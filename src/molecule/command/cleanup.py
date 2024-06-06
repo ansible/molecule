@@ -25,18 +25,19 @@ import click
 
 from molecule.command import base
 
+
 LOG = logging.getLogger(__name__)
 
 
 class Cleanup(base.Base):
     """Cleanup Command Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
         """Execute the actions necessary to cleanup the instances and returns \
         None.
 
         :return: None
-        """
+        """  # noqa: D205
         if not self._config.provisioner.playbooks.cleanup:
             msg = "Skipping, cleanup playbook not configured."
             LOG.warning(msg)
@@ -53,12 +54,12 @@ class Cleanup(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
-def cleanup(ctx, scenario_name="default"):  # type: ignore[no-untyped-def] # pragma: no cover
+def cleanup(ctx, scenario_name="default"):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """Use the provisioner to cleanup any changes made to external systems during \
     the stages of testing.
-    """
+    """  # noqa: D205
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
     command_args = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]

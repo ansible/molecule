@@ -26,6 +26,7 @@ from molecule import util
 from molecule.api import Driver  # type: ignore[attr-defined]
 from molecule.data import __file__ as data_module
 
+
 LOG = logging.getLogger(__name__)
 
 
@@ -140,21 +141,21 @@ class Delegated(Driver):
 
     title = "Default driver, user is expected to manage provisioning of test resources."
 
-    def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]
+    def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Construct Delegated."""
         super().__init__(config)
         self._name = "default"
 
     @property
-    def name(self):  # type: ignore[no-untyped-def]
+    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._name
 
     @name.setter
-    def name(self, value):  # type: ignore[no-untyped-def]
+    def name(self, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
         self._name = value
 
     @property
-    def login_cmd_template(self):  # type: ignore[no-untyped-def]
+    def login_cmd_template(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         if "login_cmd_template" in self.options:
             return self.options["login_cmd_template"]
 
@@ -171,11 +172,11 @@ class Delegated(Driver):
         return None
 
     @property
-    def default_safe_files(self):  # type: ignore[no-untyped-def]
+    def default_safe_files(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return []
 
     @property
-    def default_ssh_connection_options(self):  # type: ignore[no-untyped-def]
+    def default_ssh_connection_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         if self.managed:
             ssh_connopts = self._get_ssh_connection_options()  # type: ignore[no-untyped-call]
             if self.options.get("ansible_connection_options", {}).get(
@@ -190,14 +191,14 @@ class Delegated(Driver):
             return ssh_connopts
         return []
 
-    def login_options(self, instance_name):  # type: ignore[no-untyped-def]
+    def login_options(self, instance_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, D102
         if self.managed:
             d = {"instance": instance_name}
 
             return util.merge_dicts(d, self._get_instance_config(instance_name))  # type: ignore[no-untyped-call]
         return {"instance": instance_name}
 
-    def ansible_connection_options(self, instance_name):  # type: ignore[no-untyped-def]
+    def ansible_connection_options(self, instance_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, D102
         # list of tuples describing mappable instance params and default values
         instance_params = [
             ("become_pass", None),
@@ -226,7 +227,7 @@ class Delegated(Driver):
                     conn_dict["ansible_private_key_file"] = d.get("identity_file")
                 if d.get("password", None):
                     conn_dict["ansible_password"] = d.get("password")
-                    # Based on testinfra documentation, ansible password must be passed via ansible_ssh_pass
+                    # Based on testinfra documentation, ansible password must be passed via ansible_ssh_pass  # noqa: E501
                     # issue to fix this can be found https://github.com/pytest-dev/pytest-testinfra/issues/580
                     conn_dict["ansible_ssh_pass"] = d.get("password")
 
@@ -234,7 +235,7 @@ class Delegated(Driver):
                     self.ssh_connection_options,
                 )
 
-                return conn_dict
+                return conn_dict  # noqa: TRY300
 
             except StopIteration:
                 return {}
@@ -244,19 +245,19 @@ class Delegated(Driver):
                 return {}
         return self.options.get("ansible_connection_options", {})
 
-    def _created(self):  # type: ignore[no-untyped-def]
+    def _created(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         if self.managed:
             return super()._created()  # type: ignore[no-untyped-call]
         return "unknown"
 
-    def _get_instance_config(self, instance_name):  # type: ignore[no-untyped-def]
+    def _get_instance_config(self, instance_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
         instance_config_dict = util.safe_load_file(self._config.driver.instance_config)
 
         return next(item for item in instance_config_dict if item["instance"] == instance_name)
 
-    def sanity_checks(self):  # type: ignore[no-untyped-def]
+    def sanity_checks(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         # Note(decentral1se): Cannot implement driver specifics are unknown
         pass
 
-    def schema_file(self):  # type: ignore[no-untyped-def]
-        return os.path.join(os.path.dirname(data_module), "driver.json")
+    def schema_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+        return os.path.join(os.path.dirname(data_module), "driver.json")  # noqa: PTH118, PTH120

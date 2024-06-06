@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -27,11 +27,11 @@ from molecule.command import dependency
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_dependency_execute(  # type: ignore[no-untyped-def]
-    mocker: MockerFixture,
-    caplog,
-    patched_ansible_galaxy,
-    patched_config_validate,
+def test_dependency_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,  # noqa: ARG001
+    caplog,  # noqa: ANN001
+    patched_ansible_galaxy,  # noqa: ANN001
+    patched_config_validate,  # noqa: ANN001, ARG001
     config_instance: config.Config,
 ):
     d = dependency.Dependency(config_instance)

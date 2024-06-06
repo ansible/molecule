@@ -26,6 +26,7 @@ import click
 from molecule.api import drivers
 from molecule.command import base
 
+
 LOG = logging.getLogger(__name__)
 
 
@@ -37,10 +38,10 @@ LOG = logging.getLogger(__name__)
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
-def reset(ctx, scenario_name):  # type: ignore[no-untyped-def] # pragma: no cover
+def reset(ctx, scenario_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """Reset molecule temporary folders."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
     command_args = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]

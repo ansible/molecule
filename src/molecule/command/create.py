@@ -27,18 +27,19 @@ from molecule.api import drivers
 from molecule.command import base
 from molecule.config import DEFAULT_DRIVER
 
+
 LOG = logging.getLogger(__name__)
 
 
 class Create(base.Base):
     """Create Command Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
         """Execute the actions necessary to perform a `molecule create` and \
         returns None.
 
         :return: None
-        """
+        """  # noqa: D205
         self._config.state.change_state("driver", self._config.driver.name)
 
         if self._config.state.created:
@@ -48,7 +49,7 @@ class Create(base.Base):
 
         self._config.provisioner.create()
 
-        self._config.state.change_state("created", True)
+        self._config.state.change_state("created", True)  # noqa: FBT003
 
 
 @base.click_command_ex()
@@ -65,10 +66,10 @@ class Create(base.Base):
     type=click.Choice([str(s) for s in drivers()]),
     help=f"Name of driver to use. ({DEFAULT_DRIVER})",
 )
-def create(ctx, scenario_name, driver_name):  # type: ignore[no-untyped-def] # pragma: no cover
+def create(ctx, scenario_name, driver_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """Use the provisioner to start the instances."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
     command_args = {"subcommand": subcommand, "driver_name": driver_name}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]

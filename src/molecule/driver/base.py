@@ -21,6 +21,7 @@
 
 import inspect
 import os
+
 from abc import ABCMeta, abstractmethod
 from importlib.metadata import version
 
@@ -33,34 +34,36 @@ class Driver:
     __metaclass__ = ABCMeta
     title = ""  # Short description of the driver.
 
-    def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]
+    def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Initialize code for all :ref:`Driver` classes.
 
         :param config: An instance of a Molecule config.
         :returns: None
         """
         self._config = config
-        self._path = os.path.abspath(os.path.dirname(inspect.getfile(self.__class__)))
+        self._path = os.path.abspath(  # noqa: PTH100
+            os.path.dirname(inspect.getfile(self.__class__)),  # noqa: PTH120
+        )
         self.module = self.__module__.split(".", maxsplit=1)[0]
         self.version = version(self.module)
 
     @property
     @abstractmethod
-    def name(self) -> str:  # pragma: no cover
+    def name(self) -> str:  # pragma: no cover  # noqa: ANN101
         """Name of the driver and returns a string.
 
         :returns: str
         """
 
     @name.setter
-    def name(self, value):  # type: ignore[no-untyped-def] # pragma: no cover
+    def name(self, value):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN101, ANN202
         """Driver name setter and returns None.
 
         :returns: None
         """
 
     @property
-    def testinfra_options(self):  # type: ignore[no-untyped-def]
+    def testinfra_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
         """Testinfra specific options and returns a dict.
 
         :returns: dict
@@ -72,16 +75,16 @@ class Driver:
 
     @property
     @abstractmethod
-    def login_cmd_template(self):  # type: ignore[no-untyped-def] # pragma: no cover
+    def login_cmd_template(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
         """Get the login command template to be populated by ``login_options`` as \
         a string.
 
         :returns: str
-        """
+        """  # noqa: D205
 
     @property
     @abstractmethod
-    def default_ssh_connection_options(self):  # type: ignore[no-untyped-def] # pragma: no cover
+    def default_ssh_connection_options(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
         """SSH client options and returns a list.
 
         :returns: list
@@ -89,14 +92,14 @@ class Driver:
 
     @property
     @abstractmethod
-    def default_safe_files(self):  # type: ignore[no-untyped-def] # pragma: no cover
+    def default_safe_files(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
         """Generate files to be preserved.
 
         :returns: list
         """
 
     @abstractmethod
-    def login_options(self, instance_name):  # type: ignore[no-untyped-def] # pragma: no cover
+    def login_options(self, instance_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN101, ANN201
         """Options used in the login command and returns a dict.
 
         :param instance_name: A string containing the instance to login to.
@@ -104,16 +107,16 @@ class Driver:
         """
 
     @abstractmethod
-    def ansible_connection_options(self, instance_name):  # type: ignore[no-untyped-def] # pragma: no cover
+    def ansible_connection_options(self, instance_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN101, ANN201
         """Ansible specific connection options supplied to inventory and returns a \
         dict.
 
         :param instance_name: A string containing the instance to login to.
         :returns: dict
-        """
+        """  # noqa: D205
 
     @abstractmethod
-    def sanity_checks(self) -> None:
+    def sanity_checks(self) -> None:  # noqa: ANN101
         """Confirm that driver is usable.
 
         Sanity checks to ensure the driver can do work successfully. For
@@ -126,28 +129,28 @@ class Driver:
         """
 
     @property
-    def options(self):  # type: ignore[no-untyped-def]
+    def options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._config.config["driver"]["options"]
 
     @property
-    def instance_config(self):  # type: ignore[no-untyped-def]
-        return os.path.join(
+    def instance_config(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+        return os.path.join(  # noqa: PTH118
             self._config.scenario.ephemeral_directory,
             "instance_config.yml",
         )
 
     @property
-    def ssh_connection_options(self):  # type: ignore[no-untyped-def]
+    def ssh_connection_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         if self._config.config["driver"]["ssh_connection_options"]:
             return self._config.config["driver"]["ssh_connection_options"]
         return self.default_ssh_connection_options
 
     @property
-    def safe_files(self):  # type: ignore[no-untyped-def]
+    def safe_files(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self.default_safe_files + self._config.config["driver"]["safe_files"]
 
     @property
-    def delegated(self):  # type: ignore[no-untyped-def]
+    def delegated(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
         """Is the dedriver delegated and returns a bool.
 
         :returns: bool
@@ -155,14 +158,14 @@ class Driver:
         return self.name == "default"
 
     @property
-    def managed(self):  # type: ignore[no-untyped-def]
+    def managed(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
         """Is the driver is managed and returns a bool.
 
         :returns: bool
         """
         return self.options["managed"]
 
-    def status(self):  # type: ignore[no-untyped-def]
+    def status(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
         """Collect the instances state and returns a list.
 
         !!! note
@@ -195,7 +198,7 @@ class Driver:
 
         return status_list
 
-    def _get_ssh_connection_options(self):  # type: ignore[no-untyped-def]
+    def _get_ssh_connection_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         # LogLevel=ERROR is needed in order to avoid warnings like:
         # Warning: Permanently added ... to the list of known hosts.
         return [
@@ -208,65 +211,65 @@ class Driver:
             "-o StrictHostKeyChecking=no",
         ]
 
-    def _created(self):  # type: ignore[no-untyped-def]
+    def _created(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         return str(self._config.state.created).lower()
 
-    def _converged(self):  # type: ignore[no-untyped-def]
+    def _converged(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         return str(self._config.state.converged).lower()
 
-    def __eq__(self, other):  # type: ignore[no-untyped-def]
+    def __eq__(self, other):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN204
         """Implement equality comparison."""
         # trick that allows us to test if a driver is loaded via:
         # if 'driver-name' in drivers()
         return str(self) == str(other)
 
-    def __lt__(self, other):  # type: ignore[no-untyped-def]
+    def __lt__(self, other):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN204
         """Implement lower than comparison."""
         return str.__lt__(str(self), str(other))
 
-    def __hash__(self):  # type: ignore[no-untyped-def]
+    def __hash__(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN204
         """Perform object hash."""
         return self.name.__hash__()
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # noqa: ANN101
         """Return readable string representation of object."""
         return self.name
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # noqa: ANN101
         """Return detailed string representation of object."""
         return self.name
 
-    def __rich__(self):  # type: ignore[no-untyped-def]
+    def __rich__(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN204
         """Return rich representation of object."""
         return self.__str__()
 
-    def get_playbook(self, step):  # type: ignore[no-untyped-def]
+    def get_playbook(self, step):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
         """Return embedded playbook location or None.
 
         The default location is relative to the file implementing the driver
         class, allowing driver writers to define playbooks without having
         to override this method.
         """
-        p = os.path.join(
+        p = os.path.join(  # noqa: PTH118
             self._path,
             "playbooks",
             step + ".yml",
         )
-        if os.path.isfile(p):
+        if os.path.isfile(p):  # noqa: PTH113
             return p
         return None
 
-    def schema_file(self):  # type: ignore[no-untyped-def]
+    def schema_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return None
 
-    def modules_dir(self):  # type: ignore[no-untyped-def]
+    def modules_dir(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
         """Return path to ansible modules included with driver."""
-        p = os.path.join(self._path, "modules")
-        if os.path.isdir(p):
+        p = os.path.join(self._path, "modules")  # noqa: PTH118
+        if os.path.isdir(p):  # noqa: PTH112
             return p
         return None
 
-    def reset(self):  # type: ignore[no-untyped-def]
+    def reset(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
         """Release all resources owned by molecule.
 
         This is a destructive operation that would affect all resources managed
@@ -275,6 +278,6 @@ class Driver:
         """
 
     @property
-    def required_collections(self) -> dict[str, str]:
+    def required_collections(self) -> dict[str, str]:  # noqa: ANN101
         """Return collections dict containing names and versions required."""
         return {}

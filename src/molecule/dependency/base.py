@@ -24,9 +24,11 @@ import abc
 import logging
 import os
 import time
+
 from subprocess import CalledProcessError
 
 from molecule import util
+
 
 LOG = logging.getLogger(__name__)
 
@@ -40,7 +42,7 @@ class Base:
     SLEEP = 3
     BACKOFF = 3
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Initialize code for all :ref:`Dependency` classes.
 
         :param config: An instance of a Molecule config.
@@ -49,7 +51,7 @@ class Base:
         self._config = config
         self._sh_command: list[str] | None = None
 
-    def execute_with_retries(self):  # type: ignore[no-untyped-def]
+    def execute_with_retries(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
         """Run dependency downloads with retry and timed back-off."""
         exception = None
 
@@ -57,7 +59,7 @@ class Base:
             util.run_command(self._sh_command, debug=self._config.debug, check=True)  # type: ignore[arg-type]
             msg = "Dependency completed successfully."
             LOG.info(msg)
-            return
+            return  # noqa: TRY300
         except CalledProcessError:
             pass
 
@@ -74,7 +76,7 @@ class Base:
                 util.run_command(self._sh_command, debug=self._config.debug, check=True)  # type: ignore[arg-type]
                 msg = "Dependency completed successfully."
                 LOG.info(msg)
-                return
+                return  # noqa: TRY300
             except CalledProcessError as _exception:
                 exception = _exception
 
@@ -82,7 +84,7 @@ class Base:
         util.sysexit(exception.returncode)  # type: ignore[union-attr]
 
     @abc.abstractmethod
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def] # pragma: no cover
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN101, ANN201
         """Execute ``cmd`` and returns None.
 
         :return: None
@@ -92,23 +94,23 @@ class Base:
 
     @property
     @abc.abstractmethod
-    def default_options(self):  # type: ignore[no-untyped-def] # pragma: no cover
+    def default_options(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
         """Get default CLI arguments provided to ``cmd`` as a dict.
 
         :return: dict
         """
 
     @property
-    def default_env(self):  # type: ignore[no-untyped-def] # pragma: no cover
+    def default_env(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
         """Get default env variables provided to ``cmd`` as a dict.
 
         :return: dict
         """
         env = util.merge_dicts(os.environ, self._config.env)
-        return env
+        return env  # noqa: RET504
 
     @property
-    def name(self):  # type: ignore[no-untyped-def]
+    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
         """Name of the dependency and returns a string.
 
         :returns: str
@@ -116,18 +118,18 @@ class Base:
         return self._config.config["dependency"]["name"]
 
     @property
-    def enabled(self):  # type: ignore[no-untyped-def]
+    def enabled(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._config.config["dependency"]["enabled"]
 
     @property
-    def options(self):  # type: ignore[no-untyped-def]
+    def options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return util.merge_dicts(
             self.default_options,
             self._config.config["dependency"]["options"],
         )
 
     @property
-    def env(self):  # type: ignore[no-untyped-def]
+    def env(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return util.merge_dicts(
             self.default_env,
             self._config.config["dependency"]["env"],

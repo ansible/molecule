@@ -31,6 +31,7 @@ from molecule.command import base as command_base
 from molecule.command.init import base
 from molecule.config import DEFAULT_DRIVER, MOLECULE_EMBEDDED_DATA_DIR
 
+
 LOG = logging.getLogger(__name__)
 
 
@@ -58,24 +59,24 @@ class Scenario(base.Base):
         Initialize a new scenario using a embedded template.
     """
 
-    def __init__(self, command_args: dict[str, str]) -> None:
+    def __init__(self, command_args: dict[str, str]) -> None:  # noqa: ANN101
         """Construct Scenario."""
         self._command_args = command_args
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
         """Execute the actions necessary to perform a `molecule init scenario` and \
         returns None.
 
         :return: None
-        """
+        """  # noqa: D205
         scenario_name = self._command_args["scenario_name"]
 
         msg = f"Initializing new scenario {scenario_name}..."
         LOG.info(msg)
-        molecule_directory = config.molecule_directory(os.getcwd())
-        scenario_directory = os.path.join(molecule_directory, scenario_name)
+        molecule_directory = config.molecule_directory(os.getcwd())  # noqa: PTH109
+        scenario_directory = os.path.join(molecule_directory, scenario_name)  # noqa: PTH118
 
-        if os.path.isdir(scenario_directory):
+        if os.path.isdir(scenario_directory):  # noqa: PTH112
             msg = f"The directory molecule/{scenario_name} exists. Cannot create new scenario."
             util.sysexit_with_message(msg)
 
@@ -100,14 +101,14 @@ class Scenario(base.Base):
         LOG.info(msg)
 
 
-def _role_exists(ctx, param, value: str):  # type: ignore[no-untyped-def] # pragma: no cover
+def _role_exists(ctx, param, value: str):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN202, ARG001
     # if role name was not mentioned we assume that current directory is the
     # one hosting the role and determining the role name.
     if not value:
-        value = os.path.basename(os.getcwd())
+        value = os.path.basename(os.getcwd())  # noqa: PTH109, PTH119
 
-    role_directory = os.path.join(os.pardir, value)
-    if not os.path.exists(role_directory):
+    role_directory = os.path.join(os.pardir, value)  # noqa: PTH118
+    if not os.path.exists(role_directory):  # noqa: PTH110
         msg = f"The role '{value}' not found. Please choose the proper role name."
         util.sysexit_with_message(msg)
     return value
@@ -139,12 +140,12 @@ def _role_exists(ctx, param, value: str):  # type: ignore[no-untyped-def] # prag
     default=command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
     required=False,
 )
-def scenario(  # type: ignore[no-untyped-def]
-    ctx,
-    dependency_name,
-    driver_name,
-    provisioner_name,
-    scenario_name,
+def scenario(  # type: ignore[no-untyped-def]  # noqa: ANN201
+    ctx,  # noqa: ANN001, ARG001
+    dependency_name,  # noqa: ANN001
+    driver_name,  # noqa: ANN001
+    provisioner_name,  # noqa: ANN001
+    scenario_name,  # noqa: ANN001
 ):  # pragma: no cover
     """Initialize a new scenario for use with Molecule.
 

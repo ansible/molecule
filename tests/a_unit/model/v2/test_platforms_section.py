@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -25,8 +25,8 @@ from molecule.model import schema_v3
 
 @pytest.mark.parametrize(
     "_config",
-    ["_model_platforms_delegated_section_data"],
+    ["_model_platforms_delegated_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_platforms_delegated(_config):  # type: ignore[no-untyped-def]
+def test_platforms_delegated(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]

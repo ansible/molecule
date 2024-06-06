@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -20,6 +20,7 @@
 
 
 import pytest
+
 from pytest_mock import MockerFixture
 
 from molecule import config
@@ -27,12 +28,12 @@ from molecule.command import destroy
 
 
 @pytest.fixture()
-def _patched_ansible_destroy(mocker):  # type: ignore[no-untyped-def]
+def _patched_ansible_destroy(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     return mocker.patch("molecule.provisioner.ansible.Ansible.destroy")
 
 
 @pytest.fixture()
-def _patched_destroy_setup(mocker):  # type: ignore[no-untyped-def]
+def _patched_destroy_setup(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     return mocker.patch("molecule.command.destroy.Destroy._setup")
 
 
@@ -40,11 +41,11 @@ def _patched_destroy_setup(mocker):  # type: ignore[no-untyped-def]
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.mark.skip(reason="destroy not running for delegated")
-def test_destroy_execute(  # type: ignore[no-untyped-def]
-    mocker: MockerFixture,
-    caplog,
-    patched_config_validate,
-    _patched_ansible_destroy,
+def test_destroy_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,  # noqa: ARG001
+    caplog,  # noqa: ANN001
+    patched_config_validate,  # noqa: ANN001, ARG001
+    _patched_ansible_destroy,  # noqa: ANN001, PT019
     config_instance: config.Config,
 ):
     d = destroy.Destroy(config_instance)
@@ -62,13 +63,13 @@ def test_destroy_execute(  # type: ignore[no-untyped-def]
 
 @pytest.mark.parametrize(
     "config_instance",
-    ["command_driver_delegated_section_data"],
+    ["command_driver_delegated_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_execute_skips_when_destroy_strategy_is_never(  # type: ignore[no-untyped-def]
-    _patched_destroy_setup,
-    caplog,
-    _patched_ansible_destroy,
+def test_execute_skips_when_destroy_strategy_is_never(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    _patched_destroy_setup,  # noqa: ANN001, PT019
+    caplog,  # noqa: ANN001
+    _patched_ansible_destroy,  # noqa: ANN001, PT019
     config_instance: config.Config,
 ):
     config_instance.command_args = {"destroy": "never"}

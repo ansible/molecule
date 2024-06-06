@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -24,7 +24,7 @@ from molecule.model import schema_v3
 
 
 @pytest.fixture()
-def _model_scenario_section_data():  # type: ignore[no-untyped-def]
+def _model_scenario_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {
         "scenario": {
             "name": "foo",
@@ -37,22 +37,22 @@ def _model_scenario_section_data():  # type: ignore[no-untyped-def]
     }
 
 
-@pytest.mark.parametrize("_config", ["_model_scenario_section_data"], indirect=True)
-def test_scenario(_config):  # type: ignore[no-untyped-def]
+@pytest.mark.parametrize("_config", ["_model_scenario_section_data"], indirect=True)  # noqa: PT007
+def test_scenario(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
-def _model_scenario_errors_section_data():  # type: ignore[no-untyped-def]
+def _model_scenario_errors_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {"scenario": {"name": 0}}
 
 
 @pytest.mark.parametrize(
     "_config",
-    ["_model_scenario_errors_section_data"],
+    ["_model_scenario_errors_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_scenario_has_errors(_config):  # type: ignore[no-untyped-def]
+def test_scenario_has_errors(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     x = ["0 is not of type 'string'"]
 
     assert x == schema_v3.validate(_config)  # type: ignore[no-untyped-call]

@@ -26,20 +26,21 @@ import click
 
 from molecule.command import base
 
+
 LOG = logging.getLogger(__name__)
 
 
 class Converge(base.Base):
     """Converge Command Class."""
 
-    def execute(self, action_args: list[str] | None = None) -> None:
+    def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ANN101, ARG002
         """Execute the actions necessary to perform a `molecule converge` and \
         returns None.
 
         :return: None
-        """
+        """  # noqa: D205
         self._config.provisioner.converge()
-        self._config.state.change_state("converged", True)
+        self._config.state.change_state("converged", True)  # noqa: FBT003
 
 
 @base.click_command_ex()
@@ -51,10 +52,10 @@ class Converge(base.Base):
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
-def converge(ctx, scenario_name, ansible_args):  # type: ignore[no-untyped-def] # pragma: no cover
+def converge(ctx, scenario_name, ansible_args):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """Use the provisioner to configure instances (dependency, create, prepare converge)."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
     command_args = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)  # type: ignore[no-untyped-call]

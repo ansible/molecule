@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -28,7 +28,7 @@ from molecule.text import chomp, strip_ansi_escape
 
 
 @pytest.fixture()
-def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]
+def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     config_instance_1 = copy.deepcopy(config_instance)
 
     config_instance_2 = copy.deepcopy(config_instance)
@@ -37,44 +37,44 @@ def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]
     return scenarios.Scenarios([config_instance_1, config_instance_2])
 
 
-def test_configs_private_member(_instance):  # type: ignore[no-untyped-def]
-    assert len(_instance._configs) == 2
+def test_configs_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+    assert len(_instance._configs) == 2  # noqa: PLR2004
     assert isinstance(_instance._configs[0], config.Config)
     assert isinstance(_instance._configs[1], config.Config)
 
 
-def test_scenario_name_private_member(_instance):  # type: ignore[no-untyped-def]
+def test_scenario_name_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance._scenario_name is None
 
 
-def test_scenarios_private_member(_instance):  # type: ignore[no-untyped-def]
-    assert len(_instance._scenarios) == 2
+def test_scenarios_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+    assert len(_instance._scenarios) == 2  # noqa: PLR2004
     assert isinstance(_instance._scenarios[0], scenario.Scenario)
     assert isinstance(_instance._scenarios[1], scenario.Scenario)
 
 
-def test_scenarios_iterator(_instance):  # type: ignore[no-untyped-def]
+def test_scenarios_iterator(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     s = list(_instance)
 
     assert s[0].name == "default"
     assert s[1].name == "foo"
 
 
-def test_all_property(_instance):  # type: ignore[no-untyped-def]
+def test_all_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     result = _instance.all
 
-    assert len(result) == 2
+    assert len(result) == 2  # noqa: PLR2004
     assert result[0].name == "default"
     assert result[1].name == "foo"
 
 
-def test_all_filters_on_scenario_name_property(_instance):  # type: ignore[no-untyped-def]
+def test_all_filters_on_scenario_name_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._scenario_name = "default"
 
     assert len(_instance.all) == 1
 
 
-def test_print_matrix(capsys, _instance):  # type: ignore[no-untyped-def]
+def test_print_matrix(capsys, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
     with console.capture() as capture:
         _instance.print_matrix()
     result = chomp(strip_ansi_escape(capture.get()))  # type: ignore[no-untyped-call]
@@ -109,13 +109,13 @@ foo:
     assert matrix_out in result
 
 
-def test_verify_does_not_raise_when_found(_instance):  # type: ignore[no-untyped-def]
+def test_verify_does_not_raise_when_found(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._scenario_name = "default"
 
     assert _instance._verify() is None
 
 
-def test_verify_raises_when_scenario_not_found(_instance, caplog):  # type: ignore[no-untyped-def]
+def test_verify_raises_when_scenario_not_found(_instance, caplog):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._scenario_name = "invalid"
     with pytest.raises(SystemExit) as e:
         _instance._verify()
@@ -126,7 +126,7 @@ def test_verify_raises_when_scenario_not_found(_instance, caplog):  # type: igno
     assert msg in caplog.text
 
 
-def test_filter_for_scenario(_instance):  # type: ignore[no-untyped-def]
+def test_filter_for_scenario(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._scenario_name = "default"
     result = _instance._filter_for_scenario()
     assert len(result) == 1
@@ -137,7 +137,7 @@ def test_filter_for_scenario(_instance):  # type: ignore[no-untyped-def]
     assert [] == result
 
 
-def test_get_matrix(_instance):  # type: ignore[no-untyped-def]
+def test_get_matrix(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     matrix = {
         "default": {
             "idempotence": ["idempotence"],

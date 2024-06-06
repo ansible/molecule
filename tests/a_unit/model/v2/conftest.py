@@ -27,9 +27,9 @@ from molecule import util
 
 
 @pytest.fixture()
-def _molecule_file():  # type: ignore[no-untyped-def]
-    return os.path.join(
-        os.path.dirname(__file__),
+def _molecule_file():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+    return os.path.join(  # noqa: PTH118
+        os.path.dirname(__file__),  # noqa: PTH120
         os.path.pardir,
         os.path.pardir,
         os.path.pardir,
@@ -39,8 +39,8 @@ def _molecule_file():  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture()
-def _config(_molecule_file, request):  # type: ignore[no-untyped-def]
-    with open(_molecule_file) as f:
+def _config(_molecule_file, request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
+    with open(_molecule_file) as f:  # noqa: PTH123
         d = util.safe_load(f)
     if hasattr(request, "param"):
         if isinstance(request.getfixturevalue(request.param), str):
@@ -53,7 +53,7 @@ def _config(_molecule_file, request):  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture()
-def _model_platforms_delegated_section_data():  # type: ignore[no-untyped-def]
+def _model_platforms_delegated_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return """
 ---
 platforms:

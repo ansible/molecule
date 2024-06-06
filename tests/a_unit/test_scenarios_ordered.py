@@ -1,4 +1,4 @@
-#  Copyright (c) 2018 Marc Dequènes (Duck) <duck@redhat.com>
+#  Copyright (c) 2018 Marc Dequènes (Duck) <duck@redhat.com>  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -26,7 +26,7 @@ from molecule import config, scenarios
 
 
 @pytest.fixture()
-def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]
+def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     config_instance_1 = copy.deepcopy(config_instance)
     config_instance_1.config["scenario"]["name"] = "two"
     config_instance_1.molecule_file = config_instance_1.molecule_file.replace(
@@ -53,10 +53,10 @@ def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]
     )
 
 
-def test_all_ordered(_instance):  # type: ignore[no-untyped-def]
+def test_all_ordered(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     result = _instance.all
 
-    assert len(result) == 3
+    assert len(result) == 3  # noqa: PLR2004
     assert result[0].name == "one"
     assert result[1].name == "two"
     assert result[2].name == "three"

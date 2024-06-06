@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -21,6 +21,7 @@
 import os
 
 import pytest
+
 from pytest_mock import MockerFixture
 
 from molecule import config, util
@@ -28,7 +29,7 @@ from molecule.command import side_effect
 
 
 @pytest.fixture()
-def _command_provisioner_section_with_side_effect_data():  # type: ignore[no-untyped-def]
+def _command_provisioner_section_with_side_effect_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {
         "provisioner": {
             "name": "ansible",
@@ -38,7 +39,7 @@ def _command_provisioner_section_with_side_effect_data():  # type: ignore[no-unt
 
 
 @pytest.fixture()
-def _patched_ansible_side_effect(mocker):  # type: ignore[no-untyped-def]
+def _patched_ansible_side_effect(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     return mocker.patch("molecule.provisioner.ansible.Ansible.side_effect")
 
 
@@ -47,17 +48,17 @@ def _patched_ansible_side_effect(mocker):  # type: ignore[no-untyped-def]
 # throughout patched.assert_called unit tests.
 @pytest.mark.parametrize(
     "config_instance",
-    ["_command_provisioner_section_with_side_effect_data"],
+    ["_command_provisioner_section_with_side_effect_data"],  # noqa: PT007
     indirect=True,
 )
-def test_side_effect_execute(  # type: ignore[no-untyped-def]
-    mocker: MockerFixture,
-    _patched_ansible_side_effect,
-    caplog,
-    patched_config_validate,
+def test_side_effect_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,  # noqa: ARG001
+    _patched_ansible_side_effect,  # noqa: ANN001, PT019
+    caplog,  # noqa: ANN001
+    patched_config_validate,  # noqa: ANN001, ARG001
     config_instance: config.Config,
 ):
-    pb = os.path.join(config_instance.scenario.directory, "side_effect.yml")
+    pb = os.path.join(config_instance.scenario.directory, "side_effect.yml")  # noqa: PTH118
     util.write_file(pb, "")
 
     se = side_effect.SideEffect(config_instance)
@@ -69,9 +70,9 @@ def test_side_effect_execute(  # type: ignore[no-untyped-def]
     _patched_ansible_side_effect.assert_called_once_with(None)
 
 
-def test_side_effect_execute_skips_when_playbook_not_configured(  # type: ignore[no-untyped-def]
-    caplog,
-    _patched_ansible_side_effect,
+def test_side_effect_execute_skips_when_playbook_not_configured(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    caplog,  # noqa: ANN001
+    _patched_ansible_side_effect,  # noqa: ANN001, PT019
     config_instance: config.Config,
 ):
     se = side_effect.SideEffect(config_instance)

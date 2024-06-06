@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -30,11 +30,11 @@ from molecule import config, scenario, util
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture()
-def _instance(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]
+def _instance(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005, ARG001
     return scenario.Scenario(config_instance)
 
 
-def test_prune(_instance):  # type: ignore[no-untyped-def]
+def test_prune(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     e_dir = _instance.ephemeral_directory
     # prune data also includes files in the scenario inventory dir,
     # which is "<e_dir>/inventory" by default.
@@ -55,54 +55,54 @@ def test_prune(_instance):  # type: ignore[no-untyped-def]
         # required by the assertions below.
         if directory == "inventory":
             continue
-        os.mkdir(os.path.join(e_dir, directory))
+        os.mkdir(os.path.join(e_dir, directory))  # noqa: PTH102, PTH118
 
     for file in prune_data["safe_files"] + prune_data["pruned_files"]:
-        util.write_file(os.path.join(e_dir, file), "")
+        util.write_file(os.path.join(e_dir, file), "")  # noqa: PTH118
 
     _instance.prune()
 
     for safe_file in prune_data["safe_files"]:
-        assert os.path.isfile(os.path.join(e_dir, safe_file))
+        assert os.path.isfile(os.path.join(e_dir, safe_file))  # noqa: PTH113, PTH118
 
     for safe_dir in prune_data["safe_dirs"]:
-        assert os.path.isdir(os.path.join(e_dir, safe_dir))
+        assert os.path.isdir(os.path.join(e_dir, safe_dir))  # noqa: PTH112, PTH118
 
     for pruned_file in prune_data["pruned_files"]:
-        assert not os.path.isfile(os.path.join(e_dir, pruned_file))
+        assert not os.path.isfile(os.path.join(e_dir, pruned_file))  # noqa: PTH113, PTH118
 
     for pruned_dir in prune_data["pruned_dirs"]:
-        assert not os.path.isdir(os.path.join(e_dir, pruned_dir))
+        assert not os.path.isdir(os.path.join(e_dir, pruned_dir))  # noqa: PTH112, PTH118
 
 
-def test_config_member(_instance):  # type: ignore[no-untyped-def]
+def test_config_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert isinstance(_instance.config, config.Config)
 
 
-def test_scenario_init_calls_setup(patched_scenario_setup, _instance):  # type: ignore[no-untyped-def]
+def test_scenario_init_calls_setup(patched_scenario_setup, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     patched_scenario_setup.assert_called_once_with()
 
 
-def test_scenario_name_property(_instance):  # type: ignore[no-untyped-def]
+def test_scenario_name_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance.name == "default"
 
 
-def test_scenario_directory_property(molecule_scenario_directory_fixture, _instance):  # type: ignore[no-untyped-def]
+def test_scenario_directory_property(molecule_scenario_directory_fixture, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert molecule_scenario_directory_fixture == _instance.directory
 
 
-def test_ephemeral_directory_property(_instance):  # type: ignore[no-untyped-def]
+def test_ephemeral_directory_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert os.access(_instance.ephemeral_directory, os.W_OK)
 
 
-def test_scenario_inventory_directory_property(_instance):  # type: ignore[no-untyped-def]
+def test_scenario_inventory_directory_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     ephemeral_directory = _instance.config.scenario.ephemeral_directory
-    e_dir = os.path.join(ephemeral_directory, "inventory")
+    e_dir = os.path.join(ephemeral_directory, "inventory")  # noqa: PTH118
 
     assert e_dir == _instance.inventory_directory
 
 
-def test_check_sequence_property(_instance):  # type: ignore[no-untyped-def]
+def test_check_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     sequence = [
         "dependency",
         "cleanup",
@@ -118,43 +118,43 @@ def test_check_sequence_property(_instance):  # type: ignore[no-untyped-def]
     assert sequence == _instance.check_sequence
 
 
-def test_converge_sequence_property(_instance):  # type: ignore[no-untyped-def]
+def test_converge_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     sequence = ["dependency", "create", "prepare", "converge"]
 
     assert sequence == _instance.converge_sequence
 
 
-def test_create_sequence_property(_instance):  # type: ignore[no-untyped-def]
+def test_create_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     sequence = ["dependency", "create", "prepare"]
 
     assert sequence == _instance.create_sequence
 
 
-def test_dependency_sequence_property(_instance):  # type: ignore[no-untyped-def]
+def test_dependency_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert ["dependency"] == _instance.dependency_sequence
 
 
-def test_destroy_sequence_property(_instance):  # type: ignore[no-untyped-def]
+def test_destroy_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert ["dependency", "cleanup", "destroy"] == _instance.destroy_sequence
 
 
-def test_idempotence_sequence_property(_instance):  # type: ignore[no-untyped-def]
+def test_idempotence_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert ["idempotence"] == _instance.idempotence_sequence
 
 
-def test_prepare_sequence_property(_instance):  # type: ignore[no-untyped-def]
+def test_prepare_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert ["prepare"] == _instance.prepare_sequence
 
 
-def test_side_effect_sequence_property(_instance):  # type: ignore[no-untyped-def]
+def test_side_effect_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert ["side_effect"] == _instance.side_effect_sequence
 
 
-def test_syntax_sequence_property(_instance):  # type: ignore[no-untyped-def]
+def test_syntax_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert ["syntax"] == _instance.syntax_sequence
 
 
-def test_test_sequence_property(_instance):  # type: ignore[no-untyped-def]
+def test_test_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     sequence = [
         "dependency",
         "cleanup",
@@ -173,38 +173,38 @@ def test_test_sequence_property(_instance):  # type: ignore[no-untyped-def]
     assert sequence == _instance.test_sequence
 
 
-def test_verify_sequence_property(_instance):  # type: ignore[no-untyped-def]
+def test_verify_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert ["verify"] == _instance.verify_sequence
 
 
-def test_sequence_property_with_invalid_subcommand(_instance):  # type: ignore[no-untyped-def]
+def test_sequence_property_with_invalid_subcommand(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance.config.command_args = {"subcommand": "invalid"}
 
     assert [] == _instance.sequence
 
 
-def test_setup_creates_ephemeral_and_inventory_directories(_instance):  # type: ignore[no-untyped-def]
+def test_setup_creates_ephemeral_and_inventory_directories(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     ephemeral_dir = _instance.config.scenario.ephemeral_directory
     inventory_dir = _instance.config.scenario.inventory_directory
     shutil.rmtree(ephemeral_dir)
     _instance._setup()
 
-    assert os.path.isdir(ephemeral_dir)
-    assert os.path.isdir(inventory_dir)
+    assert os.path.isdir(ephemeral_dir)  # noqa: PTH112
+    assert os.path.isdir(inventory_dir)  # noqa: PTH112
 
 
-def test_ephemeral_directory():  # type: ignore[no-untyped-def]
+def test_ephemeral_directory():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     # assure we can write to ephemeral directory
     assert os.access(scenario.ephemeral_directory("foo/bar"), os.W_OK)
 
 
-def test_ephemeral_directory_OVERRIDDEN_via_env_var(monkeypatch):  # type: ignore[no-untyped-def]
+def test_ephemeral_directory_OVERRIDDEN_via_env_var(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, N802, D103
     monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", "foo/bar")
 
     assert os.access(scenario.ephemeral_directory("foo/bar"), os.W_OK)
 
 
-def test_ephemeral_directory_OVERRIDDEN_via_env_var_uses_absolute_path(monkeypatch):  # type: ignore[no-untyped-def]
+def test_ephemeral_directory_OVERRIDDEN_via_env_var_uses_absolute_path(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, N802, D103
     monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", "foo/bar")
 
-    assert os.path.isabs(scenario.ephemeral_directory())
+    assert os.path.isabs(scenario.ephemeral_directory())  # noqa: PTH117

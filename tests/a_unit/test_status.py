@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -24,7 +24,7 @@ from molecule.status import Status
 
 
 @pytest.fixture()
-def _instance():  # type: ignore[no-untyped-def]
+def _instance():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     s = Status(
         instance_name=None,  # type: ignore[arg-type]
         driver_name=None,  # type: ignore[arg-type]
@@ -34,28 +34,28 @@ def _instance():  # type: ignore[no-untyped-def]
         converged=None,  # type: ignore[arg-type]
     )
 
-    return s
+    return s  # noqa: RET504
 
 
-def test__instance_name_attribute(_instance):  # type: ignore[no-untyped-def]
+def test__instance_name_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance.instance_name is None
 
 
-def test_status_driver_name_attribute(_instance):  # type: ignore[no-untyped-def]
+def test_status_driver_name_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance.driver_name is None
 
 
-def test_status_provisioner_name_attribute(_instance):  # type: ignore[no-untyped-def]
+def test_status_provisioner_name_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance.provisioner_name is None
 
 
-def test_status_scenario_name_attribute(_instance):  # type: ignore[no-untyped-def]
+def test_status_scenario_name_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance.scenario_name is None
 
 
-def test_status_created_attribute(_instance):  # type: ignore[no-untyped-def]
+def test_status_created_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance.created is None
 
 
-def test_status_converged_attribute(_instance):  # type: ignore[no-untyped-def]
+def test_status_converged_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance.converged is None

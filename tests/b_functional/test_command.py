@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -23,7 +23,8 @@ import os
 import pathlib
 
 import pytest
-from pytest import FixtureRequest
+
+from pytest import FixtureRequest  # noqa: PT013
 
 from molecule.command import base
 from molecule.util import run_command
@@ -38,12 +39,12 @@ from tests.conftest import mac_on_gh  # pylint:disable=C0411
 
 
 @pytest.fixture(name="scenario_to_test")
-def fixture_scenario_to_test(request):  # type: ignore[no-untyped-def]
+def fixture_scenario_to_test(request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     return request.param
 
 
 @pytest.fixture(name="scenario_name")
-def fixture_scenario_name(request):  # type: ignore[no-untyped-def]
+def fixture_scenario_name(request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     try:
         return request.param
     except AttributeError:
@@ -51,16 +52,16 @@ def fixture_scenario_name(request):  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture(name="driver_name")
-def fixture_driver_name(request: FixtureRequest) -> str | None:
+def fixture_driver_name(request: FixtureRequest) -> str | None:  # noqa: D103
     try:
         # https://stackoverflow.com/q/65334215/99834
-        return request.param  # type: ignore
+        return request.param  # type: ignore  # noqa: PGH003
     except AttributeError:
         return None
 
 
 @pytest.fixture(name="platform_name")
-def fixture_platform_name(request):  # type: ignore[no-untyped-def]
+def fixture_platform_name(request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     try:
         return request.param
     except AttributeError:
@@ -70,12 +71,12 @@ def fixture_platform_name(request):  # type: ignore[no-untyped-def]
 @pytest.mark.extensive()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
-    [
+    [  # noqa: PT007
         pytest.param("driver/delegated", "default", "default", id="0"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_check(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
+def test_command_check(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     cmd = ["molecule", "check", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -83,13 +84,13 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):  # type:
 @pytest.mark.extensive()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
-    [
+    [  # noqa: PT007
         pytest.param("driver/delegated", "default", "default", id="0"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 @pytest.mark.serial()
-def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
+def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     cmd = ["molecule", "cleanup", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -97,13 +98,13 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):  # typ
 @pytest.mark.extensive()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
-    [
+    [  # noqa: PT007
         pytest.param("driver/delegated", "default", "default", id="0"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 @pytest.mark.serial()
-def test_command_converge(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
+def test_command_converge(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     cmd = ["molecule", "converge", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -111,20 +112,20 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):  # ty
 @pytest.mark.extensive()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
-    [
+    [  # noqa: PT007
         pytest.param("driver/delegated", "default", "default", id="0"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 @pytest.mark.serial()
-def test_command_create(scenario_to_test, with_scenario, scenario_name, tmp_path):  # type: ignore[no-untyped-def]
+def test_command_create(scenario_to_test, with_scenario, scenario_name, tmp_path):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
     assert run_command(cmd, env=os.environ).returncode == 0
 
 
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
-    [
+    [  # noqa: PT007
         pytest.param(
             "dependency",
             "default",
@@ -140,7 +141,7 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name, tmp_path
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 @pytest.mark.serial()
-def test_command_dependency(request, scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
+def test_command_dependency(request, scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     cmd = ["molecule", "dependency", "--scenario-name", scenario_name]
     assert run_command(cmd, echo=True).returncode == 0
 
@@ -153,10 +154,10 @@ def test_command_dependency(request, scenario_to_test, with_scenario, scenario_n
 @pytest.mark.extensive()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
-    [pytest.param("driver/delegated", "default", "default", id="0")],
+    [pytest.param("driver/delegated", "default", "default", id="0")],  # noqa: PT007
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_destroy(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
+def test_command_destroy(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     cmd = ["molecule", "destroy", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -165,24 +166,24 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):  # typ
 @pytest.mark.extensive()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
-    [
+    [  # noqa: PT007
         pytest.param("driver/delegated", "default", "default", id="0"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
+def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     idempotence(scenario_name)  # type: ignore[no-untyped-call]
 
 
 @pytest.mark.serial()
-def test_command_init_scenario(temp_dir):  # type: ignore[no-untyped-def]
+def test_command_init_scenario(temp_dir):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     init_scenario(temp_dir, "default")  # type: ignore[no-untyped-call]
 
 
 @pytest.mark.serial()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "expected"),
-    [
+    [  # noqa: PT007
         pytest.param(
             "driver/delegated",
             "default",
@@ -192,7 +193,7 @@ def test_command_init_scenario(temp_dir):  # type: ignore[no-untyped-def]
     ],
     indirect=["scenario_to_test", "driver_name"],
 )
-def test_command_list_with_format_plain(scenario_to_test, with_scenario, expected):  # type: ignore[no-untyped-def]
+def test_command_list_with_format_plain(scenario_to_test, with_scenario, expected):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     list_with_format_plain(expected)  # type: ignore[no-untyped-call]
 
 
@@ -200,12 +201,12 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
 @pytest.mark.extensive()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
-    [
+    [  # noqa: PT007
         pytest.param("driver/delegated", "default", "default", id="0"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_prepare(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
+def test_command_prepare(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -217,12 +218,12 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):  # typ
 @pytest.mark.extensive()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
-    [
+    [  # noqa: PT007
         pytest.param("driver/delegated", "default", "default", id="0"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
+def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     cmd = ["molecule", "side-effect", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -231,12 +232,12 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):  #
 @pytest.mark.extensive()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
-    [
+    [  # noqa: PT007
         pytest.param("driver/delegated", "default", "default", id="0"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_syntax(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
+def test_command_syntax(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     cmd = ["molecule", "syntax", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -244,20 +245,20 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):  # type
 @pytest.mark.serial()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
-    [
+    [  # noqa: PT007
         pytest.param("driver/delegated", "default", "default", id="0"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_name):  # type: ignore[no-untyped-def]
+def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     run_test(driver_name, scenario_name)  # type: ignore[no-untyped-call]
 
 
-def run_test_with_platform_name(  # type: ignore[no-untyped-def]
-    driver_name,
-    platform_name,
-    scenario_name="default",
-    parallel=False,
+def run_test_with_platform_name(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    driver_name,  # noqa: ANN001
+    platform_name,  # noqa: ANN001
+    scenario_name="default",  # noqa: ANN001
+    parallel=False,  # noqa: ANN001, FBT002
 ):
     cmd = [
         "molecule",
@@ -281,17 +282,17 @@ def run_test_with_platform_name(  # type: ignore[no-untyped-def]
 @pytest.mark.serial()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name", "platform_name"),
-    [
+    [  # noqa: PT007
         pytest.param("driver/delegated", "default", "default", "instance", id="0"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name", "platform_name"],
 )
-def test_command_test_with_platform_name(  # type: ignore[no-untyped-def]
-    scenario_to_test,
-    with_scenario,
-    scenario_name,
-    driver_name,
-    platform_name,
+def test_command_test_with_platform_name(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    scenario_to_test,  # noqa: ANN001, ARG001
+    with_scenario,  # noqa: ANN001, ARG001
+    scenario_name,  # noqa: ANN001
+    driver_name,  # noqa: ANN001
+    platform_name,  # noqa: ANN001
 ):
     run_test_with_platform_name(driver_name, platform_name, scenario_name)  # type: ignore[no-untyped-call]
 
@@ -299,7 +300,7 @@ def test_command_test_with_platform_name(  # type: ignore[no-untyped-def]
 @pytest.mark.serial()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
-    [
+    [  # noqa: PT007
         pytest.param(
             "driver/delegated_invalid_role_name_with_role_name_check_equals_to_1",
             "default",
@@ -309,11 +310,11 @@ def test_command_test_with_platform_name(  # type: ignore[no-untyped-def]
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_test_with_role_name_check_equals_to_1(  # type: ignore[no-untyped-def]
-    scenario_to_test,
-    with_scenario,
-    scenario_name,
-    driver_name,
+def test_command_test_with_role_name_check_equals_to_1(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    scenario_to_test,  # noqa: ANN001, ARG001
+    with_scenario,  # noqa: ANN001, ARG001
+    scenario_name,  # noqa: ANN001
+    driver_name,  # noqa: ANN001
 ):
     run_test(driver_name, scenario_name)  # type: ignore[no-untyped-call]
 
@@ -322,16 +323,16 @@ def test_command_test_with_role_name_check_equals_to_1(  # type: ignore[no-untyp
 @pytest.mark.extensive()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
-    [
+    [  # noqa: PT007
         pytest.param("driver/delegated", "default", "default", id="0"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_verify(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
+def test_command_verify(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     verify(scenario_name)  # type: ignore[no-untyped-call]
 
 
-def test_sample_collection() -> None:
+def test_sample_collection() -> None:  # noqa: D103
     assert (
         run_command(
             ["molecule", "test"],
@@ -343,18 +344,18 @@ def test_sample_collection() -> None:
 
 @pytest.mark.parametrize(
     ("scenario_name"),
-    [
+    [  # noqa: PT007
         ("test_w_gitignore"),
         ("test_wo_gitignore"),
     ],
 )
-def test_with_and_without_gitignore(
+def test_with_and_without_gitignore(  # noqa: D103
     monkeypatch: pytest.MonkeyPatch,
     scenario_name: str,
 ) -> None:
     if scenario_name == "test_wo_gitignore":
 
-        def mock_return(scenario_paths) -> list[str]:  # type: ignore[no-untyped-def]
+        def mock_return(scenario_paths) -> list[str]:  # type: ignore[no-untyped-def]  # noqa: ANN001
             return scenario_paths  # type: ignore[no-any-return]
 
         monkeypatch.setattr(
@@ -383,7 +384,7 @@ def test_with_and_without_gitignore(
 
 
 @mac_on_gh
-def test_podman() -> None:
+def test_podman() -> None:  # noqa: D103
     assert (
         run_command(
             ["molecule", "test", "--scenario-name", "podman"],
@@ -393,7 +394,7 @@ def test_podman() -> None:
 
 
 @mac_on_gh
-def test_docker() -> None:
+def test_docker() -> None:  # noqa: D103
     assert (
         run_command(
             ["molecule", "test", "--scenario-name", "docker"],

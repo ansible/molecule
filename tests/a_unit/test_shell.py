@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -23,6 +23,6 @@ import pytest
 from molecule import shell
 
 
-def test_shell() -> None:
+def test_shell() -> None:  # noqa: D103
     with pytest.raises(SystemExit):
         shell.main()  # pylint: disable=no-value-for-parameter

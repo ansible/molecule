@@ -25,13 +25,14 @@ import os
 
 from molecule import util
 
+
 LOG = logging.getLogger(__name__)
 
 
 class AnsiblePlaybooks:
     """A class to act as a module to namespace playbook properties."""
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Initialize a new namespace class and returns None.
 
         :param config: An instance of a Molecule config.
@@ -40,39 +41,39 @@ class AnsiblePlaybooks:
         self._config = config
 
     @property
-    def cleanup(self):  # type: ignore[no-untyped-def]
+    def cleanup(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._get_playbook("cleanup")  # type: ignore[no-untyped-call]
 
     @property
-    def create(self):  # type: ignore[no-untyped-def]
+    def create(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._get_playbook("create")  # type: ignore[no-untyped-call]
 
     @property
-    def converge(self):  # type: ignore[no-untyped-def]
+    def converge(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._get_playbook("converge")  # type: ignore[no-untyped-call]
 
     @property
-    def destroy(self):  # type: ignore[no-untyped-def]
+    def destroy(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._get_playbook("destroy")  # type: ignore[no-untyped-call]
 
     @property
-    def prepare(self):  # type: ignore[no-untyped-def]
+    def prepare(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._get_playbook("prepare")  # type: ignore[no-untyped-call]
 
     @property
-    def side_effect(self):  # type: ignore[no-untyped-def]
+    def side_effect(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._get_playbook("side_effect")  # type: ignore[no-untyped-call]
 
     @property
-    def verify(self):  # type: ignore[no-untyped-def]
+    def verify(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._get_playbook("verify")  # type: ignore[no-untyped-call]
 
-    def _get_playbook_directory(self):  # type: ignore[no-untyped-def]
+    def _get_playbook_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         return util.abs_path(
-            os.path.join(self._config.provisioner.directory, "playbooks"),
+            os.path.join(self._config.provisioner.directory, "playbooks"),  # noqa: PTH118
         )
 
-    def _get_playbook(self, section):  # type: ignore[no-untyped-def]
+    def _get_playbook(self, section):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
         """Return path to playbook or None if playbook is not needed.
 
         Return None when there is no playbook configured and when action is
@@ -86,14 +87,14 @@ class AnsiblePlaybooks:
             try:
                 playbook = driver_dict[section]
             except Exception as exc:
-                LOG.exception(exc)
+                LOG.exception(exc)  # noqa: TRY401
         if playbook is not None:
             playbook = self._config.provisioner.abs_path(playbook)
             playbook = self._normalize_playbook(playbook)  # type: ignore[no-untyped-call]
 
-            if os.path.exists(playbook):
+            if os.path.exists(playbook):  # noqa: PTH110
                 return playbook
-            if os.path.exists(self._get_bundled_driver_playbook(section)):  # type: ignore[no-untyped-call]
+            if os.path.exists(self._get_bundled_driver_playbook(section)):  # type: ignore[no-untyped-call]  # noqa: PTH110
                 return self._get_bundled_driver_playbook(section)  # type: ignore[no-untyped-call]
             if section not in [
                 # these playbooks can be considered optional
@@ -107,41 +108,41 @@ class AnsiblePlaybooks:
                 return playbook
         return None
 
-    def _get_bundled_driver_playbook(self, section):  # type: ignore[no-untyped-def]
+    def _get_bundled_driver_playbook(self, section):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
         path = self._config.driver.get_playbook(section)
         if path:
             return path
 
-        path = os.path.join(
+        path = os.path.join(  # noqa: PTH118
             self._get_playbook_directory(),  # type: ignore[no-untyped-call]
             self._config.driver.name,
             self._config.config["provisioner"]["playbooks"][section],
         )
-        if os.path.exists(path):
+        if os.path.exists(path):  # noqa: PTH110
             return path
-        path = os.path.join(
-            self._config.driver._path,
+        path = os.path.join(  # noqa: PTH118
+            self._config.driver._path,  # noqa: SLF001
             "playbooks",
             self._config.config["provisioner"]["playbooks"][section],
         )
-        return path
+        return path  # noqa: RET504
 
-    def _normalize_playbook(self, playbook):  # type: ignore[no-untyped-def]
+    def _normalize_playbook(self, playbook):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
         """Return current filename to use for a playbook by allowing fallbacks.
 
         Currently used to deprecate use of playbook.yml in favour of converge.yml
         """
-        if not playbook or os.path.isfile(playbook):
+        if not playbook or os.path.isfile(playbook):  # noqa: PTH113
             return playbook
 
         pb_rename_map = {"converge.yml": "playbook.yml"}
-        basename = os.path.basename(playbook)
+        basename = os.path.basename(playbook)  # noqa: PTH119
         if basename in pb_rename_map:
-            fb_playbook = os.path.join(
-                os.path.dirname(playbook),
+            fb_playbook = os.path.join(  # noqa: PTH118
+                os.path.dirname(playbook),  # noqa: PTH120
                 pb_rename_map[basename],
             )
-            if os.path.isfile(fb_playbook):
+            if os.path.isfile(fb_playbook):  # noqa: PTH113
                 LOG.warning(
                     "%s was deprecated, rename it to %s",
                     pb_rename_map[basename],

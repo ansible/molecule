@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -25,10 +25,12 @@ import random
 import string
 
 import pytest
+
 from filelock import FileLock
 
 from molecule import config as molecule_config
 from molecule.scenario import ephemeral_directory
+
 
 # Marker to skip tests on macos when running on GH
 mac_on_gh = pytest.mark.skipif(
@@ -37,7 +39,7 @@ mac_on_gh = pytest.mark.skipif(
 )
 
 
-def is_subset(subset, superset):  # type: ignore[no-untyped-def]
+def is_subset(subset, superset):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     # Checks if first dict is a subset of the second one
     if isinstance(subset, dict):
         return all(
@@ -56,20 +58,20 @@ def is_subset(subset, superset):  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture(name="random_string")
-def fixture_random_string(l=5):  # type: ignore[no-untyped-def]
-    return "".join(random.choice(string.ascii_uppercase) for _ in range(l))
+def fixture_random_string(l=5):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, E741, D103
+    return "".join(random.choice(string.ascii_uppercase) for _ in range(l))  # noqa: S311
 
 
 @contextlib.contextmanager
-def change_dir_to(dir_name):  # type: ignore[no-untyped-def]
-    cwd = os.getcwd()
+def change_dir_to(dir_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+    cwd = os.getcwd()  # noqa: PTH109
     os.chdir(dir_name)
     yield
     os.chdir(cwd)
 
 
 @pytest.fixture()
-def temp_dir(tmpdir, random_string, request):  # type: ignore[no-untyped-def]
+def temp_dir(tmpdir, random_string, request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     directory = tmpdir.mkdir(random_string)
 
     with change_dir_to(directory.strpath):
@@ -77,41 +79,44 @@ def temp_dir(tmpdir, random_string, request):  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture()
-def resources_folder_path():  # type: ignore[no-untyped-def]
-    _resources_folder_path = os.path.join(os.path.dirname(__file__), "resources")
-    return _resources_folder_path
+def resources_folder_path():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    _resources_folder_path = os.path.join(  # noqa: PTH118
+        os.path.dirname(__file__),  # noqa: PTH120
+        "resources",
+    )
+    return _resources_folder_path  # noqa: RET504
 
 
-def molecule_project_directory() -> str:
-    return os.getcwd()
+def molecule_project_directory() -> str:  # noqa: D103
+    return os.getcwd()  # noqa: PTH109
 
 
-def molecule_directory() -> str:
+def molecule_directory() -> str:  # noqa: D103
     return molecule_config.molecule_directory(molecule_project_directory())
 
 
-def molecule_scenario_directory() -> str:
-    return os.path.join(molecule_directory(), "default")
+def molecule_scenario_directory() -> str:  # noqa: D103
+    return os.path.join(molecule_directory(), "default")  # noqa: PTH118
 
 
-def molecule_file() -> str:
+def molecule_file() -> str:  # noqa: D103
     return get_molecule_file(molecule_scenario_directory())
 
 
-def get_molecule_file(path: str) -> str:
+def get_molecule_file(path: str) -> str:  # noqa: D103
     return molecule_config.molecule_file(path)
 
 
-def molecule_ephemeral_directory(_fixture_uuid) -> str:  # type: ignore[no-untyped-def]
+def molecule_ephemeral_directory(_fixture_uuid) -> str:  # type: ignore[no-untyped-def]  # noqa: ANN001, D103
     project_directory = f"test-project-{_fixture_uuid}"
     scenario_name = "test-instance"
 
     return ephemeral_directory(
-        os.path.join("molecule_test", project_directory, scenario_name),
+        os.path.join("molecule_test", project_directory, scenario_name),  # noqa: PTH118
     )
 
 
-def pytest_collection_modifyitems(items, config):  # type: ignore[no-untyped-def]
+def pytest_collection_modifyitems(items, config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     marker = config.getoption("-m")
     is_sharded = False
     shard_id = 0
@@ -124,12 +129,12 @@ def pytest_collection_modifyitems(items, config):  # type: ignore[no-untyped-def
         shards_num = int(shards_num)
         is_sharded = True
     else:
-        raise ValueError("shard_{}_of_{} marker is invalid")
+        raise ValueError("shard_{}_of_{} marker is invalid")  # noqa: EM101, TRY003
     if not is_sharded:
         return
     if not 0 < shard_id <= shards_num:
-        raise ValueError(
-            "shard_id must be greater than 0 and not bigger than shards_num",
+        raise ValueError(  # noqa: TRY003
+            "shard_id must be greater than 0 and not bigger than shards_num",  # noqa: EM101
         )
     for test_counter, item in enumerate(items):
         cur_shard_id = test_counter % shards_num + 1
@@ -140,7 +145,7 @@ def pytest_collection_modifyitems(items, config):  # type: ignore[no-untyped-def
 
 
 @pytest.fixture(autouse=True)
-def reset_pytest_vars(monkeypatch):  # type: ignore[no-untyped-def]
+def reset_pytest_vars(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT004
     """Make PYTEST_* env vars inaccessible to subprocesses."""
     for var_name in tuple(os.environ):
         if var_name.startswith("PYTEST_"):
@@ -148,9 +153,9 @@ def reset_pytest_vars(monkeypatch):  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture(autouse=True)
-def block_on_serial_mark(request):  # type: ignore[no-untyped-def]
+def block_on_serial_mark(request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT004, D103
     # https://github.com/pytest-dev/pytest-xdist/issues/385
-    os.makedirs(".tox", exist_ok=True)
+    os.makedirs(".tox", exist_ok=True)  # noqa: PTH103
     if request.node.get_closest_marker("serial"):
         with FileLock(".tox/semaphore.lock"):
             yield

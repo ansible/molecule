@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #  Copyright (c) 2018 Red Hat, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,19 +23,23 @@ from __future__ import annotations
 import os
 import shutil
 import subprocess
+
 from subprocess import PIPE
 
 import pexpect
 import pytest
+
 from ansible_compat.ports import cache
 from packaging.version import Version
 
 import molecule
+
 from molecule import logger, util
 from molecule.app import app
 from molecule.text import strip_ansi_color
 from molecule.util import run_command
 from tests.conftest import change_dir_to, molecule_directory  # pylint:disable=C0411
+
 
 LOG = logger.get_logger(__name__)
 
@@ -46,14 +50,14 @@ MIN_PODMAN_VERSION = "1.5.1"
 
 
 @pytest.fixture(scope="session", autouse=True)
-def require_installed_package():  # type: ignore[no-untyped-def]
+def require_installed_package():  # type: ignore[no-untyped-def]  # noqa: ANN201, PT004, D103
     try:
-        molecule.__version__
-    except Exception as e:
+        molecule.__version__  # noqa: B018
+    except Exception as e:  # noqa: BLE001
         pytest.fail(f"Functional tests require molecule package to be installed: {e}")
 
 
-def _env_vars_exposed(env_vars, env=os.environ):  # type: ignore[no-untyped-def]
+def _env_vars_exposed(env_vars, env=os.environ):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, ARG001
     """Check if environment variables are exposed and populated."""
     for env_var in env_vars:
         if env_var not in os.environ:
@@ -63,9 +67,9 @@ def _env_vars_exposed(env_vars, env=os.environ):  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture()
-def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_test):  # type: ignore[no-untyped-def]
-    scenario_directory = os.path.join(
-        os.path.dirname(util.abs_path(__file__)),  # type: ignore[arg-type, type-var]
+def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_test):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT004, ARG001, D103
+    scenario_directory = os.path.join(  # noqa: PTH118
+        os.path.dirname(util.abs_path(__file__)),  # type: ignore[arg-type, type-var]  # noqa: PTH120
         os.path.pardir,
         "scenarios",
         scenario_to_test,
@@ -81,7 +85,7 @@ def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_te
 
 
 @pytest.fixture(name="skip_test")
-def fixture_skip_test(request, driver_name):  # type: ignore[no-untyped-def]
+def fixture_skip_test(request, driver_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT004, ARG001, D103
     msg_tmpl = "Skipped '{}' not supported"
     support_checks_map = {
         "default": lambda: True,
@@ -94,7 +98,7 @@ def fixture_skip_test(request, driver_name):  # type: ignore[no-untyped-def]
         pass
 
 
-def idempotence(scenario_name):  # type: ignore[no-untyped-def]
+def idempotence(scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -105,11 +109,11 @@ def idempotence(scenario_name):  # type: ignore[no-untyped-def]
     assert run_command(cmd).returncode == 0
 
 
-def init_scenario(temp_dir, driver_name):  # type: ignore[no-untyped-def]
+def init_scenario(temp_dir, driver_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     with change_dir_to(temp_dir.strpath):
         # Create scenario
         molecule_dir = molecule_directory()
-        scenario_directory = os.path.join(molecule_dir, "test-scenario")
+        scenario_directory = os.path.join(molecule_dir, "test-scenario")  # noqa: PTH118
 
         cmd = [
             "molecule",
@@ -121,21 +125,21 @@ def init_scenario(temp_dir, driver_name):  # type: ignore[no-untyped-def]
         ]
         assert run_command(cmd).returncode == 0
 
-        assert os.path.isdir(scenario_directory)
+        assert os.path.isdir(scenario_directory)  # noqa: PTH112
 
         cmd = ["molecule", "test", "--scenario-name", "test-scenario", "--all"]
         assert run_command(cmd).returncode == 0
 
 
-def metadata_lint_update(role_directory: str) -> None:
+def metadata_lint_update(role_directory: str) -> None:  # noqa: D103
     # By default, ansible-lint will fail on newly-created roles because the
     # fields in this file have not been changed from their defaults. This is
     # good because molecule should create this file using the defaults, and
     # users should receive feedback to change these defaults. However, this
     # blocks the testing of 'molecule init' itself, so ansible-lint should
     # be configured to ignore these metadata lint errors.
-    dirname = os.path.dirname(os.path.abspath(__file__))
-    ansible_lint_src = os.path.join(dirname, ".ansible-lint")
+    dirname = os.path.dirname(os.path.abspath(__file__))  # noqa: PTH100, PTH120
+    ansible_lint_src = os.path.join(dirname, ".ansible-lint")  # noqa: PTH118
     shutil.copy(ansible_lint_src, role_directory)
 
     # Explicitly lint here to catch any unexpected lint errors before
@@ -148,26 +152,26 @@ def metadata_lint_update(role_directory: str) -> None:
     assert result.returncode == 0
 
 
-def list_cmd(x):  # type: ignore[no-untyped-def]
+def list_cmd(x):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     cmd = ["molecule", "list"]
     result = run_command(cmd)
     assert result.returncode == 0
     out = util.strip_ansi_color(result.stdout)  # type: ignore[attr-defined] # pylint:disable=no-member
 
-    for l in x.splitlines():
+    for l in x.splitlines():  # noqa: E741
         assert l in out
 
 
-def list_with_format_plain(x):  # type: ignore[no-untyped-def]
+def list_with_format_plain(x):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     cmd = ["molecule", "list", "--format", "plain"]
     result = util.run_command(cmd)
     out = strip_ansi_color(result.stdout)  # type: ignore[no-untyped-call]
 
-    for l in x.splitlines():
+    for l in x.splitlines():  # noqa: E741
         assert l in out
 
 
-def login(login_args, scenario_name="default"):  # type: ignore[no-untyped-def]
+def login(login_args, scenario_name="default"):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     cmd = ["molecule", "destroy", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -185,7 +189,7 @@ def login(login_args, scenario_name="default"):  # type: ignore[no-untyped-def]
         child.sendline("exit")
 
 
-def run_test(driver_name, scenario_name="default", parallel=False):  # type: ignore[no-untyped-def]
+def run_test(driver_name, scenario_name="default", parallel=False):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, FBT002, D103
     cmd = ["molecule", "test", "--scenario-name", scenario_name]
     if driver_name != "default":
         if scenario_name is None:
@@ -196,7 +200,7 @@ def run_test(driver_name, scenario_name="default", parallel=False):  # type: ign
     assert run_command(cmd).returncode == 0
 
 
-def verify(scenario_name="default"):  # type: ignore[no-untyped-def]
+def verify(scenario_name="default"):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -207,20 +211,20 @@ def verify(scenario_name="default"):  # type: ignore[no-untyped-def]
     assert run_command(cmd).returncode == 0
 
 
-def get_docker_executable() -> str | None:
+def get_docker_executable() -> str | None:  # noqa: D103
     return shutil.which("docker")
 
 
-def get_virtualbox_executable():  # type: ignore[no-untyped-def]
+def get_virtualbox_executable():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     return shutil.which("VBoxManage")
 
 
 @cache
-def supports_docker() -> bool:
+def supports_docker() -> bool:  # noqa: D103
     docker = get_docker_executable()
     if docker:
         result = subprocess.run(
-            [docker, "info"],
+            [docker, "info"],  # noqa: S603
             stdout=PIPE,
             text=True,
             check=True,

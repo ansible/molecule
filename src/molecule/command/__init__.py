@@ -1,4 +1,4 @@
-# D104
+# D104  # noqa: D104, ERA001
 #
 #  Copyright (c) 2015-2018 Cisco Systems, Inc.
 #
@@ -24,22 +24,24 @@
 # collisions (e.g. ``list``).  The CLI usage may conflict with reserved words
 # or builtins.
 
-from molecule.command import base  # noqa
-from molecule.command import check  # noqa
-from molecule.command import cleanup  # noqa
-from molecule.command import converge  # noqa
-from molecule.command import create  # noqa
-from molecule.command import dependency  # noqa
-from molecule.command import destroy  # noqa
-from molecule.command import drivers  # noqa
-from molecule.command import idempotence  # noqa
-from molecule.command import list  # noqa
-from molecule.command import login  # noqa
-from molecule.command import matrix  # noqa
-from molecule.command import prepare  # noqa
-from molecule.command import reset  # noqa
-from molecule.command import side_effect  # noqa
-from molecule.command import syntax  # noqa
-from molecule.command import test  # noqa
-from molecule.command import verify  # noqa
-from molecule.command.init import init  # noqa
+from molecule.command import (
+    base,  # noqa: F401
+    check,  # noqa: F401
+    cleanup,  # noqa: F401
+    converge,  # noqa: F401
+    create,  # noqa: F401
+    dependency,  # noqa: F401
+    destroy,  # noqa: F401
+    drivers,  # noqa: F401
+    idempotence,  # noqa: F401
+    list,  # noqa: F401
+    login,  # noqa: F401
+    matrix,  # noqa: F401
+    prepare,  # noqa: F401
+    reset,  # noqa: F401
+    side_effect,  # noqa: F401
+    syntax,  # noqa: F401
+    test,  # noqa: F401
+    verify,  # noqa: F401
+)
+from molecule.command.init import init  # noqa: F401

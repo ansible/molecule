@@ -72,10 +72,6 @@ source_pkgs = ["molecule"]
 [tool.black]
 line-length = 100
 
-[tool.isort]
-profile = "black"
-known_first_party = "molecule"
-
 [tool.mypy]
 files = ["src", "tests"]
 strict = true
@@ -340,48 +336,27 @@ testpaths = "tests"
 verbosity_assertions = 2
 
 [tool.ruff]
-ignore = [
-  # Disabled on purpose:
-  "E501", # we use black
-  "FBT", # Boolean positional value in function call
-  # Temporary disabled until we fix them:
-  "A",
-  "ANN", # Annotations
-  "ARG",
-  "B",
-  "BLE001",
-  "C901",
-  "D",
-  "E741",
-  "EM",
-  "INP",
-  "N",
-  "PERF203",
-  "PGH",
-  "PLR",
-  "PLW",
-  "PT",
-  "PTH",
-  "RET",
-  "SIM",
-  "SLF",
-  "T",
-  "TRY",
-]
-select = ["ALL"]
+builtins = ["__"]
+fix = true
+line-length = 100
 target-version = "py310"
-# Same as Black.
-line-length = 88
 
-[tool.ruff.flake8-pytest-style]
+[tool.ruff.lint]
+select = ["ALL"]
+
+[tool.ruff.lint.flake8-pytest-style]
 parametrize-values-type = "tuple"
 
-[tool.ruff.isort]
-known-first-party = ["molecule"]
+[tool.ruff.lint.isort]
+lines-after-imports = 2 # Ensures consistency for cases when there's variable vs function/class definitions after imports
+lines-between-types = 1 # Separate import/from with 1 line
 
-[tool.ruff.per-file-ignores]
-"tests/**.py" = ["S"]
-"src/molecule/*/\\{\\{*/**.py" = ["S"]
+[tool.ruff.lint.per-file-ignores]
+"_version.py" = ["SIM108"]
+"tests/**" = ["SLF001", "S101", "S602", "T201"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
 
 [tool.setuptools.dynamic]
 optional-dependencies.docs = { file = [".config/requirements-docs.txt"] }

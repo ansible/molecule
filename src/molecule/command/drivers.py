@@ -28,6 +28,7 @@ from molecule import api
 from molecule.command import base
 from molecule.console import console
 
+
 LOG = logging.getLogger(__name__)
 
 
@@ -40,7 +41,7 @@ LOG = logging.getLogger(__name__)
     default="simple",
     help="Change output format. (simple)",
 )
-def drivers(ctx, format):  # type: ignore[no-untyped-def] # pragma: no cover
+def drivers(ctx, format):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201, A002, ARG001
     """List drivers."""
     drivers = []  # pylint: disable=redefined-outer-name
     for driver in api.drivers():
@@ -48,6 +49,6 @@ def drivers(ctx, format):  # type: ignore[no-untyped-def] # pragma: no cover
         if format != "plain":
             description = driver
         else:
-            description = f"{driver!s:16s}[logging.level.notset] {driver.title} Version {driver.version} from {driver.module} python module.)[/logging.level.notset]"
+            description = f"{driver!s:16s}[logging.level.notset] {driver.title} Version {driver.version} from {driver.module} python module.)[/logging.level.notset]"  # noqa: E501
         drivers.append([driver, description])
         console.print(description)

@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -30,22 +30,22 @@ class CommandBase(base.Base):
 
 
 @pytest.fixture()
-def _base_class():  # type: ignore[no-untyped-def]
+def _base_class():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return CommandBase
 
 
 @pytest.fixture()
-def _instance(_base_class):  # type: ignore[no-untyped-def]
+def _instance(_base_class):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     return _base_class()
 
 
 @pytest.fixture()
-def _role_directory():  # type: ignore[no-untyped-def]
+def _role_directory():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return "."
 
 
 @pytest.fixture()
-def _command_args():  # type: ignore[no-untyped-def]
+def _command_args():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {
         "dependency_name": "galaxy",
         "driver_name": "default",
@@ -57,8 +57,8 @@ def _command_args():  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture()
-def _molecule_file(_role_directory):  # type: ignore[no-untyped-def]
-    return os.path.join(
+def _molecule_file(_role_directory):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
+    return os.path.join(  # noqa: PTH118
         _role_directory,
         "test-role",
         "molecule",

@@ -29,23 +29,24 @@ import click
 from molecule import scenarios, util
 from molecule.command import base
 
+
 LOG = logging.getLogger(__name__)
 
 
 class Login(base.Base):
     """Login Command Class."""
 
-    def __init__(self, c) -> None:  # type: ignore[no-untyped-def]
+    def __init__(self, c) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Construct Login."""
         super().__init__(c)
         self._pt = None
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
         """Execute the actions necessary to perform a `molecule login` and \
         returns None.
 
         :return: None
-        """
+        """  # noqa: D205
         c = self._config
         if (not c.state.created) and c.driver.managed:
             msg = "Instances not created.  Please create instances first."
@@ -55,7 +56,7 @@ class Login(base.Base):
         hostname = self._get_hostname(hosts)  # type: ignore[no-untyped-call]
         self._get_login(hostname)  # type: ignore[no-untyped-call]
 
-    def _get_hostname(self, hosts):  # type: ignore[no-untyped-def]
+    def _get_hostname(self, hosts):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
         hostname = self._config.command_args.get("host")
         host_list = "\n".join(sorted(hosts))
         if hostname is None:
@@ -90,7 +91,7 @@ class Login(base.Base):
 
         return match[0]
 
-    def _get_login(self, hostname):  # type: ignore[no-untyped-def] # pragma: no cover
+    def _get_login(self, hostname):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN101, ANN202
         # ruff: noqa: S605,S607
         lines, columns = os.popen("stty size", "r").read().split()
         login_options = self._config.driver.login_options(hostname)
@@ -98,7 +99,7 @@ class Login(base.Base):
         login_options["lines"] = lines
         if not self._config.driver.login_cmd_template:
             LOG.warning(
-                "Login command is not supported for [dim]%s[/] host because 'login_cmd_template' was not defined in driver options.",
+                "Login command is not supported for [dim]%s[/] host because 'login_cmd_template' was not defined in driver options.",  # noqa: E501
                 login_options["instance"],
             )
             return
@@ -118,10 +119,10 @@ class Login(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
-def login(ctx, host, scenario_name):  # type: ignore[no-untyped-def] # pragma: no cover
+def login(ctx, host, scenario_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """Log in to one instance."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
     command_args = {"subcommand": subcommand, "host": host}
 
     s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)  # type: ignore[no-untyped-call]

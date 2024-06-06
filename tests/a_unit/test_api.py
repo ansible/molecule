@@ -1,4 +1,4 @@
-#  Copyright (c) 2019 Red Hat, Inc.
+#  Copyright (c) 2019 Red Hat, Inc.  # noqa: D100
 #  Copyright (c) 2015-2018 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,13 +22,13 @@
 from molecule import api
 
 
-def test_api_molecule_drivers_as_attributes():  # type: ignore[no-untyped-def]
+def test_api_molecule_drivers_as_attributes():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     results = api.drivers()
     assert hasattr(results, "default")
     assert isinstance(results.default, api.Driver)  # type: ignore[attr-defined] # pylint:disable=no-member
 
 
-def test_api_drivers():  # type: ignore[no-untyped-def]
+def test_api_drivers():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     results = api.drivers()
 
     for result in results:
@@ -37,7 +37,7 @@ def test_api_drivers():  # type: ignore[no-untyped-def]
     assert "default" in results
 
 
-def test_api_verifiers():  # type: ignore[no-untyped-def]
+def test_api_verifiers():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     x = ["testinfra", "ansible"]
 
     assert all(elem in api.verifiers() for elem in x)

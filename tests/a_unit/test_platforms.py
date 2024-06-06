@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -24,11 +24,11 @@ from molecule import config, platforms
 
 
 @pytest.fixture()
-def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]
+def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return platforms.Platforms(config_instance)
 
 
-def test_instances_property(_instance):  # type: ignore[no-untyped-def]
+def test_instances_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     x = [
         {"groups": ["foo", "bar"], "name": "instance-1", "children": ["child1"]},
         {"groups": ["baz", "foo"], "name": "instance-2", "children": ["child2"]},
@@ -38,12 +38,12 @@ def test_instances_property(_instance):  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture(name="platform_name")
-def fixture_platform_name(request, config_instance: config.Config):  # type: ignore[no-untyped-def]
+def fixture_platform_name(request, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     return platforms.Platforms(config_instance, platform_name=request.param)
 
 
-@pytest.mark.parametrize("platform_name", ["instance-1"], indirect=True)
-def test_instances_property_with_platform_name_instance_1(platform_name):  # type: ignore[no-untyped-def]
+@pytest.mark.parametrize("platform_name", ["instance-1"], indirect=True)  # noqa: PT007
+def test_instances_property_with_platform_name_instance_1(platform_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     x = [
         {"groups": ["foo", "bar"], "name": "instance-1", "children": ["child1"]},
     ]
@@ -51,8 +51,8 @@ def test_instances_property_with_platform_name_instance_1(platform_name):  # typ
     assert x == platform_name.instances
 
 
-@pytest.mark.parametrize("platform_name", ["instance-2"], indirect=True)
-def test_instances_property_with_platform_name_instance_2(platform_name):  # type: ignore[no-untyped-def]
+@pytest.mark.parametrize("platform_name", ["instance-2"], indirect=True)  # noqa: PT007
+def test_instances_property_with_platform_name_instance_2(platform_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     x = [
         {"groups": ["baz", "foo"], "name": "instance-2", "children": ["child2"]},
     ]
