@@ -24,13 +24,13 @@ import logging
 import os
 
 from molecule import util
-from molecule.api import Verifier  # type: ignore[attr-defined] # pylint: disable=no-name-in-module
+from molecule.api import Verifier  # type: ignore[attr-defined]
 
 
 LOG = logging.getLogger(__name__)
 
 
-class Testinfra(Verifier):  # type: ignore[misc]
+class Testinfra(Verifier):
     """`Testinfra`_ is no longer the default test verifier since version 3.0.
 
     Additional options can be passed to ``testinfra`` through the options

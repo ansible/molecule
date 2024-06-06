@@ -23,14 +23,14 @@ import logging
 import os
 
 from molecule import util
-from molecule.api import Driver  # type: ignore[attr-defined]  # pylint: disable = no-name-in-module
+from molecule.api import Driver  # type: ignore[attr-defined]
 from molecule.data import __file__ as data_module
 
 
 LOG = logging.getLogger(__name__)
 
 
-class Delegated(Driver):  # type: ignore[misc]
+class Delegated(Driver):
     r"""The class responsible for managing default instances.
 
     Delegated is the default driver used in Molecule.
@@ -178,7 +178,7 @@ class Delegated(Driver):  # type: ignore[misc]
     @property
     def default_ssh_connection_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         if self.managed:
-            ssh_connopts = self._get_ssh_connection_options()
+            ssh_connopts = self._get_ssh_connection_options()  # type: ignore[no-untyped-call]
             if self.options.get("ansible_connection_options", {}).get(
                 "ansible_ssh_common_args",
                 None,
@@ -247,7 +247,7 @@ class Delegated(Driver):  # type: ignore[misc]
 
     def _created(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         if self.managed:
-            return super()._created()
+            return super()._created()  # type: ignore[no-untyped-call]
         return "unknown"
 
     def _get_instance_config(self, instance_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202

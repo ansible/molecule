@@ -23,13 +23,13 @@ import logging
 import os
 
 from molecule import util
-from molecule.api import Verifier  # type: ignore[attr-defined] # pylint: disable=no-name-in-module
+from molecule.api import Verifier  # type: ignore[attr-defined]
 
 
 log = logging.getLogger(__name__)
 
 
-class Ansible(Verifier):  # type: ignore[misc]
+class Ansible(Verifier):
     """`Ansible`_ is the default test verifier.
 
     Molecule executes a playbook (`verify.yml`) located in the role's

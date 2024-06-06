@@ -32,7 +32,7 @@ def test_api_drivers():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     results = api.drivers()
 
     for result in results:
-        assert isinstance(result, api.Driver)  # type: ignore[attr-defined] # pylint: disable=no-member
+        assert isinstance(result, api.Driver)  # type: ignore[attr-defined]
 
     assert "default" in results
 
