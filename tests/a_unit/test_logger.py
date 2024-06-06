@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -33,24 +33,24 @@ from molecule.logger import get_section_loggers
 class Dummy(Base):
     """ExtendedBase Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002, D102
         return True
 
 
 @pytest.fixture()
-def _dummy_class(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]
+def _dummy_class(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005, ARG001
     return Dummy
 
 
 @pytest.fixture()
-def _instance(_dummy_class, config_instance, _patched_logger_env):  # type: ignore[no-untyped-def]
+def _instance(_dummy_class, config_instance, _patched_logger_env):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     # _patched_logger_env included here to ensure pytest runs it first
     get_section_loggers.cache_clear()
     return _dummy_class(config_instance)
 
 
 @pytest.fixture()
-def _patched_logger_env(request, monkeypatch):  # type: ignore[no-untyped-def]
+def _patched_logger_env(request, monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     """Parametrize tests with and without CI env vars."""
     envvars = {"CI": None, "GITHUB_ACTIONS": None, "GITLAB_CI": None, "TRAVIS": None}
     envvars.update(request.param[1])
@@ -77,7 +77,7 @@ get_section_logger_tests = [
     get_section_logger_tests,
     indirect=True,
 )
-def test_get_section_loggers(_patched_logger_env):  # type: ignore[no-untyped-def]
+def test_get_section_loggers(_patched_logger_env):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     expected_section_loggers = _patched_logger_env
     get_section_loggers.cache_clear()
     section_loggers = get_section_loggers()
@@ -89,22 +89,22 @@ def test_get_section_loggers(_patched_logger_env):  # type: ignore[no-untyped-de
     get_section_logger_tests,
     indirect=True,
 )
-def test_section_loggers_do_not_change_behavior(_patched_logger_env, _instance):  # type: ignore[no-untyped-def]
+def test_section_loggers_do_not_change_behavior(_patched_logger_env, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     dummy_return = _instance.execute()
     assert dummy_return is True
 
 
-def test_markup_detection_pycolors0(monkeypatch):  # type: ignore[no-untyped-def]
+def test_markup_detection_pycolors0(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     monkeypatch.setenv("PY_COLORS", "0")
     assert not should_do_markup()
 
 
-def test_markup_detection_pycolors1(monkeypatch):  # type: ignore[no-untyped-def]
+def test_markup_detection_pycolors1(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     monkeypatch.setenv("PY_COLORS", "1")
     assert should_do_markup()
 
 
-def test_markup_detection_tty_yes(mocker):  # type: ignore[no-untyped-def]
+def test_markup_detection_tty_yes(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     mocker.patch("sys.stdout.isatty", return_value=True)
     mocker.patch("os.environ", {"TERM": "xterm"})
     assert should_do_markup()
@@ -112,7 +112,7 @@ def test_markup_detection_tty_yes(mocker):  # type: ignore[no-untyped-def]
     mocker.stopall()
 
 
-def test_markup_detection_tty_no(mocker):  # type: ignore[no-untyped-def]
+def test_markup_detection_tty_no(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     mocker.patch("os.environ", {})
     mocker.patch("sys.stdout.isatty", return_value=False)
     assert not should_do_markup()
@@ -120,7 +120,7 @@ def test_markup_detection_tty_no(mocker):  # type: ignore[no-untyped-def]
     mocker.stopall()
 
 
-def test_logger_class():  # type: ignore[no-untyped-def]
+def test_logger_class():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     class FooLogger(logging.getLoggerClass()):  # type: ignore[misc]
         """stub logger that subclasses logging.getLoggerClass()."""
 

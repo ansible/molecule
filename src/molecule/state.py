@@ -24,6 +24,7 @@ import os
 
 from molecule import util
 
+
 LOG = logging.getLogger(__name__)
 VALID_KEYS = [
     "created",
@@ -36,7 +37,7 @@ VALID_KEYS = [
 ]
 
 
-class InvalidState(Exception):
+class InvalidState(Exception):  # noqa: N818
     """Exception class raised when an error occurs in :class:`.State`."""
 
 
@@ -58,7 +59,7 @@ class State:
         Molecule.
     """
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Initialize a new state class and returns None.
 
         :param config: An instance of a Molecule config.
@@ -69,51 +70,51 @@ class State:
         self._data = self._get_data()  # type: ignore[no-untyped-call]
         self._write_state_file()  # type: ignore[no-untyped-call]
 
-    def marshal(func):  # type: ignore[no-untyped-def]
-        def wrapper(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+    def marshal(func):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, N805, D102
+        def wrapper(self, *args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN002, ANN003, ANN202
             func(self, *args, **kwargs)  # type: ignore[operator]  # pylint: disable=not-callable
             self._write_state_file()
 
         return wrapper
 
     @property
-    def state_file(self):  # type: ignore[no-untyped-def]
+    def state_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._state_file
 
     @property
-    def converged(self):  # type: ignore[no-untyped-def]
+    def converged(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._data.get("converged")
 
     @property
-    def created(self):  # type: ignore[no-untyped-def]
+    def created(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._data.get("created")
 
     @property
-    def driver(self):  # type: ignore[no-untyped-def]
+    def driver(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._data.get("driver")
 
     @property
-    def prepared(self):  # type: ignore[no-untyped-def]
+    def prepared(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._data.get("prepared")
 
     @property
-    def run_uuid(self):  # type: ignore[no-untyped-def]
+    def run_uuid(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._data.get("run_uuid")
 
     @property
-    def is_parallel(self):  # type: ignore[no-untyped-def]
+    def is_parallel(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._data.get("is_parallel")
 
     @property
-    def molecule_yml_date_modified(self):  # type: ignore[no-untyped-def]
+    def molecule_yml_date_modified(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._data.get("molecule_yml_date_modified")
 
     @marshal  # type: ignore[arg-type]
-    def reset(self):  # type: ignore[no-untyped-def]
+    def reset(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         self._data = self._default_data()  # type: ignore[no-untyped-call]
 
     @marshal  # type: ignore[arg-type]
-    def change_state(self, key, value):  # type: ignore[no-untyped-def]
+    def change_state(self, key, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
         """Change the state of the instance data with the given \
         ``key`` and the provided ``value``.
 
@@ -122,32 +123,32 @@ class State:
         :param key: A ``str`` containing the key to update
         :param value: A value to change the ``key`` to
         :return: None
-        """
+        """  # noqa: D205
         if key not in VALID_KEYS:
             raise InvalidState
         self._data[key] = value
 
-    def _get_data(self):  # type: ignore[no-untyped-def]
-        if os.path.isfile(self.state_file):
+    def _get_data(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+        if os.path.isfile(self.state_file):  # noqa: PTH113
             return self._load_file()  # type: ignore[no-untyped-call]
         return self._default_data()  # type: ignore[no-untyped-call]
 
-    def _default_data(self):  # type: ignore[no-untyped-def]
+    def _default_data(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         return {
             "converged": False,
             "created": False,
             "driver": None,
             "prepared": None,
             "molecule_yml_date_modified": None,
-            "run_uuid": self._config._run_uuid,
+            "run_uuid": self._config._run_uuid,  # noqa: SLF001
             "is_parallel": self._config.is_parallel,
         }
 
-    def _load_file(self):  # type: ignore[no-untyped-def]
+    def _load_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         return util.safe_load_file(self.state_file)
 
-    def _write_state_file(self):  # type: ignore[no-untyped-def]
+    def _write_state_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         util.write_file(self.state_file, util.safe_dump(self._data))
 
-    def _get_state_file(self):  # type: ignore[no-untyped-def]
-        return os.path.join(self._config.scenario.ephemeral_directory, "state.yml")
+    def _get_state_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+        return os.path.join(self._config.scenario.ephemeral_directory, "state.yml")  # noqa: PTH118

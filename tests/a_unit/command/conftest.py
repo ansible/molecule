@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -21,12 +21,12 @@ import pytest
 
 
 @pytest.fixture()
-def command_patched_ansible_create(mocker):  # type: ignore[no-untyped-def]
+def command_patched_ansible_create(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     return mocker.patch("molecule.provisioner.ansible.Ansible.create")
 
 
 @pytest.fixture()
-def command_driver_delegated_section_data():  # type: ignore[no-untyped-def]
+def command_driver_delegated_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     x = {
         "driver": {
             "name": "default",
@@ -37,9 +37,9 @@ def command_driver_delegated_section_data():  # type: ignore[no-untyped-def]
     }
     # if "DOCKER_HOST" in os.environ:
     #     x["driver"]["options"]["ansible_docker_extra_args"] = "-H={}".format(
-    return x
+    return x  # noqa: RET504
 
 
 @pytest.fixture()
-def command_driver_delegated_managed_section_data():  # type: ignore[no-untyped-def]
+def command_driver_delegated_managed_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     return {"driver": {"name": "default", "managed": True}}

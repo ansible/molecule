@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -23,8 +23,8 @@ from molecule.command import list
 from molecule.driver import base
 
 
-def test_list_execute(capsys, config_instance: config.Config):  # type: ignore[no-untyped-def]
-    l = list.List(config_instance)
+def test_list_execute(capsys, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
+    l = list.List(config_instance)  # noqa: E741
     x = [
         base.Status(  # type: ignore[attr-defined]
             instance_name="instance-1",

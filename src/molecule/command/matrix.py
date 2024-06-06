@@ -26,6 +26,7 @@ import click
 from molecule import scenarios
 from molecule.command import base
 
+
 LOG = logging.getLogger(__name__)
 
 
@@ -71,7 +72,7 @@ class Matrix(base.Base):  # pylint: disable=abstract-method
 # NOTE(retr0h): Cannot introspect base.Base for `click.Choice`, since
 # subclasses have not all loaded at this point.
 @click.argument("subcommand", nargs=1, type=click.UNPROCESSED)
-def matrix(ctx, scenario_name, subcommand):  # type: ignore[no-untyped-def] # pragma: no cover
+def matrix(ctx, scenario_name, subcommand):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """List matrix of steps used to test instances."""
     args = ctx.obj.get("args")
     command_args = {"subcommand": subcommand}

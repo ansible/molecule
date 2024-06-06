@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -21,6 +21,7 @@
 import os
 
 import pytest
+
 from pytest_mock import MockerFixture
 
 from molecule import config, util
@@ -30,7 +31,7 @@ from molecule.command import base
 class ExtendedBase(base.Base):
     """ExtendedBase Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, D102
         pass
 
 
@@ -38,75 +39,75 @@ class ExtendedBase(base.Base):
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture()
-def _base_class(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]
+def _base_class(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005, ARG001
     return ExtendedBase
 
 
 @pytest.fixture()
-def _instance(_base_class, config_instance: config.Config):  # type: ignore[no-untyped-def]
+def _instance(_base_class, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     return _base_class(config_instance)
 
 
 @pytest.fixture()
-def _patched_base_setup(mocker):  # type: ignore[no-untyped-def]
+def _patched_base_setup(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     return mocker.patch("tests.a_unit.command.test_base.ExtendedBase._setup")
 
 
 @pytest.fixture()
-def _patched_write_config(mocker):  # type: ignore[no-untyped-def]
+def _patched_write_config(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     return mocker.patch("molecule.provisioner.ansible.Ansible.write_config")
 
 
 @pytest.fixture()
-def _patched_manage_inventory(mocker):  # type: ignore[no-untyped-def]
+def _patched_manage_inventory(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     return mocker.patch("molecule.provisioner.ansible.Ansible.manage_inventory")
 
 
 @pytest.fixture()
-def _patched_execute_subcommand(mocker):  # type: ignore[no-untyped-def]
+def _patched_execute_subcommand(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     return mocker.patch("molecule.command.base.execute_subcommand")
 
 
 @pytest.fixture()
-def _patched_execute_scenario(mocker):  # type: ignore[no-untyped-def]
+def _patched_execute_scenario(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     return mocker.patch("molecule.command.base.execute_scenario")
 
 
 @pytest.fixture()
-def _patched_prune(mocker):  # type: ignore[no-untyped-def]
+def _patched_prune(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     return mocker.patch("molecule.scenario.Scenario.prune")
 
 
 @pytest.fixture()
-def _patched_sysexit(mocker):  # type: ignore[no-untyped-def]
+def _patched_sysexit(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     return mocker.patch("molecule.util.sysexit")
 
 
-def test_command_config_private_member(_instance):  # type: ignore[no-untyped-def]
+def test_command_config_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert isinstance(_instance._config, config.Config)
 
 
-def test_init_calls_setup(_patched_base_setup, _instance):  # type: ignore[no-untyped-def]
+def test_init_calls_setup(_patched_base_setup, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _patched_base_setup.assert_called_once_with()
 
 
-def test_command_setup(  # type: ignore[no-untyped-def]
-    mocker: MockerFixture,
-    patched_add_or_update_vars,
-    _patched_write_config,
-    _patched_manage_inventory,
-    _instance,
+def test_command_setup(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,  # noqa: ARG001
+    patched_add_or_update_vars,  # noqa: ANN001, ARG001
+    _patched_write_config,  # noqa: ANN001, PT019
+    _patched_manage_inventory,  # noqa: ANN001, PT019
+    _instance,  # noqa: ANN001, PT019
 ):
-    assert os.path.isdir(os.path.dirname(_instance._config.provisioner.inventory_file))
-    assert os.path.isfile(_instance._config.config_file)
+    assert os.path.isdir(os.path.dirname(_instance._config.provisioner.inventory_file))  # noqa: PTH112, PTH120
+    assert os.path.isfile(_instance._config.config_file)  # noqa: PTH113
 
     _patched_manage_inventory.assert_called_once_with()
     _patched_write_config.assert_called_once_with()
 
 
-def test_execute_cmdline_scenarios(  # type: ignore[no-untyped-def]
-    config_instance: config.Config,
-    _patched_execute_scenario,
+def test_execute_cmdline_scenarios(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    config_instance: config.Config,  # noqa: ARG001
+    _patched_execute_scenario,  # noqa: ANN001, PT019
 ):
     # Ensure execute_cmdline_scenarios runs normally:
     # - execute_scenario is called once, indicating the function correctly
@@ -119,10 +120,10 @@ def test_execute_cmdline_scenarios(  # type: ignore[no-untyped-def]
     assert _patched_execute_scenario.call_count == 1
 
 
-def test_execute_cmdline_scenarios_prune(  # type: ignore[no-untyped-def]
-    config_instance: config.Config,
-    _patched_prune,
-    _patched_execute_subcommand,
+def test_execute_cmdline_scenarios_prune(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    config_instance: config.Config,  # noqa: ARG001
+    _patched_prune,  # noqa: ANN001, PT019
+    _patched_execute_subcommand,  # noqa: ANN001, PT019
 ):
     # Subcommands should be executed and prune *should* run when
     # destroy is 'always'
@@ -136,10 +137,10 @@ def test_execute_cmdline_scenarios_prune(  # type: ignore[no-untyped-def]
     assert _patched_prune.called
 
 
-def test_execute_cmdline_scenarios_no_prune(  # type: ignore[no-untyped-def]
-    config_instance: config.Config,
-    _patched_prune,
-    _patched_execute_subcommand,
+def test_execute_cmdline_scenarios_no_prune(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    config_instance: config.Config,  # noqa: ARG001
+    _patched_prune,  # noqa: ANN001, PT019
+    _patched_execute_subcommand,  # noqa: ANN001, PT019
 ):
     # Subcommands should be executed but prune *should not* run when
     # destroy is 'never'
@@ -153,12 +154,12 @@ def test_execute_cmdline_scenarios_no_prune(  # type: ignore[no-untyped-def]
     assert not _patched_prune.called
 
 
-def test_execute_cmdline_scenarios_exit_destroy(  # type: ignore[no-untyped-def]
-    config_instance: config.Config,
-    _patched_execute_scenario,
-    _patched_prune,
-    _patched_execute_subcommand,
-    _patched_sysexit,
+def test_execute_cmdline_scenarios_exit_destroy(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    config_instance: config.Config,  # noqa: ARG001
+    _patched_execute_scenario,  # noqa: ANN001, PT019
+    _patched_prune,  # noqa: ANN001, PT019
+    _patched_execute_subcommand,  # noqa: ANN001, PT019
+    _patched_sysexit,  # noqa: ANN001, PT019
 ):
     # Ensure execute_cmdline_scenarios handles errors correctly when 'destroy'
     # is 'always':
@@ -172,7 +173,7 @@ def test_execute_cmdline_scenarios_exit_destroy(  # type: ignore[no-untyped-def]
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]
 
-    assert _patched_execute_subcommand.call_count == 2
+    assert _patched_execute_subcommand.call_count == 2  # noqa: PLR2004
     # pull out the second positional call argument for each call,
     # which is the called subcommand. 'cleanup' and 'destroy' should be called.
     assert _patched_execute_subcommand.call_args_list[0][0][1] == "cleanup"
@@ -181,11 +182,11 @@ def test_execute_cmdline_scenarios_exit_destroy(  # type: ignore[no-untyped-def]
     assert _patched_sysexit.called
 
 
-def test_execute_cmdline_scenarios_exit_nodestroy(  # type: ignore[no-untyped-def]
-    config_instance: config.Config,
-    _patched_execute_scenario,
-    _patched_prune,
-    _patched_sysexit,
+def test_execute_cmdline_scenarios_exit_nodestroy(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    config_instance: config.Config,  # noqa: ARG001
+    _patched_execute_scenario,  # noqa: ANN001, PT019
+    _patched_prune,  # noqa: ANN001, PT019
+    _patched_sysexit,  # noqa: ANN001, PT019
 ):
     # Ensure execute_cmdline_scenarios handles errors correctly when 'destroy'
     # is 'always':
@@ -207,7 +208,7 @@ def test_execute_cmdline_scenarios_exit_nodestroy(  # type: ignore[no-untyped-de
     assert not _patched_sysexit.called
 
 
-def test_execute_subcommand(config_instance: config.Config):  # type: ignore[no-untyped-def]
+def test_execute_subcommand(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     # scenario's config.action is mutated in-place for every sequence action,
     # so make sure that is currently set to the executed action
     assert config_instance.action != "list"
@@ -215,7 +216,7 @@ def test_execute_subcommand(config_instance: config.Config):  # type: ignore[no-
     assert config_instance.action == "list"
 
 
-def test_execute_scenario(mocker: MockerFixture, _patched_execute_subcommand):  # type: ignore[no-untyped-def]
+def test_execute_scenario(mocker: MockerFixture, _patched_execute_subcommand):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     # call a spoofed scenario with a sequence that does not include destroy:
     # - execute_subcommand should be called once for each sequence item
     # - prune should not be called, since the sequence has no destroy step
@@ -228,7 +229,7 @@ def test_execute_scenario(mocker: MockerFixture, _patched_execute_subcommand):  
     assert not scenario.prune.called
 
 
-def test_execute_scenario_destroy(mocker: MockerFixture, _patched_execute_subcommand):  # type: ignore[no-untyped-def]
+def test_execute_scenario_destroy(mocker: MockerFixture, _patched_execute_subcommand):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     # call a spoofed scenario with a sequence that includes destroy:
     # - execute_subcommand should be called once for each sequence item
     # - prune should be called, since the sequence has a destroy step
@@ -241,7 +242,7 @@ def test_execute_scenario_destroy(mocker: MockerFixture, _patched_execute_subcom
     assert scenario.prune.called
 
 
-def test_get_configs(config_instance: config.Config):  # type: ignore[no-untyped-def]
+def test_get_configs(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     molecule_file = config_instance.molecule_file
     data = config_instance.config
     util.write_file(molecule_file, util.safe_dump(data))
@@ -252,13 +253,13 @@ def test_get_configs(config_instance: config.Config):  # type: ignore[no-untyped
     assert isinstance(result[0], config.Config)
 
 
-def test_verify_configs(config_instance: config.Config):  # type: ignore[no-untyped-def]
+def test_verify_configs(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     configs = [config_instance]
 
     assert base._verify_configs(configs) is None  # type: ignore[no-untyped-call]
 
 
-def test_verify_configs_raises_with_no_configs(caplog):  # type: ignore[no-untyped-def]
+def test_verify_configs_raises_with_no_configs(caplog):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     with pytest.raises(SystemExit) as e:
         base._verify_configs([])  # type: ignore[no-untyped-call]
 
@@ -268,11 +269,11 @@ def test_verify_configs_raises_with_no_configs(caplog):  # type: ignore[no-untyp
     assert msg in caplog.text
 
 
-def test_verify_configs_raises_with_duplicate_configs(  # type: ignore[no-untyped-def]
+def test_verify_configs_raises_with_duplicate_configs(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     caplog: pytest.LogCaptureFixture,
     config_instance: config.Config,
 ):
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(SystemExit) as e:  # noqa: PT012
         configs = [config_instance, config_instance]
         base._verify_configs(configs)  # type: ignore[no-untyped-call]
 
@@ -282,19 +283,19 @@ def test_verify_configs_raises_with_duplicate_configs(  # type: ignore[no-untype
     assert msg in caplog.text
 
 
-def test_get_subcommand() -> None:
+def test_get_subcommand() -> None:  # noqa: D103
     assert base._get_subcommand(__name__) == "test_base"  # type: ignore[no-untyped-call]
 
 
 @pytest.mark.parametrize(
     "shell",
-    [
+    [  # noqa: PT007
         "bash",
         "zsh",
         "fish",
     ],
 )
-def test_command_completion(shell: str) -> None:
+def test_command_completion(shell: str) -> None:  # noqa: D103
     env = os.environ.copy()
     env["_MOLECULE_COMPLETE"] = f"{shell}_source"
     bash_version = "0.0"
@@ -304,7 +305,7 @@ def test_command_completion(shell: str) -> None:
 
     result = util.run_command(["molecule"], env=env)
 
-    if "bash" in shell and (float(bash_version) < 4.4):
+    if "bash" in shell and (float(bash_version) < 4.4):  # noqa: PLR2004
         string = "Shell completion is not supported for Bash versions older than 4.4"
         assert string not in result.stdout
     else:

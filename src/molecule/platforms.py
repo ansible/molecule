@@ -23,6 +23,7 @@ import logging
 
 from molecule import util
 
+
 LOG = logging.getLogger(__name__)
 
 
@@ -66,9 +67,9 @@ class Platforms:
             children:
               - child_group1
     ```
-    """
+    """  # noqa: D205
 
-    def __init__(self, config, parallelize_platforms=False, platform_name=None) -> None:  # type: ignore[no-untyped-def]
+    def __init__(self, config, parallelize_platforms=False, platform_name=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, FBT002
         """Initialize a new platform class and returns None.
 
         :param config: An instance of a Molecule config.
@@ -77,17 +78,17 @@ class Platforms:
         :return: None
         """
         if platform_name:
-            config.config["platforms"] = util._filter_platforms(  # type: ignore[no-untyped-call]
+            config.config["platforms"] = util._filter_platforms(  # type: ignore[no-untyped-call]  # noqa: SLF001
                 config.config,
                 platform_name,
             )
         if parallelize_platforms:
-            config.config["platforms"] = util._parallelize_platforms(  # type: ignore[no-untyped-call]
+            config.config["platforms"] = util._parallelize_platforms(  # type: ignore[no-untyped-call]  # noqa: SLF001
                 config.config,
-                config._run_uuid,
+                config._run_uuid,  # noqa: SLF001
             )
         self._config = config
 
     @property
-    def instances(self):  # type: ignore[no-untyped-def]
+    def instances(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         return self._config.config["platforms"]

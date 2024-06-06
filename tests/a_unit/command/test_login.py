@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -20,6 +20,7 @@
 
 
 import pytest
+
 from pytest_mock import MockerFixture
 
 from molecule import config
@@ -27,13 +28,13 @@ from molecule.command import login
 
 
 @pytest.fixture()
-def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]
-    config_instance.state.change_state("created", True)
+def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+    config_instance.state.change_state("created", True)  # noqa: FBT003
 
     return login.Login(config_instance)
 
 
-def test_login_execute(mocker: MockerFixture, _instance):  # type: ignore[no-untyped-def]
+def test_login_execute(mocker: MockerFixture, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._config.command_args = {"host": "instance-1"}
     m = mocker.patch("molecule.command.login.Login._get_login")
     _instance.execute()
@@ -44,11 +45,11 @@ def test_login_execute(mocker: MockerFixture, _instance):  # type: ignore[no-unt
 @pytest.mark.skip(reason="needs rewrite after switch to delegated")
 @pytest.mark.parametrize(
     "config_instance",
-    ["command_driver_delegated_managed_section_data"],
+    ["command_driver_delegated_managed_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_execute_raises_when_not_created(caplog, _instance):  # type: ignore[no-untyped-def]
-    _instance._config.state.change_state("created", False)
+def test_execute_raises_when_not_created(caplog, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+    _instance._config.state.change_state("created", False)  # noqa: FBT003
 
     with pytest.raises(SystemExit) as e:
         _instance.execute()
@@ -59,7 +60,7 @@ def test_execute_raises_when_not_created(caplog, _instance):  # type: ignore[no-
     assert msg in caplog.text
 
 
-def test_get_hostname_does_not_match(caplog, _instance):  # type: ignore[no-untyped-def]
+def test_get_hostname_does_not_match(caplog, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._config.command_args = {"host": "invalid"}
     hosts = ["instance-1"]
     with pytest.raises(SystemExit) as e:
@@ -71,37 +72,37 @@ def test_get_hostname_does_not_match(caplog, _instance):  # type: ignore[no-unty
     assert msg in caplog.text
 
 
-def test_get_hostname_exact_match_with_one_host(_instance):  # type: ignore[no-untyped-def]
+def test_get_hostname_exact_match_with_one_host(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._config.command_args = {"host": "instance-1"}
     hosts = ["instance-1"]
 
     assert _instance._get_hostname(hosts) == "instance-1"
 
 
-def test_get_hostname_partial_match_with_one_host(_instance):  # type: ignore[no-untyped-def]
+def test_get_hostname_partial_match_with_one_host(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._config.command_args = {"host": "inst"}
     hosts = ["instance-1"]
 
     assert _instance._get_hostname(hosts) == "instance-1"
 
 
-def test_get_hostname_exact_match_with_multiple_hosts(_instance):  # type: ignore[no-untyped-def]
+def test_get_hostname_exact_match_with_multiple_hosts(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._config.command_args = {"host": "instance-1"}
     hosts = ["instance-1", "instance-2"]
 
     assert _instance._get_hostname(hosts) == "instance-1"
 
 
-def test_get_hostname_partial_match_with_multiple_hosts(_instance):  # type: ignore[no-untyped-def]
+def test_get_hostname_partial_match_with_multiple_hosts(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._config.command_args = {"host": "foo"}
     hosts = ["foo", "fooo"]
 
     assert _instance._get_hostname(hosts) == "foo"
 
 
-def test_get_hostname_partial_match_with_multiple_hosts_raises(  # type: ignore[no-untyped-def]
-    caplog,
-    _instance,
+def test_get_hostname_partial_match_with_multiple_hosts_raises(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    caplog,  # noqa: ANN001
+    _instance,  # noqa: ANN001, PT019
 ):
     _instance._config.command_args = {"host": "inst"}
     hosts = ["instance-1", "instance-2"]
@@ -120,7 +121,7 @@ def test_get_hostname_partial_match_with_multiple_hosts_raises(  # type: ignore[
     assert msg in caplog.text
 
 
-def test_get_hostname_no_host_flag_specified_on_cli(_instance):  # type: ignore[no-untyped-def]
+def test_get_hostname_no_host_flag_specified_on_cli(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._config.command_args = {}
     hosts = ["instance-1"]
     _instance._get_hostname(hosts)
@@ -128,9 +129,9 @@ def test_get_hostname_no_host_flag_specified_on_cli(_instance):  # type: ignore[
     assert _instance._get_hostname(hosts) == "instance-1"
 
 
-def test_get_hostname_no_host_flag_specified_on_cli_with_multiple_hosts_raises(  # type: ignore[no-untyped-def]
-    caplog,
-    _instance,
+def test_get_hostname_no_host_flag_specified_on_cli_with_multiple_hosts_raises(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    caplog,  # noqa: ANN001
+    _instance,  # noqa: ANN001, PT019
 ):
     _instance._config.command_args = {}
     hosts = ["instance-1", "instance-2"]

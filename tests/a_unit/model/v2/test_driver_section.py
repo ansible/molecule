@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -24,7 +24,7 @@ from molecule.model import schema_v3
 
 
 @pytest.fixture()
-def _model_driver_section_data():  # type: ignore[no-untyped-def]
+def _model_driver_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {
         "driver": {
             "name": "default",
@@ -36,13 +36,13 @@ def _model_driver_section_data():  # type: ignore[no-untyped-def]
     }
 
 
-@pytest.mark.parametrize("_config", ["_model_driver_section_data"], indirect=True)
-def test_driver(_config):  # type: ignore[no-untyped-def]
+@pytest.mark.parametrize("_config", ["_model_driver_section_data"], indirect=True)  # noqa: PT007
+def test_driver(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
-def _model_driver_errors_section_data():  # type: ignore[no-untyped-def]
+def _model_driver_errors_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {
         "driver": {
             "name": 0,
@@ -51,7 +51,7 @@ def _model_driver_errors_section_data():  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture()
-def _model_driver_errors_section_data_no_prefix():  # type: ignore[no-untyped-def]
+def _model_driver_errors_section_data_no_prefix():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {
         "driver": {
             "name": "random_name",
@@ -61,14 +61,14 @@ def _model_driver_errors_section_data_no_prefix():  # type: ignore[no-untyped-de
 
 @pytest.mark.parametrize(
     "_config",
-    [
+    [  # noqa: PT007
         "_model_driver_errors_section_data",
         "_model_driver_errors_section_data_no_prefix",
     ],
     indirect=True,
 )
-def test_driver_has_errors(_config):  # type: ignore[no-untyped-def]
-    base_error_msg = "is not one of ['azure', 'ec2', 'delegated', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd', 'molecule-*', 'molecule_*', 'custom-*', 'custom_*']"
+def test_driver_has_errors(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+    base_error_msg = "is not one of ['azure', 'ec2', 'delegated', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd', 'molecule-*', 'molecule_*', 'custom-*', 'custom_*']"  # noqa: E501
 
     driver_name = str(_config["driver"]["name"])
     if isinstance(_config["driver"]["name"], str):
@@ -80,48 +80,48 @@ def test_driver_has_errors(_config):  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture()
-def _model_driver_provider_name_nullable_section_data():  # type: ignore[no-untyped-def]
+def _model_driver_provider_name_nullable_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {"driver": {"provider": {"name": None}}}
 
 
 @pytest.mark.parametrize(
     "_config",
-    ["_model_driver_provider_name_nullable_section_data"],
+    ["_model_driver_provider_name_nullable_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_driver_provider_name_nullable(_config):  # type: ignore[no-untyped-def]
+def test_driver_provider_name_nullable(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
-def _model_driver_allows_delegated_section_data():  # type: ignore[no-untyped-def]
+def _model_driver_allows_delegated_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {"driver": {"name": "default"}}
 
 
 @pytest.fixture()
-def _model_driver_allows_molecule_section_data1():  # type: ignore[no-untyped-def]
+def _model_driver_allows_molecule_section_data1():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {"driver": {"name": "molecule-test_driver.name"}}
 
 
 @pytest.fixture()
-def _model_driver_allows_molecule_section_data2():  # type: ignore[no-untyped-def]
+def _model_driver_allows_molecule_section_data2():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {"driver": {"name": "molecule_test_driver.name"}}
 
 
 @pytest.fixture()
-def _model_driver_allows_custom_section_data1():  # type: ignore[no-untyped-def]
+def _model_driver_allows_custom_section_data1():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {"driver": {"name": "custom-test_driver.name"}}
 
 
 @pytest.fixture()
-def _model_driver_allows_custom_section_data2():  # type: ignore[no-untyped-def]
+def _model_driver_allows_custom_section_data2():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {"driver": {"name": "custom_test_driver.name"}}
 
 
 ###
 @pytest.mark.parametrize(
     "_config",
-    [
+    [  # noqa: PT007
         ("_model_driver_allows_delegated_section_data"),
         ("_model_driver_allows_molecule_section_data1"),
         ("_model_driver_allows_molecule_section_data2"),
@@ -130,5 +130,5 @@ def _model_driver_allows_custom_section_data2():  # type: ignore[no-untyped-def]
     ],
     indirect=True,
 )
-def test_driver_allows_name(_config):  # type: ignore[no-untyped-def]
+def test_driver_allows_name(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]

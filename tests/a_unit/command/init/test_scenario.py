@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -26,7 +26,7 @@ from molecule.command.init import scenario
 
 
 @pytest.fixture()
-def _command_args():  # type: ignore[no-untyped-def]
+def _command_args():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {
         "driver_name": "default",
         "role_name": "test-role",
@@ -37,24 +37,24 @@ def _command_args():  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture()
-def _instance(_command_args):  # type: ignore[no-untyped-def]
+def _instance(_command_args):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     return scenario.Scenario(_command_args)
 
 
-def test_scenario_execute(temp_dir, _instance, patched_logger_info):  # type: ignore[no-untyped-def]
+def test_scenario_execute(temp_dir, _instance, patched_logger_info):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance.execute()
 
     msg = "Initializing new scenario test-scenario..."
     patched_logger_info.assert_any_call(msg)
 
-    assert os.path.isdir("./molecule/test-scenario")
+    assert os.path.isdir("./molecule/test-scenario")  # noqa: PTH112
 
-    scenario_directory = os.path.join(temp_dir.strpath, "molecule", "test-scenario")
+    scenario_directory = os.path.join(temp_dir.strpath, "molecule", "test-scenario")  # noqa: PTH118
     msg = f"Initialized scenario in {scenario_directory} successfully."
     patched_logger_info.assert_any_call(msg)
 
 
-def test_execute_scenario_exists(temp_dir, _instance, caplog):  # type: ignore[no-untyped-def]
+def test_execute_scenario_exists(temp_dir, _instance, caplog):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
     _instance.execute()
 
     with pytest.raises(SystemExit) as e:

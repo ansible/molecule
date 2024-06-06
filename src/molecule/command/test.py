@@ -29,6 +29,7 @@ from molecule.api import drivers
 from molecule.command import base
 from molecule.config import DEFAULT_DRIVER
 
+
 LOG = logging.getLogger(__name__)
 MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
 MOLECULE_PLATFORM_NAME = os.environ.get("MOLECULE_PLATFORM_NAME", None)
@@ -37,12 +38,12 @@ MOLECULE_PLATFORM_NAME = os.environ.get("MOLECULE_PLATFORM_NAME", None)
 class Test(base.Base):
     """Test Command Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
         """Execute the actions necessary to perform a `molecule test` and \
         returns None.
 
         :return: None
-        """
+        """  # noqa: D205
 
 
 @base.click_command_ex()
@@ -83,19 +84,19 @@ class Test(base.Base):
     help="Enable or disable parallel mode. Default is disabled.",
 )
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
-def test(  # type: ignore[no-untyped-def]
-    ctx,
-    scenario_name,
-    driver_name,
-    __all,
-    destroy,
-    parallel,
-    ansible_args,
-    platform_name,
+def test(  # type: ignore[no-untyped-def]  # noqa: ANN201, PLR0913
+    ctx,  # noqa: ANN001
+    scenario_name,  # noqa: ANN001
+    driver_name,  # noqa: ANN001
+    __all,  # noqa: ANN001
+    destroy,  # noqa: ANN001
+    parallel,  # noqa: ANN001
+    ansible_args,  # noqa: ANN001
+    platform_name,  # noqa: ANN001
 ):  # pragma: no cover
-    """Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy)."""
+    """Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy)."""  # noqa: E501
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
     command_args = {
         "parallel": parallel,
         "destroy": destroy,

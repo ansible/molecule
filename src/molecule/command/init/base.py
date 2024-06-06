@@ -25,6 +25,7 @@ import os
 
 from molecule import util
 
+
 LOG = logging.getLogger(__name__)
 
 
@@ -33,8 +34,8 @@ class Base:
 
     __metaclass__ = abc.ABCMeta
 
-    def _validate_template_dir(self, template_dir):  # type: ignore[no-untyped-def]
-        if not os.path.isdir(template_dir):
+    def _validate_template_dir(self, template_dir):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
+        if not os.path.isdir(template_dir):  # noqa: PTH112
             util.sysexit_with_message(
                 "The specified template directory (" + str(template_dir) + ") does not exist",
             )

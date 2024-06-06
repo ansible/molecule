@@ -1,4 +1,4 @@
-# D104
+# D104  # noqa: D104
 #
 #  Copyright (c) 2015-2018 Cisco Systems, Inc.
 #

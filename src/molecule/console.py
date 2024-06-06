@@ -2,11 +2,13 @@
 
 import os
 import sys
+
 from typing import Any
 
 from enrich.console import Console
 from rich.style import Style
 from rich.theme import Theme
+
 
 theme = Theme(
     {
@@ -28,7 +30,7 @@ theme = Theme(
 
 
 # Based on Ansible implementation
-def to_bool(a: Any) -> bool:
+def to_bool(a: Any) -> bool:  # noqa: ANN401
     """Return a bool for the arg."""
     if a is None or isinstance(a, bool):
         return bool(a)

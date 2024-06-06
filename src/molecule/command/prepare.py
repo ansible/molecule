@@ -27,6 +27,7 @@ from molecule.api import drivers
 from molecule.command import base
 from molecule.config import DEFAULT_DRIVER
 
+
 LOG = logging.getLogger(__name__)
 
 
@@ -80,14 +81,14 @@ class Prepare(base.Base):
 
         Load an env file to read variables from when rendering
         molecule.yml.
-    """
+    """  # noqa: D205
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
         """Execute the actions necessary to prepare the instances and returns \
         None.
 
         :return: None
-        """
+        """  # noqa: D205
         if self._config.state.prepared and not self._config.command_args.get("force"):
             msg = "Skipping, instances already prepared."
             LOG.warning(msg)
@@ -99,7 +100,7 @@ class Prepare(base.Base):
             return
 
         self._config.provisioner.prepare()
-        self._config.state.change_state("prepared", True)
+        self._config.state.change_state("prepared", True)  # noqa: FBT003
 
 
 @base.click_command_ex()
@@ -122,10 +123,10 @@ class Prepare(base.Base):
     default=False,
     help="Enable or disable force mode. Default is disabled.",
 )
-def prepare(ctx, scenario_name, driver_name, force):  # type: ignore[no-untyped-def] # pragma: no cover
+def prepare(ctx, scenario_name, driver_name, force):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """Use the provisioner to prepare the instances into a particular starting state."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
     command_args = {
         "subcommand": subcommand,
         "driver_name": driver_name,

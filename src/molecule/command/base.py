@@ -26,18 +26,22 @@ import logging
 import os
 import shutil
 import subprocess
+
 from collections.abc import Callable
 from typing import Any
 
 import click
 import wcmatch.pathlib
 import wcmatch.wcmatch
+
 from click_help_colors import HelpColorsCommand, HelpColorsGroup
 from wcmatch import glob
 
 import molecule.scenarios
+
 from molecule import config, logger, text, util
 from molecule.console import should_do_markup
+
 
 LOG = logging.getLogger(__name__)
 MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
@@ -47,7 +51,7 @@ MOLECULE_DEFAULT_SCENARIO_NAME = "default"
 class Base(metaclass=abc.ABCMeta):
     """An abstract base class used to define the command interface."""
 
-    def __init__(self, c: config.Config) -> None:
+    def __init__(self, c: config.Config) -> None:  # noqa: ANN101
         """Initialize code for all command classes.
 
         :param c: An instance of a Molecule config.
@@ -56,17 +60,17 @@ class Base(metaclass=abc.ABCMeta):
         self._config = c
         self._setup()
 
-    def __init_subclass__(cls) -> None:
+    def __init_subclass__(cls) -> None:  # noqa: ANN101
         """Decorate execute from all subclasses."""
         super().__init_subclass__()
         for wrapper in logger.get_section_loggers():
-            cls.execute = wrapper(cls.execute)  # type: ignore
+            cls.execute = wrapper(cls.execute)  # type: ignore  # noqa: PGH003
 
     @abc.abstractmethod
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def] # pragma: no cover
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN101, ANN201, D102
         pass
 
-    def _setup(self) -> None:
+    def _setup(self) -> None:  # noqa: ANN101
         """Prepare Molecule's provisioner and returns None.
 
         :return: None
@@ -76,7 +80,7 @@ class Base(metaclass=abc.ABCMeta):
         self._config.provisioner.manage_inventory()
 
 
-def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()):  # type: ignore[no-untyped-def]
+def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     """Execute scenario sequences based on parsed command-line arguments.
 
     This is useful for subcommands that run scenario sequences, which
@@ -136,13 +140,13 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
                 # always prune ephemeral dir if destroying on failure
                 scenario.prune()
                 if scenario.config.is_parallel:
-                    scenario._remove_scenario_state_directory()
+                    scenario._remove_scenario_state_directory()  # noqa: SLF001
                 util.sysexit()
             else:
                 raise
 
 
-def execute_subcommand(config, subcommand_and_args):  # type: ignore[no-untyped-def]  # pylint: disable=redefined-outer-name
+def execute_subcommand(config, subcommand_and_args):  # type: ignore[no-untyped-def]  # pylint: disable=redefined-outer-name  # noqa: ANN001, ANN201
     """Execute subcommand."""
     (subcommand, *args) = subcommand_and_args.split(" ")
     command_module = getattr(molecule.command, subcommand)
@@ -157,7 +161,7 @@ def execute_subcommand(config, subcommand_and_args):  # type: ignore[no-untyped-
     return command(config).execute(args)
 
 
-def execute_scenario(scenario):  # type: ignore[no-untyped-def]
+def execute_scenario(scenario):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     """Execute each command in the given scenario's configured sequence.
 
     :param scenario: The scenario to execute.
@@ -170,10 +174,10 @@ def execute_scenario(scenario):  # type: ignore[no-untyped-def]
         scenario.prune()
 
         if scenario.config.is_parallel:
-            scenario._remove_scenario_state_directory()
+            scenario._remove_scenario_state_directory()  # noqa: SLF001
 
 
-def filter_ignored_scenarios(scenario_paths) -> list[str]:  # type: ignore[no-untyped-def]
+def filter_ignored_scenarios(scenario_paths) -> list[str]:  # type: ignore[no-untyped-def]  # noqa: ANN001, D103
     command = ["git", "check-ignore", *scenario_paths]
 
     with contextlib.suppress(subprocess.CalledProcessError, FileNotFoundError):
@@ -194,7 +198,7 @@ def filter_ignored_scenarios(scenario_paths) -> list[str]:  # type: ignore[no-un
     return paths
 
 
-def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):  # type: ignore[no-untyped-def]
+def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     """Glob the current directory for Molecule config files, instantiate config \
     objects, and returns a list.
 
@@ -204,7 +208,7 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):  #
     :param ansible_args: An optional tuple of arguments provided to the
      `ansible-playbook` command.
     :return: list
-    """
+    """  # noqa: D205
     scenario_paths = glob.glob(
         glob_str,
         flags=wcmatch.pathlib.GLOBSTAR | wcmatch.pathlib.BRACE | wcmatch.pathlib.DOTGLOB,
@@ -225,7 +229,7 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):  #
     return configs
 
 
-def _verify_configs(configs, glob_str=MOLECULE_GLOB):  # type: ignore[no-untyped-def]
+def _verify_configs(configs, glob_str=MOLECULE_GLOB):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     """Verify a Molecule config was found and returns None.
 
     :param configs: A list containing absolute paths to Molecule config files.
@@ -243,11 +247,11 @@ def _verify_configs(configs, glob_str=MOLECULE_GLOB):  # type: ignore[no-untyped
         util.sysexit_with_message(msg)
 
 
-def _get_subcommand(string):  # type: ignore[no-untyped-def]
+def _get_subcommand(string):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     return string.split(".")[-1]
 
 
-def click_group_ex():  # type: ignore[no-untyped-def]
+def click_group_ex():  # type: ignore[no-untyped-def]  # noqa: ANN201
     """Return extended version of click.group()."""
     # Color coding used to group command types, documented only here as we may
     # decide to change them later.
@@ -283,7 +287,7 @@ def click_command_ex() -> Callable[[Callable[..., Any]], click.Command]:
     )
 
 
-def result_callback(*args, **kwargs):  # type: ignore[no-untyped-def]
+def result_callback(*args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN002, ANN003, ANN201, ARG001
     """Click natural exit callback."""
     # We want to be used we run out custom exit code, regardless if run was
     # a success or failure.

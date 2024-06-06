@@ -22,6 +22,7 @@
 import logging
 import os
 import time
+
 from collections.abc import Callable, Iterable
 from functools import wraps
 
@@ -30,6 +31,7 @@ from enrich.logging import RichHandler
 
 from molecule.console import console, console_stderr
 from molecule.text import underscore
+
 
 LOG = logging.getLogger(__name__)
 
@@ -58,7 +60,7 @@ def configure() -> None:
     logger.setLevel(logging.INFO)
 
 
-def set_log_level(log_level: int, debug: bool) -> None:
+def set_log_level(log_level: int, debug: bool) -> None:  # noqa: FBT001
     """Set logging level.
 
     :param log_level: verbosity control (0 - INFO, 1 - DEBUG)
@@ -83,7 +85,7 @@ def github_actions_groups(func: Callable) -> Callable:  # type: ignore[type-arg]
     """Print group indicators before/after execution of a method."""
 
     @wraps(func)
-    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
+    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN002, ANN003, ANN202
         self = args[0]
         scenario = self._config.scenario.name
         subcommand = underscore(self.__class__.__name__)  # type: ignore[no-untyped-call]
@@ -111,7 +113,7 @@ def gitlab_ci_sections(func: Callable) -> Callable:  # type: ignore[type-arg]
     clear_line = "\r\033[0K"
 
     @wraps(func)
-    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
+    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN002, ANN003, ANN202
         self = args[0]
         scenario = self._config.scenario.name
         subcommand = underscore(self.__class__.__name__)  # type: ignore[no-untyped-call]
@@ -148,7 +150,7 @@ def travis_ci_folds(func: Callable) -> Callable:  # type: ignore[type-arg]
     """Print group indicators before/after execution of a method."""
 
     @wraps(func)
-    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
+    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN002, ANN003, ANN202
         self = args[0]
         scenario = self._config.scenario.name
         subcommand = underscore(self.__class__.__name__)  # type: ignore[no-untyped-call]
@@ -177,7 +179,7 @@ def section_logger(func: Callable) -> Callable:  # type: ignore[type-arg]
     """Wrap effective execution of a method."""
 
     @wraps(func)
-    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
+    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN002, ANN003, ANN202
         self = args[0]
         LOG.info(
             "[info]Running [scenario]%s[/] > [action]%s[/][/]",
@@ -187,7 +189,7 @@ def section_logger(func: Callable) -> Callable:  # type: ignore[type-arg]
         )
         rt = func(*args, **kwargs)
         # section close code goes here
-        return rt
+        return rt  # noqa: RET504
 
     return wrapper
 

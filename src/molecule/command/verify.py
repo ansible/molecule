@@ -25,18 +25,19 @@ import click
 
 from molecule.command import base
 
+
 LOG = logging.getLogger(__name__)
 
 
 class Verify(base.Base):
     """Verify Command Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
         """Execute the actions necessary to perform a `molecule verify` and \
         returns None.
 
         :return: None
-        """
+        """  # noqa: D205
         self._config.verifier.execute(action_args)
 
 
@@ -48,10 +49,10 @@ class Verify(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
-def verify(ctx, scenario_name="default"):  # type: ignore[no-untyped-def] # pragma: no cover
+def verify(ctx, scenario_name="default"):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """Run automated tests against instances."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
     command_args = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]

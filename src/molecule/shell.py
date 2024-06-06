@@ -26,6 +26,7 @@ import click
 import packaging
 
 import molecule
+
 from molecule import command, logger
 from molecule.api import drivers
 from molecule.app import app
@@ -33,6 +34,7 @@ from molecule.command.base import click_group_ex
 from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY
 from molecule.console import console
 from molecule.util import do_report, lookup_config_file
+
 
 # Setup logging. This location of initialization is not ideal, but the code
 # structure does not give us much choice because config file lookup down below
@@ -51,18 +53,18 @@ LOCAL_CONFIG = lookup_config_file(LOCAL_CONFIG_SEARCH)
 ENV_FILE = ".env.yml"
 
 
-def print_version(ctx, param, value):  # type: ignore[no-untyped-def]
+def print_version(ctx, param, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001
     """Print version information."""
     if not value or ctx.resilient_parsing:
         return
 
     v = packaging.version.Version(molecule.__version__)
     color = "bright_yellow" if v.is_prerelease else "green"
-    msg = f"molecule [{color}]{v}[/] using python [repr.number]{sys.version_info[0]}.{sys.version_info[1]}[/] \n"
+    msg = f"molecule [{color}]{v}[/] using python [repr.number]{sys.version_info[0]}.{sys.version_info[1]}[/] \n"  # noqa: E501
 
     msg += f"    [repr.attrib_name]ansible[/][dim]:[/][repr.number]{app.runtime.version}[/]"
     for driver in drivers():
-        msg += f"\n    [repr.attrib_name]{driver!s}[/][dim]:[/][repr.number]{driver.version}[/][dim] from {driver.module}"
+        msg += f"\n    [repr.attrib_name]{driver!s}[/][dim]:[/][repr.number]{driver.version}[/][dim] from {driver.module}"  # noqa: E501
         if driver.required_collections:
             msg += " requiring collections:"
             for name, version in driver.required_collections.items():
@@ -116,7 +118,7 @@ def print_version(ctx, param, value):  # type: ignore[no-untyped-def]
     is_eager=True,
 )
 @click.pass_context
-def main(ctx, debug, verbose, base_config, env_file):  # type: ignore[no-untyped-def] # pragma: no cover
+def main(ctx, debug, verbose, base_config, env_file):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """Molecule aids in the development and testing of Ansible roles.
 
     To enable autocomplete for a supported shell execute command below after

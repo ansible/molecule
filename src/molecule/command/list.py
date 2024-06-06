@@ -23,6 +23,7 @@
 import logging
 
 import click
+
 from rich import box
 from rich.syntax import Syntax
 from rich.table import Table
@@ -32,18 +33,19 @@ from molecule.command import base
 from molecule.console import console
 from molecule.status import Status
 
+
 LOG = logging.getLogger(__name__)
 
 
 class List(base.Base):
     """List command shows information about current scenarios."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
         """Execute the actions necessary to perform a `molecule list` and \
         returns None.
 
         :return: None
-        """
+        """  # noqa: D205
         return self._config.driver.status()
 
 
@@ -57,10 +59,10 @@ class List(base.Base):
     default="simple",
     help="Change output format. (simple)",
 )
-def list(ctx, scenario_name, format):  # type: ignore[no-untyped-def] # pragma: no cover
+def list(ctx, scenario_name, format):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201, A001, A002
     """List status of instances."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
     command_args = {"subcommand": subcommand, "format": format}
 
     statuses = []
@@ -83,7 +85,7 @@ def list(ctx, scenario_name, format):  # type: ignore[no-untyped-def] # pragma: 
         _print_yaml_data(headers, statuses)  # type: ignore[no-untyped-call]
 
 
-def _print_tabulate_data(headers, data, table_format):  # type: ignore[no-untyped-def] # pragma: no cover
+def _print_tabulate_data(headers, data, table_format):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN202
     """Show the tabulate data on the screen and returns None.
 
     :param headers: A list of column headers.
@@ -102,8 +104,8 @@ def _print_tabulate_data(headers, data, table_format):  # type: ignore[no-untype
         console.print(t)
 
 
-def _print_yaml_data(headers, data):  # type: ignore[no-untyped-def] # pragma: no cover
-    l = [dict(zip(headers, [getattr(datum, field) for field in datum._fields])) for datum in data]
+def _print_yaml_data(headers, data):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN202
+    l = [dict(zip(headers, [getattr(datum, field) for field in datum._fields], strict=False)) for datum in data]  # noqa: E501, E741
 
     syntax = Syntax(util.safe_dump(l), "yaml")
     console.print(syntax)

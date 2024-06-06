@@ -26,17 +26,20 @@ import logging
 import os
 import re
 import sys
+
 from subprocess import CalledProcessError, CompletedProcess
 from typing import TYPE_CHECKING, Any, NoReturn
 
 import jinja2
 import yaml
+
 from ansible_compat.ports import cache
 from rich.syntax import Syntax
 
 from molecule.app import app
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
+
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, MutableMapping
@@ -48,8 +51,8 @@ LOG = logging.getLogger(__name__)
 class SafeDumper(yaml.SafeDumper):
     """SafeDumper YAML Class."""
 
-    def increase_indent(self, flow=False, indentless=False):  # type: ignore[no-untyped-def]
-        return super().increase_indent(flow, False)
+    def increase_indent(self, flow=False, indentless=False):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, FBT002, ARG002, D102
+        return super().increase_indent(flow, False)  # noqa: FBT003
 
 
 def print_debug(title: str, data: str) -> None:
@@ -80,14 +83,14 @@ def print_environment_vars(env: dict[str, str | None] | None) -> None:
             "SHELL REPLAY",
             " ".join([f"{k}={v}" for (k, v) in sorted(combined_env.items())]),
         )
-        print()
+        print()  # noqa: T201
 
 
 def do_report() -> None:
     """Dump html report atexit."""
     report_file = os.environ["MOLECULE_REPORT"]
     LOG.info("Writing %s report.", report_file)
-    with open(report_file, "w") as f:
+    with open(report_file, "w") as f:  # noqa: PTH123
         f.write(console.export_html())
         f.close()
 
@@ -108,7 +111,7 @@ def sysexit_with_message(
     # logger.
     if detail:
         detail_str = safe_dump(detail) if isinstance(detail, dict) else str(detail)
-        print(detail_str)
+        print(detail_str)  # noqa: T201
     LOG.critical(msg, extra={"highlighter": False})
 
     for warn in warns:
@@ -116,14 +119,14 @@ def sysexit_with_message(
     sysexit(code)
 
 
-def run_command(  # type: ignore[no-untyped-def]
+def run_command(  # type: ignore[no-untyped-def]  # noqa: PLR0913
     cmd: list[str],
-    env=None,
-    debug=False,
-    echo=False,
-    quiet=False,
-    check=False,
-    cwd=None,
+    env=None,  # noqa: ANN001
+    debug=False,  # noqa: ANN001, FBT002
+    echo=False,  # noqa: ANN001, FBT002, ARG001
+    quiet=False,  # noqa: ANN001, FBT002, ARG001
+    check=False,  # noqa: ANN001, FBT002
+    cwd=None,  # noqa: ANN001
 ) -> CompletedProcess:  # type: ignore[type-arg]
     """Execute the given command and returns None.
 
@@ -153,18 +156,18 @@ def run_command(  # type: ignore[no-untyped-def]
     return result
 
 
-def os_walk(directory, pattern, excludes=[], followlinks=False):  # type: ignore[no-untyped-def]
+def os_walk(directory, pattern, excludes=[], followlinks=False):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, FBT002, B006
     """Navigate recursively and retried files based on pattern."""
     for root, dirs, files in os.walk(directory, topdown=True, followlinks=followlinks):
         dirs[:] = [d for d in dirs if d not in excludes]
         for basename in files:
             if fnmatch.fnmatch(basename, pattern):
-                filename = os.path.join(root, basename)
+                filename = os.path.join(root, basename)  # noqa: PTH118
 
                 yield filename
 
 
-def render_template(template, **kwargs):  # type: ignore[no-untyped-def]
+def render_template(template, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN003, ANN201
     """Render a jinaj2 template."""
     t = jinja2.Environment(
         autoescape=jinja2.select_autoescape(
@@ -188,7 +191,7 @@ def write_file(filename: str, content: str, header: str | None = None) -> None:
     if header is None:
         content = MOLECULE_HEADER + "\n\n" + content
 
-    with open(filename, "w") as f:
+    with open(filename, "w") as f:  # noqa: PTH123
         f.write(content)
 
 
@@ -203,14 +206,14 @@ def file_prepender(filename: str) -> None:
 
     :param filename: A string containing the target filename.
     :return: None
-    """
-    with open(filename, "r+") as f:
+    """  # noqa: D205
+    with open(filename, "r+") as f:  # noqa: PTH123
         content = f.read()
         f.seek(0, 0)
         f.write(molecule_prepender(content))
 
 
-def safe_dump(data: Any, explicit_start=True) -> str:  # type: ignore[no-untyped-def]
+def safe_dump(data: Any, explicit_start=True) -> str:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN401, FBT002
     """Dump the provided data to a YAML document and returns a string.
 
     :param data: A string containing an absolute path to the file to parse.
@@ -224,7 +227,7 @@ def safe_dump(data: Any, explicit_start=True) -> str:  # type: ignore[no-untyped
     )
 
 
-def safe_load(string) -> dict:  # type: ignore[no-untyped-def, type-arg]
+def safe_load(string) -> dict:  # type: ignore[no-untyped-def, type-arg]  # noqa: ANN001
     """Parse the provided string returns a dict.
 
     :param string: A string to be parsed.
@@ -237,22 +240,22 @@ def safe_load(string) -> dict:  # type: ignore[no-untyped-def, type-arg]
     return {}
 
 
-def safe_load_file(filename: str):  # type: ignore[no-untyped-def]
+def safe_load_file(filename: str):  # type: ignore[no-untyped-def]  # noqa: ANN201
     """Parse the provided YAML file and returns a dict.
 
     :param filename: A string containing an absolute path to the file to parse.
     :return: dict
     """
-    with open(filename) as stream:
+    with open(filename) as stream:  # noqa: PTH123
         return safe_load(stream)
 
 
-def instance_with_scenario_name(instance_name, scenario_name):  # type: ignore[no-untyped-def]
+def instance_with_scenario_name(instance_name, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     """Format instance name that includes scenario."""
     return f"{instance_name}-{scenario_name}"
 
 
-def verbose_flag(options):  # type: ignore[no-untyped-def]
+def verbose_flag(options):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     """Return computed verbosity flag."""
     verbose = "v"
     verbose_flag = []  # pylint: disable=redefined-outer-name
@@ -268,7 +271,7 @@ def verbose_flag(options):  # type: ignore[no-untyped-def]
     return verbose_flag
 
 
-def filter_verbose_permutation(options):  # type: ignore[no-untyped-def]
+def filter_verbose_permutation(options):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     """Clean verbose information."""
     return {k: options[k] for k in options if not re.match("^[v]+$", k)}
 
@@ -276,7 +279,7 @@ def filter_verbose_permutation(options):  # type: ignore[no-untyped-def]
 def abs_path(path: str) -> str | None:
     """Return absolute path."""
     if path:
-        return os.path.abspath(path)
+        return os.path.abspath(path)  # noqa: PTH100
     return None
 
 
@@ -300,22 +303,22 @@ def merge_dicts(a: MutableMapping, b: MutableMapping) -> MutableMapping:  # type
     return result
 
 
-def validate_parallel_cmd_args(cmd_args):  # type: ignore[no-untyped-def]
+def validate_parallel_cmd_args(cmd_args):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     """Prevents use of options incompatible with parallel mode."""
     if cmd_args.get("parallel") and cmd_args.get("destroy") == "never":
         msg = 'Combining "--parallel" and "--destroy=never" is not supported'
         sysexit_with_message(msg)
 
 
-def _parallelize_platforms(config, run_uuid):  # type: ignore[no-untyped-def]
-    def parallelize(platform):  # type: ignore[no-untyped-def]
+def _parallelize_platforms(config, run_uuid):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+    def parallelize(platform):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
         platform["name"] = f"{platform['name']}-{run_uuid}"
         return platform
 
     return [parallelize(platform) for platform in config["platforms"]]  # type: ignore[no-untyped-call]
 
 
-def _filter_platforms(config, platform_name):  # type: ignore[no-untyped-def]
+def _filter_platforms(config, platform_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     for platform in config["platforms"]:
         if platform["name"] == platform_name:
             return [platform]
@@ -324,35 +327,35 @@ def _filter_platforms(config, platform_name):  # type: ignore[no-untyped-def]
 
 
 @cache
-def find_vcs_root(location="", dirs=(".git", ".hg", ".svn"), default=None) -> str:  # type: ignore[no-untyped-def]
+def find_vcs_root(location="", dirs=(".git", ".hg", ".svn"), default=None) -> str:  # type: ignore[no-untyped-def]  # noqa: ANN001
     """Return current repository root directory."""
     if not location:
-        location = os.getcwd()
-    prev, location = None, os.path.abspath(location)
+        location = os.getcwd()  # noqa: PTH109
+    prev, location = None, os.path.abspath(location)  # noqa: PTH100
     while prev != location:
-        if any(os.path.isdir(os.path.join(location, d)) for d in dirs):
+        if any(os.path.isdir(os.path.join(location, d)) for d in dirs):  # noqa: PTH112, PTH118
             return location  # type: ignore[no-any-return]
-        prev, location = location, os.path.abspath(os.path.join(location, os.pardir))
+        prev, location = location, os.path.abspath(os.path.join(location, os.pardir))  # noqa: PTH100, PTH118
     return default  # type: ignore[no-any-return]
 
 
 def lookup_config_file(filename: str) -> str | None:
     """Return config file PATH."""
     for path in [find_vcs_root(default="~"), "~"]:
-        f = os.path.expanduser(f"{path}/{filename}")
-        if os.path.isfile(f):
+        f = os.path.expanduser(f"{path}/{filename}")  # noqa: PTH111
+        if os.path.isfile(f):  # noqa: PTH113
             LOG.info("Found config file %s", f)
             return f
     return None
 
 
-def boolean(value: Any, strict=True) -> bool:  # type: ignore[no-untyped-def]
+def boolean(value: Any, strict=True) -> bool:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN401, FBT002
     """Evaluate any object as boolean matching ansible behavior."""
     # Based on https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/parsing/convert_bool.py
 
-    BOOLEANS_TRUE = frozenset(("y", "yes", "on", "1", "true", "t", 1, 1.0, True))
-    BOOLEANS_FALSE = frozenset(("n", "no", "off", "0", "false", "f", 0, 0.0, False))
-    BOOLEANS = BOOLEANS_TRUE.union(BOOLEANS_FALSE)
+    BOOLEANS_TRUE = frozenset(("y", "yes", "on", "1", "true", "t", 1, 1.0, True))  # noqa: N806
+    BOOLEANS_FALSE = frozenset(("n", "no", "off", "0", "false", "f", 0, 0.0, False))  # noqa: N806
+    BOOLEANS = BOOLEANS_TRUE.union(BOOLEANS_FALSE)  # noqa: N806
 
     if isinstance(value, bool):
         return value
@@ -366,8 +369,8 @@ def boolean(value: Any, strict=True) -> bool:  # type: ignore[no-untyped-def]
     if normalized_value in BOOLEANS_FALSE or not strict:
         return False
 
-    raise TypeError(
-        f"The value '{value!s}' is not a valid boolean.  Valid booleans include: {', '.join(repr(i) for i in BOOLEANS)!s}",
+    raise TypeError(  # noqa: TRY003
+        f"The value '{value!s}' is not a valid boolean.  Valid booleans include: {', '.join(repr(i) for i in BOOLEANS)!s}",  # noqa: EM102, E501
     )
 
 
@@ -385,12 +388,12 @@ def dict2args(data: dict) -> list[str]:  # type: ignore[type-arg]
     return result
 
 
-def bool2args(data: bool) -> list[str]:
+def bool2args(data: bool) -> list[str]:  # noqa: FBT001, ARG001
     """Convert a boolean value to command line argument (flag)."""
     return []
 
 
-def print_as_yaml(data: Any) -> None:
+def print_as_yaml(data: Any) -> None:  # noqa: ANN401
     """Render python object as yaml on console."""
     # https://github.com/Textualize/rich/discussions/990#discussioncomment-342217
     result = Syntax(code=safe_dump(data), lexer="yaml", background_color="default")

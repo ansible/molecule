@@ -25,6 +25,7 @@ import click
 
 from molecule.command import base
 
+
 LOG = logging.getLogger(__name__)
 
 
@@ -34,12 +35,12 @@ class SideEffect(base.Base):
     See the provisioners documentation for further details.
     """
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
         """Execute the actions necessary to perform a `molecule side-effect` and \
         returns None.
 
         :return: None
-        """
+        """  # noqa: D205
         if not self._config.provisioner.playbooks.side_effect:
             msg = "Skipping, side effect playbook not configured."
             LOG.warning(msg)
@@ -56,10 +57,10 @@ class SideEffect(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
-def side_effect(ctx, scenario_name):  # type: ignore[no-untyped-def] # pragma: no cover
+def side_effect(ctx, scenario_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """Use the provisioner to perform side-effects to the instances."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
     command_args = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]

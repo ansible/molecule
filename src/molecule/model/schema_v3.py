@@ -29,15 +29,16 @@ from jsonschema.exceptions import ValidationError
 from molecule import api
 from molecule.data import __file__ as data_module
 
+
 LOG = logging.getLogger(__name__)
 
 
-def validate(c):  # type: ignore[no-untyped-def]
+def validate(c):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     """Perform schema validation."""
     result = []
     schemas = []
 
-    schema_files = [os.path.dirname(data_module) + "/molecule.json"]
+    schema_files = [os.path.dirname(data_module) + "/molecule.json"]  # noqa: PTH120
     driver_name = c["driver"]["name"]
 
     driver_schema_file = None
@@ -47,14 +48,14 @@ def validate(c):  # type: ignore[no-untyped-def]
     if driver_schema_file is None:
         msg = f"Driver {driver_name} does not provide a schema."
         LOG.warning(msg)
-    elif not os.path.exists(driver_schema_file):
+    elif not os.path.exists(driver_schema_file):  # noqa: PTH110
         msg = f"Schema {driver_schema_file} for driver {driver_name} not found."
         LOG.warning(msg)
     else:
         schema_files.append(driver_schema_file)
 
     for schema_file in schema_files:
-        with open(schema_file, encoding="utf-8") as f:
+        with open(schema_file, encoding="utf-8") as f:  # noqa: PTH123
             schema = json.load(f)
         schemas.append(schema)
 

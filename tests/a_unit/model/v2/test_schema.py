@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -22,11 +22,11 @@ from molecule.model import schema_v3
 from molecule.util import run_command
 
 
-def test_base_config(_config):  # type: ignore[no-untyped-def]
+def test_base_config(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
-def test_molecule_schema():  # type: ignore[no-untyped-def]
+def test_molecule_schema():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     cmd = [
         "check-jsonschema",
         "-v",

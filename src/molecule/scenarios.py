@@ -22,13 +22,14 @@ import logging
 
 from molecule import util
 
+
 LOG = logging.getLogger(__name__)
 
 
 class Scenarios:
     """The Scenarios groups one or more scenario objects Molecule will execute."""
 
-    def __init__(self, configs, scenario_name=None) -> None:  # type: ignore[no-untyped-def]
+    def __init__(self, configs, scenario_name=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Initialize a new scenarios class and returns None.
 
         :param configs: A list containing Molecule config instances.
@@ -39,19 +40,19 @@ class Scenarios:
         self._scenario_name = scenario_name
         self._scenarios = self.all
 
-    def next(self):  # type: ignore[no-untyped-def]
+    def next(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         if not self._scenarios:
             raise StopIteration
         return self._scenarios.pop(0)
 
-    def __iter__(self):  # type: ignore[no-untyped-def]
+    def __iter__(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN204
         """Make object iterable."""
         return self
 
     __next__ = next  # Python 3.X compatibility
 
     @property
-    def all(self):  # type: ignore[no-untyped-def]
+    def all(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
         """Return a list containing all scenario objects.
 
         :return: list
@@ -66,7 +67,7 @@ class Scenarios:
         scenarios.sort(key=lambda x: x.directory)
         return scenarios
 
-    def print_matrix(self):  # type: ignore[no-untyped-def]
+    def print_matrix(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
         msg = "Test matrix"
         LOG.info(msg)
 
@@ -75,13 +76,13 @@ class Scenarios:
             tree[scenario.name] = list(scenario.sequence)
         util.print_as_yaml(tree)
 
-    def sequence(self, scenario_name: str) -> list[str]:
+    def sequence(self, scenario_name: str) -> list[str]:  # noqa: ANN101, D102
         for scenario in self.all:
             if scenario.name == scenario_name:
                 return list(scenario.sequence)
-        raise RuntimeError(f"Unable to find sequence for {scenario_name} scenario.")
+        raise RuntimeError(f"Unable to find sequence for {scenario_name} scenario.")  # noqa: EM102, TRY003
 
-    def _verify(self):  # type: ignore[no-untyped-def]
+    def _verify(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         """Verify the specified scenario was found and returns None.
 
         :return: None
@@ -91,15 +92,15 @@ class Scenarios:
             msg = f"Scenario '{self._scenario_name}' not found.  Exiting."
             util.sysexit_with_message(msg)
 
-    def _filter_for_scenario(self):  # type: ignore[no-untyped-def]
+    def _filter_for_scenario(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         """Find the scenario matching the provided scenario name and returns a \
         list.
 
         :return: list
-        """
+        """  # noqa: D205
         return [c.scenario for c in self._configs if c.scenario.name == self._scenario_name]
 
-    def _get_matrix(self):  # type: ignore[no-untyped-def]
+    def _get_matrix(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         """Build a matrix of scenarios with sequence to include and returns a \
         dict.
 
@@ -118,7 +119,7 @@ class Scenarios:
         }
 
         :returns: dict
-        """
+        """  # noqa: D205
         return {
             scenario.name: {
                 "check": scenario.check_sequence,

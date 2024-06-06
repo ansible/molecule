@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -21,6 +21,7 @@
 import copy
 import os
 import shutil
+
 from collections.abc import Generator
 from pathlib import Path
 from subprocess import CompletedProcess
@@ -29,6 +30,7 @@ from unittest.mock import Mock
 from uuid import uuid4
 
 import pytest
+
 from pytest_mock import MockerFixture
 
 from molecule import config, util
@@ -40,11 +42,11 @@ from tests.conftest import (  # pylint:disable=C0411
 )
 
 
-def write_molecule_file(filename: str, data: Any) -> None:
+def write_molecule_file(filename: str, data: Any) -> None:  # noqa: ANN401, D103
     util.write_file(filename, util.safe_dump(data))
 
 
-def os_split(s: str) -> tuple[str, ...]:
+def os_split(s: str) -> tuple[str, ...]:  # noqa: D103
     rest, tail = os.path.split(s)
     if rest in ("", os.path.sep):
         return (tail,)
@@ -52,17 +54,17 @@ def os_split(s: str) -> tuple[str, ...]:
 
 
 @pytest.fixture()
-def _molecule_dependency_galaxy_section_data():  # type: ignore[no-untyped-def]
+def _molecule_dependency_galaxy_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {"dependency": {"name": "galaxy"}}
 
 
 @pytest.fixture()
-def _molecule_driver_section_data():  # type: ignore[no-untyped-def]
+def _molecule_driver_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {"driver": {"name": "default", "options": {"managed": True}}}
 
 
 @pytest.fixture()
-def _molecule_platforms_section_data():  # type: ignore[no-untyped-def]
+def _molecule_platforms_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {
         "platforms": [
             {"name": "instance-1", "groups": ["foo", "bar"], "children": ["child1"]},
@@ -72,7 +74,7 @@ def _molecule_platforms_section_data():  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture()
-def _molecule_provisioner_section_data():  # type: ignore[no-untyped-def]
+def _molecule_provisioner_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {
         "provisioner": {
             "name": "ansible",
@@ -83,23 +85,23 @@ def _molecule_provisioner_section_data():  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture()
-def _molecule_scenario_section_data():  # type: ignore[no-untyped-def]
+def _molecule_scenario_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {"scenario": {"name": "default"}}
 
 
 @pytest.fixture()
-def _molecule_verifier_section_data():  # type: ignore[no-untyped-def]
+def _molecule_verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {"verifier": {"name": "ansible"}}
 
 
 @pytest.fixture(name="molecule_data")
-def fixture_molecule_data(  # type: ignore[no-untyped-def]
-    _molecule_dependency_galaxy_section_data,
-    _molecule_driver_section_data,
-    _molecule_platforms_section_data,
-    _molecule_provisioner_section_data,
-    _molecule_scenario_section_data,
-    _molecule_verifier_section_data,
+def fixture_molecule_data(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    _molecule_dependency_galaxy_section_data,  # noqa: ANN001
+    _molecule_driver_section_data,  # noqa: ANN001
+    _molecule_platforms_section_data,  # noqa: ANN001
+    _molecule_provisioner_section_data,  # noqa: ANN001
+    _molecule_scenario_section_data,  # noqa: ANN001
+    _molecule_verifier_section_data,  # noqa: ANN001
 ):
     fixtures = [
         _molecule_dependency_galaxy_section_data,
@@ -118,41 +120,41 @@ def fixture_molecule_data(  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture(name="molecule_directory_fixture")
-def fixture_molecule_directory_fixture(temp_dir):  # type: ignore[no-untyped-def]
+def fixture_molecule_directory_fixture(temp_dir):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     return molecule_directory()
 
 
 @pytest.fixture(name="molecule_scenario_directory_fixture")
-def fixture_molecule_scenario_directory_fixture(molecule_directory_fixture):  # type: ignore[no-untyped-def]
+def fixture_molecule_scenario_directory_fixture(molecule_directory_fixture):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
     path = molecule_scenario_directory()
-    if not os.path.isdir(path):
-        os.makedirs(path, exist_ok=True)
+    if not os.path.isdir(path):  # noqa: PTH112
+        os.makedirs(path, exist_ok=True)  # noqa: PTH103
 
     return path
 
 
 @pytest.fixture(name="molecule_ephemeral_directory_fixture")
-def fixture_molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):  # type: ignore[no-untyped-def]
+def fixture_molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT004, ARG001, D103
     path = molecule_ephemeral_directory(str(uuid4()))
-    if not os.path.isdir(path):
-        os.makedirs(path, exist_ok=True)
+    if not os.path.isdir(path):  # noqa: PTH112
+        os.makedirs(path, exist_ok=True)  # noqa: PTH103
     yield
     shutil.rmtree(str(Path(path).parent))
 
 
 @pytest.fixture(name="molecule_file_fixture")
-def fixture_molecule_file_fixture(  # type: ignore[no-untyped-def]
-    molecule_scenario_directory_fixture,
-    molecule_ephemeral_directory_fixture,
+def fixture_molecule_file_fixture(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    molecule_scenario_directory_fixture,  # noqa: ANN001, ARG001
+    molecule_ephemeral_directory_fixture,  # noqa: ANN001, ARG001
 ):
     return molecule_file()
 
 
 @pytest.fixture()
-def config_instance(  # type: ignore[no-untyped-def]
+def config_instance(  # type: ignore[no-untyped-def]  # noqa: D103
     molecule_file_fixture: str,
-    molecule_data,
-    request,
+    molecule_data,  # noqa: ANN001
+    request,  # noqa: ANN001
 ) -> Generator[config.Config, None, None]:
     mdc = copy.deepcopy(molecule_data)
     if hasattr(request, "param"):
@@ -172,27 +174,27 @@ def config_instance(  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture()
-def patched_print_debug(mocker):  # type: ignore[no-untyped-def]
+def patched_print_debug(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     return mocker.patch("molecule.util.print_debug")
 
 
 @pytest.fixture()
-def patched_logger_info(mocker):  # type: ignore[no-untyped-def]
+def patched_logger_info(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     return mocker.patch("logging.Logger.info")
 
 
 @pytest.fixture()
-def patched_logger_debug(mocker):  # type: ignore[no-untyped-def]
+def patched_logger_debug(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     return mocker.patch("logging.Logger.debug")
 
 
 @pytest.fixture()
-def patched_logger_error(mocker):  # type: ignore[no-untyped-def]
+def patched_logger_error(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     return mocker.patch("logging.Logger.error")
 
 
 @pytest.fixture()
-def patched_run_command(mocker):  # type: ignore[no-untyped-def]
+def patched_run_command(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     m = mocker.patch("molecule.util.run_command")
     m.return_value = CompletedProcess(
         args="foo",
@@ -205,7 +207,7 @@ def patched_run_command(mocker):  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture()
-def patched_ansible_converge(mocker: MockerFixture) -> Mock:
+def patched_ansible_converge(mocker: MockerFixture) -> Mock:  # noqa: D103
     m = mocker.patch("molecule.provisioner.ansible.Ansible.converge")
     m.return_value = "patched-ansible-converge-stdout"
 
@@ -213,27 +215,27 @@ def patched_ansible_converge(mocker: MockerFixture) -> Mock:
 
 
 @pytest.fixture()
-def patched_add_or_update_vars(mocker):  # type: ignore[no-untyped-def]
+def patched_add_or_update_vars(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     return mocker.patch("molecule.provisioner.ansible.Ansible._add_or_update_vars")
 
 
 @pytest.fixture()
-def patched_ansible_galaxy(mocker):  # type: ignore[no-untyped-def]
+def patched_ansible_galaxy(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     return mocker.patch("molecule.dependency.ansible_galaxy.AnsibleGalaxy.execute")
 
 
 @pytest.fixture()
-def patched_default_verifier(mocker):  # type: ignore[no-untyped-def]
+def patched_default_verifier(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     return mocker.patch("molecule.verifier.ansible.Ansible.execute")
 
 
 @pytest.fixture()
-def patched_scenario_setup(mocker):  # type: ignore[no-untyped-def]
+def patched_scenario_setup(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     mocker.patch("molecule.config.Config.env")
 
     return mocker.patch("molecule.scenario.Scenario._setup")
 
 
 @pytest.fixture()
-def patched_config_validate(mocker):  # type: ignore[no-untyped-def]
+def patched_config_validate(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     return mocker.patch("molecule.config.Config._validate")

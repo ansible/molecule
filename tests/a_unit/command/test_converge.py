@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -22,7 +22,7 @@ from typing import Any
 from unittest.mock import Mock
 
 from click.testing import CliRunner
-from pytest import LogCaptureFixture
+from pytest import LogCaptureFixture  # noqa: PT013
 from pytest_mock import MockerFixture
 
 from molecule import config
@@ -33,11 +33,11 @@ from molecule.shell import main
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_converge_execute(
-    mocker: MockerFixture,
+def test_converge_execute(  # noqa: D103
+    mocker: MockerFixture,  # noqa: ARG001
     caplog: LogCaptureFixture,
     patched_ansible_converge: Mock,
-    patched_config_validate: Any,
+    patched_config_validate: Any,  # noqa: ANN401, ARG001
     config_instance: config.Config,
 ) -> None:
     c = converge.Converge(config_instance)
@@ -51,7 +51,7 @@ def test_converge_execute(
     assert config_instance.state.converged
 
 
-def test_ansible_args_passed_to_scenarios_get_configs(mocker: MockerFixture) -> None:
+def test_ansible_args_passed_to_scenarios_get_configs(mocker: MockerFixture) -> None:  # noqa: D103
     # Scenarios patch is needed to safely invoke CliRunner
     # in the test environment and block scenario execution
     mocker.patch("molecule.scenarios.Scenarios")

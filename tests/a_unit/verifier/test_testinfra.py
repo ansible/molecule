@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -27,7 +27,7 @@ from molecule.verifier import testinfra
 
 
 @pytest.fixture()
-def _patched_testinfra_get_tests(mocker):  # type: ignore[no-untyped-def]
+def _patched_testinfra_get_tests(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
     m = mocker.patch("molecule.verifier.testinfra.Testinfra._get_tests")
     m.return_value = ["foo.py", "bar.py"]
 
@@ -35,7 +35,7 @@ def _patched_testinfra_get_tests(mocker):  # type: ignore[no-untyped-def]
 
 
 @pytest.fixture()
-def _verifier_section_data():  # type: ignore[no-untyped-def]
+def _verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     return {
         "verifier": {
             "name": "testinfra",
@@ -50,25 +50,25 @@ def _verifier_section_data():  # type: ignore[no-untyped-def]
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture()
-def _instance(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]
+def _instance(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005, ARG001
     return testinfra.Testinfra(config_instance)
 
 
 @pytest.fixture()
-def inventory_file(_instance):  # type: ignore[no-untyped-def]
+def inventory_file(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     return _instance._config.provisioner.inventory_file
 
 
 @pytest.fixture(name="inventory_directory")
-def fixture_inventory_directory(_instance):  # type: ignore[no-untyped-def]
+def fixture_inventory_directory(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     return _instance._config.provisioner.inventory_directory
 
 
-def test_testinfra_config_private_member(_instance):  # type: ignore[no-untyped-def]
+def test_testinfra_config_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert isinstance(_instance._config, config.Config)
 
 
-def test_testinfra_default_options_property(inventory_directory, _instance):  # type: ignore[no-untyped-def]
+def test_testinfra_default_options_property(inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     x = {
         "connection": "ansible",
         "ansible-inventory": inventory_directory,
@@ -78,7 +78,7 @@ def test_testinfra_default_options_property(inventory_directory, _instance):  # 
     assert x == _instance.default_options
 
 
-def test_default_options_property_updates_debug(inventory_directory, _instance):  # type: ignore[no-untyped-def]
+def test_default_options_property_updates_debug(inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._config.args = {"debug": True}
     x = {
         "connection": "ansible",
@@ -91,10 +91,10 @@ def test_default_options_property_updates_debug(inventory_directory, _instance):
     assert x == _instance.default_options
 
 
-def test_default_options_property_updates_sudo(  # type: ignore[no-untyped-def]
-    inventory_directory,
-    _instance,
-    _patched_testinfra_get_tests,
+def test_default_options_property_updates_sudo(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    inventory_directory,  # noqa: ANN001
+    _instance,  # noqa: ANN001, PT019
+    _patched_testinfra_get_tests,  # noqa: ANN001, PT019
 ):
     _instance._config.args = {"sudo": True}
     x = {
@@ -107,25 +107,25 @@ def test_default_options_property_updates_sudo(  # type: ignore[no-untyped-def]
     assert x == _instance.default_options
 
 
-def test_testinfra_default_env_property(_instance):  # type: ignore[no-untyped-def]
+def test_testinfra_default_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert "MOLECULE_FILE" in _instance.default_env
     assert "MOLECULE_INVENTORY_FILE" in _instance.default_env
     assert "MOLECULE_SCENARIO_DIRECTORY" in _instance.default_env
     assert "MOLECULE_INSTANCE_CONFIG" in _instance.default_env
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_additional_files_or_dirs_property(_instance):  # type: ignore[no-untyped-def]
+@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+def test_additional_files_or_dirs_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     tests_directory = _instance._config.verifier.directory
-    file1_file = os.path.join(tests_directory, "file1.py")
-    file2_file = os.path.join(tests_directory, "file2.py")
-    match1_file = os.path.join(tests_directory, "match1.py")
-    match2_file = os.path.join(tests_directory, "match2.py")
-    test_subdir = os.path.join(tests_directory, "dir")
-    test_subdir_file = os.path.join(test_subdir, "test_subdir_file.py")
+    file1_file = os.path.join(tests_directory, "file1.py")  # noqa: PTH118
+    file2_file = os.path.join(tests_directory, "file2.py")  # noqa: PTH118
+    match1_file = os.path.join(tests_directory, "match1.py")  # noqa: PTH118
+    match2_file = os.path.join(tests_directory, "match2.py")  # noqa: PTH118
+    test_subdir = os.path.join(tests_directory, "dir")  # noqa: PTH118
+    test_subdir_file = os.path.join(test_subdir, "test_subdir_file.py")  # noqa: PTH118
 
-    os.mkdir(tests_directory)
-    os.mkdir(test_subdir)
+    os.mkdir(tests_directory)  # noqa: PTH102
+    os.mkdir(test_subdir)  # noqa: PTH102
     for f in [file1_file, file2_file, match1_file, match2_file, test_subdir_file]:
         util.write_file(f, "")
 
@@ -133,8 +133,8 @@ def test_additional_files_or_dirs_property(_instance):  # type: ignore[no-untype
     assert sorted(x) == sorted(_instance.additional_files_or_dirs)
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_testinfra_env_property(_instance):  # type: ignore[no-untyped-def]
+@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+def test_testinfra_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance.env["FOO"] == "bar"
     assert "ANSIBLE_CONFIG" in _instance.env
     assert "ANSIBLE_ROLES_PATH" in _instance.env
@@ -142,36 +142,36 @@ def test_testinfra_env_property(_instance):  # type: ignore[no-untyped-def]
     assert "ANSIBLE_FILTER_PLUGINS" in _instance.env
 
 
-def test_testinfra_name_property(_instance):  # type: ignore[no-untyped-def]
+def test_testinfra_name_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance.name == "testinfra"
 
 
-def test_testinfra_enabled_property(_instance):  # type: ignore[no-untyped-def]
+def test_testinfra_enabled_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance.enabled
 
 
-def test_testinfra_directory_property(_instance):  # type: ignore[no-untyped-def]
+def test_testinfra_directory_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     parts = _instance.directory.split(os.path.sep)
 
     assert ["molecule", "default", "tests"] == parts[-3:]
 
 
 @pytest.fixture()
-def _verifier_testinfra_directory_section_data():  # type: ignore[no-untyped-def]
-    return {"verifier": {"name": "testinfra", "directory": "/tmp/foo/bar"}}
+def _verifier_testinfra_directory_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+    return {"verifier": {"name": "testinfra", "directory": "/tmp/foo/bar"}}  # noqa: S108
 
 
 @pytest.mark.parametrize(
     "config_instance",
-    ["_verifier_testinfra_directory_section_data"],
+    ["_verifier_testinfra_directory_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_directory_property_overridden(_instance):  # type: ignore[no-untyped-def]
-    assert _instance.directory == "/tmp/foo/bar"
+def test_directory_property_overridden(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+    assert _instance.directory == "/tmp/foo/bar"  # noqa: S108
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_testinfra_options_property(inventory_directory, _instance):  # type: ignore[no-untyped-def]
+@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+def test_testinfra_options_property(inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     x = {
         "connection": "ansible",
         "ansible-inventory": inventory_directory,
@@ -184,8 +184,8 @@ def test_testinfra_options_property(inventory_directory, _instance):  # type: ig
     assert x == _instance.options
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_testinfra_options_property_handles_cli_args(inventory_directory, _instance):  # type: ignore[no-untyped-def]
+@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+def test_testinfra_options_property_handles_cli_args(inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._config.args = {"debug": True}
     x = {
         "connection": "ansible",
@@ -200,8 +200,8 @@ def test_testinfra_options_property_handles_cli_args(inventory_directory, _insta
     assert x == _instance.options
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_testinfra_bake(_patched_testinfra_get_tests, inventory_directory, _instance):  # type: ignore[no-untyped-def]
+@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+def test_testinfra_bake(_patched_testinfra_get_tests, inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._tests = ["foo.py", "bar.py"]
     _instance.bake()
     args = [
@@ -222,11 +222,11 @@ def test_testinfra_bake(_patched_testinfra_get_tests, inventory_directory, _inst
     assert _instance._testinfra_command == args
 
 
-def test_testinfra_execute(  # type: ignore[no-untyped-def]
-    caplog,
-    patched_run_command,
-    _patched_testinfra_get_tests,
-    _instance,
+def test_testinfra_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    caplog,  # noqa: ANN001
+    patched_run_command,  # noqa: ANN001
+    _patched_testinfra_get_tests,  # noqa: ANN001, PT019
+    _instance,  # noqa: ANN001, PT019
 ):
     _instance.execute()
 
@@ -236,13 +236,13 @@ def test_testinfra_execute(  # type: ignore[no-untyped-def]
     msg2 = "Verifier completed successfully."
     assert msg in caplog.text
     assert msg2 in caplog.text
-    assert "pytest" == patched_run_command.call_args[0][0][0]
+    assert patched_run_command.call_args[0][0][0] == "pytest"
 
 
-def test_testinfra_execute_does_not_execute(  # type: ignore[no-untyped-def]
-    patched_run_command,
-    caplog,
-    _instance,
+def test_testinfra_execute_does_not_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    patched_run_command,  # noqa: ANN001
+    caplog,  # noqa: ANN001
+    _instance,  # noqa: ANN001, PT019
 ):
     _instance._config.config["verifier"]["enabled"] = False
     _instance.execute()
@@ -253,10 +253,10 @@ def test_testinfra_execute_does_not_execute(  # type: ignore[no-untyped-def]
     assert msg in caplog.text
 
 
-def test_does_not_execute_without_tests(  # type: ignore[no-untyped-def]
-    patched_run_command,
-    caplog,
-    _instance,
+def test_does_not_execute_without_tests(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    patched_run_command,  # noqa: ANN001
+    caplog,  # noqa: ANN001
+    _instance,  # noqa: ANN001, PT019
 ):
     _instance.execute()
 
@@ -266,10 +266,10 @@ def test_does_not_execute_without_tests(  # type: ignore[no-untyped-def]
     assert msg in caplog.text
 
 
-def test_testinfra_execute_bakes(  # type: ignore[no-untyped-def]
-    patched_run_command,
-    _patched_testinfra_get_tests,
-    _instance,
+def test_testinfra_execute_bakes(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    patched_run_command,  # noqa: ANN001
+    _patched_testinfra_get_tests,  # noqa: ANN001, PT019
+    _instance,  # noqa: ANN001, PT019
 ):
     _instance.execute()
 
@@ -278,22 +278,22 @@ def test_testinfra_execute_bakes(  # type: ignore[no-untyped-def]
     assert patched_run_command.call_count == 1
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_execute_bakes_env(  # type: ignore[no-untyped-def]
-    patched_run_command,
-    _patched_testinfra_get_tests,
-    inventory_directory,
-    _instance,
+@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+def test_execute_bakes_env(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    patched_run_command,  # noqa: ANN001
+    _patched_testinfra_get_tests,  # noqa: ANN001, PT019
+    inventory_directory,  # noqa: ANN001, ARG001
+    _instance,  # noqa: ANN001, PT019
 ):
     _instance.execute()
 
     assert patched_run_command.call_args[1]["env"]["FOO"] == "bar"
 
 
-def test_testinfra_executes_catches_and_exits_return_code(  # type: ignore[no-untyped-def]
-    patched_run_command,
-    _patched_testinfra_get_tests,
-    _instance,
+def test_testinfra_executes_catches_and_exits_return_code(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    patched_run_command,  # noqa: ANN001
+    _patched_testinfra_get_tests,  # noqa: ANN001, PT019
+    _instance,  # noqa: ANN001, PT019
 ):
     patched_run_command.side_effect = SystemExit(1)
     with pytest.raises(SystemExit) as e:

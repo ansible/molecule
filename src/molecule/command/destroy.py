@@ -29,6 +29,7 @@ from molecule.api import drivers
 from molecule.command import base
 from molecule.config import DEFAULT_DRIVER
 
+
 LOG = logging.getLogger(__name__)
 MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
 
@@ -36,12 +37,12 @@ MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
 class Destroy(base.Base):
     """Destroy Command Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
         """Execute the actions necessary to perform a `molecule destroy` and \
         returns None.
 
         :return: None
-        """
+        """  # noqa: D205
         if self._config.command_args.get("destroy") == "never":
             msg = "Skipping, '--destroy=never' requested."
             LOG.warning(msg)
@@ -76,10 +77,10 @@ class Destroy(base.Base):
     default=False,
     help="Enable or disable parallel mode. Default is disabled.",
 )
-def destroy(ctx, scenario_name, driver_name, __all, parallel):  # type: ignore[no-untyped-def] # pragma: no cover
+def destroy(ctx, scenario_name, driver_name, __all, parallel):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """Use the provisioner to destroy the instances."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
     command_args = {
         "parallel": parallel,
         "subcommand": subcommand,
