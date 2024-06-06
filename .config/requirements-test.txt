@@ -3,6 +3,7 @@
 # related tools/plugins but w/o ansible, which can be installed separated.
 ansi2html >= 1.8.0
 ansible-lint >= 6.12.1
+black
 check-jsonschema
 coverage >= 7.0.3
 filelock >= 3.9.0
