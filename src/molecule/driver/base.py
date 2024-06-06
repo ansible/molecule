@@ -41,7 +41,9 @@ class Driver:
         :returns: None
         """
         self._config = config
-        self._path = os.path.abspath(os.path.dirname(inspect.getfile(self.__class__)))  # noqa: PTH100, PTH120
+        self._path = os.path.abspath(  # noqa: PTH100
+            os.path.dirname(inspect.getfile(self.__class__)),  # noqa: PTH120
+        )
         self.module = self.__module__.split(".", maxsplit=1)[0]
         self.version = version(self.module)
 

@@ -114,7 +114,11 @@ def test_testinfra_default_env_property(_instance):  # type: ignore[no-untyped-d
     assert "MOLECULE_INSTANCE_CONFIG" in _instance.default_env
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_verifier_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_additional_files_or_dirs_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     tests_directory = _instance._config.verifier.directory
     file1_file = os.path.join(tests_directory, "file1.py")  # noqa: PTH118
@@ -133,7 +137,11 @@ def test_additional_files_or_dirs_property(_instance):  # type: ignore[no-untype
     assert sorted(x) == sorted(_instance.additional_files_or_dirs)
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_verifier_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_testinfra_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance.env["FOO"] == "bar"
     assert "ANSIBLE_CONFIG" in _instance.env
@@ -170,7 +178,11 @@ def test_directory_property_overridden(_instance):  # type: ignore[no-untyped-de
     assert _instance.directory == "/tmp/foo/bar"  # noqa: S108
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_verifier_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_testinfra_options_property(inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     x = {
         "connection": "ansible",
@@ -184,7 +196,11 @@ def test_testinfra_options_property(inventory_directory, _instance):  # type: ig
     assert x == _instance.options
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_verifier_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_testinfra_options_property_handles_cli_args(inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._config.args = {"debug": True}
     x = {
@@ -200,7 +216,11 @@ def test_testinfra_options_property_handles_cli_args(inventory_directory, _insta
     assert x == _instance.options
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_verifier_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_testinfra_bake(_patched_testinfra_get_tests, inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._tests = ["foo.py", "bar.py"]
     _instance.bake()
@@ -278,7 +298,11 @@ def test_testinfra_execute_bakes(  # type: ignore[no-untyped-def]  # noqa: ANN20
     assert patched_run_command.call_count == 1
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_verifier_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_execute_bakes_env(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     patched_run_command,  # noqa: ANN001
     _patched_testinfra_get_tests,  # noqa: ANN001, PT019

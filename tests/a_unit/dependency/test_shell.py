@@ -66,7 +66,11 @@ def test_shell_default_env_property(_instance):  # type: ignore[no-untyped-def] 
     assert "MOLECULE_INSTANCE_CONFIG" in _instance.default_env
 
 
-@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_dependency_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_shell_name_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance.name == "shell"
 
@@ -75,14 +79,22 @@ def test_shell_enabled_property(_instance):  # type: ignore[no-untyped-def]  # n
     assert _instance.enabled
 
 
-@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_dependency_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_shell_options_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     x = {"foo": "bar"}
 
     assert x == _instance.options
 
 
-@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_dependency_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_shell_options_property_handles_cli_args(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._config.args = {}
     x = {"foo": "bar"}
@@ -90,7 +102,11 @@ def test_shell_options_property_handles_cli_args(_instance):  # type: ignore[no-
     assert x == _instance.options
 
 
-@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_dependency_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_shell_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance.env["FOO"] == "bar"
 
@@ -127,13 +143,21 @@ def test_shell_execute_does_not_execute_when_disabled(  # type: ignore[no-untype
     assert msg in caplog.text
 
 
-@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_dependency_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_dependency_execute_bakes(patched_run_command, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance.execute()
     assert patched_run_command.call_count == 1
 
 
-@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_dependency_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_dep_executes_catches_and_exits_return_code(patched_run_command, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     patched_run_command.side_effect = SystemExit(1)
     with pytest.raises(SystemExit) as e:

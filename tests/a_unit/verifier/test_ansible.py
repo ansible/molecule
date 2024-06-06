@@ -46,7 +46,11 @@ def test_verifier_ansible_default_env_property(_instance):  # type: ignore[no-un
     assert "MOLECULE_INSTANCE_CONFIG" in _instance.default_env
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_verifier_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_verifier_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance.env["FOO"] == "bar"
 
@@ -65,14 +69,22 @@ def test_verifier_directory_property(_instance):  # type: ignore[no-untyped-def]
     assert ["molecule", "default", "tests"] == parts[-3:]
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_verifier_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_verifier_ansible_options_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     x = {}  # type: ignore[var-annotated]
 
     assert x == _instance.options
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_verifier_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_verifier_ansible_options_property_handles_cli_args(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._config.args = {"debug": True}
     x = {}  # type: ignore[var-annotated]

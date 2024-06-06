@@ -91,7 +91,11 @@ def test_roles_enabled_property(_instance):  # type: ignore[no-untyped-def]  # n
     assert _instance.enabled
 
 
-@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_dependency_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_roles_options_property(_instance, role_file):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     x = {
         "force": False,
@@ -103,7 +107,11 @@ def test_roles_options_property(_instance, role_file):  # type: ignore[no-untype
     assert x == _instance.options
 
 
-@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_dependency_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_roles_options_property_handles_cli_args(role_file, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance._config.args = {"debug": True}
     x = {
@@ -116,12 +124,20 @@ def test_roles_options_property_handles_cli_args(role_file, _instance):  # type:
     assert x == _instance.options
 
 
-@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_dependency_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_roles_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance.env["FOO"] == "bar"
 
 
-@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_dependency_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_galaxy_bake(_instance, role_file):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance.bake()
     args = [

@@ -9,9 +9,6 @@ import pluggy
 
 from ansible_compat.ports import cache
 
-from molecule.driver.base import Driver  # noqa
-from molecule.verifier.base import Verifier  # noqa
-
 
 LOG = logging.getLogger(__name__)
 

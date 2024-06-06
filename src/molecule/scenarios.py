@@ -80,7 +80,9 @@ class Scenarios:
         for scenario in self.all:
             if scenario.name == scenario_name:
                 return list(scenario.sequence)
-        raise RuntimeError(f"Unable to find sequence for {scenario_name} scenario.")  # noqa: EM102, TRY003
+        raise RuntimeError(  # noqa: TRY003
+            f"Unable to find sequence for {scenario_name} scenario.",  # noqa: EM102
+        )
 
     def _verify(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         """Verify the specified scenario was found and returns None.

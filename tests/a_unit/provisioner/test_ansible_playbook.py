@@ -66,7 +66,11 @@ def test_env_in_provision(_instance_for_verifier_env):  # type: ignore[no-untype
     assert _instance_for_verifier_env._env["FOO"] == "bar"
 
 
-@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)  # noqa: PT007
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_verifier_section_data"],  # noqa: PT007
+    indirect=True,
+)
 def test_env_in_verifier(_instance_for_verifier_env):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     assert _instance_for_verifier_env._env["FOO"] == "bar"
 

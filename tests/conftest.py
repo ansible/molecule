@@ -80,7 +80,10 @@ def temp_dir(tmpdir, random_string, request):  # type: ignore[no-untyped-def]  #
 
 @pytest.fixture()
 def resources_folder_path():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    _resources_folder_path = os.path.join(os.path.dirname(__file__), "resources")  # noqa: PTH118, PTH120
+    _resources_folder_path = os.path.join(  # noqa: PTH118
+        os.path.dirname(__file__),  # noqa: PTH120
+        "resources",
+    )
     return _resources_folder_path  # noqa: RET504
 
 

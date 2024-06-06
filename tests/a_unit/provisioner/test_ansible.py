@@ -216,7 +216,9 @@ def test_provisioner_env_property(_instance):  # type: ignore[no-untyped-def]  #
 def test_env_appends_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     x = _instance._get_modules_directories()
     x.append(
-        util.abs_path(os.path.join(_instance._config.scenario.directory, "foo", "bar")),  # noqa: PTH118
+        util.abs_path(
+            os.path.join(_instance._config.scenario.directory, "foo", "bar"),  # noqa: PTH118
+        ),
     )
     assert x == _instance.env["ANSIBLE_LIBRARY"].split(":")
 
@@ -233,10 +235,17 @@ def test_env_appends_env_property(_instance):  # type: ignore[no-untyped-def]  #
             os.path.join(_instance._config.project_directory, "plugins", "filter"),  # noqa: PTH118
         ),
         util.abs_path(
-            os.path.join(os.path.expanduser("~"), ".ansible", "plugins", "filter"),  # noqa: PTH111, PTH118
+            os.path.join(  # noqa: PTH118
+                os.path.expanduser("~"),  # noqa: PTH111
+                ".ansible",
+                "plugins",
+                "filter",
+            ),
         ),
         "/usr/share/ansible/plugins/filter",
-        util.abs_path(os.path.join(_instance._config.scenario.directory, "foo", "bar")),  # noqa: PTH118
+        util.abs_path(
+            os.path.join(_instance._config.scenario.directory, "foo", "bar"),  # noqa: PTH118
+        ),
     ]
     assert x == _instance.env["ANSIBLE_FILTER_PLUGINS"].split(":")
 
@@ -664,7 +673,11 @@ def test_link_vars_raises_when_source_not_found(_instance, caplog):  # type: ign
 
     assert e.value.code == 1
 
-    source = os.path.join(_instance._config.scenario.directory, os.path.pardir, "bar")  # noqa: PTH118
+    source = os.path.join(  # noqa: PTH118
+        _instance._config.scenario.directory,
+        os.path.pardir,
+        "bar",
+    )
     msg = f"The source path '{source}' does not exist."
     assert msg in caplog.text
 

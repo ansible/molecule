@@ -335,7 +335,9 @@ def find_vcs_root(location="", dirs=(".git", ".hg", ".svn"), default=None) -> st
     while prev != location:
         if any(os.path.isdir(os.path.join(location, d)) for d in dirs):  # noqa: PTH112, PTH118
             return location  # type: ignore[no-any-return]
-        prev, location = location, os.path.abspath(os.path.join(location, os.pardir))  # noqa: PTH100, PTH118
+        prev, location = location, os.path.abspath(  # noqa: PTH100
+            os.path.join(location, os.pardir),  # noqa: PTH118
+        )
     return default  # type: ignore[no-any-return]
 
 

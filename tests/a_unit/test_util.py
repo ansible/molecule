@@ -306,7 +306,9 @@ def test_filter_verbose_permutation() -> None:  # noqa: D103
 
 
 def test_abs_path(temp_dir) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ARG001, D103
-    x = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir, "foo", "bar"))  # noqa: PTH100, PTH109, PTH118
+    x = os.path.abspath(  # noqa: PTH100
+        os.path.join(os.getcwd(), os.path.pardir, "foo", "bar"),  # noqa: PTH109, PTH118
+    )
 
     assert x == util.abs_path(os.path.join(os.path.pardir, "foo", "bar"))  # noqa: PTH118
 

@@ -199,7 +199,9 @@ class Scenario:
         try:
             result = matrix[self.name][self.config.subcommand]
             if not isinstance(result, list):
-                raise RuntimeError("Unexpected sequence type {result}.")  # noqa: EM101, TRY003, TRY004
+                raise RuntimeError(  # noqa: TRY003, TRY004
+                    "Unexpected sequence type {result}.",  # noqa: EM101
+                )
         except KeyError:
             pass
         return result

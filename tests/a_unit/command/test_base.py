@@ -98,7 +98,9 @@ def test_command_setup(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     _patched_manage_inventory,  # noqa: ANN001, PT019
     _instance,  # noqa: ANN001, PT019
 ):
-    assert os.path.isdir(os.path.dirname(_instance._config.provisioner.inventory_file))  # noqa: PTH112, PTH120
+    assert os.path.isdir(  # noqa: PTH112
+        os.path.dirname(_instance._config.provisioner.inventory_file),  # noqa: PTH120
+    )
     assert os.path.isfile(_instance._config.config_file)  # noqa: PTH113
 
     _patched_manage_inventory.assert_called_once_with()

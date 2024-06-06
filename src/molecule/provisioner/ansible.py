@@ -465,7 +465,10 @@ class Ansible(base.Base):
         # from installing dependencies to user list of collections.
         collections_path_list = [
             util.abs_path(
-                os.path.join(self._config.scenario.ephemeral_directory, "collections"),  # noqa: PTH118
+                os.path.join(  # noqa: PTH118
+                    self._config.scenario.ephemeral_directory,
+                    "collections",
+                ),
             ),
         ]
         if collection_indicator in self._config.project_directory:
@@ -477,7 +480,10 @@ class Ansible(base.Base):
         collections_path_list.extend(
             [
                 util.abs_path(
-                    os.path.join(os.path.expanduser("~"), ".ansible/collections"),  # noqa: PTH111, PTH118
+                    os.path.join(  # noqa: PTH118
+                        os.path.expanduser("~"),  # noqa: PTH111
+                        ".ansible/collections",
+                    ),
                 ),
                 "/usr/share/ansible/collections",
                 "/etc/ansible/collections",
@@ -498,8 +504,12 @@ class Ansible(base.Base):
             util.abs_path(
                 os.path.join(self._config.scenario.ephemeral_directory, "roles"),  # noqa: PTH118
             ),
-            util.abs_path(os.path.join(self._config.project_directory, os.path.pardir)),  # noqa: PTH118
-            util.abs_path(os.path.join(os.path.expanduser("~"), ".ansible", "roles")),  # noqa: PTH111, PTH118
+            util.abs_path(
+                os.path.join(self._config.project_directory, os.path.pardir),  # noqa: PTH118
+            ),
+            util.abs_path(
+                os.path.join(os.path.expanduser("~"), ".ansible", "roles"),  # noqa: PTH111, PTH118
+            ),
             "/usr/share/ansible/roles",
             "/etc/ansible/roles",
         ]
@@ -659,7 +669,10 @@ class Ansible(base.Base):
 
     @property
     def config_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
-        return os.path.join(self._config.scenario.ephemeral_directory, "ansible.cfg")  # noqa: PTH118
+        return os.path.join(  # noqa: PTH118
+            self._config.scenario.ephemeral_directory,
+            "ansible.cfg",
+        )
 
     @cached_property
     def playbooks(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
@@ -834,7 +847,10 @@ class Ansible(base.Base):
                 vars_target = self.group_vars
 
             if vars_target:
-                target_vars_directory = os.path.join(self.inventory_directory, target)  # noqa: PTH118
+                target_vars_directory = os.path.join(  # noqa: PTH118
+                    self.inventory_directory,
+                    target,
+                )
 
                 if not os.path.isdir(util.abs_path(target_vars_directory)):  # type: ignore[arg-type]  # noqa: PTH112
                     os.mkdir(util.abs_path(target_vars_directory))  # type: ignore[arg-type]  # noqa: PTH102
@@ -965,9 +981,14 @@ class Ansible(base.Base):
         paths.extend(
             [
                 util.abs_path(
-                    os.path.join(self._config.scenario.ephemeral_directory, "library"),  # noqa: PTH118
+                    os.path.join(  # noqa: PTH118
+                        self._config.scenario.ephemeral_directory,
+                        "library",
+                    ),
                 ),
-                util.abs_path(os.path.join(self._config.project_directory, "library")),  # noqa: PTH118
+                util.abs_path(
+                    os.path.join(self._config.project_directory, "library"),  # noqa: PTH118
+                ),
                 util.abs_path(
                     os.path.join(  # noqa: PTH118
                         os.path.expanduser("~"),  # noqa: PTH111

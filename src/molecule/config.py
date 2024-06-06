@@ -115,7 +115,10 @@ class Config(metaclass=NewInitCaller):
         self.config = self._get_config()
         self._action = None
         self._run_uuid = str(uuid4())
-        self.project_directory = os.getenv("MOLECULE_PROJECT_DIRECTORY", os.getcwd())  # noqa: PTH109
+        self.project_directory = os.getenv(
+            "MOLECULE_PROJECT_DIRECTORY",
+            os.getcwd(),  # noqa: PTH109
+        )
         self.runtime = app.runtime
         self.scenario_path = Path(molecule_file).parent
 
@@ -373,7 +376,10 @@ class Config(metaclass=NewInitCaller):
         if not self.molecule_file:
             scenario_name = "default"
         else:
-            scenario_name = os.path.basename(os.path.dirname(self.molecule_file)) or "default"  # noqa: PTH119, PTH120
+            scenario_name = (
+                os.path.basename(os.path.dirname(self.molecule_file))  # noqa: PTH119, PTH120
+                or "default"
+            )
         return {
             "dependency": {
                 "name": "galaxy",
