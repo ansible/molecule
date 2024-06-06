@@ -1,0 +1,11 @@
+[flake8]
+allow-init-docstring = True
+arg-type-hints-in-docstring = False
+check-return-types = False
+select = DOC
+show-filenames-in-every-violation-message = True
+skip-checking-short-docstrings = False
+filename =
+    */src/**/*.py
+    */tests/**/*.py
+style = google

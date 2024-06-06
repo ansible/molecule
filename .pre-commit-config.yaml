@@ -49,7 +49,7 @@ repos:
         types: [file, yaml]
         entry: yamllint --strict
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.4.7"
+    rev: "v0.4.8"
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
@@ -75,7 +75,7 @@ repos:
         args: [--strict]
 
   - repo: https://github.com/pycqa/pylint.git
-    rev: v3.2.2
+    rev: v3.2.3
     hooks:
       - id: pylint
         args:
