@@ -1,4 +1,3 @@
-# spell-checker:ignore bcond pkgversion buildrequires autosetup PYTHONPATH noarch buildroot bindir sitelib numprocesses
 # All tests require Internet access
 # to test in mock use:  --enable-network --with check
 # to test in a privileged environment use:
