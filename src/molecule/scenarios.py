@@ -32,9 +32,9 @@ class Scenarios:
     def __init__(self, configs, scenario_name=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Initialize a new scenarios class and returns None.
 
-        :param configs: A list containing Molecule config instances.
-        :param scenario_name: A string containing the name of the scenario.
-        :return: None
+        Args:
+            configs: A list containing Molecule config instances.
+            scenario_name: A string containing the name of the scenario.
         """
         self._configs = configs
         self._scenario_name = scenario_name
@@ -55,7 +55,8 @@ class Scenarios:
     def all(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
         """Return a list containing all scenario objects.
 
-        :return: list
+        Returns:
+            list
         """
         if self._scenario_name:
             scenarios = self._filter_for_scenario()  # type: ignore[no-untyped-call]
@@ -85,26 +86,22 @@ class Scenarios:
         )
 
     def _verify(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
-        """Verify the specified scenario was found and returns None.
-
-        :return: None
-        """
+        """Verify the specified scenario was found and returns None."""
         scenario_names = [c.scenario.name for c in self._configs]
         if self._scenario_name not in scenario_names:
             msg = f"Scenario '{self._scenario_name}' not found.  Exiting."
             util.sysexit_with_message(msg)
 
     def _filter_for_scenario(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
-        """Find the scenario matching the provided scenario name and returns a \
-        list.
+        """Find the scenario matching the provided scenario name and returns a list.
 
-        :return: list
-        """  # noqa: D205
+        Returns:
+            list
+        """
         return [c.scenario for c in self._configs if c.scenario.name == self._scenario_name]
 
     def _get_matrix(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
-        """Build a matrix of scenarios with sequence to include and returns a \
-        dict.
+        """Build a matrix of scenarios with sequence to include and returns a dict.
 
         {
             scenario_1: {
@@ -120,8 +117,9 @@ class Scenarios:
             },
         }
 
-        :returns: dict
-        """  # noqa: D205
+        Returns:
+            dict
+        """
         return {
             scenario.name: {
                 "check": scenario.check_sequence,

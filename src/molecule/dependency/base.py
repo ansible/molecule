@@ -45,8 +45,8 @@ class Base:
     def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Initialize code for all :ref:`Dependency` classes.
 
-        :param config: An instance of a Molecule config.
-        :returns: None
+        Args:
+            config: An instance of a Molecule config.
         """
         self._config = config
         self._sh_command: list[str] | None = None
@@ -85,10 +85,7 @@ class Base:
 
     @abc.abstractmethod
     def execute(self, action_args=None):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN101, ANN201
-        """Execute ``cmd`` and returns None.
-
-        :return: None
-        """
+        """Execute ``cmd`` and returns None."""
         for name, version in self._config.driver.required_collections.items():
             self._config.runtime.require_collection(name, version)
 
@@ -97,14 +94,16 @@ class Base:
     def default_options(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
         """Get default CLI arguments provided to ``cmd`` as a dict.
 
-        :return: dict
+        Returns:
+            dict
         """
 
     @property
     def default_env(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
         """Get default env variables provided to ``cmd`` as a dict.
 
-        :return: dict
+        Returns:
+            dict
         """
         env = util.merge_dicts(os.environ, self._config.env)
         return env  # noqa: RET504

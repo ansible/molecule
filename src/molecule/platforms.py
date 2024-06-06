@@ -28,8 +28,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Platforms:
-    """Platforms define the instances to be tested, and the groups to which the \
-    instances belong.
+    """Platforms define the instances to be tested, and the groups to which the instances belong.
 
     ``` yaml
 
@@ -67,15 +66,15 @@ class Platforms:
             children:
               - child_group1
     ```
-    """  # noqa: D205
+    """
 
     def __init__(self, config, parallelize_platforms=False, platform_name=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, FBT002
         """Initialize a new platform class and returns None.
 
-        :param config: An instance of a Molecule config.
-        :param parallelize_platforms: Parallel mode. Default is False.
-        :param platform_name: One platform to target only, defaults to None.
-        :return: None
+        Args:
+            config: An instance of a Molecule config.
+            parallelize_platforms: Parallel mode. Default is False.
+            platform_name: One platform to target only, defaults to None.
         """
         if platform_name:
             config.config["platforms"] = util._filter_platforms(  # type: ignore[no-untyped-call]  # noqa: SLF001

@@ -91,8 +91,8 @@ class Testinfra(Verifier):
     def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Set up the requirements to execute ``testinfra`` and returns None.
 
-        :param config: An instance of a Molecule config.
-        :return: None
+        Args:
+            config: An instance of a Molecule config.
         """
         super().__init__(config)
         self._testinfra_command = None
@@ -146,10 +146,7 @@ class Testinfra(Verifier):
         return files_list
 
     def bake(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
-        """Bake a ``testinfra`` command so it's ready to execute and returns None.
-
-        :return: None
-        """
+        """Bake a ``testinfra`` command so it's ready to execute and returns None."""
         options = self.options
         verbose_flag = util.verbose_flag(options)  # type: ignore[no-untyped-call]
         args = verbose_flag
@@ -196,7 +193,8 @@ class Testinfra(Verifier):
     def _get_tests(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
         """Walk the verifier's directory for tests and returns a list.
 
-        :return: list
+        Returns:
+            list
         """
         if action_args:
             tests = []

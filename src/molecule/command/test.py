@@ -39,11 +39,7 @@ class Test(base.Base):
     """Test Command Class."""
 
     def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
-        """Execute the actions necessary to perform a `molecule test` and \
-        returns None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute the actions necessary to perform a `molecule test` and returns None."""
 
 
 @base.click_command_ex()

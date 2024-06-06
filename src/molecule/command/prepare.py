@@ -32,8 +32,9 @@ LOG = logging.getLogger(__name__)
 
 
 class Prepare(base.Base):
-    """This action is for the purpose of preparing a molecule managed instance \
-    before the :py:class:`molecule.command.converge.Converge` action is run.
+    """This action is for the purpose of preparing a molecule managed instance.
+
+    Done before the :py:class:`molecule.command.converge.Converge` action is run.
 
     Tasks contained within the ``prepare.yml`` playbook in the scenario
     directory will be run remotely on the managed instance. This action is run
@@ -81,14 +82,10 @@ class Prepare(base.Base):
 
         Load an env file to read variables from when rendering
         molecule.yml.
-    """  # noqa: D205
+    """
 
     def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
-        """Execute the actions necessary to prepare the instances and returns \
-        None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute the actions necessary to prepare the instances and returns None."""
         if self._config.state.prepared and not self._config.command_args.get("force"):
             msg = "Skipping, instances already prepared."
             LOG.warning(msg)

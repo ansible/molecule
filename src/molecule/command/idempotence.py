@@ -40,11 +40,7 @@ class Idempotence(base.Base):
     """
 
     def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
-        """Execute the actions necessary to perform a `molecule idempotence` and \
-        returns None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute the actions necessary to perform a `molecule idempotence` and returns None."""
         if not self._config.state.converged:
             msg = "Instances not converged.  Please converge instances first."
             util.sysexit_with_message(msg)
@@ -63,8 +59,11 @@ class Idempotence(base.Base):
     def _is_idempotent(self, output):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
         """Parse the output of the provisioning for changed and returns a bool.
 
-        :param output: A string containing the output of the ansible run.
-        :return: bool
+        Args:
+            output: A string containing the output of the ansible run.
+
+        Returns:
+            bool: True if the output is idempotent, False otherwise.
         """
         # Remove blank lines to make regex matches easier
         output = re.sub(r"\n\s*\n*", "\n", output)
@@ -81,8 +80,12 @@ class Idempotence(base.Base):
     def _non_idempotent_tasks(self, output):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
         """Parse the output to identify the non idempotent tasks.
 
-        :param (str) output: A string containing the output of the ansible run.
-        :return: A list containing the names of the non idempotent tasks.
+        Args:
+            output: A string containing the output of the ansible run.
+
+        Returns:
+            list: A list containing the names of the non idempotent tasks.
+
         """
         # Remove blank lines to make regex matches easier.
         output = re.sub(r"\n\s*\n*", "\n", output)
@@ -115,9 +118,10 @@ class Idempotence(base.Base):
 )
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
 def idempotence(ctx, scenario_name, ansible_args):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
-    """Use the provisioner to configure the instances and parse the output to \
-    determine idempotence.
-    """  # noqa: D205
+    """Use the provisioner to configure the instances.
+
+    After parse the output to determine idempotence.
+    """
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
     command_args = {"subcommand": subcommand}

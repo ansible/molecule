@@ -35,8 +35,8 @@ class AnsiblePlaybooks:
     def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Initialize a new namespace class and returns None.
 
-        :param config: An instance of a Molecule config.
-        :return: None
+        Args:
+            config: An instance of a Molecule config.
         """
         self._config = config
 

@@ -36,8 +36,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Scenario(base.Base):
-    """
-    Scenario Class.
+    """Scenario Class.
 
     .. program:: molecule init scenario bar --role-name foo
 
@@ -64,11 +63,7 @@ class Scenario(base.Base):
         self._command_args = command_args
 
     def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
-        """Execute the actions necessary to perform a `molecule init scenario` and \
-        returns None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute the actions necessary to perform a `molecule init scenario` and returns None."""
         scenario_name = self._command_args["scenario_name"]
 
         msg = f"Initializing new scenario {scenario_name}..."

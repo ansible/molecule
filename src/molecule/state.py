@@ -62,8 +62,8 @@ class State:
     def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Initialize a new state class and returns None.
 
-        :param config: An instance of a Molecule config.
-        :returns: None
+        Args:
+            config: An instance of a Molecule config.
         """
         self._config = config
         self._state_file = self._get_state_file()  # type: ignore[no-untyped-call]
@@ -115,15 +115,14 @@ class State:
 
     @marshal  # type: ignore[arg-type]
     def change_state(self, key, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
-        """Change the state of the instance data with the given \
-        ``key`` and the provided ``value``.
+        """Change the state of the instance data with the given `key` and the provided ``value`.
 
         Wrapping with a decorator is probably not necessary.
 
-        :param key: A ``str`` containing the key to update
-        :param value: A value to change the ``key`` to
-        :return: None
-        """  # noqa: D205
+        Args:
+            key: A ``str`` containing the key to update
+            value: A value to change the ``key`` to
+        """
         if key not in VALID_KEYS:
             raise InvalidState
         self._data[key] = value

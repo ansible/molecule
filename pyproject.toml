@@ -356,7 +356,7 @@ lines-between-types = 1 # Separate import/from with 1 line
 "tests/**" = ["SLF001", "S101", "S602", "T201"]
 
 [tool.ruff.lint.pydocstyle]
-convention = "pep257"
+convention = "google"
 
 [tool.setuptools.dynamic]
 optional-dependencies.docs = { file = [".config/requirements-docs.txt"] }

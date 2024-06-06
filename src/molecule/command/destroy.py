@@ -38,11 +38,7 @@ class Destroy(base.Base):
     """Destroy Command Class."""
 
     def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
-        """Execute the actions necessary to perform a `molecule destroy` and \
-        returns None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute the actions necessary to perform a `molecule destroy` and returns None."""
         if self._config.command_args.get("destroy") == "never":
             msg = "Skipping, '--destroy=never' requested."
             LOG.warning(msg)

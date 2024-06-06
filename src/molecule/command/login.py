@@ -42,11 +42,7 @@ class Login(base.Base):
         self._pt = None
 
     def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
-        """Execute the actions necessary to perform a `molecule login` and \
-        returns None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute the actions necessary to perform a `molecule login` and returns None."""
         c = self._config
         if (not c.state.created) and c.driver.managed:
             msg = "Instances not created.  Please create instances first."
