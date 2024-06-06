@@ -70,7 +70,7 @@ parallel = true
 source_pkgs = ["molecule"]
 
 [tool.black]
-skip-string-normalization = false
+line-length = 100
 
 [tool.isort]
 profile = "black"

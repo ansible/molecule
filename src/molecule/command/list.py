@@ -103,10 +103,7 @@ def _print_tabulate_data(headers, data, table_format):  # type: ignore[no-untype
 
 
 def _print_yaml_data(headers, data):  # type: ignore[no-untyped-def] # pragma: no cover
-    l = [
-        dict(zip(headers, [getattr(datum, field) for field in datum._fields]))
-        for datum in data
-    ]
+    l = [dict(zip(headers, [getattr(datum, field) for field in datum._fields])) for datum in data]
 
     syntax = Syntax(util.safe_dump(l), "yaml")
     console.print(syntax)

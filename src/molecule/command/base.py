@@ -166,10 +166,7 @@ def execute_scenario(scenario):  # type: ignore[no-untyped-def]
     for action in scenario.sequence:
         execute_subcommand(scenario.config, action)  # type: ignore[no-untyped-call]
 
-    if (
-        "destroy" in scenario.sequence
-        and scenario.config.command_args.get("destroy") != "never"
-    ):
+    if "destroy" in scenario.sequence and scenario.config.command_args.get("destroy") != "never":
         scenario.prune()
 
         if scenario.config.is_parallel:
@@ -190,9 +187,7 @@ def filter_ignored_scenarios(scenario_paths) -> list[str]:  # type: ignore[no-un
 
     try:
         ignored = proc.stdout.splitlines()
-        paths = [
-            candidate for candidate in scenario_paths if str(candidate) not in ignored
-        ]
+        paths = [candidate for candidate in scenario_paths if str(candidate) not in ignored]
     except NameError:
         paths = scenario_paths
 
@@ -212,9 +207,7 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):  #
     """
     scenario_paths = glob.glob(
         glob_str,
-        flags=wcmatch.pathlib.GLOBSTAR
-        | wcmatch.pathlib.BRACE
-        | wcmatch.pathlib.DOTGLOB,
+        flags=wcmatch.pathlib.GLOBSTAR | wcmatch.pathlib.BRACE | wcmatch.pathlib.DOTGLOB,
     )
 
     scenario_paths = filter_ignored_scenarios(scenario_paths)

@@ -76,10 +76,7 @@ class Scenario(base.Base):
         scenario_directory = os.path.join(molecule_directory, scenario_name)
 
         if os.path.isdir(scenario_directory):
-            msg = (
-                f"The directory molecule/{scenario_name} exists. "
-                "Cannot create new scenario."
-            )
+            msg = f"The directory molecule/{scenario_name} exists. Cannot create new scenario."
             util.sysexit_with_message(msg)
 
         extra_vars = json.dumps(self._command_args)

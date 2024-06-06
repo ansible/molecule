@@ -36,7 +36,5 @@ class Base:
     def _validate_template_dir(self, template_dir):  # type: ignore[no-untyped-def]
         if not os.path.isdir(template_dir):
             util.sysexit_with_message(
-                "The specified template directory ("
-                + str(template_dir)
-                + ") does not exist",
+                "The specified template directory (" + str(template_dir) + ") does not exist",
             )
