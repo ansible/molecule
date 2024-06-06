@@ -23,7 +23,9 @@ from collections.abc import MutableMapping
 class InvalidInterpolation(Exception):
     """InvalidInterpolation Exception."""
 
-    def __init__(self, string: str, place: Exception) -> None:  # pylint: disable=redefined-outer-name
+    def __init__(
+        self, string: str, place: Exception,
+    ) -> None:  # pylint: disable=redefined-outer-name
         """Construct InvalidInterpolation."""
         self.string = string
         self.place = place
