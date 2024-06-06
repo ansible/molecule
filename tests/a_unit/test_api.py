@@ -25,7 +25,7 @@ from molecule import api
 def test_api_molecule_drivers_as_attributes():  # type: ignore[no-untyped-def]
     results = api.drivers()
     assert hasattr(results, "default")
-    assert isinstance(results.default, api.Driver)  # type: ignore[attr-defined]
+    assert isinstance(results.default, api.Driver)  # type: ignore[attr-defined] # pylint:disable=no-member
 
 
 def test_api_drivers():  # type: ignore[no-untyped-def]

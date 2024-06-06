@@ -74,7 +74,7 @@ repos:
         # Override default pre-commit '--ignore-missing-imports'
         args: [--strict]
 
-  - repo: https://github.com/pycqa/pylint
+  - repo: https://github.com/pycqa/pylint.git
     rev: v3.2.2
     hooks:
       - id: pylint
@@ -91,6 +91,7 @@ repos:
           - pytest-mock
           - pytest-testinfra
           - wcmatch
+
   - repo: https://github.com/ansible/ansible-lint
     rev: v24.6.0
     hooks:

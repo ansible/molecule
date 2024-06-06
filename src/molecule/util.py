@@ -255,7 +255,7 @@ def instance_with_scenario_name(instance_name, scenario_name):  # type: ignore[n
 def verbose_flag(options):  # type: ignore[no-untyped-def]
     """Return computed verbosity flag."""
     verbose = "v"
-    verbose_flag = []
+    verbose_flag = []  # pylint: disable=redefined-outer-name
     for _i in range(3):
         if options.get(verbose):
             verbose_flag = [f"-{verbose}"]

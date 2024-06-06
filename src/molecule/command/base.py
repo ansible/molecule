@@ -142,7 +142,7 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
                 raise
 
 
-def execute_subcommand(config, subcommand_and_args):  # type: ignore[no-untyped-def]
+def execute_subcommand(config, subcommand_and_args):  # type: ignore[no-untyped-def]  # pylint: disable=redefined-outer-name
     """Execute subcommand."""
     (subcommand, *args) = subcommand_and_args.split(" ")
     command_module = getattr(molecule.command, subcommand)

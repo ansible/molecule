@@ -42,7 +42,7 @@ LOG = logging.getLogger(__name__)
 )
 def drivers(ctx, format):  # type: ignore[no-untyped-def] # pragma: no cover
     """List drivers."""
-    drivers = []
+    drivers = []  # pylint: disable=redefined-outer-name
     for driver in api.drivers():
         description = driver
         if format != "plain":

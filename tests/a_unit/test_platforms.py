@@ -37,8 +37,8 @@ def test_instances_property(_instance):  # type: ignore[no-untyped-def]
     assert x == _instance.instances
 
 
-@pytest.fixture()
-def platform_name(request, config_instance: config.Config):  # type: ignore[no-untyped-def]
+@pytest.fixture(name="platform_name")
+def fixture_platform_name(request, config_instance: config.Config):  # type: ignore[no-untyped-def]
     return platforms.Platforms(config_instance, platform_name=request.param)
 
 

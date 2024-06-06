@@ -29,7 +29,7 @@ from molecule.command import base
 LOG = logging.getLogger(__name__)
 
 
-class Matrix(base.Base):
+class Matrix(base.Base):  # pylint: disable=abstract-method
     """Matrix Command Class.
 
     .. program:: molecule matrix subcommand

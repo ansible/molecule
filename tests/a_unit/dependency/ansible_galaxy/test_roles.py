@@ -59,8 +59,8 @@ def _instance(  # type: ignore[no-untyped-def]
     return roles.Roles(config_instance)
 
 
-@pytest.fixture()
-def role_file(_instance):  # type: ignore[no-untyped-def]
+@pytest.fixture(name="role_file")
+def fixture_role_file(_instance):  # type: ignore[no-untyped-def]
     return os.path.join(_instance._config.scenario.directory, "requirements.yml")
 
 

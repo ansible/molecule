@@ -37,21 +37,21 @@ from tests.b_functional.conftest import (  # pylint:disable=C0411
 from tests.conftest import mac_on_gh  # pylint:disable=C0411
 
 
-@pytest.fixture()
-def scenario_to_test(request):  # type: ignore[no-untyped-def]
+@pytest.fixture(name="scenario_to_test")
+def fixture_scenario_to_test(request):  # type: ignore[no-untyped-def]
     return request.param
 
 
-@pytest.fixture()
-def scenario_name(request):  # type: ignore[no-untyped-def]
+@pytest.fixture(name="scenario_name")
+def fixture_scenario_name(request):  # type: ignore[no-untyped-def]
     try:
         return request.param
     except AttributeError:
         return None
 
 
-@pytest.fixture()
-def driver_name(request: FixtureRequest) -> str | None:
+@pytest.fixture(name="driver_name")
+def fixture_driver_name(request: FixtureRequest) -> str | None:
     try:
         # https://stackoverflow.com/q/65334215/99834
         return request.param  # type: ignore
@@ -59,8 +59,8 @@ def driver_name(request: FixtureRequest) -> str | None:
         return None
 
 
-@pytest.fixture()
-def platform_name(request):  # type: ignore[no-untyped-def]
+@pytest.fixture(name="platform_name")
+def fixture_platform_name(request):  # type: ignore[no-untyped-def]
     try:
         return request.param
     except AttributeError:

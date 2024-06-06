@@ -313,7 +313,6 @@ def test_abs_path_with_none_path() -> None:
     assert util.abs_path(None) is None  # type: ignore
 
 
-# pylint: disable=use-dict-literal
 @pytest.mark.parametrize(
     ("a", "b", "x"),
     [
