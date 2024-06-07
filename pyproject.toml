@@ -1,20 +1,12 @@
 [build-system]
+build-backend = "setuptools.build_meta"
 requires = [
   "setuptools >= 63.0.0", # required by pyproject+setuptools_scm integration
   "setuptools_scm[toml] >= 7.0.5" # required for "no-local-version" scheme
 ]
-build-backend = "setuptools.build_meta"
 
 [project]
-# https://peps.python.org/pep-0621/#readme
-requires-python = ">=3.10"
-dynamic = ["version", "dependencies", "optional-dependencies"]
-name = "molecule"
-description = "Molecule aids in the development and testing of Ansible roles"
-readme = "README.md"
-authors = [{"name" = "Ansible by Red Hat", "email" = "info@ansible.com"}]
-maintainers = [{"name" = "Ansible by Red Hat", "email" = "info@ansible.com"}]
-license = {text = "MIT"}
+authors = [{"email" = "info@ansible.com", "name" = "Ansible by Red Hat"}]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Environment :: Console",
@@ -35,14 +27,22 @@ classifiers = [
   "Topic :: Software Development :: Testing",
   "Topic :: Utilities"
 ]
+description = "Molecule aids in the development and testing of Ansible roles"
+dynamic = ["version", "dependencies", "optional-dependencies"]
 keywords = ["ansible", "roles", "testing", "molecule"]
+license = {text = "MIT"}
+maintainers = [{"email" = "info@ansible.com", "name" = "Ansible by Red Hat"}]
+name = "molecule"
+readme = "README.md"
+# https://peps.python.org/pep-0621/#readme
+requires-python = ">=3.10"
 
 [project.entry-points."molecule.driver"]
 default = "molecule.driver.delegated:Delegated"
 
 [project.entry-points."molecule.verifier"]
-testinfra = "molecule.verifier.testinfra:Testinfra"
 ansible = "molecule.verifier.ansible:Ansible"
+testinfra = "molecule.verifier.testinfra:Testinfra"
 
 [project.scripts]
 molecule = "molecule.__main__:main"
