@@ -1,5 +1,6 @@
 - name: Converge
   hosts: localhost
+  connection: local
   tasks:
     - name: Assert CWD is the same as playbook_dir
       ansible.builtin.assert:
