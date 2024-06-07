@@ -1,3 +1,4 @@
+---
 # See https://github.com/ansible/team-devtools/blob/main/.github/workflows/push.yml
 name: push
 on:
@@ -6,6 +7,7 @@ on:
       - main
       - "releases/**"
       - "stable/**"
+  workflow_dispatch:
 
 jobs:
   ack:

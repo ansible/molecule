@@ -1,4 +1,4 @@
 comment: false
 coverage:
   status:
-    patch: true # we want github annotations
+    patch: true
