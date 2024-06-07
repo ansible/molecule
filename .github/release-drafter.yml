@@ -1,2 +1,3 @@
+---
 # see https://github.com/ansible/team-devtools
 _extends: ansible/team-devtools
