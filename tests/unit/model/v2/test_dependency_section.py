@@ -36,12 +36,12 @@ def _model_dependency_section_data():  # type: ignore[no-untyped-def]  # noqa: A
 
 
 @pytest.mark.parametrize(
-    "_config",
+    "config",
     ["_model_dependency_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_dependency(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
+def test_dependency(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+    assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
@@ -50,14 +50,14 @@ def _model_dependency_errors_section_data():  # type: ignore[no-untyped-def]  # 
 
 
 @pytest.mark.parametrize(
-    "_config",
+    "config",
     ["_model_dependency_errors_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_dependency_has_errors(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_dependency_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     x = ["0 is not one of ['galaxy', 'shell']"]
 
-    assert x == schema_v3.validate(_config)  # type: ignore[no-untyped-call]
+    assert x == schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
@@ -71,15 +71,15 @@ def _model_dependency_allows_shell_section_data():  # type: ignore[no-untyped-de
 
 
 @pytest.mark.parametrize(
-    "_config",
+    "config",
     [  # noqa: PT007
         ("_model_dependency_allows_galaxy_section_data"),
         ("_model_dependency_allows_shell_section_data"),
     ],
     indirect=True,
 )
-def test_dependency_allows_shell_name(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
+def test_dependency_allows_shell_name(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+    assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
@@ -88,11 +88,11 @@ def _model_dependency_shell_errors_section_data():  # type: ignore[no-untyped-de
 
 
 @pytest.mark.parametrize(
-    "_config",
+    "config",
     ["_model_dependency_shell_errors_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_dependency_shell_has_errors(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_dependency_shell_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     x = ["None is not of type 'string'"]
 
-    assert x == schema_v3.validate(_config)  # type: ignore[no-untyped-call]
+    assert x == schema_v3.validate(config)  # type: ignore[no-untyped-call]
