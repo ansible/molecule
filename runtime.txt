@@ -1,2 +1,0 @@
-# See https://github.com/dependabot/dependabot-core/issues/4062
-python-3.10.13

@@ -22,6 +22,8 @@ from __future__ import annotations
 import os
 import pathlib
 
+from pathlib import Path
+
 import pytest
 
 from pytest import FixtureRequest  # noqa: PT013
@@ -384,27 +386,38 @@ def test_with_and_without_gitignore(  # noqa: D103
 
 
 @mac_on_gh
-def test_podman() -> None:  # noqa: D103
-    assert (
-        run_command(
-            ["molecule", "test", "--scenario-name", "podman"],
-        ).returncode
-        == 0
-    )
+def test_podman(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None:
+    """Execute Podman scenario.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        test_fixture_dir: Path to the test fixture directory.
+    """
+    monkeypatch.chdir(test_fixture_dir)
+    command = ["molecule", "test", "--scenario-name", "podman"]
+    assert run_command(command).returncode == 0
 
 
 @mac_on_gh
-def test_docker() -> None:  # noqa: D103
-    assert (
-        run_command(
-            ["molecule", "test", "--scenario-name", "docker"],
-        ).returncode
-        == 0
-    )
+def test_docker(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None:
+    """Execute Docker scenario.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        test_fixture_dir: Path to the test fixture directory.
+    """
+    monkeypatch.chdir(test_fixture_dir)
+    command = ["molecule", "test", "--scenario-name", "docker"]
+    assert run_command(command).returncode == 0
 
 
-def test_smoke() -> None:
-    """Execute smoke-test scenario that should spot potentially breaking changes."""
-    assert run_command(
-        ["molecule", "test", "--scenario-name", "smoke"],
-    )
+def test_smoke(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None:
+    """Execute smoke-test scenario that should spot potentially breaking changes.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        test_fixture_dir: Path to the test fixture directory.
+    """
+    monkeypatch.chdir(test_fixture_dir)
+    command = ["molecule", "test", "--scenario-name", "smoke"]
+    assert run_command(command).returncode == 0

@@ -125,6 +125,7 @@ ulimits
 ultral
 unittests
 urandom
+usefixtures
 usermod
 vfoo
 virt

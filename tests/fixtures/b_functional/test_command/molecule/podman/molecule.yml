@@ -7,7 +7,7 @@ platforms:
     image: ubuntu:18.04
 driver:
   options:
-    managed: False
+    managed: false
     login_cmd_template: "podman exec -ti {instance} bash"
     ansible_connection_options:
       ansible_connection: podman

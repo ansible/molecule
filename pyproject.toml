@@ -73,6 +73,7 @@ source_pkgs = ["molecule"]
 line-length = 100
 
 [tool.mypy]
+cache_dir = "./.cache/.mypy"
 files = ["src", "tests"]
 strict = true
 
@@ -327,6 +328,7 @@ fail-on = [
 
 [tool.pytest.ini_options]
 addopts = "-ra --showlocals --durations=10"
+cache_dir = "./.cache/.pytest"
 markers = [
   "serial: Run this test serially via filelock.",
   "extensive: marks tests that we want to skip by default, as they are indirectly covered by other tests",
@@ -337,6 +339,7 @@ verbosity_assertions = 2
 
 [tool.ruff]
 builtins = ["__"]
+cache-dir = "./.cache/.ruff"
 fix = true
 line-length = 100
 target-version = "py310"
@@ -348,6 +351,7 @@ select = ["ALL"]
 parametrize-values-type = "tuple"
 
 [tool.ruff.lint.isort]
+known-first-party = ["molecule"]
 lines-after-imports = 2 # Ensures consistency for cases when there's variable vs function/class definitions after imports
 lines-between-types = 1 # Separate import/from with 1 line
 
