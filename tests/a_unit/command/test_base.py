@@ -20,12 +20,18 @@
 
 import os
 
+from pathlib import Path
+from unittest.mock import MagicMock
+
 import pytest
 
 from pytest_mock import MockerFixture
 
 from molecule import config, util
 from molecule.command import base
+
+
+FIXTURE_DIR = Path(__file__).parent.parent.parent / "fixtures" / "unit" / "test_base"
 
 
 class ExtendedBase(base.Base):
@@ -63,23 +69,55 @@ def _patched_manage_inventory(mocker):  # type: ignore[no-untyped-def]  # noqa: 
     return mocker.patch("molecule.provisioner.ansible.Ansible.manage_inventory")
 
 
-@pytest.fixture()
-def _patched_execute_subcommand(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
+@pytest.fixture(name="patched_execute_subcommand")
+def fixture_patched_execute_subcommand(mocker: MockerFixture) -> MagicMock:
+    """Mock molecule execute_subcommand function.
+
+    Args:
+        mocker: pytest mocker fixture.
+
+    Returns:
+        MagicMock: Mocked execute_subcommand function.
+    """
     return mocker.patch("molecule.command.base.execute_subcommand")
 
 
-@pytest.fixture()
-def _patched_execute_scenario(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
+@pytest.fixture(name="patched_execute_scenario")
+def fixture_patched_execute_scenario(mocker: MockerFixture) -> MagicMock:
+    """Mock molecule execute_scenario function.
+
+    Args:
+        mocker: pytest mocker fixture.
+
+    Returns:
+        MagicMock: Mocked execute_scenario function.
+    """
     return mocker.patch("molecule.command.base.execute_scenario")
 
 
-@pytest.fixture()
-def _patched_prune(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
+@pytest.fixture(name="patched_prune")
+def fixture_patched_prune(mocker: MockerFixture) -> MagicMock:
+    """Mock molecule prune function.
+
+    Args:
+        mocker: pytest mocker fixture.
+
+    Returns:
+        MagicMock: Mocked prune function.
+    """
     return mocker.patch("molecule.scenario.Scenario.prune")
 
 
-@pytest.fixture()
-def _patched_sysexit(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
+@pytest.fixture(name="patched_sysexit")
+def fixture_patched_sysexit(mocker: MockerFixture) -> MagicMock:
+    """Mock molecule util.sysexit function.
+
+    Args:
+        mocker: pytest mocker fixture.
+
+    Returns:
+        MagicMock: Mocked util.sysexit function.
+    """
     return mocker.patch("molecule.util.sysexit")
 
 
@@ -107,61 +145,77 @@ def test_command_setup(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     _patched_write_config.assert_called_once_with()
 
 
-def test_execute_cmdline_scenarios(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    config_instance: config.Config,  # noqa: ARG001
-    _patched_execute_scenario,  # noqa: ANN001, PT019
-):
-    # Ensure execute_cmdline_scenarios runs normally:
-    # - execute_scenario is called once, indicating the function correctly
-    #   loops over Scenarios.
+@pytest.mark.usefixtures("config_instance")
+def test_execute_cmdline_scenarios(
+    patched_execute_scenario: MagicMock,
+) -> None:
+    """Ensure execute_cmdline_scenarios runs normally.
+
+    Execute_scenario is called once, indicating the function correctly loops over Scenarios.
+
+    Args:
+        monkeypatch: pytest fixture.
+        patched_execute_scenario: Mocked execute_scenario function.
+    """
     scenario_name = None
     args: dict[str, str] = {}
     command_args = {"destroy": "always", "subcommand": "test"}
     base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]
 
-    assert _patched_execute_scenario.call_count == 1
+    scenario_count = 1
+    assert patched_execute_scenario.call_count == scenario_count
 
 
-def test_execute_cmdline_scenarios_prune(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    config_instance: config.Config,  # noqa: ARG001
-    _patched_prune,  # noqa: ANN001, PT019
-    _patched_execute_subcommand,  # noqa: ANN001, PT019
-):
-    # Subcommands should be executed and prune *should* run when
-    # destroy is 'always'
+@pytest.mark.usefixtures("config_instance")
+def test_execute_cmdline_scenarios_prune(
+    patched_prune: MagicMock,
+    patched_execute_subcommand: MagicMock,
+) -> None:
+    """Confirm prune is called when destroy is 'always'.
+
+    Args:
+        monkeypatch: pytest fixture.
+        patched_prune: Mocked prune function.
+        patched_execute_subcommand: Mocked execute_subcommand function.
+    """
     scenario_name = "default"
     args: dict[str, str] = {}
     command_args = {"destroy": "always", "subcommand": "test"}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]
 
-    assert _patched_execute_subcommand.called
-    assert _patched_prune.called
+    assert patched_execute_subcommand.called
+    assert patched_prune.called
 
 
-def test_execute_cmdline_scenarios_no_prune(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    config_instance: config.Config,  # noqa: ARG001
-    _patched_prune,  # noqa: ANN001, PT019
-    _patched_execute_subcommand,  # noqa: ANN001, PT019
-):
-    # Subcommands should be executed but prune *should not* run when
-    # destroy is 'never'
+@pytest.mark.usefixtures("config_instance")
+def test_execute_cmdline_scenarios_no_prune(
+    patched_prune: MagicMock,
+    patched_execute_subcommand: MagicMock,
+) -> None:
+    """Confirm prune is not called when destroy is 'never'.
+
+    Args:
+        monkeypatch: pytest fixture.
+        patched_prune: Mocked prune function.
+        patched_execute_subcommand: Mocked execute_subcommand function.
+    """
     scenario_name = "default"
     args: dict[str, str] = {}
     command_args = {"destroy": "never", "subcommand": "test"}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]
 
-    assert _patched_execute_subcommand.called
-    assert not _patched_prune.called
+    assert patched_execute_subcommand.called
+    assert not patched_prune.called
 
 
 def test_execute_cmdline_scenarios_exit_destroy(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     config_instance: config.Config,  # noqa: ARG001
-    _patched_execute_scenario,  # noqa: ANN001, PT019
-    _patched_prune,  # noqa: ANN001, PT019
-    _patched_execute_subcommand,  # noqa: ANN001, PT019
-    _patched_sysexit,  # noqa: ANN001, PT019
+    patched_execute_scenario: MagicMock,
+    patched_prune: MagicMock,
+    patched_execute_subcommand: MagicMock,
+    patched_sysexit: MagicMock,
 ):
     # Ensure execute_cmdline_scenarios handles errors correctly when 'destroy'
     # is 'always':
@@ -171,24 +225,24 @@ def test_execute_cmdline_scenarios_exit_destroy(  # type: ignore[no-untyped-def]
     scenario_name = "default"
     args: dict[str, str] = {}
     command_args = {"destroy": "always", "subcommand": "test"}
-    _patched_execute_scenario.side_effect = SystemExit()
+    patched_execute_scenario.side_effect = SystemExit()
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]
 
-    assert _patched_execute_subcommand.call_count == 2  # noqa: PLR2004
+    assert patched_execute_subcommand.call_count == 2  # noqa: PLR2004
     # pull out the second positional call argument for each call,
     # which is the called subcommand. 'cleanup' and 'destroy' should be called.
-    assert _patched_execute_subcommand.call_args_list[0][0][1] == "cleanup"
-    assert _patched_execute_subcommand.call_args_list[1][0][1] == "destroy"
-    assert _patched_prune.called
-    assert _patched_sysexit.called
+    assert patched_execute_subcommand.call_args_list[0][0][1] == "cleanup"
+    assert patched_execute_subcommand.call_args_list[1][0][1] == "destroy"
+    assert patched_prune.called
+    assert patched_sysexit.called
 
 
 def test_execute_cmdline_scenarios_exit_nodestroy(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     config_instance: config.Config,  # noqa: ARG001
-    _patched_execute_scenario,  # noqa: ANN001, PT019
-    _patched_prune,  # noqa: ANN001, PT019
-    _patched_sysexit,  # noqa: ANN001, PT019
+    patched_execute_scenario: MagicMock,
+    patched_prune: MagicMock,
+    patched_sysexit: MagicMock,
 ):
     # Ensure execute_cmdline_scenarios handles errors correctly when 'destroy'
     # is 'always':
@@ -199,15 +253,15 @@ def test_execute_cmdline_scenarios_exit_nodestroy(  # type: ignore[no-untyped-de
     args: dict[str, str] = {}
     command_args = {"destroy": "never", "subcommand": "test"}
 
-    _patched_execute_scenario.side_effect = SystemExit()
+    patched_execute_scenario.side_effect = SystemExit()
 
     # Catch the expected SystemExit reraise
     with pytest.raises(SystemExit):
         base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]
 
-    assert _patched_execute_scenario.called
-    assert not _patched_prune.called
-    assert not _patched_sysexit.called
+    assert patched_execute_scenario.called
+    assert not patched_prune.called
+    assert not patched_sysexit.called
 
 
 def test_execute_subcommand(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
@@ -218,7 +272,7 @@ def test_execute_subcommand(config_instance: config.Config):  # type: ignore[no-
     assert config_instance.action == "list"
 
 
-def test_execute_scenario(mocker: MockerFixture, _patched_execute_subcommand):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_execute_scenario(mocker: MockerFixture, patched_execute_subcommand):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     # call a spoofed scenario with a sequence that does not include destroy:
     # - execute_subcommand should be called once for each sequence item
     # - prune should not be called, since the sequence has no destroy step
@@ -227,11 +281,11 @@ def test_execute_scenario(mocker: MockerFixture, _patched_execute_subcommand):  
 
     base.execute_scenario(scenario)  # type: ignore[no-untyped-call]
 
-    assert _patched_execute_subcommand.call_count == len(scenario.sequence)
+    assert patched_execute_subcommand.call_count == len(scenario.sequence)
     assert not scenario.prune.called
 
 
-def test_execute_scenario_destroy(mocker: MockerFixture, _patched_execute_subcommand):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_execute_scenario_destroy(mocker: MockerFixture, patched_execute_subcommand):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     # call a spoofed scenario with a sequence that includes destroy:
     # - execute_subcommand should be called once for each sequence item
     # - prune should be called, since the sequence has a destroy step
@@ -240,7 +294,7 @@ def test_execute_scenario_destroy(mocker: MockerFixture, _patched_execute_subcom
 
     base.execute_scenario(scenario)  # type: ignore[no-untyped-call]
 
-    assert _patched_execute_subcommand.call_count == len(scenario.sequence)
+    assert patched_execute_subcommand.call_count == len(scenario.sequence)
     assert scenario.prune.called
 
 

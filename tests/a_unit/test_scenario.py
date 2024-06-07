@@ -21,6 +21,8 @@
 import os
 import shutil
 
+from pathlib import Path
+
 import pytest
 
 from molecule import config, scenario, util
@@ -198,13 +200,33 @@ def test_ephemeral_directory():  # type: ignore[no-untyped-def]  # noqa: ANN201,
     assert os.access(scenario.ephemeral_directory("foo/bar"), os.W_OK)
 
 
-def test_ephemeral_directory_OVERRIDDEN_via_env_var(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, N802, D103
+def test_ephemeral_directory_overridden_via_env_var(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Confirm ephemeral_directory is overridden by MOLECULE_EPHEMERAL_DIRECTORY.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        tmp_path: Pytest tmp_path fixture.
+    """
+    monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", "foo/bar")
 
     assert os.access(scenario.ephemeral_directory("foo/bar"), os.W_OK)
 
 
-def test_ephemeral_directory_OVERRIDDEN_via_env_var_uses_absolute_path(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, N802, D103
+def test_ephemeral_directory_overridden_via_env_var_uses_absolute_path(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Confirm MOLECULE_EPHEMERAL_DIRECTORY uses absolute path.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        tmp_path: Pytest tmp_path fixture.
+    """
+    monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", "foo/bar")
 
-    assert os.path.isabs(scenario.ephemeral_directory())  # noqa: PTH117
+    assert Path(scenario.ephemeral_directory()).is_absolute()

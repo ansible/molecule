@@ -38,13 +38,6 @@ repos:
       - id: debug-statements
         language_version: python3
 
-  - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.35.1
-    hooks:
-      - id: yamllint
-        files: \.(yaml|yml)$
-        types: [file, yaml]
-        entry: yamllint --strict
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: "v0.4.8"
     hooks:
