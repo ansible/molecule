@@ -419,5 +419,6 @@ def test_smoke(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None:
         test_fixture_dir: Path to the test fixture directory.
     """
     monkeypatch.chdir(test_fixture_dir)
+    monkeypatch.setenv("ANSIBLE_HOST_KEY_CHECKING", "False")
     command = ["molecule", "test", "--scenario-name", "smoke"]
     assert run_command(command).returncode == 0
