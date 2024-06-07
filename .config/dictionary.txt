@@ -103,6 +103,7 @@ sendline
 serviceaccount
 setenv
 setuptools
+sharded
 signoff
 skipsdist
 snapcraft

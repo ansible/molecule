@@ -1,8 +1,0 @@
-[flake8]
-# TODO(ssbarnea): Remove this file once we make entire codebase pydocstyle compliant
-# Prevents tests failure when run on systems that have pytest-docstrings already installed, the other settings are copied from root version.
-
-# E203: https://github.com/python/black/issues/315
-ignore = D,E741,W503,W504,H,E501,E203
-# 88 is official black default:
-max-line-length = 88

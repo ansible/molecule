@@ -53,12 +53,12 @@ def _model_provisioner_section_data():  # type: ignore[no-untyped-def]  # noqa: 
 
 
 @pytest.mark.parametrize(
-    "_config",
+    "config",
     ["_model_provisioner_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_provisioner(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
+def test_provisioner(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+    assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
@@ -71,14 +71,14 @@ def _model_provisioner_errors_section_data():  # type: ignore[no-untyped-def]  #
 
 
 @pytest.mark.parametrize(
-    "_config",
+    "config",
     ["_model_provisioner_errors_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_provisioner_has_errors(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_provisioner_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     x = ["0 is not one of ['ansible']"]
 
-    assert x == schema_v3.validate(_config)  # type: ignore[no-untyped-call]
+    assert x == schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
@@ -87,9 +87,9 @@ def _model_provisioner_allows_ansible_section_data():  # type: ignore[no-untyped
 
 
 @pytest.mark.parametrize(
-    "_config",
+    "config",
     [("_model_provisioner_allows_ansible_section_data")],  # noqa: PT007
     indirect=True,
 )
-def test_provisioner_allows_name(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
+def test_provisioner_allows_name(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+    assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]

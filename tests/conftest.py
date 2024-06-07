@@ -83,12 +83,13 @@ def temp_dir(tmpdir, random_string, request):  # type: ignore[no-untyped-def]  #
 
 
 @pytest.fixture()
-def resources_folder_path():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    _resources_folder_path = os.path.join(  # noqa: PTH118
-        os.path.dirname(__file__),  # noqa: PTH120
-        "resources",
-    )
-    return _resources_folder_path  # noqa: RET504
+def resources_folder_path() -> Path:
+    """Return the path to the resources folder.
+
+    Returns:
+        Path: The path to the resources folder.
+    """
+    return FIXTURES_DIR / "resources"
 
 
 def molecule_project_directory() -> str:  # noqa: D103

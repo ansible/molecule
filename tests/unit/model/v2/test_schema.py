@@ -18,15 +18,36 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import pytest
+from pathlib import Path
 
 from molecule.model import schema_v3
+from molecule.util import run_command
 
 
-@pytest.mark.parametrize(
-    "_config",
-    ["_model_platforms_delegated_section_data"],  # noqa: PT007
-    indirect=True,
-)
-def test_platforms_delegated(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
+def test_base_config(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+    assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
+
+
+def test_molecule_schema(resources_folder_path: Path) -> None:
+    """Test the molecule schema.
+
+    Args:
+        resources_folder_path: Path to the resources folder.
+    """
+    cmd = [
+        "check-jsonschema",
+        "-v",
+        "--schemafile",
+        "src/molecule/data/molecule.json",
+        f"{resources_folder_path}/schema_instance_files/valid/molecule.yml",
+    ]
+    assert run_command(cmd).returncode == 0
+
+    cmd = [
+        "check-jsonschema",
+        "-v",
+        "--schemafile",
+        "src/molecule/data/driver.json",
+        f"{resources_folder_path}/schema_instance_files/invalid/molecule_delegated.yml",
+    ]
+    assert run_command(cmd).returncode != 0

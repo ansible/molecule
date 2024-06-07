@@ -37,9 +37,9 @@ def _model_scenario_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN
     }
 
 
-@pytest.mark.parametrize("_config", ["_model_scenario_section_data"], indirect=True)  # noqa: PT007
-def test_scenario(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
+@pytest.mark.parametrize("config", ["_model_scenario_section_data"], indirect=True)  # noqa: PT007
+def test_scenario(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+    assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
@@ -48,11 +48,11 @@ def _model_scenario_errors_section_data():  # type: ignore[no-untyped-def]  # no
 
 
 @pytest.mark.parametrize(
-    "_config",
+    "config",
     ["_model_scenario_errors_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_scenario_has_errors(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_scenario_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     x = ["0 is not of type 'string'"]
 
-    assert x == schema_v3.validate(_config)  # type: ignore[no-untyped-call]
+    assert x == schema_v3.validate(config)  # type: ignore[no-untyped-call]

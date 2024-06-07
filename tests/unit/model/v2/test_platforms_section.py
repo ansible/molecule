@@ -18,29 +18,15 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import pytest
+
 from molecule.model import schema_v3
-from molecule.util import run_command
 
 
-def test_base_config(_config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
-
-
-def test_molecule_schema():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    cmd = [
-        "check-jsonschema",
-        "-v",
-        "--schemafile",
-        "src/molecule/data/molecule.json",
-        "tests/resources/schema_instance_files/valid/molecule.yml",
-    ]
-    assert run_command(cmd).returncode == 0
-
-    cmd = [
-        "check-jsonschema",
-        "-v",
-        "--schemafile",
-        "src/molecule/data/driver.json",
-        "tests/resources/schema_instance_files/invalid/molecule_delegated.yml",
-    ]
-    assert run_command(cmd).returncode != 0
+@pytest.mark.parametrize(
+    "config",
+    ["_model_platforms_delegated_section_data"],  # noqa: PT007
+    indirect=True,
+)
+def test_platforms_delegated(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+    assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]

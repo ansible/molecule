@@ -19,28 +19,40 @@
 #  DEALINGS IN THE SOFTWARE.
 """Unittest for v2 config format."""
 
-import os
+
+from pathlib import Path
+from typing import Any
 
 import pytest
 
 from molecule import util
 
 
-@pytest.fixture()
-def _molecule_file():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
-    return os.path.join(  # noqa: PTH118
-        os.path.dirname(__file__),  # noqa: PTH120
-        os.path.pardir,
-        os.path.pardir,
-        os.path.pardir,
-        "resources",
-        "molecule.yml",
-    )
+@pytest.fixture(name="molecule_file")
+def fixture_molecule_file(resources_folder_path: Path) -> Path:
+    """Return path to molecule file.
+
+    Args:
+        resources_folder_path: Path to the resources folder.
+
+    Returns:
+        Path to molecule file.
+    """
+    return resources_folder_path / "molecule.yml"
 
 
 @pytest.fixture()
-def _config(_molecule_file, request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
-    with open(_molecule_file) as f:  # noqa: PTH123
+def config(molecule_file: Path, request: pytest.FixtureRequest) -> dict[str, Any]:
+    """Return merged molecule file data.
+
+    Args:
+        molecule_file: Path to molecule file.
+        request: Pytest fixture request.
+
+    Returns:
+        Merged molecule file data.
+    """
+    with molecule_file.open() as f:
         d = util.safe_load(f)
     if hasattr(request, "param"):
         if isinstance(request.getfixturevalue(request.param), str):

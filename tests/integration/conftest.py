@@ -25,6 +25,7 @@ import shutil
 import subprocess
 
 from subprocess import PIPE
+from typing import TYPE_CHECKING
 
 import pexpect
 import pytest
@@ -39,6 +40,11 @@ from molecule.app import app
 from molecule.text import strip_ansi_color
 from molecule.util import run_command
 from tests.conftest import change_dir_to, molecule_directory  # pylint:disable=C0411
+
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+    from pathlib import Path
 
 
 LOG = logger.get_logger(__name__)
@@ -66,14 +72,27 @@ def _env_vars_exposed(env_vars, env=os.environ):  # type: ignore[no-untyped-def]
     return None
 
 
-@pytest.fixture()
-def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_test):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT004, ARG001, D103
-    scenario_directory = os.path.join(  # noqa: PTH118
-        os.path.dirname(util.abs_path(__file__)),  # type: ignore[arg-type, type-var]  # noqa: PTH120
-        os.path.pardir,
-        "scenarios",
-        scenario_to_test,
-    )
+@pytest.fixture(name="with_scenario")
+def _with_scenario(
+    scenario_to_test: str,
+    driver_name: str,
+    scenario_name: str,
+    skip_test: bool,  # noqa: ARG001, FBT001
+    test_fixture_dir: Path,
+) -> Iterator[None]:
+    """Yield to test with a scenario, changes dir and does cleanup.
+
+    Args:
+        scenario_to_test: The scenario to test.
+        driver_name: The driver name.
+        scenario_name: The scenario name.
+        skip_test: Skip the test.
+        test_fixture_dir: The test fixture directory.
+
+    Yields:
+        None:
+    """
+    scenario_directory = test_fixture_dir / "scenarios" / scenario_to_test
 
     with change_dir_to(scenario_directory):
         yield

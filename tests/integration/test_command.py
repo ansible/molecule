@@ -20,9 +20,8 @@
 from __future__ import annotations
 
 import os
-import pathlib
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -30,14 +29,18 @@ from pytest import FixtureRequest  # noqa: PT013
 
 from molecule.command import base
 from molecule.util import run_command
-from tests.b_functional.conftest import (  # pylint:disable=C0411
+from tests.conftest import mac_on_gh  # pylint:disable=C0411
+from tests.integration.conftest import (  # pylint:disable=C0411
     idempotence,
     init_scenario,
     list_with_format_plain,
     run_test,
     verify,
 )
-from tests.conftest import mac_on_gh  # pylint:disable=C0411
+
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 @pytest.fixture(name="scenario_to_test")
@@ -334,14 +337,15 @@ def test_command_verify(scenario_to_test, with_scenario, scenario_name):  # type
     verify(scenario_name)  # type: ignore[no-untyped-call]
 
 
-def test_sample_collection() -> None:  # noqa: D103
-    assert (
-        run_command(
-            ["molecule", "test"],
-            cwd="tests/resources/sample-collection",
-        ).returncode
-        == 0
-    )
+def test_sample_collection(resources_folder_path: Path) -> None:
+    """Test the sample collection.
+
+    Args:
+        resources_folder_path: Path to the resources folder.
+    """
+    cmd = ["molecule", "test"]
+    cwd = f"{resources_folder_path}/sample-collection"
+    assert run_command(cmd=cmd, cwd=cwd).returncode == 0
 
 
 @pytest.mark.parametrize(
@@ -354,6 +358,7 @@ def test_sample_collection() -> None:  # noqa: D103
 def test_with_and_without_gitignore(  # noqa: D103
     monkeypatch: pytest.MonkeyPatch,
     scenario_name: str,
+    resources_folder_path: Path,
 ) -> None:
     if scenario_name == "test_wo_gitignore":
 
@@ -365,16 +370,13 @@ def test_with_and_without_gitignore(  # noqa: D103
             mock_return,
         )
 
-    resource_path = pathlib.Path(__file__).parent.parent / "resources"
+    monkeypatch.chdir(resources_folder_path)
 
-    monkeypatch.chdir(resource_path)
+    scenario_dir = resources_folder_path / ".extensions" / "molecule" / scenario_name
+    scenario_dir.mkdir(parents=True, exist_ok=True)
 
-    pathlib.Path(resource_path / f".extensions/molecule/{scenario_name}").mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-
-    pathlib.Path(f".extensions/molecule/{scenario_name}/molecule.yml").touch()
+    molecule_file = scenario_dir / "molecule.yml"
+    molecule_file.touch()
 
     op = base.get_configs({}, {}, glob_str="**/molecule/*/molecule.yml")  # type: ignore[no-untyped-call]
 
