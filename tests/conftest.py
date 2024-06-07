@@ -24,6 +24,8 @@ import platform
 import random
 import string
 
+from pathlib import Path
+
 import pytest
 
 from filelock import FileLock
@@ -31,6 +33,8 @@ from filelock import FileLock
 from molecule import config as molecule_config
 from molecule.scenario import ephemeral_directory
 
+
+FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
 # Marker to skip tests on macos when running on GH
 mac_on_gh = pytest.mark.skipif(
@@ -161,3 +165,13 @@ def block_on_serial_mark(request):  # type: ignore[no-untyped-def]  # noqa: ANN0
             yield
     else:
         yield
+
+
+@pytest.fixture()
+def test_fixture_dir(request: pytest.FixtureRequest) -> Path:
+    """Provide the fixture directory for a given test.
+
+    :param request: The pytest request object
+    :returns: The fixture directory
+    """
+    return FIXTURES_DIR / request.path.relative_to(Path(__file__).parent).with_suffix("")

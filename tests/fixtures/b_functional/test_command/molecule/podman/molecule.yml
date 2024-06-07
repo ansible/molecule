@@ -1,0 +1,13 @@
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+platforms:
+  - name: molecule-ubuntu
+    image: ubuntu:18.04
+driver:
+  options:
+    managed: False
+    login_cmd_template: "podman exec -ti {instance} bash"
+    ansible_connection_options:
+      ansible_connection: podman

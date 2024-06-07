@@ -1,0 +1,96 @@
+- name: Create
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    temporary_ssh_key_size: 2048 # Variable for the size of the SSH key
+  tasks:
+    - name: Set default SSH key path # Sets the path of the SSH key
+      ansible.builtin.set_fact:
+        temporary_ssh_key_path: "{{ molecule_ephemeral_directory }}/identity_file"
+
+    - name: Generate SSH key pair # Generates a new SSH key pair
+      community.crypto.openssh_keypair:
+        path: "{{ temporary_ssh_key_path }}"
+        size: "{{ temporary_ssh_key_size }}"
+      register: temporary_ssh_keypair # Stores the output of this task in a variable
+
+    - name: Set SSH public key # Sets the SSH public key from the key pair
+      ansible.builtin.set_fact:
+        temporary_ssh_public_key: "{{ temporary_ssh_keypair.public_key }}"
+
+    - name: Create VM in KubeVirt # Calls another file to create the VM in KubeVirt
+      ansible.builtin.include_tasks: tasks/create_vm.yml
+      loop: "{{ molecule_yml.platforms }}" # Loops over all platforms defined in molecule_yml
+      loop_control:
+        loop_var: vm # Sets the variable for the current item in the loop
+
+    - name: Create Nodeport service if ssh_type is set to NodePort # Conditional block, executes if vm.ssh_service.type is NodePort
+      when: "vm.ssh_service.type == 'NodePort'" # The block is executed when this condition is met
+      block:
+        - name: Create ssh NodePort Kubernetes Services # Creates a new NodePort service in Kubernetes
+          kubernetes.core.k8s:
+            state: present
+            definition:
+              apiVersion: v1
+              kind: Service
+              metadata:
+                name: "{{ vm.name }}"
+                namespace: "{{ vm.namespace }}"
+              spec:
+                ports:
+                  - port: 22
+                    protocol: TCP
+                    targetPort: 22
+                selector:
+                  kubevirt.io/domain: "{{ vm.name }}"
+                type: NodePort
+          loop: "{{ molecule_yml.platforms }}" # Loops over all platforms defined in molecule_yml
+          loop_control:
+            loop_var: vm # Sets the variable for the current item in the loop
+
+        - name: Retrieve Service Info # Retrieves information about the service
+          kubernetes.core.k8s_info:
+            api_version: v1
+            kind: Service
+            name: "{{ vm.name }}"
+            namespace: "{{ vm.namespace }}"
+          loop: "{{ molecule_yml.platforms }}" # Loops over all platforms defined in molecule_yml
+          loop_control:
+            loop_var: vm # Sets the variable for the current item in the loop
+          register: node_port_services # Stores the output of this task in a variable
+
+    - name: Create VM dictionary # Calls another file to create a dictionary with information about the VM
+      ansible.builtin.include_tasks: tasks/create_vm_dictionary.yml
+      loop: "{{ molecule_yml.platforms }}" # Loops over all platforms defined in molecule_yml
+      loop_control:
+        loop_var: vm # Sets the variable for the current item in the loop
+
+    - name: Create ansible inventory from dictionary # Creates an Ansible inventory file from the dictionary
+      vars:
+        molecule_inventory:
+          all:
+            children:
+              molecule:
+                hosts: "{{ molecule_systems }}"
+      ansible.builtin.copy:
+        content: "{{ molecule_inventory | to_nice_yaml }}"
+        dest: "{{ molecule_ephemeral_directory }}/inventory/molecule_inventory.yml"
+        mode: "0600" # Sets the permissions of the file to -rw-------
+
+    - name: Refresh inventory # Refreshes the inventory
+      ansible.builtin.meta: refresh_inventory
+
+    - name: Assert molecule group exists # Checks if the 'molecule' group exists in the inventory
+      ansible.builtin.assert:
+        that: "'molecule' in groups"
+        fail_msg: "Molecule group was not found in inventory groups: {{ groups }}"
+      run_once: true # noqa: run-once
+
+- name: Validate that inventory was refreshed # New playbook to validate the inventory
+  hosts: molecule # Runs on hosts in the 'molecule' group
+  gather_facts: false # Disables fact gathering
+  tasks:
+    - name: Wait for the host to be reachable # Waits for the host to become reachable
+      ansible.builtin.wait_for_connection:
+        timeout: 120 # Waits for up to 120 seconds

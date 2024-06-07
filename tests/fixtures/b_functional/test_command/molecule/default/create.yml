@@ -1,0 +1,37 @@
+---
+- name: Create
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ molecule_no_log }}"
+  tasks:
+    # TODO: Developer must implement and populate 'server' variable
+
+    - name: Create instance config
+      when: server.changed | default(false) | bool # noqa no-handler
+      block:
+        - name: Populate instance config dict # noqa jinja
+          ansible.builtin.set_fact:
+            instance_conf_dict:
+              {
+                "instance": "{{ }}",
+                "address": "{{ }}",
+                "user": "{{ }}",
+                "port": "{{ }}",
+                "identity_file": "{{ }}",
+              }
+          with_items: "{{ server.results }}"
+          register: instance_config_dict
+
+        - name: Convert instance config dict to a list
+          ansible.builtin.set_fact:
+            instance_conf: "{{ instance_config_dict.results | map(attribute='ansible_facts.instance_conf_dict') | list }}"
+
+        - name: Dump instance config
+          ansible.builtin.copy:
+            content: |
+              # Molecule managed
+
+              {{ instance_conf | to_json | from_json | to_yaml }}
+            dest: "{{ molecule_instance_config }}"
+            mode: "0600"
