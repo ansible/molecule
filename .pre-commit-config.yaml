@@ -1,47 +1,63 @@
 ---
 ci:
-  skip:
-    - ansible-lint
-    - deps
-default_language_version:
-  python: python3.10
+  # format compatible with commitlint
+  autoupdate_commit_msg: "chore: pre-commit autoupdate"
+  autoupdate_schedule: monthly
+  autofix_commit_msg: "chore: auto fixes from pre-commit.com hooks"
+
 repos:
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    # keep it before yamllint
-    rev: "v4.0.0-alpha.8"
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: debug-statements
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/asottile/add-trailing-comma.git
+    rev: v3.1.0
+    hooks:
+      - id: add-trailing-comma
+        args:
+          - --py36-plus
+
+  - repo: https://github.com/Lucas-C/pre-commit-hooks.git
+    rev: v1.5.5
+    hooks:
+      - id: remove-tabs
+
+  - repo: https://github.com/pycontribs/mirrors-prettier
+    rev: v3.3.0
     hooks:
       - id: prettier
-        # Temporary excludes so we can gradually normalize the formatting
-        exclude: >
-          (?x)^(
-            test/resources/templates/.*|
-          )$
+        always_run: true
         additional_dependencies:
           - prettier
           - prettier-plugin-toml
+          - prettier-plugin-sort-json
 
   - repo: https://github.com/psf/black
     rev: 24.4.2
     hooks:
       - id: black
 
-  - repo: https://github.com/pre-commit/pre-commit-hooks.git
-    rev: v4.6.0
+  - repo: https://github.com/pappasam/toml-sort
+    rev: v0.23.1
     hooks:
-      - id: end-of-file-fixer
-      - id: trailing-whitespace
-      - id: mixed-line-ending
-      - id: check-byte-order-marker
-      - id: check-executables-have-shebangs
-      - id: check-merge-conflict
-      - id: debug-statements
-        language_version: python3
+      - id: toml-sort-fix
+
+  - repo: https://github.com/tox-dev/tox-ini-fmt
+    rev: 1.3.1
+    hooks:
+      - id: tox-ini-fmt
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.4.8"
+    rev: v0.4.5
     hooks:
       - id: ruff
-        args: [--fix, --exit-non-zero-on-fix]
+        args:
+          - --exit-non-zero-on-fix
 
   - repo: https://github.com/streetsidesoftware/cspell-cli
     rev: v8.8.2
@@ -56,6 +72,24 @@ repos:
         name: flake8(pydoclint)
         additional_dependencies:
           - pydoclint[flake8]
+
+  - repo: https://github.com/pycqa/pylint.git
+    rev: v3.2.3
+    hooks:
+      - id: pylint
+        args:
+          - --output-format=colorized
+        additional_dependencies:
+          - ansible-compat>=24.6.1
+          - click
+          - click-help-colors
+          - enrich>=1.2.7
+          - filelock
+          - jsonschema
+          - pexpect
+          - pytest-mock
+          - pytest-testinfra
+          - wcmatch
 
   - repo: https://github.com/pre-commit/mirrors-mypy.git
     rev: v1.10.0
@@ -78,29 +112,6 @@ repos:
         # Override default pre-commit '--ignore-missing-imports'
         args: [--strict]
 
-  - repo: https://github.com/pycqa/pylint.git
-    rev: v3.2.3
-    hooks:
-      - id: pylint
-        args:
-          - --output-format=colorized
-        additional_dependencies:
-          - ansible-compat>=24.6.1
-          - click
-          - click-help-colors
-          - enrich>=1.2.7
-          - filelock
-          - jsonschema
-          - pexpect
-          - pytest-mock
-          - pytest-testinfra
-          - wcmatch
-
-  - repo: https://github.com/ansible/ansible-lint
-    rev: v24.6.0
-    hooks:
-      - id: ansible-lint
-
   - repo: https://github.com/jazzband/pip-tools
     rev: 7.4.1
     hooks:
@@ -117,3 +128,9 @@ repos:
           --output-file=.config/constraints.txt pyproject.toml
         files: ^.config\/.*requirements.*$
         language_version: "3.10" # minimal we support officially
+
+  - repo: https://github.com/ansible/ansible-lint
+    rev: v24.6.0
+    hooks:
+      - id: ansible-lint
+        stages: [manual]

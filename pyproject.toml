@@ -1,8 +1,7 @@
 [build-system]
 requires = [
   "setuptools >= 63.0.0", # required by pyproject+setuptools_scm integration
-  "setuptools_scm[toml] >= 7.0.5", # required for "no-local-version" scheme
-
+  "setuptools_scm[toml] >= 7.0.5" # required for "no-local-version" scheme
 ]
 build-backend = "setuptools.build_meta"
 
@@ -13,9 +12,9 @@ dynamic = ["version", "dependencies", "optional-dependencies"]
 name = "molecule"
 description = "Molecule aids in the development and testing of Ansible roles"
 readme = "README.md"
-authors = [{ "name" = "Ansible by Red Hat", "email" = "info@ansible.com" }]
-maintainers = [{ "name" = "Ansible by Red Hat", "email" = "info@ansible.com" }]
-license = { text = "MIT" }
+authors = [{"name" = "Ansible by Red Hat", "email" = "info@ansible.com"}]
+maintainers = [{"name" = "Ansible by Red Hat", "email" = "info@ansible.com"}]
+license = {text = "MIT"}
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Environment :: Console",
@@ -34,18 +33,9 @@ classifiers = [
   "Topic :: Software Development :: Bug Tracking",
   "Topic :: Software Development :: Quality Assurance",
   "Topic :: Software Development :: Testing",
-  "Topic :: Utilities",
+  "Topic :: Utilities"
 ]
 keywords = ["ansible", "roles", "testing", "molecule"]
-
-[project.urls]
-homepage = "https://github.com/ansible-community/molecule"
-documentation = "https://molecule.readthedocs.io/"
-repository = "https://github.com/ansible-community/molecule"
-changelog = "https://github.com/ansible-community/molecule/releases"
-
-[project.scripts]
-molecule = "molecule.__main__:main"
 
 [project.entry-points."molecule.driver"]
 default = "molecule.driver.delegated:Delegated"
@@ -53,6 +43,18 @@ default = "molecule.driver.delegated:Delegated"
 [project.entry-points."molecule.verifier"]
 testinfra = "molecule.verifier.testinfra:Testinfra"
 ansible = "molecule.verifier.ansible:Ansible"
+
+[project.scripts]
+molecule = "molecule.__main__:main"
+
+[project.urls]
+homepage = "https://github.com/ansible-community/molecule"
+documentation = "https://molecule.readthedocs.io/"
+repository = "https://github.com/ansible-community/molecule"
+changelog = "https://github.com/ansible-community/molecule/releases"
+
+[tool.black]
+line-length = 100
 
 [tool.coverage.report]
 exclude_also = ["if TYPE_CHECKING:", "pragma: no cover"]
@@ -69,9 +71,6 @@ concurrency = ["multiprocessing", "thread"]
 parallel = true
 source_pkgs = ["molecule"]
 
-[tool.black]
-line-length = 100
-
 [tool.mypy]
 cache_dir = "./.cache/.mypy"
 files = ["src", "tests"]
@@ -80,7 +79,7 @@ strict = true
 [[tool.mypy.overrides]]
 module = [
   "click_help_colors", # https://github.com/click-contrib/click-help-colors/issues/20
-  "testinfra.*", # https://github.com/pytest-dev/pytest-testinfra/issues/619
+  "testinfra.*" # https://github.com/pytest-dev/pytest-testinfra/issues/619
 ]
 ignore_missing_imports = true
 
@@ -331,7 +330,7 @@ addopts = "-ra --showlocals --durations=10"
 cache_dir = "./.cache/.pytest"
 markers = [
   "serial: Run this test serially via filelock.",
-  "extensive: marks tests that we want to skip by default, as they are indirectly covered by other tests",
+  "extensive: marks tests that we want to skip by default, as they are indirectly covered by other tests"
 ]
 norecursedirs = ["scenarios"]
 testpaths = "tests"
@@ -363,10 +362,10 @@ lines-between-types = 1 # Separate import/from with 1 line
 convention = "google"
 
 [tool.setuptools.dynamic]
-optional-dependencies.docs = { file = [".config/requirements-docs.txt"] }
-optional-dependencies.test = { file = [".config/requirements-test.txt"] }
-optional-dependencies.testinfra = { file = [".config/requirements-testinfra.txt"] }
-dependencies = { file = [".config/requirements.in"] }
+dependencies = {file = [".config/requirements.in"]}
+optional-dependencies.docs = {file = [".config/requirements-docs.txt"]}
+optional-dependencies.test = {file = [".config/requirements-test.txt"]}
+optional-dependencies.testinfra = {file = [".config/requirements-testinfra.txt"]}
 
 [tool.setuptools_scm]
 local_scheme = "no-local-version"
