@@ -1,11 +1,22 @@
-# https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/enabling-and-disabling-dependabot-version-updates
+---
 version: 2
-enable-beta-ecosystems: true
 updates:
+  - package-ecosystem: pip
+    directory: /.config/
+    schedule:
+      day: sunday
+      interval: weekly
+    labels:
+      - dependabot-deps-updates
+      - skip-changelog
+    groups:
+      dependencies:
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: daily
     labels:
-      - dependencies
-      - skip-changelog
+      - "dependencies"
+      - "skip-changelog"
