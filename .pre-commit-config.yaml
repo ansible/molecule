@@ -101,6 +101,7 @@ repos:
     rev: v24.6.0
     hooks:
       - id: ansible-lint
+
   - repo: https://github.com/jazzband/pip-tools
     rev: 7.4.1
     hooks:

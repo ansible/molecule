@@ -351,6 +351,7 @@ select = ["ALL"]
 parametrize-values-type = "tuple"
 
 [tool.ruff.lint.isort]
+known-first-party = ["molecule"]
 lines-after-imports = 2 # Ensures consistency for cases when there's variable vs function/class definitions after imports
 lines-between-types = 1 # Separate import/from with 1 line
 

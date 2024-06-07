@@ -145,15 +145,12 @@ def test_command_setup(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
 
 
 @pytest.mark.usefixtures("config_instance")
-def test_execute_cmdline_scenarios(
-    patched_execute_scenario: MagicMock,
-) -> None:
+def test_execute_cmdline_scenarios(patched_execute_scenario: MagicMock) -> None:
     """Ensure execute_cmdline_scenarios runs normally.
 
     Execute_scenario is called once, indicating the function correctly loops over Scenarios.
 
     Args:
-        monkeypatch: pytest fixture.
         patched_execute_scenario: Mocked execute_scenario function.
     """
     scenario_name = None
@@ -167,15 +164,14 @@ def test_execute_cmdline_scenarios(
 
 @pytest.mark.usefixtures("config_instance")
 def test_execute_cmdline_scenarios_prune(
-    patched_prune: MagicMock,
     patched_execute_subcommand: MagicMock,
+    patched_prune: MagicMock,
 ) -> None:
     """Confirm prune is called when destroy is 'always'.
 
     Args:
-        monkeypatch: pytest fixture.
-        patched_prune: Mocked prune function.
         patched_execute_subcommand: Mocked execute_subcommand function.
+        patched_prune: Mocked prune function.
     """
     scenario_name = "default"
     args: dict[str, str] = {}
@@ -195,7 +191,6 @@ def test_execute_cmdline_scenarios_no_prune(
     """Confirm prune is not called when destroy is 'never'.
 
     Args:
-        monkeypatch: pytest fixture.
         patched_prune: Mocked prune function.
         patched_execute_subcommand: Mocked execute_subcommand function.
     """
