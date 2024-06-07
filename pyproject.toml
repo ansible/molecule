@@ -1,20 +1,12 @@
 [build-system]
+build-backend = "setuptools.build_meta"
 requires = [
   "setuptools >= 63.0.0", # required by pyproject+setuptools_scm integration
   "setuptools_scm[toml] >= 7.0.5" # required for "no-local-version" scheme
 ]
-build-backend = "setuptools.build_meta"
 
 [project]
-# https://peps.python.org/pep-0621/#readme
-requires-python = ">=3.10"
-dynamic = ["version", "dependencies", "optional-dependencies"]
-name = "molecule"
-description = "Molecule aids in the development and testing of Ansible roles"
-readme = "README.md"
-authors = [{"name" = "Ansible by Red Hat", "email" = "info@ansible.com"}]
-maintainers = [{"name" = "Ansible by Red Hat", "email" = "info@ansible.com"}]
-license = {text = "MIT"}
+authors = [{"email" = "info@ansible.com", "name" = "Ansible by Red Hat"}]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Environment :: Console",
@@ -35,23 +27,31 @@ classifiers = [
   "Topic :: Software Development :: Testing",
   "Topic :: Utilities"
 ]
+description = "Molecule aids in the development and testing of Ansible roles"
+dynamic = ["version", "dependencies", "optional-dependencies"]
 keywords = ["ansible", "roles", "testing", "molecule"]
+license = {text = "MIT"}
+maintainers = [{"email" = "info@ansible.com", "name" = "Ansible by Red Hat"}]
+name = "molecule"
+readme = "README.md"
+# https://peps.python.org/pep-0621/#readme
+requires-python = ">=3.10"
 
 [project.entry-points."molecule.driver"]
 default = "molecule.driver.delegated:Delegated"
 
 [project.entry-points."molecule.verifier"]
-testinfra = "molecule.verifier.testinfra:Testinfra"
 ansible = "molecule.verifier.ansible:Ansible"
+testinfra = "molecule.verifier.testinfra:Testinfra"
 
 [project.scripts]
 molecule = "molecule.__main__:main"
 
 [project.urls]
-homepage = "https://github.com/ansible-community/molecule"
-documentation = "https://molecule.readthedocs.io/"
-repository = "https://github.com/ansible-community/molecule"
 changelog = "https://github.com/ansible-community/molecule/releases"
+documentation = "https://molecule.readthedocs.io/"
+homepage = "https://github.com/ansible-community/molecule"
+repository = "https://github.com/ansible-community/molecule"
 
 [tool.black]
 line-length = 100
@@ -77,11 +77,11 @@ files = ["src", "tests"]
 strict = true
 
 [[tool.mypy.overrides]]
+ignore_missing_imports = true
 module = [
   "click_help_colors", # https://github.com/click-contrib/click-help-colors/issues/20
   "testinfra.*" # https://github.com/pytest-dev/pytest-testinfra/issues/619
 ]
-ignore_missing_imports = true
 
 [tool.pylint]
 
@@ -368,5 +368,20 @@ optional-dependencies.test = {file = [".config/requirements-test.txt"]}
 optional-dependencies.testinfra = {file = [".config/requirements-testinfra.txt"]}
 
 [tool.setuptools_scm]
+# To prevent accidental pick of mobile version tags such 'v6'
+git_describe_command = [
+  "git",
+  "describe",
+  "--dirty",
+  "--long",
+  "--tags",
+  "--match",
+  "v*.*"
+]
 local_scheme = "no-local-version"
 write_to = "src/molecule/_version.py"
+
+[tool.tomlsort]
+in_place = true
+sort_inline_tables = true
+sort_table_keys = true
