@@ -18,10 +18,9 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from pytest_mock import MockerFixture
-
 from molecule import config
 from molecule.command import verify
+from pytest_mock import MockerFixture
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables

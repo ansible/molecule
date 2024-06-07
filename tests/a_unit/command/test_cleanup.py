@@ -22,10 +22,9 @@ import os
 
 import pytest
 
-from pytest_mock import MockerFixture
-
 from molecule import config, util
 from molecule.command import cleanup
+from pytest_mock import MockerFixture
 
 
 @pytest.fixture()

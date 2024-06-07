@@ -24,10 +24,10 @@ import re
 
 import pytest
 
-from pytest_mock import MockerFixture
-
 from molecule import config, util
 from molecule.provisioner import ansible, ansible_playbooks
+from pytest_mock import MockerFixture
+
 from tests.a_unit.conftest import os_split  # pylint:disable=C0411
 
 

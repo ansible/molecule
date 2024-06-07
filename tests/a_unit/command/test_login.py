@@ -21,10 +21,9 @@
 
 import pytest
 
-from pytest_mock import MockerFixture
-
 from molecule import config
 from molecule.command import login
+from pytest_mock import MockerFixture
 
 
 @pytest.fixture()

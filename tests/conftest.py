@@ -27,7 +27,6 @@ import string
 import pytest
 
 from filelock import FileLock
-
 from molecule import config as molecule_config
 from molecule.scenario import ephemeral_directory
 

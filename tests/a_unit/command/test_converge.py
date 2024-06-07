@@ -22,12 +22,11 @@ from typing import Any
 from unittest.mock import Mock
 
 from click.testing import CliRunner
-from pytest import LogCaptureFixture  # noqa: PT013
-from pytest_mock import MockerFixture
-
 from molecule import config
 from molecule.command import converge
 from molecule.shell import main
+from pytest import LogCaptureFixture  # noqa: PT013
+from pytest_mock import MockerFixture
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables

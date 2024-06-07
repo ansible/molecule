@@ -22,12 +22,11 @@ import os
 
 import pytest
 
-from pytest_mock import MockerFixture
-
 from molecule import config, platforms, scenario, state, util
 from molecule.dependency import ansible_galaxy, shell
 from molecule.provisioner import ansible
 from molecule.verifier.ansible import Ansible as AnsibleVerifier
+from pytest_mock import MockerFixture
 
 
 def test_molecule_file_private_member(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
