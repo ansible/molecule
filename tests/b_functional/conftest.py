@@ -26,17 +26,18 @@ import subprocess
 
 from subprocess import PIPE
 
-import molecule
 import pexpect
 import pytest
 
 from ansible_compat.ports import cache
+from packaging.version import Version
+
+import molecule
+
 from molecule import logger, util
 from molecule.app import app
 from molecule.text import strip_ansi_color
 from molecule.util import run_command
-from packaging.version import Version
-
 from tests.conftest import change_dir_to, molecule_directory  # pylint:disable=C0411
 
 

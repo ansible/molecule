@@ -22,10 +22,10 @@ import os
 
 import pytest
 
-from molecule import config
-from molecule.driver import delegated
 from pytest_mock import MockerFixture
 
+from molecule import config
+from molecule.driver import delegated
 from tests.conftest import is_subset  # pylint:disable=C0411
 
 

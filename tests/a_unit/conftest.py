@@ -31,9 +31,9 @@ from uuid import uuid4
 
 import pytest
 
-from molecule import config, util
 from pytest_mock import MockerFixture
 
+from molecule import config, util
 from tests.conftest import (  # pylint:disable=C0411
     molecule_directory,
     molecule_ephemeral_directory,

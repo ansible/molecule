@@ -24,10 +24,10 @@ import pathlib
 
 import pytest
 
-from molecule.command import base
-from molecule.util import run_command
 from pytest import FixtureRequest  # noqa: PT013
 
+from molecule.command import base
+from molecule.util import run_command
 from tests.b_functional.conftest import (  # pylint:disable=C0411
     idempotence,
     init_scenario,

@@ -25,9 +25,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from pytest_mock import MockerFixture
+
 from molecule import config, util
 from molecule.command import base
-from pytest_mock import MockerFixture
 
 
 FIXTURE_DIR = Path(__file__).parent.parent.parent / "fixtures" / "unit" / "test_base"

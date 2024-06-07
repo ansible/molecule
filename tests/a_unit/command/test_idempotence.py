@@ -22,9 +22,10 @@ from unittest.mock import Mock
 
 import pytest
 
+from pytest_mock import MockerFixture
+
 from molecule import config
 from molecule.command import idempotence
-from pytest_mock import MockerFixture
 
 
 @pytest.fixture()

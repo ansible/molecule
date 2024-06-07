@@ -28,13 +28,13 @@ from typing import Any
 
 import pytest
 
+from pytest_mock import MockerFixture
+
 from molecule import util
 from molecule.api import IncompatibleMoleculeRuntimeWarning, MoleculeRuntimeWarning
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
 from molecule.text import strip_ansi_escape
-from pytest_mock import MockerFixture
-
 from tests.conftest import (  # pylint:disable = C0411
     get_molecule_file,
     molecule_directory,
