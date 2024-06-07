@@ -3,7 +3,6 @@ ci:
   skip:
     - ansible-lint
     - deps
-    - lock
 default_language_version:
   python: python3.10
 repos:
