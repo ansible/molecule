@@ -28,7 +28,7 @@ repos:
       - id: remove-tabs
 
   - repo: https://github.com/pycontribs/mirrors-prettier
-    rev: v3.3.0
+    rev: v3.3.1
     hooks:
       - id: prettier
         always_run: true
@@ -53,7 +53,7 @@ repos:
       - id: tox-ini-fmt
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.5
+    rev: v0.4.8
     hooks:
       - id: ruff
         args:
