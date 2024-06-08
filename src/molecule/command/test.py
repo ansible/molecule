@@ -92,7 +92,7 @@ def test(  # type: ignore[no-untyped-def]  # noqa: ANN201, PLR0913
 ):  # pragma: no cover
     """Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy)."""  # noqa: E501
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
+    subcommand = base._get_subcommand(__name__)    # noqa: SLF001
     command_args = {
         "parallel": parallel,
         "destroy": destroy,
@@ -107,4 +107,4 @@ def test(  # type: ignore[no-untyped-def]  # noqa: ANN201, PLR0913
     if parallel:
         util.validate_parallel_cmd_args(command_args)  # type: ignore[no-untyped-call]
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)  # type: ignore[no-untyped-call]
+    base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)

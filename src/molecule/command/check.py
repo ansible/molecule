@@ -56,10 +56,10 @@ class Check(base.Base):
 def check(ctx, scenario_name, parallel):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """Use the provisioner to perform a Dry-Run (destroy, dependency, create, prepare, converge)."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
+    subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args = {"parallel": parallel, "subcommand": subcommand}
 
     if parallel:
         util.validate_parallel_cmd_args(command_args)  # type: ignore[no-untyped-call]
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)

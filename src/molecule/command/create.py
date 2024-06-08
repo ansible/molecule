@@ -65,7 +65,7 @@ class Create(base.Base):
 def create(ctx, scenario_name, driver_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """Use the provisioner to start the instances."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
+    subcommand = base._get_subcommand(__name__)    # noqa: SLF001
     command_args = {"subcommand": subcommand, "driver_name": driver_name}
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)
