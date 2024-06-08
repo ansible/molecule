@@ -118,7 +118,7 @@ class Login(base.Base):
 def login(ctx, host, scenario_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """Log in to one instance."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)    # noqa: SLF001
+    subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args = {"subcommand": subcommand, "host": host}
 
     s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)  # type: ignore[no-untyped-call]

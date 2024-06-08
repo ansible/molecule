@@ -29,8 +29,7 @@ import os
 import shutil
 import subprocess
 
-from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import click
 import wcmatch.pathlib
@@ -45,6 +44,11 @@ from molecule import config, logger, text, util
 from molecule.console import should_do_markup
 from molecule.scenario import Scenario
 
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from molecule.scenario import Scenario
 
 LOG = logging.getLogger(__name__)
 MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")

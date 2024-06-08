@@ -76,7 +76,7 @@ class Destroy(base.Base):
 def destroy(ctx, scenario_name, driver_name, __all, parallel):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """Use the provisioner to destroy the instances."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)    # noqa: SLF001
+    subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args = {
         "parallel": parallel,
         "subcommand": subcommand,

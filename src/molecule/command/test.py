@@ -92,7 +92,7 @@ def test(  # type: ignore[no-untyped-def]  # noqa: ANN201, PLR0913
 ):  # pragma: no cover
     """Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy)."""  # noqa: E501
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)    # noqa: SLF001
+    subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args = {
         "parallel": parallel,
         "destroy": destroy,
