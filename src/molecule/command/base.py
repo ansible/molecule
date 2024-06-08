@@ -19,6 +19,8 @@
 #  DEALINGS IN THE SOFTWARE.
 """Base Command Module."""
 
+from __future__ import annotations
+
 import abc
 import collections
 import contextlib
@@ -27,8 +29,7 @@ import os
 import shutil
 import subprocess
 
-from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import click
 import wcmatch.pathlib
@@ -41,7 +42,13 @@ import molecule.scenarios
 
 from molecule import config, logger, text, util
 from molecule.console import should_do_markup
+from molecule.scenario import Scenario
 
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from molecule.scenario import Scenario
 
 LOG = logging.getLogger(__name__)
 MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
@@ -70,8 +77,15 @@ class Base(metaclass=abc.ABCMeta):
             cls.execute = wrapper(cls.execute)  # type: ignore  # noqa: PGH003
 
     @abc.abstractmethod
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN101, ANN201, D102
-        pass
+    def execute(
+        self: Base,
+        action_args: list[str] | None = None,
+    ) -> None:  # pragma: no cover
+        """Abstract method to execute the command.
+
+        Args:
+            action_args: An optional list of arguments to pass to the action.
+        """
 
     def _setup(self) -> None:  # noqa: ANN101
         """Prepare Molecule's provisioner and returns None."""
@@ -80,7 +94,12 @@ class Base(metaclass=abc.ABCMeta):
         self._config.provisioner.manage_inventory()
 
 
-def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
+def execute_cmdline_scenarios(
+    scenario_name: str | None,
+    args: dict[str, Any],
+    command_args: dict[str, Any],
+    ansible_args: tuple[()] | tuple[str] = (),
+) -> None:
     """Execute scenario sequences based on parsed command-line arguments.
 
     This is useful for subcommands that run scenario sequences, which
@@ -124,7 +143,7 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
             shutil.rmtree(scenario.ephemeral_directory)
             return
         try:
-            execute_scenario(scenario)  # type: ignore[no-untyped-call]
+            execute_scenario(scenario)
         except SystemExit:
             # if the command has a 'destroy' arg, like test does,
             # handle that behavior here.
@@ -134,8 +153,8 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
                     f"'{scenario.config.action}'. Cleaning up."
                 )
                 LOG.warning(msg)
-                execute_subcommand(scenario.config, "cleanup")  # type: ignore[no-untyped-call]
-                execute_subcommand(scenario.config, "destroy")  # type: ignore[no-untyped-call]
+                execute_subcommand(scenario.config, "cleanup")
+                execute_subcommand(scenario.config, "destroy")
                 # always prune ephemeral dir if destroying on failure
                 scenario.prune()
                 if scenario.config.is_parallel:
@@ -145,8 +164,16 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
                 raise
 
 
-def execute_subcommand(config, subcommand_and_args):  # type: ignore[no-untyped-def]  # pylint: disable=redefined-outer-name  # noqa: ANN001, ANN201
-    """Execute subcommand."""
+def execute_subcommand(
+    current_config: config.Config,
+    subcommand_and_args: str,
+) -> Any:  # noqa: ANN401
+    """Execute subcommand.
+
+    Args:
+        current_config: An instance of a Molecule config.
+        subcommand_and_args: A string representing the subcommand and arguments.
+    """
     (subcommand, *args) = subcommand_and_args.split(" ")
     command_module = getattr(molecule.command, subcommand)
     command = getattr(command_module, text.camelize(subcommand))  # type: ignore[no-untyped-call]
@@ -155,19 +182,19 @@ def execute_subcommand(config, subcommand_and_args):  # type: ignore[no-untyped-
     # to ensure they behave correctly during certain sequence steps,
     # particularly the setting of ansible options in create/destroy,
     # and is also used for reporting in execute_cmdline_scenarios
-    config.action = subcommand
+    current_config.action = subcommand
 
-    return command(config).execute(args)
+    return command(current_config).execute(args)
 
 
-def execute_scenario(scenario):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
+def execute_scenario(scenario: Scenario) -> None:
     """Execute each command in the given scenario's configured sequence.
 
     Args:
         scenario: The scenario to execute.
     """
     for action in scenario.sequence:
-        execute_subcommand(scenario.config, action)  # type: ignore[no-untyped-call]
+        execute_subcommand(scenario.config, action)
 
     if "destroy" in scenario.sequence and scenario.config.command_args.get("destroy") != "never":
         scenario.prune()
@@ -226,12 +253,12 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):  #
         )
         for c in scenario_paths
     ]
-    _verify_configs(configs, glob_str)  # type: ignore[no-untyped-call]
+    _verify_configs(configs, glob_str)
 
     return configs
 
 
-def _verify_configs(configs, glob_str=MOLECULE_GLOB):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+def _verify_configs(configs: list[config.Config], glob_str: str = MOLECULE_GLOB) -> None:
     """Verify a Molecule config was found and returns None.
 
     Args:
@@ -250,7 +277,15 @@ def _verify_configs(configs, glob_str=MOLECULE_GLOB):  # type: ignore[no-untyped
         util.sysexit_with_message(msg)
 
 
-def _get_subcommand(string):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+def _get_subcommand(string: str) -> str:
+    """Return the subcommand from a string.
+
+    Args:
+        string: A string containing a subcommand.
+
+    Returns:
+        A string representing the subcommand.
+    """
     return string.split(".")[-1]
 
 

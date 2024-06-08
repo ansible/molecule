@@ -48,7 +48,7 @@ class Verify(base.Base):
 def verify(ctx, scenario_name="default"):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """Run automated tests against instances."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
+    subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args = {"subcommand": subcommand}
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)

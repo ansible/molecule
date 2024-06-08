@@ -58,7 +58,7 @@ class List(base.Base):
 def list(ctx, scenario_name, format):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201, A001, A002
     """List status of instances."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]  # noqa: SLF001
+    subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args = {"subcommand": subcommand, "format": format}
 
     statuses = []
@@ -67,7 +67,7 @@ def list(ctx, scenario_name, format):  # type: ignore[no-untyped-def] # pragma: 
         scenario_name,
     )
     for scenario in s:
-        statuses.extend(base.execute_subcommand(scenario.config, subcommand))  # type: ignore[no-untyped-call]
+        statuses.extend(base.execute_subcommand(scenario.config, subcommand))
 
     headers = [text.title(name) for name in Status._fields]
     if format in ["simple", "plain"]:
