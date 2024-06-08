@@ -19,6 +19,8 @@
 #  DEALINGS IN THE SOFTWARE.
 """Base Command Module."""
 
+from __future__ import annotations
+
 import abc
 import collections
 import contextlib
@@ -71,8 +73,15 @@ class Base(metaclass=abc.ABCMeta):
             cls.execute = wrapper(cls.execute)  # type: ignore  # noqa: PGH003
 
     @abc.abstractmethod
-    def execute(self, action_args=None) -> None:  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN101, D102
-        pass
+    def execute(
+        self: Base,
+        action_args: list[str] | None = None,
+    ) -> None:  # pragma: no cover
+        """Abstract method to execute the command.
+
+        Args:
+            action_args: An optional list of arguments to pass to the action.
+        """
 
     def _setup(self) -> None:  # noqa: ANN101
         """Prepare Molecule's provisioner and returns None."""
