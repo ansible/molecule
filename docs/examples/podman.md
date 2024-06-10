@@ -11,31 +11,31 @@ installed.
 ## Config playbook
 
 ```yaml title="molecule.yml"
-{!../molecule/podman/molecule.yml!}
+{!podman/molecule.yml!}
 ```
 
 ```yaml title="requirements.yml"
-{!../molecule/podman/requirements.yml!}
+{!podman/requirements.yml!}
 ```
 
 ## Create playbook
 
 ```yaml title="create.yml"
-{!../molecule/podman/create.yml!}
+{!podman/create.yml!}
 ```
 
 ```yaml title="tasks/create-fail.yml"
-{!../molecule/podman/tasks/create-fail.yml!}
+{!podman/tasks/create-fail.yml!}
 ```
 
 ## Converge playbook
 
 ```yaml title="converge.yml"
-{!../molecule/podman/converge.yml!}
+{!podman/converge.yml!}
 ```
 
 ## Destroy playbook
 
 ```yaml title="destroy.yml"
-{!../molecule/podman/destroy.yml!}
+{!podman/destroy.yml!}
 ```
