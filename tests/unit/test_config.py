@@ -30,13 +30,6 @@ from molecule.provisioner import ansible
 from molecule.verifier.ansible import Ansible as AnsibleVerifier
 
 
-def test_molecule_file_private_member(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    molecule_file_fixture,  # noqa: ANN001
-    config_instance: config.Config,
-):
-    assert molecule_file_fixture == config_instance.molecule_file
-
-
 def test_args_member(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     assert {} == config_instance.args
 

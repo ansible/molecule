@@ -20,26 +20,18 @@
 
 import copy
 import os
-import shutil
 
-from collections.abc import Generator
+from collections.abc import Generator, MutableMapping
 from pathlib import Path
 from subprocess import CompletedProcess
 from typing import Any
 from unittest.mock import Mock
-from uuid import uuid4
 
 import pytest
 
 from pytest_mock import MockerFixture
 
 from molecule import config, util
-from tests.conftest import (  # pylint:disable=C0411
-    molecule_directory,
-    molecule_ephemeral_directory,
-    molecule_file,
-    molecule_scenario_directory,
-)
 
 
 def write_molecule_file(filename: str, data: Any) -> None:  # noqa: ANN401, D103
@@ -53,116 +45,68 @@ def os_split(s: str) -> tuple[str, ...]:  # noqa: D103
     return (*os_split(rest), tail)
 
 
-@pytest.fixture()
-def _molecule_dependency_galaxy_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
-    return {"dependency": {"name": "galaxy"}}
-
-
-@pytest.fixture()
-def _molecule_driver_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
-    return {"driver": {"name": "default", "options": {"managed": True}}}
-
-
-@pytest.fixture()
-def _molecule_platforms_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+@pytest.fixture(name="molecule_data")
+def fixture_molecule_data() -> dict[str, Any]:
+    """Provide a default molecule data dictionary."""
     return {
+        "dependency": {"name": "galaxy"},
+        "driver": {"name": "default", "options": {"managed": True}},
         "platforms": [
             {"name": "instance-1", "groups": ["foo", "bar"], "children": ["child1"]},
             {"name": "instance-2", "groups": ["baz", "foo"], "children": ["child2"]},
         ],
-    }
-
-
-@pytest.fixture()
-def _molecule_provisioner_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
-    return {
         "provisioner": {
             "name": "ansible",
             "options": {"become": True},
             "config_options": {},
         },
+        "scenario": {"name": "default"},
+        "verifier": {"name": "ansible"},
     }
 
 
 @pytest.fixture()
-def _molecule_scenario_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
-    return {"scenario": {"name": "default"}}
-
-
-@pytest.fixture()
-def _molecule_verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
-    return {"verifier": {"name": "ansible"}}
-
-
-@pytest.fixture(name="molecule_data")
-def fixture_molecule_data(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    _molecule_dependency_galaxy_section_data,  # noqa: ANN001
-    _molecule_driver_section_data,  # noqa: ANN001
-    _molecule_platforms_section_data,  # noqa: ANN001
-    _molecule_provisioner_section_data,  # noqa: ANN001
-    _molecule_scenario_section_data,  # noqa: ANN001
-    _molecule_verifier_section_data,  # noqa: ANN001
-):
-    fixtures = [
-        _molecule_dependency_galaxy_section_data,
-        _molecule_driver_section_data,
-        _molecule_platforms_section_data,
-        _molecule_provisioner_section_data,
-        _molecule_scenario_section_data,
-        _molecule_verifier_section_data,
-    ]
-
-    merged_dict = {}
-    for fixture in fixtures:
-        merged_dict.update(fixture)
-
-    return merged_dict
-
-
-@pytest.fixture(name="molecule_directory_fixture")
-def fixture_molecule_directory_fixture(temp_dir):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    return molecule_directory()
-
-
-@pytest.fixture(name="molecule_scenario_directory_fixture")
-def fixture_molecule_scenario_directory_fixture(molecule_directory_fixture):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    path = molecule_scenario_directory()
-    if not os.path.isdir(path):  # noqa: PTH112
-        os.makedirs(path, exist_ok=True)  # noqa: PTH103
-
-    return path
-
-
-@pytest.fixture(name="molecule_ephemeral_directory_fixture")
-def fixture_molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT004, ARG001, D103
-    path = molecule_ephemeral_directory(str(uuid4()))
-    if not os.path.isdir(path):  # noqa: PTH112
-        os.makedirs(path, exist_ok=True)  # noqa: PTH103
-    yield
-    shutil.rmtree(str(Path(path).parent))
-
-
-@pytest.fixture(name="molecule_file_fixture")
-def fixture_molecule_file_fixture(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    molecule_scenario_directory_fixture,  # noqa: ANN001, ARG001
-    molecule_ephemeral_directory_fixture,  # noqa: ANN001, ARG001
-):
-    return molecule_file()
-
-
-@pytest.fixture()
-def config_instance(  # type: ignore[no-untyped-def]  # noqa: D103
-    molecule_file_fixture: str,
-    molecule_data,  # noqa: ANN001
-    request,  # noqa: ANN001
+def config_instance(
+    monkeypatch: pytest.MonkeyPatch,
+    molecule_data: dict[str, Any],
+    request: pytest.FixtureRequest,
+    test_cache_path: Path,
 ) -> Generator[config.Config, None, None]:
-    mdc = copy.deepcopy(molecule_data)
+    """Return a Config instance.
+
+    Merge molecule_data with any fixture that requests it and write the
+    resulting data to a molecule file.  Return a Config instance with the
+    molecule file path.
+
+    Because the test_cache_path is gitignored, monkeypatch the filter_ignored_scenarios
+    function to return the original list of scenarios.
+
+    Args:
+        monkeypatch: The pytest fixture for patching
+        molecule_data: The pytest fixture for molecule data.
+        request: The pytest fixture request
+        test_cache_path: The test cache path
+
+    Yields:
+        config.Config: A Config instance
+    """
+    mdc: MutableMapping[str, Any] = copy.deepcopy(molecule_data)
     if hasattr(request, "param"):
-        mdc = util.merge_dicts(mdc, request.getfixturevalue(request.param))
-    write_molecule_file(molecule_file_fixture, mdc)
+        mdc = util.merge_dicts(molecule_data, request.getfixturevalue(request.param))
+
+    monkeypatch.chdir(test_cache_path)
+    molecule_dir = test_cache_path / "molecule" / "default"
+    molecule_dir.mkdir(parents=True, exist_ok=True)
+    molecule_file = molecule_dir / "molecule.yml"
+    write_molecule_file(str(molecule_file), mdc)
+
+    def _filter_ignored_scenarios(scenario_paths: list[str]) -> list[str]:
+        return scenario_paths
+
+    monkeypatch.setattr("molecule.command.base.filter_ignored_scenarios", _filter_ignored_scenarios)
 
     _environ = dict(os.environ)
-    c = config.Config(molecule_file_fixture)
+    c = config.Config(str(molecule_file))
     c.command_args = {"subcommand": "test"}
     yield c
     # restore environ which can be modified by Config()

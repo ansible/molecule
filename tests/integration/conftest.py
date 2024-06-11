@@ -26,7 +26,6 @@ import pytest
 
 from molecule import logger
 from molecule.util import run_command
-from tests.conftest import change_dir_to  # pylint:disable=C0411
 
 
 if TYPE_CHECKING:
@@ -38,8 +37,9 @@ LOG = logger.get_logger(__name__)
 
 
 @pytest.fixture(name="with_scenario")
-def _with_scenario(
+def _with_scenario(  # noqa: PLR0913
     request: pytest.FixtureRequest,
+    monkeypatch: pytest.MonkeyPatch,
     test_ephemeral_dir_env: dict[str, str],
     scenario_to_test: str,
     scenario_name: str,
@@ -49,6 +49,7 @@ def _with_scenario(
 
     Args:
         request: The pytest request object.
+        monkeypatch: The pytest monkeypatch object.
         test_ephemeral_dir_env: The ephemeral directory environment variables.
         scenario_to_test: The scenario to test.
         scenario_name: The scenario name.
@@ -59,12 +60,13 @@ def _with_scenario(
     """
     scenario_directory = test_fixture_dir / "scenarios" / scenario_to_test
 
-    with change_dir_to(scenario_directory):
-        yield
-        if request.node.rep_call.failed:
-            return
-        if scenario_name:
-            msg = f"CLEANUP: Destroying instances for {scenario_name}"
-            LOG.info(msg)
-            cmd = ["molecule", "destroy", "--scenario-name", scenario_name]
-            assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+    monkeypatch.chdir(scenario_directory)
+
+    yield
+    if request.node.rep_call.failed:
+        return
+    if scenario_name:
+        msg = f"CLEANUP: Destroying instances for {scenario_name}"
+        LOG.info(msg)
+        cmd = ["molecule", "destroy", "--scenario-name", scenario_name]
+        assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0

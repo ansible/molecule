@@ -18,12 +18,9 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import contextlib
 import os
 import platform
-import random
 import shutil
-import string
 
 from collections.abc import Iterable
 from pathlib import Path
@@ -32,10 +29,8 @@ import pytest
 
 from _pytest.nodes import Item
 from _pytest.runner import CallInfo
-from filelock import FileLock
 
-from molecule import config as molecule_config
-from molecule.scenario import Scenario, ephemeral_directory
+from molecule.scenario import Scenario
 
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
@@ -66,27 +61,6 @@ def is_subset(subset, superset):  # type: ignore[no-untyped-def]  # noqa: ANN001
     return subset == superset
 
 
-@pytest.fixture(name="random_string")
-def fixture_random_string(l=5):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, E741, D103
-    return "".join(random.choice(string.ascii_uppercase) for _ in range(l))  # noqa: S311
-
-
-@contextlib.contextmanager
-def change_dir_to(dir_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
-    cwd = os.getcwd()  # noqa: PTH109
-    os.chdir(dir_name)
-    yield
-    os.chdir(cwd)
-
-
-@pytest.fixture()
-def temp_dir(tmpdir, random_string, request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    directory = tmpdir.mkdir(random_string)
-
-    with change_dir_to(directory.strpath):
-        yield directory
-
-
 @pytest.fixture()
 def resources_folder_path() -> Path:
     """Return the path to the resources folder.
@@ -95,35 +69,6 @@ def resources_folder_path() -> Path:
         Path: The path to the resources folder.
     """
     return FIXTURES_DIR / "resources"
-
-
-def molecule_project_directory() -> str:  # noqa: D103
-    return os.getcwd()  # noqa: PTH109
-
-
-def molecule_directory() -> str:  # noqa: D103
-    return molecule_config.molecule_directory(molecule_project_directory())
-
-
-def molecule_scenario_directory() -> str:  # noqa: D103
-    return os.path.join(molecule_directory(), "default")  # noqa: PTH118
-
-
-def molecule_file() -> str:  # noqa: D103
-    return get_molecule_file(molecule_scenario_directory())
-
-
-def get_molecule_file(path: str) -> str:  # noqa: D103
-    return molecule_config.molecule_file(path)
-
-
-def molecule_ephemeral_directory(_fixture_uuid) -> str:  # type: ignore[no-untyped-def]  # noqa: ANN001, D103
-    project_directory = f"test-project-{_fixture_uuid}"
-    scenario_name = "test-instance"
-
-    return ephemeral_directory(
-        os.path.join("molecule_test", project_directory, scenario_name),  # noqa: PTH118
-    )
 
 
 def pytest_collection_modifyitems(items, config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
@@ -162,17 +107,6 @@ def reset_pytest_vars(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN
             monkeypatch.delenv(var_name, raising=False)
 
 
-@pytest.fixture(autouse=True)
-def block_on_serial_mark(request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT004, D103
-    # https://github.com/pytest-dev/pytest-xdist/issues/385
-    os.makedirs(".tox", exist_ok=True)  # noqa: PTH103
-    if request.node.get_closest_marker("serial"):
-        with FileLock(".tox/semaphore.lock"):
-            yield
-    else:
-        yield
-
-
 @pytest.fixture()
 def test_fixture_dir(request: pytest.FixtureRequest) -> Path:
     """Provide the fixture directory for a given test.
@@ -205,15 +139,26 @@ def pytest_runtest_makereport(  # type: ignore[misc]
     return rep
 
 
-@pytest.fixture(name="test_ephemeral_dir_path")
-def fixture_test_ephemeral_dir_path(
+def git_root() -> Path:
+    """Return the root of the git repository.
+
+    Returns:
+        The root of the git repository
+    """
+    command = "git rev-parse --show-toplevel"
+    return Path(os.popen(command, mode="r").read().strip())  # noqa: S605
+
+
+@pytest.fixture(name="test_cache_path")
+def fixture_test_cache_path(
     monkeypatch: pytest.MonkeyPatch,
     request: pytest.FixtureRequest,
 ) -> Iterable[Path]:
-    """Provide the ephemeral directory for a given test.
+    """Provide a test specific cache path.
 
     The assumption here is that the tests are always run after being checkout out from git.
-    We will monkey patch the source and provide it as an env for any subprocess commands to use.
+    The ephemeral directory function will be mocked to ensure that the cache directory is
+    used by the test. as the ephemeral directory.
 
     After success completion of the test, the directory will be removed.
 
@@ -224,11 +169,8 @@ def fixture_test_ephemeral_dir_path(
     Yields:
         Path: The ephemeral directory
     """
-    # use the git root as the ephemeral directory
-    command = "git rev-parse --show-toplevel"
-    git_root = Path(os.popen(cmd=command, mode="r").read().strip())
     test_dir = Path(
-        git_root
+        git_root()
         / ".cache"
         / ".molecule"
         / "tests"
@@ -264,14 +206,14 @@ def fixture_test_ephemeral_dir_path(
 
 
 @pytest.fixture(name="test_ephemeral_dir_env")
-def fixture_test_ephemeral_dir_env(test_ephemeral_dir_path: Path) -> dict[str, str]:
+def fixture_test_ephemeral_dir_env(test_cache_path: Path) -> dict[str, str]:
     """Provide the ephemeral directory for a given test as an env variable.
 
     The current path will be provided as an env variable for any subprocess commands to use
     so any commands can be found.
 
     Args:
-        test_ephemeral_dir_path: The ephemeral directory path
+        test_cache_path: The ephemeral directory path
 
     Returns:
         The ephemeral directory as an env variable
@@ -279,5 +221,22 @@ def fixture_test_ephemeral_dir_env(test_ephemeral_dir_path: Path) -> dict[str, s
     path = os.environ.get("PATH", "")
     return {
         "PATH": path,
-        "MOLECULE_EPHEMERAL_DIRECTORY": str(test_ephemeral_dir_path),
+        "MOLECULE_EPHEMERAL_DIRECTORY": str(test_cache_path),
     }
+
+
+def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:
+    """Remove the test cache directory after a successful test session.
+
+    Args:
+        session: The pytest session
+        exitstatus: The exit status of the test session
+    """
+    assert session
+    if exitstatus:
+        return
+    if os.environ.get("PYTEST_XDIST_WORKER"):
+        return
+    test_cache_dir = Path(git_root() / ".cache" / ".molecule" / "tests")
+    if test_cache_dir.exists():
+        shutil.rmtree(test_cache_dir)
