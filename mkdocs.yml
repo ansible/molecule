@@ -108,7 +108,7 @@ plugins:
 
 markdown_extensions:
   - markdown_include.include:
-      base_path: docs
+      base_path: tests/fixtures/integration/test_command/molecule/
   - admonition
   - def_list
   - footnotes
