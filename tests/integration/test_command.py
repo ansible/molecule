@@ -247,15 +247,21 @@ def test_role_name_check_one(
     assert result.returncode == 0
 
 
-def test_sample_collection(resources_folder_path: Path) -> None:
+def test_sample_collection(
+    monkeypatch: pytest.MonkeyPatch,
+    resources_folder_path: Path,
+    test_ephemeral_dir_env: dict[str, str],
+) -> None:
     """Test the sample collection.
 
     Args:
+        monkeypatch: Pytest fixture.
         resources_folder_path: Path to the resources folder.
+        test_ephemeral_dir_env: The ephemeral directory env.
     """
+    monkeypatch.chdir(resources_folder_path / "sample-collection")
     cmd = ["molecule", "test"]
-    cwd = f"{resources_folder_path}/sample-collection"
-    assert run_command(cmd=cmd, cwd=cwd).returncode == 0
+    assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
 
 
 @pytest.mark.parametrize(("scenario_name"), (("test_w_gitignore"), ("test_wo_gitignore")))
@@ -263,6 +269,7 @@ def test_with_and_without_gitignore(
     monkeypatch: pytest.MonkeyPatch,
     scenario_name: str,
     resources_folder_path: Path,
+    test_fixture_dir: Path,
 ) -> None:
     """Test with and without gitignore.
 
@@ -270,6 +277,7 @@ def test_with_and_without_gitignore(
         monkeypatch: Pytest fixture.
         scenario_name: The scenario name.
         resources_folder_path: Path to the resources folder.
+        test_fixture_dir: Path to the test fixture directory.
     """
     if scenario_name == "test_wo_gitignore":
 
@@ -282,6 +290,7 @@ def test_with_and_without_gitignore(
         )
 
     monkeypatch.chdir(resources_folder_path)
+    monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", str(test_fixture_dir))
 
     scenario_dir = resources_folder_path / ".extensions" / "molecule" / scenario_name
     scenario_dir.mkdir(parents=True, exist_ok=True)
