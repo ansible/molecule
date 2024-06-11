@@ -35,10 +35,6 @@ from molecule.api import IncompatibleMoleculeRuntimeWarning, MoleculeRuntimeWarn
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
 from molecule.text import strip_ansi_escape
-from tests.conftest import (  # pylint:disable = C0411
-    get_molecule_file,
-    molecule_directory,
-)
 
 
 def test_print_debug():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
@@ -169,12 +165,12 @@ def test_run_command_with_debug_handles_no_env(  # type: ignore[no-untyped-def] 
     assert empty_list == patched_print_debug.mock_calls
 
 
-def test_os_walk(temp_dir):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
+def test_os_walk(test_cache_path):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     scenarios = ["scenario1", "scenario2", "scenario3"]
-    mol_dir = molecule_directory()
+    mol_dir = test_cache_path / "molecule"
     for scenario in scenarios:
         scenario_directory = os.path.join(mol_dir, scenario)  # noqa: PTH118
-        molecule_file = get_molecule_file(scenario_directory)
+        molecule_file = os.path.join(scenario_directory, "molecule.yml")  # noqa: PTH118
         os.makedirs(scenario_directory, exist_ok=True)  # noqa: PTH103
         util.write_file(molecule_file, "")
 
@@ -196,14 +192,18 @@ def test_render_template_quoted():  # type: ignore[no-untyped-def]  # noqa: ANN2
     assert util.render_template(template) == 'url = "quoted_str"'  # type: ignore[no-untyped-call]
 
 
-def test_write_file(temp_dir):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
-    dest_file = os.path.join(temp_dir.strpath, "test_util_write_file.tmp")  # noqa: PTH118
+def test_write_file(test_cache_path: Path) -> None:
+    """Test the `write_file` function.
+
+    Args:
+        test_cache_path: The path to the test cache directory for the test.
+    """
+    dest_file = test_cache_path / "test_util_write_file.tmp"
     contents = binascii.b2a_hex(os.urandom(15)).decode("utf-8")
-    util.write_file(dest_file, contents)
-    with open(dest_file) as stream:  # noqa: PTH123
+    util.write_file(str(dest_file), contents)
+    with dest_file.open() as stream:
         data = stream.read()
     x = f"# Molecule managed\n\n{contents}"
-
     assert x == data
 
 
@@ -256,11 +256,16 @@ def test_safe_load_exits_when_cannot_parse() -> None:  # noqa: D103
     assert e.value.code == 1
 
 
-def test_safe_load_file(temp_dir) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, D103
-    path = os.path.join(temp_dir.strpath, "foo")  # noqa: PTH118
-    util.write_file(path, "foo: bar")
+def test_safe_load_file(test_cache_path: Path) -> None:
+    """Test the `safe_load_file` function.
 
-    assert {"foo": "bar"} == util.safe_load_file(path)
+    Args:
+        test_cache_path: The path to the test cache directory for the test.
+    """
+    path = test_cache_path / "test_safe_load_file.yml"
+    util.write_file(str(path), "foo: bar")
+
+    assert {"foo": "bar"} == util.safe_load_file(str(path))
 
 
 def test_instance_with_scenario_name() -> None:  # noqa: D103
@@ -305,16 +310,15 @@ def test_filter_verbose_permutation() -> None:  # noqa: D103
     assert x == util.filter_verbose_permutation(options)  # type: ignore[no-untyped-call]
 
 
-def test_abs_path(temp_dir) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ARG001, D103
-    x = os.path.abspath(  # noqa: PTH100
-        os.path.join(os.getcwd(), os.path.pardir, "foo", "bar"),  # noqa: PTH109, PTH118
-    )
-
-    assert x == util.abs_path(os.path.join(os.path.pardir, "foo", "bar"))  # noqa: PTH118
+def test_abs_path() -> None:
+    """Test the `abs_path` function."""
+    test_dir = "/foo/../foo"
+    assert util.abs_path(test_dir) == "/foo"
 
 
-def test_abs_path_with_none_path() -> None:  # noqa: D103
-    assert util.abs_path(None) is None  # type: ignore  # noqa: PGH003
+def test_abs_path_with_empty_path() -> None:
+    """Test the `abs_path` function with an empty path."""
+    assert util.abs_path("") is None
 
 
 @pytest.mark.parametrize(

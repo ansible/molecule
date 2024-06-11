@@ -20,13 +20,17 @@
 
 import os
 
+from pathlib import Path
+from unittest.mock import Mock
+
 import pytest
 
 from molecule.command.init import scenario
 
 
-@pytest.fixture()
-def _command_args():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+@pytest.fixture(name="command_args")
+def fixture_command_args() -> dict[str, str]:
+    """Provide a dictionary of command arguments."""
     return {
         "driver_name": "default",
         "role_name": "test-role",
@@ -36,29 +40,62 @@ def _command_args():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
     }
 
 
-@pytest.fixture()
-def _instance(_command_args):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
-    return scenario.Scenario(_command_args)
+@pytest.fixture(name="instance")
+def fixture_instance(command_args: dict[str, str]) -> scenario.Scenario:
+    """Provide a scenario instance.
+
+    Args:
+        command_args: A dictionary of command arguments.
+    """
+    return scenario.Scenario(command_args)
 
 
-def test_scenario_execute(temp_dir, _instance, patched_logger_info):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    _instance.execute()
+def test_scenario_execute(
+    monkeypatch: pytest.MonkeyPatch,
+    instance: scenario.Scenario,
+    patched_logger_info: Mock,
+    test_cache_path: Path,
+) -> None:
+    """Test that the scenario is initialized successfully.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        instance: A scenario instance.
+        patched_logger_info: A patched logger.
+        test_cache_path: Path to the cache directory for the test.
+    """
+    monkeypatch.chdir(test_cache_path)
+    instance.execute()  # type: ignore[no-untyped-call]
 
     msg = "Initializing new scenario test-scenario..."
     patched_logger_info.assert_any_call(msg)
 
     assert os.path.isdir("./molecule/test-scenario")  # noqa: PTH112
 
-    scenario_directory = os.path.join(temp_dir.strpath, "molecule", "test-scenario")  # noqa: PTH118
+    scenario_directory = test_cache_path / "molecule" / "test-scenario"
     msg = f"Initialized scenario in {scenario_directory} successfully."
     patched_logger_info.assert_any_call(msg)
 
 
-def test_execute_scenario_exists(temp_dir, _instance, caplog):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
-    _instance.execute()
+def test_execute_scenario_exists(
+    monkeypatch: pytest.MonkeyPatch,
+    instance: scenario.Scenario,
+    caplog: pytest.LogCaptureFixture,
+    test_cache_path: Path,
+) -> None:
+    """Test that the scenario is initialized successfully.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        instance: A scenario instance.
+        caplog: Pytest log capture fixture.
+        test_cache_path: Path to the cache directory for the test.
+    """
+    monkeypatch.chdir(test_cache_path)
+    instance.execute()  # type: ignore[no-untyped-call]
 
     with pytest.raises(SystemExit) as e:
-        _instance.execute()
+        instance.execute()  # type: ignore[no-untyped-call]
 
     assert e.value.code == 1
 

@@ -264,7 +264,7 @@ def test_sample_collection(
     assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
 
 
-@pytest.mark.usefixtures("test_ephemeral_dir_path")
+@pytest.mark.usefixtures("test_cache_path")
 @pytest.mark.parametrize(("scenario_name"), (("test_w_gitignore"), ("test_wo_gitignore")))
 def test_with_and_without_gitignore(
     monkeypatch: pytest.MonkeyPatch,

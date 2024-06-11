@@ -138,7 +138,8 @@ class Testinfra(Verifier):
         files_list = []
         c = self._config.config
         for f in c["verifier"]["additional_files_or_dirs"]:
-            glob_path = os.path.join(self._config.verifier.directory, f)  # noqa: PTH118
+            escaped = glob.escape(self._config.verifier.directory)
+            glob_path = os.path.join(escaped, f)  # noqa: PTH118
             glob_list = glob.glob(glob_path)  # noqa: PTH207
             if glob_list:
                 files_list.extend(glob_list)

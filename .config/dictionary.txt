@@ -35,6 +35,7 @@ envlist
 envname
 ericsysmin
 euxo
+exitstatus
 failover
 fileglob
 filelock
@@ -105,6 +106,7 @@ seccomp
 selectattr
 sendline
 serviceaccount
+sessionfinish
 setenv
 setuptools
 sharded
@@ -139,4 +141,6 @@ virt's
 virtenv
 virtualmachines
 wcmatch
+workerinput
+xdist
 zzyzx
