@@ -17,11 +17,9 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
-from __future__ import annotations
 
-import os
-
-from typing import TYPE_CHECKING
+from pathlib import Path
+from typing import TypedDict
 
 import pytest
 
@@ -30,17 +28,6 @@ from pytest import FixtureRequest  # noqa: PT013
 from molecule.command import base
 from molecule.util import run_command
 from tests.conftest import mac_on_gh  # pylint:disable=C0411
-from tests.integration.conftest import (  # pylint:disable=C0411
-    idempotence,
-    init_scenario,
-    list_with_format_plain,
-    run_test,
-    verify,
-)
-
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 @pytest.fixture(name="scenario_to_test")
@@ -65,276 +52,199 @@ def fixture_driver_name(request: FixtureRequest) -> str | None:  # noqa: D103
         return None
 
 
-@pytest.fixture(name="platform_name")
-def fixture_platform_name(request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
-    try:
-        return request.param
-    except AttributeError:
-        return None
+class ParamDefault(TypedDict):
+    """Typed params."""
+
+    argnames: tuple[str, str]
+    argvalues: tuple[tuple[str, str]]
+    ids: str
+    indirect: tuple[str, str]
+
+
+PARAMS_DEFAULT: ParamDefault = {
+    "argnames": ("scenario_to_test", "scenario_name"),
+    "argvalues": (("driver/delegated", "default"),),
+    "ids": "0",
+    "indirect": ("scenario_to_test", "scenario_name"),
+}
 
 
 @pytest.mark.extensive()
+@pytest.mark.parametrize(**PARAMS_DEFAULT)
+@pytest.mark.usefixtures("with_scenario")
 @pytest.mark.parametrize(
-    ("scenario_to_test", "driver_name", "scenario_name"),
-    [  # noqa: PT007
-        pytest.param("driver/delegated", "default", "default", id="0"),
-    ],
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
-)
-def test_command_check(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    cmd = ["molecule", "check", "--scenario-name", scenario_name]
-    assert run_command(cmd).returncode == 0
-
-
-@pytest.mark.extensive()
-@pytest.mark.parametrize(
-    ("scenario_to_test", "driver_name", "scenario_name"),
-    [  # noqa: PT007
-        pytest.param("driver/delegated", "default", "default", id="0"),
-    ],
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
-)
-@pytest.mark.serial()
-def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    cmd = ["molecule", "cleanup", "--scenario-name", scenario_name]
-    assert run_command(cmd).returncode == 0
-
-
-@pytest.mark.extensive()
-@pytest.mark.parametrize(
-    ("scenario_to_test", "driver_name", "scenario_name"),
-    [  # noqa: PT007
-        pytest.param("driver/delegated", "default", "default", id="0"),
-    ],
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
-)
-@pytest.mark.serial()
-def test_command_converge(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    cmd = ["molecule", "converge", "--scenario-name", scenario_name]
-    assert run_command(cmd).returncode == 0
-
-
-@pytest.mark.extensive()
-@pytest.mark.parametrize(
-    ("scenario_to_test", "driver_name", "scenario_name"),
-    [  # noqa: PT007
-        pytest.param("driver/delegated", "default", "default", id="0"),
-    ],
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
-)
-@pytest.mark.serial()
-def test_command_create(scenario_to_test, with_scenario, scenario_name, tmp_path):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    cmd = ["molecule", "create", "--scenario-name", scenario_name]
-    assert run_command(cmd, env=os.environ).returncode == 0
-
-
-@pytest.mark.parametrize(
-    ("scenario_to_test", "driver_name", "scenario_name"),
-    [  # noqa: PT007
-        pytest.param(
-            "dependency",
-            "default",
-            "shell",
-        ),
-        pytest.param(
-            "dependency",
-            "default",
-            "ansible-galaxy",
-            id="galaxy",
-        ),
-    ],
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
-)
-@pytest.mark.serial()
-def test_command_dependency(request, scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    cmd = ["molecule", "dependency", "--scenario-name", scenario_name]
-    assert run_command(cmd, echo=True).returncode == 0
-
-    # Validate that dependency worked by running converge, which make use
-    cmd = ["molecule", "converge", "--scenario-name", scenario_name]
-    assert run_command(cmd, echo=True).returncode == 0
-
-
-@pytest.mark.serial()
-@pytest.mark.extensive()
-@pytest.mark.parametrize(
-    ("scenario_to_test", "driver_name", "scenario_name"),
-    [pytest.param("driver/delegated", "default", "default", id="0")],  # noqa: PT007
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
-)
-def test_command_destroy(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    cmd = ["molecule", "destroy", "--scenario-name", scenario_name]
-    assert run_command(cmd).returncode == 0
-
-
-@pytest.mark.serial()
-@pytest.mark.extensive()
-@pytest.mark.parametrize(
-    ("scenario_to_test", "driver_name", "scenario_name"),
-    [  # noqa: PT007
-        pytest.param("driver/delegated", "default", "default", id="0"),
-    ],
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
-)
-def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    idempotence(scenario_name)  # type: ignore[no-untyped-call]
-
-
-@pytest.mark.serial()
-def test_command_init_scenario(temp_dir):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
-    init_scenario(temp_dir, "default")  # type: ignore[no-untyped-call]
-
-
-@pytest.mark.serial()
-@pytest.mark.parametrize(
-    ("scenario_to_test", "driver_name", "expected"),
-    [  # noqa: PT007
-        pytest.param(
-            "driver/delegated",
-            "default",
-            "instance        default ansible default",
-            id="0",
-        ),
-    ],
-    indirect=["scenario_to_test", "driver_name"],
-)
-def test_command_list_with_format_plain(scenario_to_test, with_scenario, expected):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    list_with_format_plain(expected)  # type: ignore[no-untyped-call]
-
-
-@pytest.mark.serial()
-@pytest.mark.extensive()
-@pytest.mark.parametrize(
-    ("scenario_to_test", "driver_name", "scenario_name"),
-    [  # noqa: PT007
-        pytest.param("driver/delegated", "default", "default", id="0"),
-    ],
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
-)
-def test_command_prepare(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    cmd = ["molecule", "create", "--scenario-name", scenario_name]
-    assert run_command(cmd).returncode == 0
-
-    cmd = ["molecule", "prepare", "--scenario-name", scenario_name]
-    assert run_command(cmd).returncode == 0
-
-
-@pytest.mark.serial()
-@pytest.mark.extensive()
-@pytest.mark.parametrize(
-    ("scenario_to_test", "driver_name", "scenario_name"),
-    [  # noqa: PT007
-        pytest.param("driver/delegated", "default", "default", id="0"),
-    ],
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
-)
-def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    cmd = ["molecule", "side-effect", "--scenario-name", scenario_name]
-    assert run_command(cmd).returncode == 0
-
-
-@pytest.mark.serial()
-@pytest.mark.extensive()
-@pytest.mark.parametrize(
-    ("scenario_to_test", "driver_name", "scenario_name"),
-    [  # noqa: PT007
-        pytest.param("driver/delegated", "default", "default", id="0"),
-    ],
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
-)
-def test_command_syntax(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    cmd = ["molecule", "syntax", "--scenario-name", scenario_name]
-    assert run_command(cmd).returncode == 0
-
-
-@pytest.mark.serial()
-@pytest.mark.parametrize(
-    ("scenario_to_test", "driver_name", "scenario_name"),
-    [  # noqa: PT007
-        pytest.param("driver/delegated", "default", "default", id="0"),
-    ],
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
-)
-def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    run_test(driver_name, scenario_name)  # type: ignore[no-untyped-call]
-
-
-def run_test_with_platform_name(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    driver_name,  # noqa: ANN001
-    platform_name,  # noqa: ANN001
-    scenario_name="default",  # noqa: ANN001
-    parallel=False,  # noqa: ANN001, FBT002
-):
-    cmd = [
-        "molecule",
-        "-vvv",
-        "--debug",
+    "command",
+    (
+        "check",
+        "cleanup",
+        "converge",
+        "create",
+        "destroy",
+        "prepare",
+        "syntax",
+        "side-effect",
         "test",
-        "--scenario-name",
-        scenario_name,
-        "--platform-name",
-        platform_name,
-    ]
-    if driver_name != "default":
-        if scenario_name is None:
-            cmd.append("--all")
-        if parallel:
-            cmd.append("--parallel")
-
-    assert run_command(cmd).returncode == 0
-
-
-@pytest.mark.serial()
-@pytest.mark.parametrize(
-    ("scenario_to_test", "driver_name", "scenario_name", "platform_name"),
-    [  # noqa: PT007
-        pytest.param("driver/delegated", "default", "default", "instance", id="0"),
-    ],
-    indirect=["scenario_to_test", "driver_name", "scenario_name", "platform_name"],
+        "verify",
+    ),
 )
-def test_command_test_with_platform_name(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    scenario_to_test,  # noqa: ANN001, ARG001
-    with_scenario,  # noqa: ANN001, ARG001
-    scenario_name,  # noqa: ANN001
-    driver_name,  # noqa: ANN001
-    platform_name,  # noqa: ANN001
-):
-    run_test_with_platform_name(driver_name, platform_name, scenario_name)  # type: ignore[no-untyped-call]
+def test_command(
+    test_ephemeral_dir_env: dict[str, str],
+    scenario_name: str,
+    command: str,
+) -> None:
+    """Test a scenario using command.
+
+    Args:
+        test_ephemeral_dir_env: The ephemeral directory env.
+        scenario_name: The scenario name.
+        command: The command to run.
+    """
+    cmd = ["molecule", command, "--scenario-name", scenario_name]
+    result = run_command(cmd=cmd, env=test_ephemeral_dir_env)
+    assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+    if command == "syntax":
+        assert "converge.yml" in result.stdout
+    else:
+        assert "PLAY RECAP" in result.stdout
 
 
-@pytest.mark.serial()
-@pytest.mark.parametrize(
-    ("scenario_to_test", "driver_name", "scenario_name"),
-    [  # noqa: PT007
-        pytest.param(
-            "driver/delegated_invalid_role_name_with_role_name_check_equals_to_1",
-            "default",
-            "default",
-            id="0",
-        ),
-    ],
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
-)
-def test_command_test_with_role_name_check_equals_to_1(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    scenario_to_test,  # noqa: ANN001, ARG001
-    with_scenario,  # noqa: ANN001, ARG001
-    scenario_name,  # noqa: ANN001
-    driver_name,  # noqa: ANN001
-):
-    run_test(driver_name, scenario_name)  # type: ignore[no-untyped-call]
-
-
-@pytest.mark.serial()
 @pytest.mark.extensive()
+@pytest.mark.parametrize(**PARAMS_DEFAULT)
+@pytest.mark.usefixtures("with_scenario")
+def test_command_idempotence(test_ephemeral_dir_env: dict[str, str], scenario_name: str) -> None:
+    """Test idempotence of a scenario.
+
+    Args:
+        test_ephemeral_dir_env: The ephemeral directory env.
+        scenario_name: The scenario name.
+    """
+    cmd = ["molecule", "create", "--scenario-name", scenario_name]
+    assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+
+    cmd = ["molecule", "converge", "--scenario-name", scenario_name]
+    assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+
+    cmd = ["molecule", "idempotence", "--scenario-name", scenario_name]
+    assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+
+
 @pytest.mark.parametrize(
-    ("scenario_to_test", "driver_name", "scenario_name"),
-    [  # noqa: PT007
-        pytest.param("driver/delegated", "default", "default", id="0"),
-    ],
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
+    ("scenario_to_test", "scenario_name"),
+    (("dependency", "shell"), ("dependency", "ansible-galaxy")),
 )
-def test_command_verify(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
-    verify(scenario_name)  # type: ignore[no-untyped-call]
+@pytest.mark.usefixtures("with_scenario")
+def test_command_dependency(test_ephemeral_dir_env: dict[str, str], scenario_name: str) -> None:
+    """Test scenario dependency.
+
+    Args:
+        test_ephemeral_dir_env: The ephemeral directory env.
+        scenario_name: The scenario name.
+    """
+    cmd = ["molecule", "dependency", "--scenario-name", scenario_name]
+    assert run_command(cmd, env=test_ephemeral_dir_env).returncode == 0
+
+    # Validate that dependency worked by running converge, which make use it
+    cmd = ["molecule", "converge", "--scenario-name", scenario_name]
+    assert run_command(cmd, env=test_ephemeral_dir_env).returncode == 0
+
+
+def test_command_init_scenario(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    test_ephemeral_dir_env: dict[str, str],
+) -> None:
+    """Test scenario initialization.
+
+    Manually destroy the scenario after the test because the with_scenario fixture
+    is not used.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        tmp_path: Path to the temporary directory.
+        test_ephemeral_dir_env: The ephemeral directory env.
+    """
+    monkeypatch.chdir(tmp_path)
+    scenario_name = "test-scenario"
+
+    cmd = ["molecule", "init", "scenario", scenario_name]
+    assert run_command(cmd).returncode == 0
+    assert (tmp_path / "molecule" / scenario_name).is_dir()
+
+    cmd = ["molecule", "test", "--scenario-name", "test-scenario", "--all"]
+    assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+
+    cmd = ["molecule", "destroy", "--scenario-name", "test-scenario"]
+    assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+
+
+def test_command_list_with_format_plain(
+    monkeypatch: pytest.MonkeyPatch,
+    test_fixture_dir: Path,
+    test_ephemeral_dir_env: dict[str, str],
+) -> None:
+    """Test list command with plain format.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        test_fixture_dir: Path to the test fixture directory.
+        test_ephemeral_dir_env: The ephemeral directory env.
+    """
+    monkeypatch.chdir(test_fixture_dir / "scenarios" / "driver" / "delegated")
+    cmd = ["molecule", "list", "--format", "plain"]
+    result = run_command(cmd=cmd, env=test_ephemeral_dir_env)
+    assert result.returncode == 0
+    assert result.stdout == "instance        default ansible default false   false\n"
+
+
+@pytest.mark.extensive()
+@pytest.mark.parametrize(**PARAMS_DEFAULT)
+@pytest.mark.usefixtures("with_scenario")
+@pytest.mark.parametrize(("platform", "missing"), (("instance", False), ("gonzo", True)))
+def test_with_missing_platform_name(
+    test_ephemeral_dir_env: dict[str, str],
+    scenario_name: str,
+    platform: str,
+    missing: bool,  # noqa: FBT001
+) -> None:
+    """Test a scenario using command with missing platform name.
+
+    Args:
+        test_ephemeral_dir_env: The ephemeral directory env.
+        scenario_name: The scenario name.
+        platform: The platform name.
+        missing: If platform name is missing.
+    """
+    cmd = ["molecule", "test", "-s", scenario_name, "-p", platform]
+    result = run_command(cmd=cmd, env=test_ephemeral_dir_env)
+    assert bool(result.returncode) == missing
+    if missing:
+        assert "Instances missing" in result.stderr
+    else:
+        assert "PLAY RECAP" in result.stdout
+
+
+def test_role_name_check_one(
+    monkeypatch: pytest.MonkeyPatch,
+    test_fixture_dir: Path,
+    test_ephemeral_dir_env: dict[str, str],
+) -> None:
+    """Test role name check only warns when equal to 1.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        test_fixture_dir: Path to the test fixture directory.
+        test_ephemeral_dir_env: The ephemeral directory env.
+    """
+    scenario_dir = "delegated_invalid_role_name_with_role_name_check_equals_to_1"
+    monkeypatch.chdir(test_fixture_dir / "scenarios" / "driver" / scenario_dir)
+    cmd = ["molecule", "dependency"]
+    result = run_command(cmd=cmd, env=test_ephemeral_dir_env)
+    assert result.returncode == 0
+    string = "molecule.delegated-test does not follow current galaxy requirements"
+    assert string in result.stderr
+    cmd = ["molecule", "destroy"]
+    result = run_command(cmd=cmd, env=test_ephemeral_dir_env)
+    assert result.returncode == 0
 
 
 def test_sample_collection(resources_folder_path: Path) -> None:
@@ -348,22 +258,23 @@ def test_sample_collection(resources_folder_path: Path) -> None:
     assert run_command(cmd=cmd, cwd=cwd).returncode == 0
 
 
-@pytest.mark.parametrize(
-    ("scenario_name"),
-    [  # noqa: PT007
-        ("test_w_gitignore"),
-        ("test_wo_gitignore"),
-    ],
-)
-def test_with_and_without_gitignore(  # noqa: D103
+@pytest.mark.parametrize(("scenario_name"), (("test_w_gitignore"), ("test_wo_gitignore")))
+def test_with_and_without_gitignore(
     monkeypatch: pytest.MonkeyPatch,
     scenario_name: str,
     resources_folder_path: Path,
 ) -> None:
+    """Test with and without gitignore.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        scenario_name: The scenario name.
+        resources_folder_path: Path to the resources folder.
+    """
     if scenario_name == "test_wo_gitignore":
 
-        def mock_return(scenario_paths) -> list[str]:  # type: ignore[no-untyped-def]  # noqa: ANN001
-            return scenario_paths  # type: ignore[no-any-return]
+        def mock_return(scenario_paths: list[str]) -> list[str]:
+            return scenario_paths
 
         monkeypatch.setattr(
             "molecule.command.base.filter_ignored_scenarios",

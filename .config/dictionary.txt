@@ -1,4 +1,6 @@
 anyconfig
+argnames
+argvalues
 autouse
 autovivification
 booleaness
@@ -43,6 +45,7 @@ geerlingguy
 getfixturevalue
 goss
 helloworld
+hookwrapper
 hostvars
 htmldir
 indentless
@@ -59,6 +62,7 @@ libpod
 lifecycle
 localwebroot
 lockf
+makereport
 maxsplit
 metacopy
 mfoo
@@ -122,6 +126,7 @@ timedout
 tmpfs
 tmpl
 topdown
+tryfirst
 ulimits
 ultral
 unittests

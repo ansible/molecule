@@ -22,12 +22,16 @@ import contextlib
 import os
 import platform
 import random
+import shutil
 import string
 
+from collections.abc import Iterable
 from pathlib import Path
 
 import pytest
 
+from _pytest.nodes import Item
+from _pytest.runner import CallInfo
 from filelock import FileLock
 
 from molecule import config as molecule_config
@@ -176,3 +180,100 @@ def test_fixture_dir(request: pytest.FixtureRequest) -> Path:
     :returns: The fixture directory
     """
     return FIXTURES_DIR / request.path.relative_to(Path(__file__).parent).with_suffix("")
+
+
+@pytest.hookimpl(hookwrapper=True, tryfirst=True)
+def pytest_runtest_makereport(  # type: ignore[misc]
+    item: Item,
+    call: CallInfo[None],  # noqa: ARG001
+) -> pytest.TestReport:
+    """Create a phase report for each test phase.
+
+    Allows the test success or failure to be available in a fixture
+    https://docs.pytest.org/en/latest/example/simple.html#making-test-result-information-available-in-fixtures
+
+    Args:
+        item: The pytest item
+        call: The pytest call
+    Returns:
+        The pytest report
+    """
+    outcome = yield
+    rep = outcome.get_result()
+    setattr(item, "rep_" + rep.when, rep)
+    return rep
+
+
+@pytest.fixture(name="test_ephemeral_dir_path")
+def fixture_test_ephemeral_dir_path(
+    monkeypatch: pytest.MonkeyPatch,
+    request: pytest.FixtureRequest,
+) -> Iterable[Path]:
+    """Provide the ephemeral directory for a given test.
+
+    The assumption here is that the tests are always run after being checkout out from git.
+    We will monkey patch the source and provide it as an env for any subprocess commands to use.
+
+    After success completion of the test, the directory will be removed.
+
+    Args:
+        monkeypatch: The pytest monkeypatch object
+        request: The pytest request object
+
+    Yields:
+        Path: The ephemeral directory
+    """
+    # use the git root as the ephemeral directory
+    command = "git rev-parse --show-toplevel"
+    git_root = Path(os.popen(cmd=command, mode="r").read().strip())
+    test_dir = Path(
+        git_root
+        / ".cache"
+        / ".molecule"
+        / "tests"
+        / request.path.relative_to(Path(__file__).parent).with_suffix("")
+        / request.node.name,
+    )
+    if test_dir.exists():
+        shutil.rmtree(test_dir)
+
+    test_dir.mkdir(parents=True, exist_ok=True)
+
+    def mock_ephemeral_directory() -> Path:
+        """Mock the ephemeral directory.
+
+        Returns:
+            Path: The ephemeral directory
+        """
+        return test_dir
+
+    monkeypatch.setattr("molecule.scenario.Scenario.ephemeral_directory", mock_ephemeral_directory)
+
+    yield test_dir
+
+    item = request.node
+    if item.rep_call.failed:
+        # if the test failed, keep the ephemeral directory for debugging
+        return
+
+    shutil.rmtree(test_dir, ignore_errors=True)
+
+
+@pytest.fixture(name="test_ephemeral_dir_env")
+def fixture_test_ephemeral_dir_env(test_ephemeral_dir_path: Path) -> dict[str, str]:
+    """Provide the ephemeral directory for a given test as an env variable.
+
+    The current path will be provided as an env variable for any subprocess commands to use
+    so any commands can be found.
+
+    Args:
+        test_ephemeral_dir_path: The ephemeral directory path
+
+    Returns:
+        The ephemeral directory as an env variable
+    """
+    path = os.environ.get("PATH", "")
+    return {
+        "PATH": path,
+        "MOLECULE_EPHEMERAL_DIRECTORY": str(test_ephemeral_dir_path),
+    }

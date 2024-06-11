@@ -1,0 +1,5 @@
+---
+- name: Cleanup
+  hosts: all
+  gather_facts: false
+  become: false
