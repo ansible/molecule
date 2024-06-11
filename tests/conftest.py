@@ -240,7 +240,7 @@ def fixture_test_ephemeral_dir_path(
 
     test_dir.mkdir(parents=True, exist_ok=True)
 
-    def mock_ephemeral_directory(self: Scenario) -> str:
+    def mock_ephemeral_directory(_self: Scenario) -> str:
         """Mock the ephemeral directory.
 
         Returns:
