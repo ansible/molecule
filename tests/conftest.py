@@ -35,10 +35,11 @@ from _pytest.runner import CallInfo
 from filelock import FileLock
 
 from molecule import config as molecule_config
-from molecule.scenario import ephemeral_directory
+from molecule.scenario import Scenario, ephemeral_directory
 
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
+
 
 # Marker to skip tests on macos when running on GH
 mac_on_gh = pytest.mark.skipif(
@@ -239,15 +240,18 @@ def fixture_test_ephemeral_dir_path(
 
     test_dir.mkdir(parents=True, exist_ok=True)
 
-    def mock_ephemeral_directory() -> Path:
+    def mock_ephemeral_directory(_self: Scenario) -> str:
         """Mock the ephemeral directory.
 
         Returns:
             Path: The ephemeral directory
         """
-        return test_dir
+        return str(test_dir)
 
-    monkeypatch.setattr("molecule.scenario.Scenario.ephemeral_directory", mock_ephemeral_directory)
+    monkeypatch.setattr(
+        "molecule.scenario.Scenario.ephemeral_directory",
+        property(mock_ephemeral_directory),
+    )
 
     yield test_dir
 
