@@ -9,9 +9,11 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:
+      - id: check-added-large-files
       - id: check-merge-conflict
       - id: check-symlinks
       - id: debug-statements
+      - id: detect-private-key
       - id: end-of-file-fixer
       - id: trailing-whitespace
 
@@ -128,7 +130,6 @@ repos:
           --output-file=.config/constraints.txt pyproject.toml
         files: ^.config\/.*requirements.*$
         language_version: "3.10" # minimal we support officially
-
   - repo: https://github.com/ansible/ansible-lint
     rev: v24.6.0
     hooks:
