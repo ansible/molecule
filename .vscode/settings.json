@@ -11,7 +11,7 @@
     "editor.formatOnSave": true
   },
   "flake8.importStrategy": "fromEnvironment",
-  "markiscodecoverage.searchCriteria": ".coverage/lcov.info",
+  "markiscodecoverage.searchCriteria": ".cache/.coverage/lcov.info",
   "mypy-type-checker.args": ["--config-file=${workspaceFolder}/pyproject.toml"],
   "mypy-type-checker.importStrategy": "fromEnvironment",
   "mypy-type-checker.reportingScope": "workspace",
