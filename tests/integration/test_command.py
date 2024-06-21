@@ -296,7 +296,7 @@ def test_with_and_without_gitignore(
     molecule_file = scenario_dir / "molecule.yml"
     molecule_file.touch()
 
-    op = base.get_configs({}, {}, glob_str="**/molecule/*/molecule.yml")  # type: ignore[no-untyped-call]
+    op = base.get_configs({}, {}, glob_str="**/molecule/*/molecule.yml")
 
     names = [config.scenario.name for config in op]
     if scenario_name == "test_w_gitignore":
