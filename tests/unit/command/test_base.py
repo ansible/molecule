@@ -414,7 +414,7 @@ def test_get_configs(config_instance: config.Config) -> None:
     data = config_instance.config
     util.write_file(molecule_file, util.safe_dump(data))
 
-    result = base.get_configs({}, {})  # type: ignore[no-untyped-call]
+    result = base.get_configs({}, {})
     assert len(result) == 1
     assert isinstance(result, list)
     assert isinstance(result[0], config.Config)

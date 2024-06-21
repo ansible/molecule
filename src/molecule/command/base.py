@@ -118,7 +118,7 @@ def execute_cmdline_scenarios(
     if scenario_name:
         glob_str = glob_str.replace("*", scenario_name)
     scenarios = molecule.scenarios.Scenarios(
-        get_configs(args, command_args, ansible_args, glob_str),  # type: ignore[no-untyped-call]
+        get_configs(args, command_args, ansible_args, glob_str),
         scenario_name,
     )
 
@@ -224,7 +224,12 @@ def filter_ignored_scenarios(scenario_paths) -> list[str]:  # type: ignore[no-un
     return paths
 
 
-def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
+def get_configs(
+    args: dict[str, Any],
+    command_args: dict[str, Any],
+    ansible_args: tuple[str, ...] = (),
+    glob_str: str = MOLECULE_GLOB,
+) -> list[config.Config]:
     """Glob the current directory for Molecule config files.
 
     Instantiate config objects, and returns a list.
