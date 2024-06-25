@@ -82,6 +82,13 @@ module = [
   "testinfra.*" # https://github.com/pytest-dev/pytest-testinfra/issues/619
 ]
 
+[tool.pydoclint]
+arg-type-hints-in-docstring = false
+baseline = ".config/pydoclint-baseline.txt"
+show-filenames-in-every-violation-message = true
+skip-checking-short-docstrings = false
+style = "google"
+
 [tool.pylint]
 
 [tool.pylint.format]
