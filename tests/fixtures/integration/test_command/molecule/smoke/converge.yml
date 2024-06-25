@@ -1,3 +1,4 @@
+---
 - name: Converge
   hosts: localhost
   connection: local
@@ -5,7 +6,9 @@
     - name: Assert CWD is the same as playbook_dir
       ansible.builtin.assert:
         that:
-          - playbook_dir == lookup('env', 'PWD')
+          - playbook_dir == pwd
         msg: >
           Molecule should automatically chdir to scenario directory {{ playbook_dir }}
-          but we found that it runs from {{ lookup('env', 'PWD') }} instead."
+          but we found that it runs from {{ pwd }} instead."
+      vars:
+        pwd: "{{ lookup('pipe', 'pwd') }}"
