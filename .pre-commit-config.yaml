@@ -28,9 +28,13 @@ repos:
     rev: v1.5.5
     hooks:
       - id: remove-tabs
+        exclude: >
+          (?x)^(
+            .config/pydoclint-baseline.txt
+          )$
 
   - repo: https://github.com/pycontribs/mirrors-prettier
-    rev: v3.3.1
+    rev: v3.3.2
     hooks:
       - id: prettier
         always_run: true
@@ -55,25 +59,22 @@ repos:
       - id: tox-ini-fmt
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.8
+    rev: v0.4.10
     hooks:
       - id: ruff
         args:
           - --exit-non-zero-on-fix
 
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v8.8.2
+    rev: v8.9.0
     hooks:
       - id: cspell
         name: Spell check with cspell
 
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.0.0
+  - repo: https://github.com/jsh9/pydoclint
+    rev: 0.5.1
     hooks:
-      - id: flake8
-        name: flake8(pydoclint)
-        additional_dependencies:
-          - pydoclint[flake8]
+      - id: pydoclint
 
   - repo: https://github.com/pycqa/pylint.git
     rev: v3.2.3
@@ -94,7 +95,7 @@ repos:
           - wcmatch
 
   - repo: https://github.com/pre-commit/mirrors-mypy.git
-    rev: v1.10.0
+    rev: v1.10.1
     hooks:
       - id: mypy
         additional_dependencies:
@@ -131,7 +132,7 @@ repos:
         files: ^.config\/.*requirements.*$
         language_version: "3.10" # minimal we support officially
   - repo: https://github.com/ansible/ansible-lint
-    rev: v24.6.0
+    rev: v24.6.1
     hooks:
       - id: ansible-lint
         stages: [manual]
