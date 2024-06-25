@@ -3,6 +3,6 @@
 collections:
   - name: community.crypto
   - name: community.docker
-    version: ">=3.10.2"
+    version: ">=3.10.4"
   - name: containers.podman
   - name: kubernetes.core
