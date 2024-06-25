@@ -54,4 +54,8 @@ per-file-ignores =
     src/molecule/util.py: DOC001,DOC101,DOC103,DOC106,DOC107,DOC201,DOC402,DOC404,DOC501
     src/molecule/verifier/base.py: DOC101,DOC103,DOC106,DOC107,DOC201
     src/molecule/verifier/testinfra.py: DOC101,DOC103,DOC106,DOC107
+<<<<<<< HEAD
     tests/**: DOC101,DOC103,DOC106,DOC107,DOC201
+=======
+    tests/**: DOC101,DOC103,DOC106,DOC107,DOC201
+>>>>>>> 11c492c5 (Restore pydoclint, add class docstrings)
