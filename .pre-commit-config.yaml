@@ -28,6 +28,10 @@ repos:
     rev: v1.5.5
     hooks:
       - id: remove-tabs
+        exclude: >
+          (?x)^(
+            .config/pydoclint-baseline.txt
+          )$
 
   - repo: https://github.com/pycontribs/mirrors-prettier
     rev: v3.3.2
