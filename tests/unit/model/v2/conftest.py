@@ -29,7 +29,7 @@ from molecule import util
 
 if TYPE_CHECKING:
     from pathlib import Path
-    from typing import Any, LiteralString
+    from typing import Any
 
 
 @pytest.fixture(name="molecule_file")
@@ -69,7 +69,7 @@ def config(molecule_file: Path, request: pytest.FixtureRequest) -> dict[str, Any
 
 
 @pytest.fixture()
-def _model_platforms_delegated_section_data() -> LiteralString:
+def _model_platforms_delegated_section_data() -> str:
     return """
 ---
 platforms:

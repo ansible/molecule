@@ -28,8 +28,6 @@ from molecule import util
 
 
 if TYPE_CHECKING:
-    from typing import Self
-
     from molecule.config import Config
     from molecule.scenario import Scenario
 
@@ -55,7 +53,7 @@ class Scenarios:
         self._scenario_name = scenario_name
         self._scenarios = self.all
 
-    def __iter__(self) -> Self:
+    def __iter__(self) -> Scenarios:
         """Make object iterable.
 
         Returns:

@@ -76,6 +76,7 @@ cache_dir = "./.cache/.mypy"
 # To ensure that calling `mypy .` produces desired results (vscode)
 exclude = ["build"]
 files = ["src", "tests"]
+python_version = "3.10"
 strict = true
 
 [[tool.mypy.overrides]]
@@ -92,6 +93,7 @@ baseline = ".config/pydoclint-baseline.txt"
 check-return-types = false
 check-yield-types = false
 exclude = '\.cache|\.git|\.tox|build|out|venv'
+quiet = true # no need to print out the files being checked
 should-document-private-class-attributes = true
 show-filenames-in-every-violation-message = true
 skip-checking-short-docstrings = false
@@ -354,6 +356,9 @@ verbosity_assertions = 2
 [tool.ruff]
 builtins = ["__"]
 cache-dir = "./.cache/.ruff"
+external = [
+  "DOC" # pydoclint
+]
 fix = true
 line-length = 100
 target-version = "py310"

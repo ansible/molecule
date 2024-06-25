@@ -18,4 +18,5 @@ jobs:
   tox:
     uses: ansible/team-devtools/.github/workflows/tox.yml@main
     with:
+      default_python: "3.10" # for lint
       other_names_also: "eco"
