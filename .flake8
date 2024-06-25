@@ -1,6 +1,9 @@
 [flake8]
 allow-init-docstring = True
 arg-type-hints-in-docstring = False
+# Newly added in 0.5.0, should be cleaned up later
+# https://jsh9.github.io/pydoclint/checking_class_attributes.html
+check-class-attributes = False
 check-return-types = False
 select = DOC
 show-filenames-in-every-violation-message = True
