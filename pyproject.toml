@@ -338,9 +338,6 @@ verbosity_assertions = 2
 [tool.ruff]
 builtins = ["__"]
 cache-dir = "./.cache/.ruff"
-external = [
-  "DOC" # pydoclint
-]
 fix = true
 line-length = 100
 target-version = "py310"
