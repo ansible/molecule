@@ -703,6 +703,8 @@ src/molecule/verifier/testinfra.py
 	DOC203: Method `Testinfra._get_tests` return type(s) in docstring not consistent with the return annotation. Return annotation has 0 type(s); docstring return section has 1 type(s).
 --------------------
 tests/conftest.py
+	DOC101: Function `_no_color`: Docstring contains fewer arguments than in function signature.
+	DOC103: Function `_no_color`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [monkeypatch: pytest.MonkeyPatch].
 	DOC101: Function `reset_pytest_vars`: Docstring contains fewer arguments than in function signature.
 	DOC106: Function `reset_pytest_vars`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
 	DOC107: Function `reset_pytest_vars`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints

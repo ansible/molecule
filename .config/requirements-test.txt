@@ -3,6 +3,7 @@ ansible-lint >= 6.12.1
 black
 check-jsonschema
 coverage[toml]
+docker >= 7.1.0 # testing
 filelock >= 3.9.0
 flake8
 mypy

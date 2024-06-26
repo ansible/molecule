@@ -85,6 +85,7 @@ module = [
 [tool.pydoclint]
 arg-type-hints-in-docstring = false
 baseline = ".config/pydoclint-baseline.txt"
+exclude = '\.git|\.test_logs|\.tox|build|out|venv'
 show-filenames-in-every-violation-message = true
 skip-checking-short-docstrings = false
 style = "google"
@@ -345,6 +346,9 @@ verbosity_assertions = 2
 [tool.ruff]
 builtins = ["__"]
 cache-dir = "./.cache/.ruff"
+external = [
+  "DOC" # pydoclint
+]
 fix = true
 line-length = 100
 target-version = "py310"

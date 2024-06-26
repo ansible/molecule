@@ -4,6 +4,8 @@ ci:
   autoupdate_commit_msg: "chore: pre-commit autoupdate"
   autoupdate_schedule: monthly
   autofix_commit_msg: "chore: auto fixes from pre-commit.com hooks"
+default_language_version:
+  python: python3.10 # minimal we support officially for consistent results
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -130,7 +132,6 @@ repos:
           --strip-extras
           --output-file=.config/constraints.txt pyproject.toml
         files: ^.config\/.*requirements.*$
-        language_version: "3.10" # minimal we support officially
   - repo: https://github.com/ansible/ansible-lint
     rev: v24.6.1
     hooks:

@@ -61,6 +61,17 @@ def is_subset(subset, superset):  # type: ignore[no-untyped-def]  # noqa: ANN001
     return subset == superset
 
 
+@pytest.fixture(autouse=True)
+def _no_color(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Disable coloring output."""
+    # Analyzing output with no color is much easier. Tests that need to test for
+    # color output, should override the value.
+    monkeypatch.setitem(os.environ, "NO_COLOR", "1")
+    monkeypatch.delitem(os.environ, "PY_COLORS", raising=False)
+    monkeypatch.delitem(os.environ, "ANSIBLE_FORCE_COLOR", raising=False)
+    monkeypatch.delitem(os.environ, "FORCE_COLOR", raising=False)
+
+
 @pytest.fixture()
 def resources_folder_path() -> Path:
     """Return the path to the resources folder.

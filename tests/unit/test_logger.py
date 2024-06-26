@@ -100,6 +100,7 @@ def test_markup_detection_pycolors0(monkeypatch):  # type: ignore[no-untyped-def
 
 
 def test_markup_detection_pycolors1(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+    monkeypatch.delenv("NO_COLOR", raising=False)
     monkeypatch.setenv("PY_COLORS", "1")
     assert should_do_markup()
 

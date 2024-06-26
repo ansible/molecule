@@ -340,4 +340,5 @@ def test_smoke(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None:
     """
     monkeypatch.chdir(test_fixture_dir)
     command = ["molecule", "test", "--scenario-name", "smoke"]
-    assert run_command(command).returncode == 0
+    result = run_command(command)
+    assert result.returncode == 0, result
