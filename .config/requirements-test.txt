@@ -4,12 +4,11 @@ black
 check-jsonschema
 coverage[toml]
 filelock >= 3.9.0
-flake8
 mypy
 pexpect >= 4.8.0, < 5
 pip-tools
 pre-commit
-pydoclint[flake8]
+pydoclint
 pylint
 pytest
 pytest-mock >= 3.10.0

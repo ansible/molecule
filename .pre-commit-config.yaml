@@ -80,7 +80,7 @@ repos:
         pass_filenames: false
 
   - repo: https://github.com/pycqa/pylint.git
-    rev: v3.2.3
+    rev: v3.2.4
     hooks:
       - id: pylint
         args:
