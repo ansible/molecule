@@ -53,7 +53,14 @@ def fixture_driver_name(request: FixtureRequest) -> str | None:  # noqa: D103
 
 
 class ParamDefault(TypedDict):
-    """Typed params."""
+    """Typed params.
+
+    Attributes:
+        argnames: The argument names.
+        argvalues: The argument values.
+        ids: The ids.
+        indirect: The indirect fixtures.
+    """
 
     argnames: tuple[str, str]
     argvalues: tuple[tuple[str, str]]

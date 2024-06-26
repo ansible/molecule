@@ -137,6 +137,9 @@ class Delegated(Driver):
             ansible_connection_options:
               ansible_connection: local
     ```
+
+    Attributes:
+        title: Descriptive title of the driver.
     """
 
     title = "Default driver, user is expected to manage provisioning of test resources."

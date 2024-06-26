@@ -32,7 +32,12 @@ LOG = logging.getLogger(__name__)
 
 
 class AnsibleGalaxyBase(base.Base):
-    """Ansible Galaxy dependency base class."""
+    """Ansible Galaxy dependency base class.
+
+    Attributes:
+        __metaclass__: A class that determines the behavior of the class itself.
+        FILTER_OPTS: A list of options to filter from the options dictionary.
+    """
 
     __metaclass__ = abc.ABCMeta
 

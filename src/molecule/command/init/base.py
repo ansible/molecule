@@ -30,7 +30,11 @@ LOG = logging.getLogger(__name__)
 
 
 class Base:
-    """Init Command Base Class."""
+    """Init Command Base Class.
+
+    Attributes:
+        __metaclass__: A class that determines the behavior of the class itself.
+    """
 
     __metaclass__ = abc.ABCMeta
 

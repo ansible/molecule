@@ -27,7 +27,11 @@ LOG = logging.getLogger(__name__)
 
 
 class Scenarios:
-    """The Scenarios groups one or more scenario objects Molecule will execute."""
+    """The Scenarios groups one or more scenario objects Molecule will execute.
+
+    Attributes:
+        __next__: A method that returns the next scenario.
+    """
 
     def __init__(self, configs, scenario_name=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
         """Initialize a new scenarios class and returns None.

@@ -26,7 +26,11 @@ from molecule import util
 
 
 class Verifier:
-    """Verifier Base Class."""
+    """Verifier Base Class.
+
+    Attributes:
+        __metaclass__: A class that determines the behavior of the class itself.
+    """
 
     __metaclass__ = abc.ABCMeta
 

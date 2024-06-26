@@ -71,13 +71,13 @@ repos:
       - id: cspell
         name: Spell check with cspell
 
-  - repo: https://github.com/jsh9/pydoclint
-    rev: 0.5.1
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
     hooks:
-      - id: pydoclint
-        # This allows automatic reduction of the baseline file when needed.
-        entry: sh -ec "pydoclint . && pydoclint --generate-baseline=1 ."
-        pass_filenames: false
+      - id: flake8
+        name: flake8(pydoclint)
+        additional_dependencies:
+          - pydoclint[flake8]
 
   - repo: https://github.com/pycqa/pylint.git
     rev: v3.2.3

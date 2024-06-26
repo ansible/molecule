@@ -23,7 +23,16 @@ from typing import NamedTuple
 
 
 class Status(NamedTuple):
-    """Scenario status information."""
+    """Scenario status information.
+
+    Attributes:
+        instance_name: The name of the instance.
+        driver_name: The name of the driver.
+        provisioner_name: The name of the provisioner.
+        scenario_name: The name of the scenario.
+        created: The date and time the scenario was created.
+        converged: The date and time the scenario was converged.
+    """
 
     instance_name: str
     driver_name: str

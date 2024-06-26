@@ -29,7 +29,13 @@ from molecule.status import Status
 
 
 class Driver:
-    """Driver Class."""
+    """Driver Class.
+
+    Attributes:
+        __metaclass__: A class that determines the behavior of the class itself.
+        title: Short description of the driver
+
+    """
 
     __metaclass__ = ABCMeta
     title = ""  # Short description of the driver.

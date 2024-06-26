@@ -92,7 +92,11 @@ class Interpolator:
 
 
 class TemplateWithDefaults(string.Template):
-    """TemplateWithDefaults Class."""
+    """TemplateWithDefaults Class.
+
+    Attributes:
+        idpattern: A regular expression pattern for identifying a placeholder.
+    """
 
     idpattern = r"[_a-z][_a-z0-9]*(?::?-[^}]+)?"
 

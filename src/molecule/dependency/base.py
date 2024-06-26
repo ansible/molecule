@@ -34,7 +34,14 @@ LOG = logging.getLogger(__name__)
 
 
 class Base:
-    """Dependency Base Class."""
+    """Dependency Base Class.
+
+    Attributes:
+        __metaclass__: A class that determines the behavior of the class itself
+        RETRY: The number of times to retry the dependency download
+        SLEEP: The number of seconds to sleep between retries
+        BACKOFF: The number of seconds to increase the sleep time between retries
+    """
 
     __metaclass__ = abc.ABCMeta
 
