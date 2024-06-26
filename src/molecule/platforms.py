@@ -68,7 +68,7 @@ class Platforms:
     ```
     """
 
-    def __init__(self, config, parallelize_platforms=False, platform_name=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, FBT002
+    def __init__(self, config, parallelize_platforms=False, platform_name=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, FBT002
         """Initialize a new platform class and returns None.
 
         Args:
@@ -89,5 +89,5 @@ class Platforms:
         self._config = config
 
     @property
-    def instances(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def instances(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._config.config["platforms"]

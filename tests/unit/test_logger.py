@@ -33,7 +33,7 @@ from molecule.logger import get_section_loggers
 class Dummy(Base):
     """ExtendedBase Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002, D102
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002, D102
         return True
 
 

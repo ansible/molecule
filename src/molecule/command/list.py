@@ -40,7 +40,7 @@ LOG = logging.getLogger(__name__)
 class List(base.Base):
     """List command shows information about current scenarios."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
         """Execute the actions necessary to perform a `molecule list` and returns None."""
         return self._config.driver.status()
 

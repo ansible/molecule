@@ -32,7 +32,7 @@ LOG = logging.getLogger(__name__)
 class AnsiblePlaybooks:
     """A class to act as a module to namespace playbook properties."""
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
         """Initialize a new namespace class and returns None.
 
         Args:
@@ -41,39 +41,39 @@ class AnsiblePlaybooks:
         self._config = config
 
     @property
-    def cleanup(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def cleanup(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._get_playbook("cleanup")  # type: ignore[no-untyped-call]
 
     @property
-    def create(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def create(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._get_playbook("create")  # type: ignore[no-untyped-call]
 
     @property
-    def converge(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def converge(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._get_playbook("converge")  # type: ignore[no-untyped-call]
 
     @property
-    def destroy(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def destroy(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._get_playbook("destroy")  # type: ignore[no-untyped-call]
 
     @property
-    def prepare(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def prepare(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._get_playbook("prepare")  # type: ignore[no-untyped-call]
 
     @property
-    def side_effect(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def side_effect(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._get_playbook("side_effect")  # type: ignore[no-untyped-call]
 
     @property
-    def verify(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def verify(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._get_playbook("verify")  # type: ignore[no-untyped-call]
 
-    def _get_playbook_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _get_playbook_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         return util.abs_path(
             os.path.join(self._config.provisioner.directory, "playbooks"),  # noqa: PTH118
         )
 
-    def _get_playbook(self, section):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
+    def _get_playbook(self, section):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
         """Return path to playbook or None if playbook is not needed.
 
         Return None when there is no playbook configured and when action is
@@ -108,7 +108,7 @@ class AnsiblePlaybooks:
                 return playbook
         return None
 
-    def _get_bundled_driver_playbook(self, section):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
+    def _get_bundled_driver_playbook(self, section):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
         path = self._config.driver.get_playbook(section)
         if path:
             return path
@@ -127,7 +127,7 @@ class AnsiblePlaybooks:
         )
         return path  # noqa: RET504
 
-    def _normalize_playbook(self, playbook):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
+    def _normalize_playbook(self, playbook):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
         """Return current filename to use for a playbook by allowing fallbacks.
 
         Currently used to deprecate use of playbook.yml in favour of converge.yml

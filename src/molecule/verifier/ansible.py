@@ -60,19 +60,19 @@ class Ansible(Verifier):
     """
 
     @property
-    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return "ansible"
 
     @property
-    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return {}
 
     @property
-    def default_env(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def default_env(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         env = util.merge_dicts(os.environ, self._config.env)
         return util.merge_dicts(env, self._config.provisioner.env)
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, D102
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D102
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
             log.warning(msg)
@@ -86,7 +86,7 @@ class Ansible(Verifier):
         msg = "Verifier completed successfully."
         log.info(msg)
 
-    def schema(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def schema(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return {
             "verifier": {
                 "type": "dict",

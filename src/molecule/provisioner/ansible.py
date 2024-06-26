@@ -413,7 +413,7 @@ class Ansible(base.Base):
     ```
     """
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # pylint: disable=useless-parent-delegation  # noqa: ANN001, ANN101
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # pylint: disable=useless-parent-delegation  # noqa: ANN001
         """Initialize a new ansible class and returns None.
 
         Args:
@@ -422,7 +422,7 @@ class Ansible(base.Base):
         super().__init__(config)
 
     @property
-    def default_config_options(self) -> dict[str, Any]:  # noqa: ANN101
+    def default_config_options(self) -> dict[str, Any]:
         """Provide Default options to construct ansible.cfg and returns a dict."""
         return {
             "defaults": {
@@ -441,7 +441,7 @@ class Ansible(base.Base):
         }
 
     @property
-    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         d = {"skip-tags": "molecule-notest,notest"}
 
         if self._config.action == "idempotence":
@@ -454,7 +454,7 @@ class Ansible(base.Base):
         return d
 
     @property
-    def default_env(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def default_env(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         # Finds if the current project is part of an ansible_collections hierarchy
         collection_indicator = "ansible_collections"
         # isolating test environment by injects ephemeral scenario directory on
@@ -533,22 +533,22 @@ class Ansible(base.Base):
         return env  # noqa: RET504
 
     @property
-    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._config.config["provisioner"]["name"]
 
     @property
-    def ansible_args(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def ansible_args(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._config.config["provisioner"]["ansible_args"]
 
     @property
-    def config_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def config_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return util.merge_dicts(
             self.default_config_options,
             self._config.config["provisioner"]["config_options"],
         )
 
     @property
-    def options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         if self._config.action in ["create", "destroy"]:
             return self.default_options
 
@@ -561,7 +561,7 @@ class Ansible(base.Base):
         return util.merge_dicts(self.default_options, o)
 
     @property
-    def env(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def env(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         default_env = self.default_env
         env = self._config.config["provisioner"]["env"].copy()
         # ensure that all keys and values are strings
@@ -588,23 +588,23 @@ class Ansible(base.Base):
         return util.merge_dicts(default_env, env)
 
     @property
-    def hosts(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def hosts(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._config.config["provisioner"]["inventory"]["hosts"]
 
     @property
-    def host_vars(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def host_vars(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._config.config["provisioner"]["inventory"]["host_vars"]
 
     @property
-    def group_vars(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def group_vars(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._config.config["provisioner"]["inventory"]["group_vars"]
 
     @property
-    def links(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def links(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._config.config["provisioner"]["inventory"]["links"]
 
     @property
-    def inventory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
+    def inventory(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
         """Create an inventory structure and returns a dict.
 
         ``` yaml
@@ -657,26 +657,26 @@ class Ansible(base.Base):
         return self._default_to_regular(dd)  # type: ignore[no-untyped-call]
 
     @property
-    def inventory_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def inventory_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._config.scenario.inventory_directory
 
     @property
-    def inventory_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def inventory_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return os.path.join(self.inventory_directory, "ansible_inventory.yml")  # noqa: PTH118
 
     @property
-    def config_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def config_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return os.path.join(  # noqa: PTH118
             self._config.scenario.ephemeral_directory,
             "ansible.cfg",
         )
 
     @cached_property
-    def playbooks(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def playbooks(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return ansible_playbooks.AnsiblePlaybooks(self._config)
 
     @property
-    def directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return os.path.join(  # noqa: PTH118
             os.path.dirname(__file__),  # noqa: PTH120
             os.path.pardir,
@@ -686,12 +686,12 @@ class Ansible(base.Base):
             "ansible",
         )
 
-    def cleanup(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
+    def cleanup(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
         """Execute `ansible-playbook` against the cleanup playbook and returns None."""
         pb = self._get_ansible_playbook(self.playbooks.cleanup)  # type: ignore[no-untyped-call]
         pb.execute()
 
-    def connection_options(self, instance_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, D102
+    def connection_options(self, instance_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D102
         d = self._config.driver.ansible_connection_options(instance_name)
 
         return util.merge_dicts(
@@ -699,13 +699,13 @@ class Ansible(base.Base):
             self._config.config["provisioner"]["connection_options"],
         )
 
-    def check(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
+    def check(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
         """Execute ``ansible-playbook`` against the converge playbook with the ``--check`` flag."""
         pb = self._get_ansible_playbook(self.playbooks.converge)  # type: ignore[no-untyped-call]
         pb.add_cli_arg("check", True)  # noqa: FBT003
         pb.execute()
 
-    def converge(self, playbook=None, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN003, ANN101, ANN201
+    def converge(self, playbook=None, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN003, ANN201
         """Execute ``ansible-playbook`` against the converge playbook. unless specified otherwise.
 
         Args:
@@ -719,12 +719,12 @@ class Ansible(base.Base):
 
         return pb.execute()
 
-    def destroy(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
+    def destroy(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
         """Execute ``ansible-playbook`` against the destroy playbook and returns None."""
         pb = self._get_ansible_playbook(self.playbooks.destroy)  # type: ignore[no-untyped-call]
         pb.execute()
 
-    def side_effect(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
+    def side_effect(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
         """Execute ``ansible-playbook`` against the side_effect playbook and returns None."""
         if action_args:
             playbooks = [
@@ -736,23 +736,23 @@ class Ansible(base.Base):
         for pb in playbooks:
             pb.execute()
 
-    def create(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
+    def create(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
         """Execute ``ansible-playbook`` against the create playbook and returns None."""
         pb = self._get_ansible_playbook(self.playbooks.create)  # type: ignore[no-untyped-call]
         pb.execute()
 
-    def prepare(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
+    def prepare(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
         """Execute ``ansible-playbook`` against the prepare playbook and returns None."""
         pb = self._get_ansible_playbook(self.playbooks.prepare)  # type: ignore[no-untyped-call]
         pb.execute()
 
-    def syntax(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
+    def syntax(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
         """Execute `ansible-playbook` against the converge playbook with the -syntax-check flag."""
         pb = self._get_ansible_playbook(self.playbooks.converge)  # type: ignore[no-untyped-call]
         pb.add_cli_arg("syntax-check", True)  # noqa: FBT003
         pb.execute()
 
-    def verify(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
+    def verify(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
         """Execute ``ansible-playbook`` against the verify playbook and returns None."""
         if action_args:
             playbooks = [self._config.provisioner.abs_path(playbook) for playbook in action_args]
@@ -766,7 +766,7 @@ class Ansible(base.Base):
             pb = self._get_ansible_playbook(playbook, verify=True)  # type: ignore[no-untyped-call]
             pb.execute()
 
-    def write_config(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
+    def write_config(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
         """Write the provisioner's config file to disk and returns None."""
         template = util.render_template(  # type: ignore[no-untyped-call]
             self._get_config_template(),  # type: ignore[no-untyped-call]
@@ -774,7 +774,7 @@ class Ansible(base.Base):
         )
         util.write_file(self.config_file, template)
 
-    def manage_inventory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
+    def manage_inventory(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
         """Manage inventory for Ansible and returns None."""
         self._write_inventory()  # type: ignore[no-untyped-call]
         self._remove_vars()  # type: ignore[no-untyped-call]
@@ -783,10 +783,10 @@ class Ansible(base.Base):
         else:
             self._link_or_update_vars()  # type: ignore[no-untyped-call]
 
-    def abs_path(self, path: str) -> str | None:  # noqa: ANN101, D102
+    def abs_path(self, path: str) -> str | None:  # noqa: D102
         return util.abs_path(os.path.join(self._config.scenario.directory, path))  # noqa: PTH118
 
-    def _add_or_update_vars(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _add_or_update_vars(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         """Create host and/or group vars and returns None."""
         # Create the hosts extra inventory source (only if not empty)
         hosts_file = os.path.join(self.inventory_directory, "hosts")  # noqa: PTH118
@@ -817,13 +817,13 @@ class Ansible(base.Base):
                     path = os.path.join(util.abs_path(target_vars_directory), target)  # type: ignore[arg-type]  # noqa: PTH118
                     util.write_file(path, util.safe_dump(target_var_content))
 
-    def _write_inventory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _write_inventory(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         """Write the provisioner's inventory file to disk and returns None."""
         self._verify_inventory()  # type: ignore[no-untyped-call]
 
         util.write_file(self.inventory_file, util.safe_dump(self.inventory))
 
-    def _remove_vars(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _remove_vars(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         """Remove hosts/host_vars/group_vars and returns None."""
         for name in ("hosts", "group_vars", "host_vars"):
             d = os.path.join(self.inventory_directory, name)  # noqa: PTH118
@@ -832,7 +832,7 @@ class Ansible(base.Base):
             elif os.path.isdir(d):  # noqa: PTH112
                 shutil.rmtree(d)
 
-    def _link_or_update_vars(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _link_or_update_vars(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         """Create or updates the symlink to group_vars and returns None."""
         for d, source in self.links.items():
             target = os.path.join(self.inventory_directory, d)  # noqa: PTH118
@@ -853,7 +853,7 @@ class Ansible(base.Base):
             LOG.debug(msg)
             os.symlink(source, target)
 
-    def _get_ansible_playbook(self, playbook, verify=False, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN003, ANN101, ANN202, FBT002
+    def _get_ansible_playbook(self, playbook, verify=False, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN003, ANN202, FBT002
         """Get an instance of AnsiblePlaybook and returns it.
 
         Args:
@@ -869,13 +869,13 @@ class Ansible(base.Base):
             **kwargs,
         )
 
-    def _verify_inventory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _verify_inventory(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         """Verify the inventory is valid and returns None."""
         if not self.inventory:
             msg = "Instances missing from the 'platform' section of molecule.yml."
             util.sysexit_with_message(msg)
 
-    def _get_config_template(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _get_config_template(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         """Return a config template string.
 
         Returns:
@@ -890,7 +890,7 @@ class Ansible(base.Base):
 {% endfor -%}
 """.strip()
 
-    def _vivify(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _vivify(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         """Return an autovivification default dict.
 
         Return:
@@ -898,16 +898,16 @@ class Ansible(base.Base):
         """
         return collections.defaultdict(self._vivify)
 
-    def _default_to_regular(self, d):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
+    def _default_to_regular(self, d):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
         if isinstance(d, collections.defaultdict):
             d = {k: self._default_to_regular(v) for k, v in d.items()}  # type: ignore[no-untyped-call]
 
         return d
 
-    def _get_plugin_directory(self) -> str:  # noqa: ANN101
+    def _get_plugin_directory(self) -> str:
         return os.path.join(self.directory, "plugins")  # noqa: PTH118
 
-    def _get_modules_directories(self) -> list[str]:  # noqa: ANN101
+    def _get_modules_directories(self) -> list[str]:
         """Return list of ansible module includes directories.
 
         Adds modules directory from molecule and its plugins.
@@ -949,10 +949,10 @@ class Ansible(base.Base):
 
         return [path for path in paths if path is not None]
 
-    def _get_filter_plugin_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _get_filter_plugin_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         return util.abs_path(os.path.join(self._get_plugin_directory(), "filter"))  # noqa: PTH118
 
-    def _get_filter_plugins_directories(self) -> list[str]:  # noqa: ANN101
+    def _get_filter_plugins_directories(self) -> list[str]:
         """Return list of ansible filter plugins includes directories."""
         paths: list[str | None] = []
         if os.environ.get("ANSIBLE_FILTER_PLUGINS"):
@@ -991,5 +991,5 @@ class Ansible(base.Base):
 
         return [path for path in paths if path is not None]
 
-    def _absolute_path_for(self, env, key):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
+    def _absolute_path_for(self, env, key):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
         return ":".join([self.abs_path(p) for p in env[key].split(":")])  # type: ignore[misc]

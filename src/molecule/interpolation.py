@@ -25,7 +25,7 @@ class InvalidInterpolation(Exception):  # noqa: N818
     """InvalidInterpolation Exception."""
 
     def __init__(
-        self,  # noqa: ANN101
+        self,
         string: str,  # pylint: disable=redefined-outer-name
         place: Exception,
     ) -> None:
@@ -76,7 +76,7 @@ class Interpolator:
     """
 
     def __init__(
-        self,  # noqa: ANN101
+        self,
         templater: type["TemplateWithDefaults"],
         mapping: MutableMapping,  # type: ignore[type-arg]
     ) -> None:
@@ -84,7 +84,7 @@ class Interpolator:
         self.templater = templater
         self.mapping = mapping
 
-    def interpolate(self, string: str, keep_string=None) -> str:  # type: ignore[no-untyped-def]  # pylint: disable=redefined-outer-name  # noqa: ANN001, ANN101, D102
+    def interpolate(self, string: str, keep_string=None) -> str:  # type: ignore[no-untyped-def]  # pylint: disable=redefined-outer-name  # noqa: ANN001, D102
         try:
             return self.templater(string).substitute(self.mapping, keep_string)  # type: ignore[no-any-return, no-untyped-call]
         except ValueError as e:
@@ -97,7 +97,7 @@ class TemplateWithDefaults(string.Template):
     idpattern = r"[_a-z][_a-z0-9]*(?::?-[^}]+)?"
 
     # pylint: disable=too-many-return-statements  # pylint: disable=useless-suppression
-    def substitute(self, mapping, keep_string):  # type: ignore[no-untyped-def]  # pylint: disable=arguments-differ  # noqa: ANN001, ANN101, ANN201, D102
+    def substitute(self, mapping, keep_string):  # type: ignore[no-untyped-def]  # pylint: disable=arguments-differ  # noqa: ANN001, ANN201, D102
         # Helper function for .sub()
         def convert(mo):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PLR0911
             # Check the most common path first.

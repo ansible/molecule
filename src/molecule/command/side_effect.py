@@ -35,7 +35,7 @@ class SideEffect(base.Base):
     See the provisioners documentation for further details.
     """
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
         """Execute the actions necessary to perform a `molecule side-effect` and returns None."""
         if not self._config.provisioner.playbooks.side_effect:
             msg = "Skipping, side effect playbook not configured."

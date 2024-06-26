@@ -33,7 +33,7 @@ LOG = logging.getLogger(__name__)
 class AnsiblePlaybook:
     """Provisioner Playbook."""
 
-    def __init__(self, playbook, config, verify=False) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, FBT002
+    def __init__(self, playbook, config, verify=False) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, FBT002
         """Set up the requirements to execute ``ansible-playbook`` and returns None.
 
         Args:
@@ -54,7 +54,7 @@ class AnsiblePlaybook:
         else:
             self._env = self._config.provisioner.env
 
-    def bake(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
+    def bake(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
         """Bake an ``ansible-playbook`` command so it's ready to execute and returns ``None``."""
         if not self._playbook:
             return
@@ -91,7 +91,7 @@ class AnsiblePlaybook:
             self._playbook,  # must always go last
         ]
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
         """Execute ``ansible-playbook`` and returns a string.
 
         Returns:
@@ -126,7 +126,7 @@ class AnsiblePlaybook:
 
         return result.stdout
 
-    def add_cli_arg(self, name, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
+    def add_cli_arg(self, name, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
         """Add argument to CLI passed to ansible-playbook and returns None.
 
         Args:
@@ -136,7 +136,7 @@ class AnsiblePlaybook:
         if value:
             self._cli[name] = value
 
-    def add_env_arg(self, name, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
+    def add_env_arg(self, name, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
         """Add argument to environment passed to ansible-playbook and returns None.
 
         Args:

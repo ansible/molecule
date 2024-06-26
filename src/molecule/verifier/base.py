@@ -30,7 +30,7 @@ class Verifier:
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
+    def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
         """Initialize code for all :ref:`Verifier` classes.
 
         Args:
@@ -40,7 +40,7 @@ class Verifier:
 
     @property
     @abc.abstractmethod
-    def name(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
+    def name(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201
         """Name of the verifier and returns a string.
 
         :returns: str
@@ -48,7 +48,7 @@ class Verifier:
 
     @property
     @abc.abstractmethod
-    def default_options(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
+    def default_options(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201
         """Get default CLI arguments provided to ``cmd`` as a dict.
 
         Return:
@@ -57,7 +57,7 @@ class Verifier:
 
     @property
     @abc.abstractmethod
-    def default_env(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
+    def default_env(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201
         """Get default env variables provided to ``cmd`` as a dict.
 
         Return:
@@ -65,54 +65,54 @@ class Verifier:
         """
 
     @abc.abstractmethod
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN101, ANN201
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
         """Execute ``cmd`` and returns None."""
 
     @abc.abstractmethod
-    def schema(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
+    def schema(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201
         """Return validation schema."""
 
     @property
-    def enabled(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def enabled(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._config.config["verifier"]["enabled"]
 
     @property
-    def directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return os.path.join(  # noqa: PTH118
             self._config.scenario.directory,
             self._config.config["verifier"].get("directory", "tests"),
         )
 
     @property
-    def options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return util.merge_dicts(
             self.default_options,
             self._config.config["verifier"]["options"],
         )
 
     @property
-    def env(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def env(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return util.merge_dicts(
             self.default_env,
             self._config.config["verifier"]["env"],
         )
 
-    def __eq__(self, other):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN204
+    def __eq__(self, other):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN204
         """Implement equality comparison."""
         return str(self) == str(other)
 
-    def __lt__(self, other):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN204
+    def __lt__(self, other):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN204
         """Implement lower than comparison."""
         return str.__lt__(str(self), str(other))
 
-    def __hash__(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN204
+    def __hash__(self):  # type: ignore[no-untyped-def]  # noqa: ANN204
         """Implement hashing."""
         return self.name.__hash__()
 
-    def __str__(self) -> str:  # noqa: ANN101
+    def __str__(self) -> str:
         """Return readable string representation of object."""
         return self.name  # type: ignore[no-any-return]
 
-    def __repr__(self) -> str:  # noqa: ANN101
+    def __repr__(self) -> str:
         """Return detailed string representation of object."""
         return self.name  # type: ignore[no-any-return]

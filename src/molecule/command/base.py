@@ -58,7 +58,7 @@ MOLECULE_DEFAULT_SCENARIO_NAME = "default"
 class Base(metaclass=abc.ABCMeta):
     """An abstract base class used to define the command interface."""
 
-    def __init__(self, c: config.Config) -> None:  # noqa: ANN101
+    def __init__(self, c: config.Config) -> None:
         """Initialize code for all command classes.
 
         Args:
@@ -70,7 +70,7 @@ class Base(metaclass=abc.ABCMeta):
         self._config = c
         self._setup()
 
-    def __init_subclass__(cls) -> None:  # noqa: ANN101
+    def __init_subclass__(cls) -> None:
         """Decorate execute from all subclasses."""
         super().__init_subclass__()
         for wrapper in logger.get_section_loggers():
@@ -87,7 +87,7 @@ class Base(metaclass=abc.ABCMeta):
             action_args: An optional list of arguments to pass to the action.
         """
 
-    def _setup(self) -> None:  # noqa: ANN101
+    def _setup(self) -> None:
         """Prepare Molecule's provisioner and returns None."""
         self._config.write()
         self._config.provisioner.write_config()

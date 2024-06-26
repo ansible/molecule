@@ -88,7 +88,7 @@ class Testinfra(Verifier):
     .. _`Testinfra`: https://testinfra.readthedocs.io
     """
 
-    def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
+    def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
         """Set up the requirements to execute ``testinfra`` and returns None.
 
         Args:
@@ -99,11 +99,11 @@ class Testinfra(Verifier):
         self._tests = []  # type: ignore[var-annotated]
 
     @property
-    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return "testinfra"
 
     @property
-    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         d = self._config.driver.testinfra_options
         d["p"] = "no:cacheprovider"
         if self._config.debug:
@@ -117,7 +117,7 @@ class Testinfra(Verifier):
     # NOTE(retr0h): Override the base classes' options() to handle
     # ``ansible-galaxy`` one-off.
     @property
-    def options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         o = self._config.config["verifier"]["options"]
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
@@ -127,14 +127,14 @@ class Testinfra(Verifier):
         return util.merge_dicts(self.default_options, o)
 
     @property
-    def default_env(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def default_env(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         env = util.merge_dicts(os.environ, self._config.env)
         env = util.merge_dicts(env, self._config.provisioner.env)
 
         return env  # noqa: RET504
 
     @property
-    def additional_files_or_dirs(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def additional_files_or_dirs(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         files_list = []
         c = self._config.config
         for f in c["verifier"]["additional_files_or_dirs"]:
@@ -146,7 +146,7 @@ class Testinfra(Verifier):
 
         return files_list
 
-    def bake(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
+    def bake(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
         """Bake a ``testinfra`` command so it's ready to execute and returns None."""
         options = self.options
         verbose_flag = util.verbose_flag(options)  # type: ignore[no-untyped-call]
@@ -159,7 +159,7 @@ class Testinfra(Verifier):
             *args,
         ]
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, D102
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D102
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
             LOG.warning(msg)
@@ -191,7 +191,7 @@ class Testinfra(Verifier):
         else:
             util.sysexit(result.returncode)
 
-    def _get_tests(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
+    def _get_tests(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
         """Walk the verifier's directory for tests and returns a list.
 
         Returns:
@@ -220,7 +220,7 @@ class Testinfra(Verifier):
             + self.additional_files_or_dirs,
         )
 
-    def schema(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def schema(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return {
             "verifier": {
                 "type": "dict",
