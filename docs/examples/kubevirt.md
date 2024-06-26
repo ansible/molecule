@@ -71,7 +71,7 @@ You will need to substitute the following placeholders:
 ## Config playbook
 
 ```yaml title="molecule.yml"
-{!kubevirt/molecule.yml!}
+{!tests/fixtures/integration/test_command/molecule/kubevirt/molecule.yml!}
 ```
 
 Please, replace the following parameters:
@@ -80,31 +80,31 @@ Please, replace the following parameters:
 - `<Kubernetes Node FQDN>`: Change this to the fully qualified domain name (FQDN) of the Kubernetes node that Ansible will attempt to SSH into via the Service NodePort.
 
 ```yaml title="requirements.yml"
-{!kubevirt/requirements.yml!}
+{!tests/fixtures/integration/test_command/molecule/kubevirt/requirements.yml!}
 ```
 
 ## Create playbook
 
 ```yaml title="create.yml"
-{!kubevirt/create.yml!}
+{!tests/fixtures/integration/test_command/molecule/kubevirt/create.yml!}
 ```
 
 ```yaml title="tasks/create_vm.yml"
-{!kubevirt/tasks/create_vm.yml!}
+{!tests/fixtures/integration/test_command/molecule/kubevirt/tasks/create_vm.yml!}
 ```
 
 ```yaml title="tasks/create_vm_dictionary.yml"
-{!kubevirt/tasks/create_vm_dictionary.yml!}
+{!tests/fixtures/integration/test_command/molecule/kubevirt/tasks/create_vm_dictionary.yml!}
 ```
 
 ## Converge playbook
 
 ```yaml title="converge.yml"
-{!kubevirt/converge.yml!}
+{!tests/fixtures/integration/test_command/molecule/kubevirt/converge.yml!}
 ```
 
 ## Destroy playbook
 
 ```yaml title="destroy.yml"
-{!kubevirt/destroy.yml!}
+{!tests/fixtures/integration/test_command/molecule/kubevirt/destroy.yml!}
 ```

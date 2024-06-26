@@ -11,31 +11,31 @@ installed.
 ## Config playbook
 
 ```yaml title="molecule.yml"
-{!docker/molecule.yml!}
+{!tests/fixtures/integration/test_command/molecule/docker/molecule.yml!}
 ```
 
 ```yaml title="requirements.yml"
-{!docker/requirements.yml!}
+{!tests/fixtures/integration/test_command/molecule/docker/requirements.yml!}
 ```
 
 ## Create playbook
 
 ```yaml title="create.yml"
-{!docker/create.yml!}
+{!tests/fixtures/integration/test_command/molecule/docker/create.yml!}
 ```
 
 ```yaml title="tasks/create-fail.yml"
-{!docker/tasks/create-fail.yml!}
+{!tests/fixtures/integration/test_command/molecule/docker/tasks/create-fail.yml!}
 ```
 
 ## Converge playbook
 
 ```yaml title="converge.yml"
-{!docker/converge.yml!}
+{!tests/fixtures/integration/test_command/molecule/docker/converge.yml!}
 ```
 
 ## Destroy playbook
 
 ```yaml title="destroy.yml"
-{!docker/destroy.yml!}
+{!tests/fixtures/integration/test_command/molecule/docker/destroy.yml!}
 ```

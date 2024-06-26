@@ -108,7 +108,8 @@ plugins:
 
 markdown_extensions:
   - markdown_include.include:
-      base_path: tests/fixtures/integration/test_command/molecule/
+      base_path: . # CWD (project root)
+      throwException: true
   - admonition
   - def_list
   - footnotes
