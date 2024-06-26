@@ -35,7 +35,7 @@ MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
 class Check(base.Base):
     """Check Command Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
         """Execute the actions necessary to perform a `molecule check` and returns None."""
         self._config.provisioner.check()
 

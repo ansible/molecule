@@ -51,7 +51,7 @@ LOG = logging.getLogger(__name__)
 class SafeDumper(yaml.SafeDumper):
     """SafeDumper YAML Class."""
 
-    def increase_indent(self, flow=False, indentless=False):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, FBT002, ARG002, D102
+    def increase_indent(self, flow=False, indentless=False):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, FBT002, ARG002, D102
         return super().increase_indent(flow, False)  # noqa: FBT003
 
 

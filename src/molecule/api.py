@@ -4,6 +4,7 @@ import logging
 import traceback
 
 from collections import UserList
+from typing import Any
 
 import pluggy
 
@@ -25,16 +26,16 @@ class UserListMap(UserList):  # type: ignore[type-arg]
     foo.boo
     """
 
-    def __getitem__(self, i):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN204
+    def __getitem__(self, i):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN204
         """Implement indexing."""
         if isinstance(i, int):
             return super().__getitem__(i)
         return self.__dict__[i]
 
-    def get(self, key, default):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, D102
+    def get(self, key, default):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D102
         return self.__dict__.get(key, default)
 
-    def append(self, item) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, D102
+    def append(self, item) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, D102
         self.__dict__[str(item)] = item
         super().append(item)
 
@@ -48,8 +49,12 @@ class IncompatibleMoleculeRuntimeWarning(MoleculeRuntimeWarning):
 
 
 @cache
-def drivers(config=None) -> UserListMap:  # type: ignore[no-untyped-def]  # noqa: ANN001
-    """Return list of active drivers."""
+def drivers(config: Any | None = None) -> UserListMap:  # noqa: ANN401
+    """Return list of active drivers.
+
+    Args:
+        config: plugin config
+    """
     plugins = UserListMap()
     pm = pluggy.PluginManager("molecule.driver")
     try:

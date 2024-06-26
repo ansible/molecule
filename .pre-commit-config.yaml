@@ -75,6 +75,9 @@ repos:
     rev: 0.5.1
     hooks:
       - id: pydoclint
+        # This allows automatic reduction of the baseline file when needed.
+        entry: sh -ec "pydoclint . && pydoclint --generate-baseline=1 ."
+        pass_filenames: false
 
   - repo: https://github.com/pycqa/pylint.git
     rev: v3.2.3

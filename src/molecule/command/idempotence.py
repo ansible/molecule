@@ -39,7 +39,7 @@ class Idempotence(base.Base):
     the scenario will be considered idempotent.
     """
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
         """Execute the actions necessary to perform a `molecule idempotence` and returns None."""
         if not self._config.state.converged:
             msg = "Instances not converged.  Please converge instances first."
@@ -56,7 +56,7 @@ class Idempotence(base.Base):
             msg = f"Idempotence test failed because of the following tasks:\n{details}"
             util.sysexit_with_message(msg)
 
-    def _is_idempotent(self, output):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
+    def _is_idempotent(self, output):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
         """Parse the output of the provisioning for changed and returns a bool.
 
         Args:
@@ -77,7 +77,7 @@ class Idempotence(base.Base):
 
         return True
 
-    def _non_idempotent_tasks(self, output):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
+    def _non_idempotent_tasks(self, output):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
         """Parse the output to identify the non idempotent tasks.
 
         Args:

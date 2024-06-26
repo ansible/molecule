@@ -58,11 +58,11 @@ class Scenario(base.Base):
         Initialize a new scenario using a embedded template.
     """
 
-    def __init__(self, command_args: dict[str, str]) -> None:  # noqa: ANN101
+    def __init__(self, command_args: dict[str, str]) -> None:
         """Construct Scenario."""
         self._command_args = command_args
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
         """Execute the actions necessary to perform a `molecule init scenario` and returns None."""
         scenario_name = self._command_args["scenario_name"]
 

@@ -17,7 +17,7 @@ class Roles(AnsibleGalaxyBase):
     COMMANDS = ("install",)
 
     @property
-    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         general = super().default_options
         specific = util.merge_dicts(
             general,
@@ -31,5 +31,5 @@ class Roles(AnsibleGalaxyBase):
         return specific  # noqa: RET504
 
     @property
-    def requirements_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def requirements_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self.options["role-file"]

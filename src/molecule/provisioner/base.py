@@ -27,7 +27,7 @@ class Base:
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
         """Initialize code for all :ref:`Provisioner` classes.
 
         Args:
@@ -37,7 +37,7 @@ class Base:
 
     @property
     @abc.abstractmethod
-    def default_options(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
+    def default_options(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201
         """Get default CLI arguments provided to ``cmd`` as a dict.
 
         Return:
@@ -46,7 +46,7 @@ class Base:
 
     @property
     @abc.abstractmethod
-    def default_env(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
+    def default_env(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201
         """Get default env variables provided to ``cmd`` as a dict.
 
         Return:
@@ -55,7 +55,7 @@ class Base:
 
     @property
     @abc.abstractmethod
-    def name(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
+    def name(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201
         """Name of the provisioner and returns a string.
 
         Returns:

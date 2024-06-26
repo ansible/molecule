@@ -86,30 +86,30 @@ class AnsibleGalaxy(Base):
     [ANSIBLE_HOME]: https://docs.ansible.com/ansible/latest/reference_appendices/config.html#ansible-home
     """
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
         """Construct AnsibleGalaxy."""
         super().__init__(config)
         self.invocations = [Roles(config), Collections(config)]
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002, D102
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002, D102
         for invoker in self.invocations:
             invoker.execute()  # type: ignore[no-untyped-call]
 
-    def _has_requirements_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _has_requirements_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         has_file = False
         for invoker in self.invocations:
             has_file = has_file or invoker._has_requirements_file()  # type: ignore[no-untyped-call]  # noqa: SLF001
         return has_file
 
     @property
-    def default_env(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def default_env(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         e = {}  # type: ignore[var-annotated]
         for invoker in self.invocations:
             e = util.merge(e, invoker.default_env)  # type: ignore[attr-defined]  # pylint: disable=no-member
         return e
 
     @property
-    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         opts = {}  # type: ignore[var-annotated]
         for invoker in self.invocations:
             opts = util.merge(opts, invoker.default_opts)  # type: ignore[attr-defined]  # pylint: disable=no-member

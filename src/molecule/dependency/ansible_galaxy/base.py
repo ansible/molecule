@@ -38,7 +38,7 @@ class AnsibleGalaxyBase(base.Base):
 
     FILTER_OPTS = ()
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
         """Construct AnsibleGalaxy."""
         super().__init__(config)
         self._sh_command = None
@@ -47,11 +47,11 @@ class AnsibleGalaxyBase(base.Base):
 
     @property
     @abc.abstractmethod
-    def requirements_file(self):  # type: ignore[no-untyped-def] # cover  # noqa: ANN101, ANN201, D102
+    def requirements_file(self):  # type: ignore[no-untyped-def] # cover  # noqa: ANN201, D102
         pass
 
     @property
-    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         d = {
             "force": False,
         }
@@ -60,7 +60,7 @@ class AnsibleGalaxyBase(base.Base):
 
         return d
 
-    def filter_options(self, opts, keys):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
+    def filter_options(self, opts, keys):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
         """Filter certain keys from a dictionary.
 
         Removes all the values of ``keys`` from the dictionary ``opts``, if
@@ -79,7 +79,7 @@ class AnsibleGalaxyBase(base.Base):
     # NOTE(retr0h): Override the base classes' options() to handle
     # ``ansible-galaxy`` one-off.
     @property
-    def options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         o = self._config.config["dependency"]["options"]
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
@@ -90,10 +90,10 @@ class AnsibleGalaxyBase(base.Base):
         return self.filter_options(o, self.FILTER_OPTS)  # type: ignore[no-untyped-call]
 
     @property
-    def default_env(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def default_env(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return util.merge_dicts(os.environ, self._config.env)
 
-    def bake(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
+    def bake(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
         """Bake an ``ansible-galaxy`` command so it's ready to execute and returns None."""
         options = self.options
         verbose_flag = util.verbose_flag(options)  # type: ignore[no-untyped-call]
@@ -105,7 +105,7 @@ class AnsibleGalaxyBase(base.Base):
             *verbose_flag,
         ]
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002, D102
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002, D102
         if not self.enabled:
             msg = "Skipping, dependency is disabled."
             LOG.warning(msg)
@@ -123,8 +123,8 @@ class AnsibleGalaxyBase(base.Base):
         self._setup()  # type: ignore[no-untyped-call]
         self.execute_with_retries()  # type: ignore[no-untyped-call]
 
-    def _setup(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _setup(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         """Prepare the system for using ``ansible-galaxy`` and returns None."""
 
-    def _has_requirements_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _has_requirements_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         return os.path.isfile(self.requirements_file)  # noqa: PTH113

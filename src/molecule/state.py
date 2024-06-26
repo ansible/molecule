@@ -59,7 +59,7 @@ class State:
         Molecule.
     """
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
         """Initialize a new state class and returns None.
 
         Args:
@@ -70,7 +70,7 @@ class State:
         self._data = self._get_data()  # type: ignore[no-untyped-call]
         self._write_state_file()  # type: ignore[no-untyped-call]
 
-    def marshal(func):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, N805, D102
+    def marshal(func):  # type: ignore[no-untyped-def]  # noqa: ANN201, N805, D102
         def wrapper(self, *args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN002, ANN003, ANN202
             func(self, *args, **kwargs)  # type: ignore[operator]  # pylint: disable=not-callable
             self._write_state_file()
@@ -78,43 +78,43 @@ class State:
         return wrapper
 
     @property
-    def state_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def state_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._state_file
 
     @property
-    def converged(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def converged(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._data.get("converged")
 
     @property
-    def created(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def created(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._data.get("created")
 
     @property
-    def driver(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def driver(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._data.get("driver")
 
     @property
-    def prepared(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def prepared(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._data.get("prepared")
 
     @property
-    def run_uuid(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def run_uuid(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._data.get("run_uuid")
 
     @property
-    def is_parallel(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def is_parallel(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._data.get("is_parallel")
 
     @property
-    def molecule_yml_date_modified(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def molecule_yml_date_modified(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._data.get("molecule_yml_date_modified")
 
     @marshal  # type: ignore[arg-type]
-    def reset(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def reset(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         self._data = self._default_data()  # type: ignore[no-untyped-call]
 
     @marshal  # type: ignore[arg-type]
-    def change_state(self, key, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
+    def change_state(self, key, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
         """Change the state of the instance data with the given `key` and the provided ``value`.
 
         Wrapping with a decorator is probably not necessary.
@@ -127,12 +127,12 @@ class State:
             raise InvalidState
         self._data[key] = value
 
-    def _get_data(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _get_data(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         if os.path.isfile(self.state_file):  # noqa: PTH113
             return self._load_file()  # type: ignore[no-untyped-call]
         return self._default_data()  # type: ignore[no-untyped-call]
 
-    def _default_data(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _default_data(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         return {
             "converged": False,
             "created": False,
@@ -143,11 +143,11 @@ class State:
             "is_parallel": self._config.is_parallel,
         }
 
-    def _load_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _load_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         return util.safe_load_file(self.state_file)
 
-    def _write_state_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _write_state_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         util.write_file(self.state_file, util.safe_dump(self._data))
 
-    def _get_state_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _get_state_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         return os.path.join(self._config.scenario.ephemeral_directory, "state.yml")  # noqa: PTH118

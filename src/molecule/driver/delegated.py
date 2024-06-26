@@ -141,21 +141,21 @@ class Delegated(Driver):
 
     title = "Default driver, user is expected to manage provisioning of test resources."
 
-    def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
+    def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
         """Construct Delegated."""
         super().__init__(config)
         self._name = "default"
 
     @property
-    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._name
 
     @name.setter
-    def name(self, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
+    def name(self, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
         self._name = value
 
     @property
-    def login_cmd_template(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def login_cmd_template(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         if "login_cmd_template" in self.options:
             return self.options["login_cmd_template"]
 
@@ -172,11 +172,11 @@ class Delegated(Driver):
         return None
 
     @property
-    def default_safe_files(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def default_safe_files(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return []
 
     @property
-    def default_ssh_connection_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def default_ssh_connection_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         if self.managed:
             ssh_connopts = self._get_ssh_connection_options()  # type: ignore[no-untyped-call]
             if self.options.get("ansible_connection_options", {}).get(
@@ -191,14 +191,14 @@ class Delegated(Driver):
             return ssh_connopts
         return []
 
-    def login_options(self, instance_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, D102
+    def login_options(self, instance_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D102
         if self.managed:
             d = {"instance": instance_name}
 
             return util.merge_dicts(d, self._get_instance_config(instance_name))  # type: ignore[no-untyped-call]
         return {"instance": instance_name}
 
-    def ansible_connection_options(self, instance_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, D102
+    def ansible_connection_options(self, instance_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D102
         # list of tuples describing mappable instance params and default values
         instance_params = [
             ("become_pass", None),
@@ -245,19 +245,19 @@ class Delegated(Driver):
                 return {}
         return self.options.get("ansible_connection_options", {})
 
-    def _created(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _created(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         if self.managed:
             return super()._created()  # type: ignore[no-untyped-call]
         return "unknown"
 
-    def _get_instance_config(self, instance_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
+    def _get_instance_config(self, instance_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
         instance_config_dict = util.safe_load_file(self._config.driver.instance_config)
 
         return next(item for item in instance_config_dict if item["instance"] == instance_name)
 
-    def sanity_checks(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def sanity_checks(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         # Note(decentral1se): Cannot implement driver specifics are unknown
         pass
 
-    def schema_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def schema_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return os.path.join(os.path.dirname(data_module), "driver.json")  # noqa: PTH118, PTH120

@@ -40,7 +40,7 @@ LOG = logging.getLogger(__name__)
 class Scenario:
     """A Molecule scenario."""
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
         """Initialize a new scenario class and returns None.
 
         Args:
@@ -87,17 +87,17 @@ class Scenario:
                 os.removedirs(dirpath)
 
     @property
-    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self.config.config["scenario"]["name"]
 
     @property
-    def directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         if self.config.molecule_file:
             return os.path.dirname(self.config.molecule_file)  # noqa: PTH120
         return os.getcwd()  # noqa: PTH109
 
     @property
-    def ephemeral_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def ephemeral_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         path = os.getenv("MOLECULE_EPHEMERAL_DIRECTORY", None)
         if not path:
             project_directory = os.path.basename(self.config.project_directory)  # noqa: PTH119
@@ -134,59 +134,59 @@ class Scenario:
         return path
 
     @property
-    def inventory_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def inventory_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return os.path.join(self.ephemeral_directory, "inventory")  # noqa: PTH118
 
     @property
-    def check_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def check_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self.config.config["scenario"]["check_sequence"]
 
     @property
-    def cleanup_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def cleanup_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self.config.config["scenario"]["cleanup_sequence"]
 
     @property
-    def converge_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def converge_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self.config.config["scenario"]["converge_sequence"]
 
     @property
-    def create_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def create_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self.config.config["scenario"]["create_sequence"]
 
     @property
-    def dependency_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def dependency_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return ["dependency"]
 
     @property
-    def destroy_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def destroy_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self.config.config["scenario"]["destroy_sequence"]
 
     @property
-    def idempotence_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def idempotence_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return ["idempotence"]
 
     @property
-    def prepare_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def prepare_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return ["prepare"]
 
     @property
-    def side_effect_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def side_effect_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return ["side_effect"]
 
     @property
-    def syntax_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def syntax_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return ["syntax"]
 
     @property
-    def test_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def test_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self.config.config["scenario"]["test_sequence"]
 
     @property
-    def verify_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def verify_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return ["verify"]
 
     @property
-    def sequence(self) -> list[str]:  # noqa: ANN101
+    def sequence(self) -> list[str]:
         """Select the sequence based on scenario and subcommand of the provided scenario object and returns a list."""  # noqa: E501
         result = []
         our_scenarios = scenarios.Scenarios([self.config])
@@ -202,7 +202,7 @@ class Scenario:
             pass
         return result
 
-    def _setup(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _setup(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         """Prepare the scenario for Molecule and returns None."""
         if not os.path.isdir(self.inventory_directory):  # noqa: PTH112
             os.makedirs(self.inventory_directory, exist_ok=True)  # noqa: PTH103

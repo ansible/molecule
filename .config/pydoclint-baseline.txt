@@ -4,10 +4,6 @@ src/molecule/api.py
 	DOC107: Method `UserListMap.__getitem__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
 	DOC103: Method `UserListMap.__getitem__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [i: ].
 	DOC201: Method `UserListMap.__getitem__` does not have a return section in docstring
-	DOC101: Function `drivers`: Docstring contains fewer arguments than in function signature.
-	DOC106: Function `drivers`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Function `drivers`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC103: Function `drivers`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [config: ].
 	DOC201: Function `drivers` does not have a return section in docstring
 	DOC203: Function `drivers` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
 	DOC101: Function `verifiers`: Docstring contains fewer arguments than in function signature.
@@ -237,6 +233,7 @@ src/molecule/config.py
 	DOC101: Method `Config.__init__`: Docstring contains fewer arguments than in function signature.
 	DOC107: Method `Config.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
 	DOC103: Method `Config.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [ansible_args: , args: , command_args: , molecule_file: str].
+	DOC201: Method `Config.driver` does not have a return section in docstring
 	DOC203: Method `Config._get_config` return type(s) in docstring not consistent with the return annotation. Return annotation types: ['MutableMapping']; docstring return section types: ['dict']
 	DOC203: Method `Config._reget_config` return type(s) in docstring not consistent with the return annotation. Return annotation has 0 type(s); docstring return section has 1 type(s).
 	DOC101: Method `Config._combine`: Docstring contains fewer arguments than in function signature.

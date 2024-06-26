@@ -38,7 +38,7 @@ MOLECULE_PLATFORM_NAME = os.environ.get("MOLECULE_PLATFORM_NAME", None)
 class Test(base.Base):
     """Test Command Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
         """Execute the actions necessary to perform a `molecule test` and returns None."""
 
 

@@ -36,12 +36,12 @@ LOG = logging.getLogger(__name__)
 class Login(base.Base):
     """Login Command Class."""
 
-    def __init__(self, c) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
+    def __init__(self, c) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
         """Construct Login."""
         super().__init__(c)
         self._pt = None
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
         """Execute the actions necessary to perform a `molecule login` and returns None."""
         c = self._config
         if (not c.state.created) and c.driver.managed:
@@ -52,7 +52,7 @@ class Login(base.Base):
         hostname = self._get_hostname(hosts)  # type: ignore[no-untyped-call]
         self._get_login(hostname)  # type: ignore[no-untyped-call]
 
-    def _get_hostname(self, hosts):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN202
+    def _get_hostname(self, hosts):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
         hostname = self._config.command_args.get("host")
         host_list = "\n".join(sorted(hosts))
         if hostname is None:
@@ -87,7 +87,7 @@ class Login(base.Base):
 
         return match[0]
 
-    def _get_login(self, hostname):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN101, ANN202
+    def _get_login(self, hostname):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN202
         # ruff: noqa: S605,S607
         lines, columns = os.popen("stty size", "r").read().split()
         login_options = self._config.driver.login_options(hostname)

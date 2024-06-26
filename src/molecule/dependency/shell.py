@@ -67,7 +67,7 @@ class Shell(base.Base):
     ```
     """
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
         """Construct Shell."""
         super().__init__(config)
         self._sh_command = None
@@ -75,18 +75,18 @@ class Shell(base.Base):
         # self.command = config..config['dependency']['command']
 
     @property
-    def command(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def command(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return self._config.config["dependency"]["command"]
 
     @property
-    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102
+    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
         return {}
 
-    def bake(self) -> None:  # noqa: ANN101
+    def bake(self) -> None:
         """Bake a ``shell`` command so it's ready to execute."""
         self._sh_command = self.command
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002, D102
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002, D102
         if not self.enabled:
             msg = "Skipping, dependency is disabled."
             LOG.warning(msg)
@@ -97,5 +97,5 @@ class Shell(base.Base):
             self.bake()
         self.execute_with_retries()  # type: ignore[no-untyped-call]
 
-    def _has_command_configured(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
+    def _has_command_configured(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
         return "command" in self._config.config["dependency"]
