@@ -71,7 +71,7 @@ class Idempotence(base.Base):
         # Look for any non-zero changed lines
         changed = re.search(r"(changed=[1-9][0-9]*)", output)
 
-        return bool(changed)
+        return not bool(changed)
 
     def _non_idempotent_tasks(self, output):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
         """Parse the output to identify the non idempotent tasks.
