@@ -134,7 +134,7 @@ def test_filter_for_scenario(_instance):  # type: ignore[no-untyped-def]  # noqa
 
     _instance._scenario_name = "invalid"
     result = _instance._filter_for_scenario()
-    assert [] == result
+    assert result == []
 
 
 def test_get_matrix(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103

@@ -31,7 +31,7 @@ from molecule.verifier.ansible import Ansible as AnsibleVerifier
 
 
 def test_args_member(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    assert {} == config_instance.args
+    assert config_instance.args == {}
 
 
 def test_command_args_member(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
@@ -344,7 +344,7 @@ def test_set_env_from_file_returns_original_env_when_env_file_not_found(  # type
 ):
     env = config.set_env_from_file({}, "file-not-found")
 
-    assert {} == env
+    assert env == {}
 
 
 def test_write_config(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103

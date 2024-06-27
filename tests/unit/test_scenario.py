@@ -129,27 +129,27 @@ def test_create_sequence_property(_instance):  # type: ignore[no-untyped-def]  #
 
 
 def test_dependency_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert ["dependency"] == _instance.dependency_sequence
+    assert _instance.dependency_sequence == ["dependency"]
 
 
 def test_destroy_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert ["dependency", "cleanup", "destroy"] == _instance.destroy_sequence
+    assert _instance.destroy_sequence == ["dependency", "cleanup", "destroy"]
 
 
 def test_idempotence_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert ["idempotence"] == _instance.idempotence_sequence
+    assert _instance.idempotence_sequence == ["idempotence"]
 
 
 def test_prepare_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert ["prepare"] == _instance.prepare_sequence
+    assert _instance.prepare_sequence == ["prepare"]
 
 
 def test_side_effect_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert ["side_effect"] == _instance.side_effect_sequence
+    assert _instance.side_effect_sequence == ["side_effect"]
 
 
 def test_syntax_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert ["syntax"] == _instance.syntax_sequence
+    assert _instance.syntax_sequence == ["syntax"]
 
 
 def test_test_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
@@ -172,13 +172,13 @@ def test_test_sequence_property(_instance):  # type: ignore[no-untyped-def]  # n
 
 
 def test_verify_sequence_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert ["verify"] == _instance.verify_sequence
+    assert _instance.verify_sequence == ["verify"]
 
 
 def test_sequence_property_with_invalid_subcommand(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     _instance.config.command_args = {"subcommand": "invalid"}
 
-    assert [] == _instance.sequence
+    assert _instance.sequence == []
 
 
 def test_setup_creates_ephemeral_and_inventory_directories(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103

@@ -130,7 +130,7 @@ def test_default_config_options_property(instance):  # type: ignore[no-untyped-d
 
 
 def test_provisioner_default_options_property(instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
-    assert {"skip-tags": "molecule-notest,notest"} == instance.default_options
+    assert instance.default_options == {"skip-tags": "molecule-notest,notest"}
 
 
 def test_ansible_default_env_property(instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
@@ -192,7 +192,7 @@ def test_ansible_options_property_does_not_merge(instance):  # type: ignore[no-u
     for action in ["create", "destroy"]:
         instance._config.action = action
 
-        assert {"skip-tags": "molecule-notest,notest"} == instance.options
+        assert instance.options == {"skip-tags": "molecule-notest,notest"}
 
 
 def test_provisioner_ansible_options_property_handles_cli_args(instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
@@ -300,7 +300,7 @@ def test_hosts_property(instance):  # type: ignore[no-untyped-def]  # noqa: ANN0
 
 
 def test_links_property(instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
-    assert {} == instance.links
+    assert instance.links == {}
 
 
 def test_inventory_directory_property(instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103

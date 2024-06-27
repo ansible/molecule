@@ -161,7 +161,7 @@ def test_testinfra_enabled_property(_instance):  # type: ignore[no-untyped-def] 
 def test_testinfra_directory_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     parts = _instance.directory.split(os.path.sep)
 
-    assert ["molecule", "default", "tests"] == parts[-3:]
+    assert parts[-3:] == ["molecule", "default", "tests"]
 
 
 @pytest.fixture()

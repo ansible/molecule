@@ -63,10 +63,10 @@ def test_delegated_config_private_member(_instance):  # type: ignore[no-untyped-
 
 
 def test_delegated_options_property2(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert {
+    assert _instance.testinfra_options == {
         "connection": "ansible",
         "ansible-inventory": _instance._config.provisioner.inventory_directory,
-    } == _instance.testinfra_options
+    }
 
 
 def test_delegated_name_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
@@ -118,11 +118,11 @@ def test_login_cmd_template_property_when_managed(_instance):  # type: ignore[no
 
 
 def test_safe_files_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert [] == _instance.safe_files
+    assert _instance.safe_files == []
 
 
 def test_default_safe_files_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert [] == _instance.default_safe_files
+    assert _instance.default_safe_files == []
 
 
 def test_delegated_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
@@ -139,7 +139,7 @@ def test_managed_property(_instance):  # type: ignore[no-untyped-def]  # noqa: A
     indirect=True,
 )
 def test_default_ssh_connection_options_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert [] == _instance.default_ssh_connection_options
+    assert _instance.default_ssh_connection_options == []
 
 
 @pytest.mark.parametrize(
@@ -167,7 +167,7 @@ def test_default_ssh_connection_options_property_when_managed(_instance):  # typ
     indirect=True,
 )
 def test_login_options(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert {"instance": "foo"} == _instance.login_options("foo")
+    assert _instance.login_options("foo") == {"instance": "foo"}
 
 
 @pytest.mark.parametrize(
@@ -281,7 +281,7 @@ def test_ansible_connection_options_handles_missing_instance_config_managed(  # 
     m = mocker.patch("molecule.util.safe_load_file")
     m.side_effect = IOError
 
-    assert {} == _instance.ansible_connection_options("foo")
+    assert _instance.ansible_connection_options("foo") == {}
 
 
 def test_ansible_connection_options_handles_missing_results_key_when_managed(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
@@ -291,7 +291,7 @@ def test_ansible_connection_options_handles_missing_results_key_when_managed(  #
     m = mocker.patch("molecule.util.safe_load_file")
     m.side_effect = StopIteration
 
-    assert {} == _instance.ansible_connection_options("foo")
+    assert _instance.ansible_connection_options("foo") == {}
 
 
 def test_instance_config_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
@@ -309,7 +309,7 @@ def test_instance_config_property(_instance):  # type: ignore[no-untyped-def]  #
     indirect=True,
 )
 def test_ssh_connection_options_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert [] == _instance.ssh_connection_options
+    assert _instance.ssh_connection_options == []
 
 
 def test_status(mocker: MockerFixture, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103

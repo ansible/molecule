@@ -353,7 +353,6 @@ line-length = 100
 target-version = "py310"
 
 [tool.ruff.lint]
-
 select = ["ALL"]
 
 [tool.ruff.lint.flake8-pytest-style]
