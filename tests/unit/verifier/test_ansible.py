@@ -36,7 +36,7 @@ def test_verifier_config_private_member(_instance):  # type: ignore[no-untyped-d
 
 
 def test_verifier_default_options_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert {} == _instance.default_options
+    assert _instance.default_options == {}
 
 
 def test_verifier_ansible_default_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
@@ -66,7 +66,7 @@ def test_ansible_enabled_property(_instance):  # type: ignore[no-untyped-def]  #
 def test_verifier_directory_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
     parts = _instance.directory.split(os.path.sep)
     # Unused by Ansible verifier
-    assert ["molecule", "default", "tests"] == parts[-3:]
+    assert parts[-3:] == ["molecule", "default", "tests"]
 
 
 @pytest.mark.parametrize(

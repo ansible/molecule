@@ -89,7 +89,7 @@ pluggy==1.5.0
 pre-commit==3.7.1
 ptyprocess==0.7.0
 pycparser==2.22
-pydoclint==0.5.1
+pydoclint==0.5.3
 pygments==2.18.0
 pylint==3.2.4
 pymdown-extensions==10.8.1
@@ -113,7 +113,7 @@ rich==13.7.1
 rpds-py==0.18.1
 ruamel-yaml==0.18.6
 ruamel-yaml-clib==0.2.8
-ruff==0.4.10
+ruff==0.5.0
 six==1.16.0
 soupsieve==2.5
 subprocess-tee==0.4.2

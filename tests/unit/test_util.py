@@ -237,11 +237,11 @@ foo:
 
 
 def test_safe_load() -> None:  # noqa: D103
-    assert {"foo": "bar"} == util.safe_load("foo: bar")
+    assert util.safe_load("foo: bar") == {"foo": "bar"}
 
 
 def test_safe_load_returns_empty_dict_on_empty_string() -> None:  # noqa: D103
-    assert {} == util.safe_load("")
+    assert util.safe_load("") == {}
 
 
 def test_safe_load_exits_when_cannot_parse() -> None:  # noqa: D103
@@ -265,7 +265,7 @@ def test_safe_load_file(test_cache_path: Path) -> None:
     path = test_cache_path / "test_safe_load_file.yml"
     util.write_file(str(path), "foo: bar")
 
-    assert {"foo": "bar"} == util.safe_load_file(str(path))
+    assert util.safe_load_file(str(path)) == {"foo": "bar"}
 
 
 def test_instance_with_scenario_name() -> None:  # noqa: D103
@@ -275,25 +275,25 @@ def test_instance_with_scenario_name() -> None:  # noqa: D103
 def test_verbose_flag() -> None:  # noqa: D103
     options = {"verbose": True, "v": True}
 
-    assert ["-v"] == util.verbose_flag(options)  # type: ignore[no-untyped-call]
+    assert util.verbose_flag(options) == ["-v"]  # type: ignore[no-untyped-call]
     # pylint: disable=use-implicit-booleaness-not-comparison
-    assert {} == options
+    assert options == {}
 
 
 def test_verbose_flag_extra_verbose() -> None:  # noqa: D103
     options = {"verbose": True, "vvv": True}
 
-    assert ["-vvv"] == util.verbose_flag(options)  # type: ignore[no-untyped-call]
+    assert util.verbose_flag(options) == ["-vvv"]  # type: ignore[no-untyped-call]
     # pylint: disable=use-implicit-booleaness-not-comparison
-    assert {} == options
+    assert options == {}
 
 
 def test_verbose_flag_preserves_verbose_option() -> None:  # noqa: D103
     options = {"verbose": True}
 
     # pylint: disable=use-implicit-booleaness-not-comparison
-    assert [] == util.verbose_flag(options)  # type: ignore[no-untyped-call]
-    assert {"verbose": True} == options
+    assert util.verbose_flag(options) == []  # type: ignore[no-untyped-call]
+    assert options == {"verbose": True}
 
 
 def test_filter_verbose_permutation() -> None:  # noqa: D103

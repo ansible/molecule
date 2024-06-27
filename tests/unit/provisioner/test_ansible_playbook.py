@@ -258,10 +258,10 @@ def test_executes_catches_and_exits_return_code(  # type: ignore[no-untyped-def]
 
 
 def test_add_cli_arg(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert {} == _instance._cli
+    assert _instance._cli == {}
 
     _instance.add_cli_arg("foo", "bar")
-    assert {"foo": "bar"} == _instance._cli
+    assert _instance._cli == {"foo": "bar"}
 
 
 def test_add_env_arg(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103

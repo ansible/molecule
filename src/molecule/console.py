@@ -36,9 +36,7 @@ def to_bool(a: Any) -> bool:  # noqa: ANN401
         return bool(a)
     if isinstance(a, str):
         a = a.lower()
-    if a in ("yes", "on", "1", "true", 1):
-        return True
-    return False
+    return a in ("yes", "on", "1", "true", 1)
 
 
 def should_do_markup() -> bool:
