@@ -72,6 +72,8 @@ source_pkgs = ["molecule"]
 
 [tool.mypy]
 cache_dir = "./.cache/.mypy"
+# To ensure that calling `mypy .` produces desired results (vscode)
+exclude = ["build"]
 files = ["src", "tests"]
 strict = true
 
@@ -87,7 +89,7 @@ allow-init-docstring = true
 arg-type-hints-in-docstring = false
 baseline = ".config/pydoclint-baseline.txt"
 check-return-types = false
-exclude = '\.git|\.tox|build|out|venv'
+exclude = '\.cache|\.git|\.tox|build|out|venv'
 show-filenames-in-every-violation-message = true
 skip-checking-short-docstrings = false
 style = "google"

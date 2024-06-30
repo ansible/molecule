@@ -65,8 +65,12 @@ class Verifier:
         """
 
     @abc.abstractmethod
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
-        """Execute ``cmd`` and returns None."""
+    def execute(self, action_args: None | list[str] = None) -> None:  # pragma: no cover
+        """Execute ``cmd`` and returns None.
+
+        Args:
+            action_args: list of arguments to be passed.
+        """
 
     @abc.abstractmethod
     def schema(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201

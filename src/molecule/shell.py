@@ -63,7 +63,7 @@ def print_version(ctx, param, value):  # type: ignore[no-untyped-def]  # noqa: A
     msg = f"molecule [{color}]{v}[/] using python [repr.number]{sys.version_info[0]}.{sys.version_info[1]}[/] \n"  # noqa: E501
 
     msg += f"    [repr.attrib_name]ansible[/][dim]:[/][repr.number]{app.runtime.version}[/]"
-    for driver in drivers():
+    for driver in drivers().values():
         msg += f"\n    [repr.attrib_name]{driver!s}[/][dim]:[/][repr.number]{driver.version}[/][dim] from {driver.module}"  # noqa: E501
         if driver.required_collections:
             msg += " requiring collections:"

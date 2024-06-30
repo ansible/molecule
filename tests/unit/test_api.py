@@ -22,17 +22,11 @@
 from molecule import api
 
 
-def test_api_molecule_drivers_as_attributes():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    results = api.drivers()
-    assert hasattr(results, "default")
-    assert isinstance(results.default, api.Driver)  # type: ignore[attr-defined] # pylint:disable=no-member
-
-
 def test_api_drivers():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     results = api.drivers()
 
-    for result in results:
-        assert isinstance(result, api.Driver)  # type: ignore[attr-defined]
+    for result in results.values():
+        assert isinstance(result, api.Driver)
 
     assert "default" in results
 

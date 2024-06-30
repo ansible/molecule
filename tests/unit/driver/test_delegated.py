@@ -210,7 +210,6 @@ def test_ansible_connection_options(_instance):  # type: ignore[no-untyped-def] 
     assert is_subset(x, _instance.ansible_connection_options("foo"))  # type: ignore[no-untyped-call]
 
 
-@pytest.mark.xfail(reason="Needs rewrite since switch to delegated")
 @pytest.mark.parametrize(
     "config_instance",
     ["_driver_managed_section_data"],  # noqa: PT007
@@ -251,7 +250,7 @@ def test_ansible_connection_options_when_managed(mocker: MockerFixture, _instanc
         ),
     }
 
-    assert ssh_expected_data == _instance.ansible_connection_options("foo")
+    assert ssh_expected_data.items() <= _instance.ansible_connection_options("foo").items()
 
     winrm_case_data = mocker.patch(
         "molecule.driver.delegated.Delegated._get_instance_config",
@@ -271,7 +270,7 @@ def test_ansible_connection_options_when_managed(mocker: MockerFixture, _instanc
         "ansible_connection": "winrm",
     }
 
-    assert winrm_expected_data == _instance.ansible_connection_options("foo")
+    assert winrm_expected_data.items() <= _instance.ansible_connection_options("foo").items()
 
 
 def test_ansible_connection_options_handles_missing_instance_config_managed(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103

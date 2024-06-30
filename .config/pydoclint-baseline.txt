@@ -1,9 +1,4 @@
 src/molecule/api.py
-	DOC101: Method `UserListMap.__getitem__`: Docstring contains fewer arguments than in function signature.
-	DOC106: Method `UserListMap.__getitem__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Method `UserListMap.__getitem__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC103: Method `UserListMap.__getitem__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [i: ].
-	DOC201: Method `UserListMap.__getitem__` does not have a return section in docstring
 	DOC201: Function `drivers` does not have a return section in docstring
 	DOC101: Function `verifiers`: Docstring contains fewer arguments than in function signature.
 	DOC106: Function `verifiers`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
@@ -565,10 +560,6 @@ src/molecule/verifier/base.py
 	DOC603: Class `Verifier`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [__metaclass__: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
 	DOC106: Method `Verifier.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
 	DOC107: Method `Verifier.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC101: Method `Verifier.execute`: Docstring contains fewer arguments than in function signature.
-	DOC106: Method `Verifier.execute`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Method `Verifier.execute`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC103: Method `Verifier.execute`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [action_args: ].
 	DOC101: Method `Verifier.__eq__`: Docstring contains fewer arguments than in function signature.
 	DOC106: Method `Verifier.__eq__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
 	DOC107: Method `Verifier.__eq__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints

@@ -45,5 +45,5 @@ def reset(ctx, scenario_name):  # type: ignore[no-untyped-def] # pragma: no cove
     command_args = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
-    for driver in drivers():
+    for driver in drivers().values():
         driver.reset()

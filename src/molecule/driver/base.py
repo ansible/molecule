@@ -264,17 +264,17 @@ class Driver:
             return p
         return None
 
-    def schema_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def schema_file(self) -> None | str:  # noqa: D102
         return None
 
-    def modules_dir(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
+    def modules_dir(self) -> str | None:
         """Return path to ansible modules included with driver."""
         p = os.path.join(self._path, "modules")  # noqa: PTH118
         if os.path.isdir(p):  # noqa: PTH112
             return p
         return None
 
-    def reset(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
+    def reset(self) -> None:
         """Release all resources owned by molecule.
 
         This is a destructive operation that would affect all resources managed

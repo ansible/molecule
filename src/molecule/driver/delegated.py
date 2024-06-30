@@ -23,7 +23,7 @@ import logging
 import os
 
 from molecule import util
-from molecule.api import Driver  # type: ignore[attr-defined]
+from molecule.api import Driver
 from molecule.data import __file__ as data_module
 
 
