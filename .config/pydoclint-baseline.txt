@@ -16,8 +16,6 @@ src/molecule/command/base.py
 	DOC302: Class `Base`: The class docstring does not need a "Returns" section, because __init__() cannot return anything
 	DOC501: Function `execute_cmdline_scenarios` has "raise" statements, but the docstring does not have a "Raises" section
 	DOC201: Function `execute_subcommand` does not have a return section in docstring
-	DOC106: Function `get_configs`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Function `get_configs`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
 	DOC201: Function `click_group_ex` does not have a return section in docstring
 	DOC201: Function `click_command_ex` does not have a return section in docstring
 	DOC101: Function `result_callback`: Docstring contains fewer arguments than in function signature.
