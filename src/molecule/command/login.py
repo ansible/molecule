@@ -45,8 +45,7 @@ class Login(base.Base):
         """Execute the actions necessary to perform a `molecule login` and returns None."""
         c = self._config
         if (not c.state.created) and c.driver.managed:
-            msg = "Instances not created.  Please create instances first."
-            util.sysexit_with_message(msg)
+            base.execute_subcommand(c, "create")
 
         hosts = [d["name"] for d in self._config.platforms.instances]
         hostname = self._get_hostname(hosts)  # type: ignore[no-untyped-call]
