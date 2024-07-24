@@ -1,3 +1,4 @@
+---
 name: release
 
 on:
@@ -5,8 +6,7 @@ on:
     types: [published]
 
 jobs:
-  pypi:
-    name: release ${{ github.event.ref }}
+  release:
     environment: release
     runs-on: ubuntu-22.04
     permissions:
@@ -15,20 +15,34 @@ jobs:
     env:
       FORCE_COLOR: 1
       PY_COLORS: 1
-      TOX_PARALLEL_NO_SPINNER: 1
 
     steps:
       - name: Switch to using Python 3.12 by default
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
       - name: Install tox
         run: python3 -m pip install --user "tox>=4.0.0"
+
       - name: Check out src from Git
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # needed by setuptools-scm
+
       - name: Build dists
         run: python3 -m tox -e pkg
+
       - name: Publish to pypi.org
         uses: pypa/gh-action-pypi-publish@release/v1
+
+  forum_post:
+    needs: release
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Retreive the forum post script from team-devtools
+        run: curl -O https://raw.githubusercontent.com/ansible/team-devtools/main/.github/workflows/forum_post.py
+
+      - name: Run the forum post script
+        run: python3 forum_post.py ${{ github.event.repository.full_name }} ${{ github.event.release.tag_name }} ${{ secrets.FORUM_KEY }} ${{ secrets.FORUM_USER }}
