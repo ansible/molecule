@@ -9,6 +9,7 @@
     "ms-python.mypy-type-checker",
     "ms-python.pylint",
     "ms-python.python",
+    "sonarsource.sonarlint-vscode",
     "streetsidesoftware.code-spell-checker"
   ]
 }
