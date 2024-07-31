@@ -67,6 +67,7 @@ sort = "Cover"
 [tool.coverage.run]
 branch = false # https://github.com/nedbat/coveragepy/issues/605
 concurrency = ["multiprocessing", "thread"]
+omit = ["_version.py"]
 parallel = true
 source_pkgs = ["molecule"]
 
