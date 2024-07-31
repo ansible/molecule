@@ -42,22 +42,25 @@ def test_login_execute(mocker: MockerFixture, _instance):  # type: ignore[no-unt
     m.assert_called_once_with("instance-1")
 
 
-@pytest.mark.skip(reason="needs rewrite after switch to delegated")
 @pytest.mark.parametrize(
     "config_instance",
     ["command_driver_delegated_managed_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_execute_raises_when_not_created(caplog, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_login_execute_instance_creation(mocker: MockerFixture, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+    _instance._config.command_args = {"host": "instance-1"}
     _instance._config.state.change_state("created", False)  # noqa: FBT003
 
-    with pytest.raises(SystemExit) as e:
-        _instance.execute()
+    mocker.patch("molecule.command.login.Login._get_login")
+    patched_execute_subcommand = mocker.patch("molecule.command.base.execute_subcommand")
+    patched_execute_subcommand.side_effect = lambda _config, _: _config.state.change_state(
+        key="created",
+        value=True,
+    )
+    _instance.execute()
 
-    assert e.value.code == 1
-
-    msg = "Instances not created.  Please create instances first."
-    assert msg in caplog.text
+    patched_execute_subcommand.assert_called_once_with(_instance._config, "create")
+    assert _instance._config.state.created
 
 
 def test_get_hostname_does_not_match(caplog, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
