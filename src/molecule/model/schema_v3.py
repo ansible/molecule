@@ -71,7 +71,10 @@ def validate(c):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
             ),
         ):
             wrong_driver_name = str(exc.message.split()[0])
-            driver_name_err_msg = exc.schema["messages"]["anyOf"]
+            if isinstance(exc.schema, dict):
+                driver_name_err_msg = exc.schema["messages"]["anyOf"]
+            else:
+                driver_name_err_msg = "is not a valid driver name"
             result.append(f"{wrong_driver_name} {driver_name_err_msg}")
         else:
             result.append(exc.message)
