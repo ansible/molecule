@@ -120,6 +120,6 @@ def login(ctx, host, scenario_name):  # type: ignore[no-untyped-def] # pragma: n
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args = {"subcommand": subcommand, "host": host}
 
-    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)  # type: ignore[no-untyped-call]
+    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
     for scenario in s.all:
         base.execute_subcommand(scenario.config, subcommand)
