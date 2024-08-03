@@ -920,7 +920,7 @@ class Ansible(base.Base):
             util.abs_path(os.path.join(self._get_plugin_directory(), "modules")),  # noqa: PTH118
         )
 
-        for d in drivers():
+        for d in drivers().values():
             p = d.modules_dir()
             if p:
                 paths.append(p)

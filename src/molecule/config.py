@@ -38,6 +38,7 @@ from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
 from molecule.util import boolean
+from molecule.verifier.base import Verifier
 
 
 LOG = logging.getLogger(__name__)
@@ -257,8 +258,20 @@ class Config(metaclass=NewInitCaller):
         return state.State(self)
 
     @cached_property
-    def verifier(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
-        return api.verifiers(self).get(self.config["verifier"]["name"], None)  # type: ignore[no-untyped-call]
+    def verifier(self) -> Verifier:
+        """Retrieve current verifier.
+
+        Raises:
+            RuntimeError: If is not able to find the driver.
+
+        Returns:
+            Instance of Verifier driver.
+        """
+        name = self.config["verifier"]["name"]
+        if name not in api.verifiers(self):
+            msg = f"Unable to find '{name}' verifier driver."
+            raise RuntimeError(msg)
+        return api.verifiers(self)[name]
 
     def _get_driver_name(self):  # type: ignore[no-untyped-def] # noqa: ANN202
         # the state file contains the driver from the last run

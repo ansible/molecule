@@ -24,7 +24,7 @@ import logging
 import os
 
 from molecule import util
-from molecule.api import Verifier  # type: ignore[attr-defined]
+from molecule.api import Verifier
 
 
 LOG = logging.getLogger(__name__)
