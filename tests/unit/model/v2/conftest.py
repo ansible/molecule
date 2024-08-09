@@ -18,14 +18,17 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Unittest for v2 config format."""
+from __future__ import annotations
 
-
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pytest
 
 from molecule import util
+
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 @pytest.fixture(name="molecule_file")

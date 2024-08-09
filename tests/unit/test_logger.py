@@ -17,16 +17,21 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
-
+from __future__ import annotations
 
 import logging
 
+from typing import TYPE_CHECKING
+
 import pytest
 
-from molecule import config
 from molecule.command.base import Base
 from molecule.console import should_do_markup
 from molecule.logger import get_section_loggers
+
+
+if TYPE_CHECKING:
+    from molecule import config
 
 
 # the dummy/instance fixtures are based on fixtures in tests.unit.command.test_base

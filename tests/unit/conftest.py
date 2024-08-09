@@ -17,21 +17,25 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+from __future__ import annotations
 
 import copy
 import os
 
-from collections.abc import Generator, MutableMapping
-from pathlib import Path
 from subprocess import CompletedProcess
-from typing import Any
-from unittest.mock import Mock
+from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from pytest_mock import MockerFixture
-
 from molecule import config, util
+
+
+if TYPE_CHECKING:
+    from collections.abc import Generator, MutableMapping
+    from pathlib import Path
+    from unittest.mock import Mock
+
+    from pytest_mock import MockerFixture
 
 
 def write_molecule_file(filename: str, data: Any) -> None:  # noqa: ANN401, D103

@@ -17,9 +17,9 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+from __future__ import annotations
 
-from pathlib import Path
-from typing import TypedDict
+from typing import TYPE_CHECKING, TypedDict
 
 import pytest
 
@@ -28,6 +28,10 @@ from pytest import FixtureRequest  # noqa: PT013
 from molecule.command import base
 from molecule.util import run_command
 from tests.conftest import mac_on_gh  # pylint:disable=C0411
+
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 @pytest.fixture(name="scenario_to_test")

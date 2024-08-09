@@ -15,10 +15,15 @@
 # Taken from Docker Compose:
 # https://github.com/docker/compose/blob/master/compose/config/interpolation.py
 """Interpolation Module."""
+from __future__ import annotations
 
 import string
 
-from collections.abc import MutableMapping
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from collections.abc import MutableMapping
 
 
 class InvalidInterpolation(Exception):  # noqa: N818
@@ -77,10 +82,15 @@ class Interpolator:
 
     def __init__(
         self,
-        templater: type["TemplateWithDefaults"],
+        templater: type[TemplateWithDefaults],
         mapping: MutableMapping,  # type: ignore[type-arg]
     ) -> None:
-        """Construct Interpolator."""
+        """Construct Interpolator.
+
+        Args:
+            templater: A templater class.
+            mapping: A mapping object.
+        """
         self.templater = templater
         self.mapping = mapping
 

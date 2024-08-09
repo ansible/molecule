@@ -1,5 +1,7 @@
 """Molecule API Module."""
 
+from __future__ import annotations
+
 import logging
 import traceback
 

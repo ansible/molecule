@@ -18,19 +18,24 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Logging Module."""
+from __future__ import annotations
 
 import logging
 import os
 import time
 
-from collections.abc import Callable, Iterable
 from functools import wraps
+from typing import TYPE_CHECKING
 
 from ansible_compat.ports import cache
 from enrich.logging import RichHandler
 
 from molecule.console import console, console_stderr
 from molecule.text import underscore
+
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Iterable
 
 
 LOG = logging.getLogger(__name__)

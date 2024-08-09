@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Base class used by init command."""
+from __future__ import annotations
 
 import logging
 

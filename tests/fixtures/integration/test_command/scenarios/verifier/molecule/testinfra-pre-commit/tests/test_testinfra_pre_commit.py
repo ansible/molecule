@@ -1,5 +1,7 @@
 """Testinfra tests."""  # noqa: INP001
 
+from __future__ import annotations
+
 
 def test_ansible_hostname(host):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     """Validate hostname."""

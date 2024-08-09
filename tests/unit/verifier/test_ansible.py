@@ -1,4 +1,8 @@
-import os  # noqa: D100
+"""Unit tests for the ansible verifier module."""
+
+from __future__ import annotations
+
+import os
 
 import pytest
 

@@ -1,5 +1,8 @@
 """Constants used by molecule."""
 
+from __future__ import annotations
+
+
 RC_SUCCESS = 0
 RC_TIMEOUT = 3
 RC_SETUP_ERROR = 4  # Broken setup, like missing Ansible

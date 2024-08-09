@@ -17,15 +17,20 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+from __future__ import annotations
 
 import os
 
-from pathlib import Path
-from unittest.mock import Mock
+from typing import TYPE_CHECKING
 
 import pytest
 
 from molecule.command.init import scenario
+
+
+if TYPE_CHECKING:
+    from pathlib import Path
+    from unittest.mock import Mock
 
 
 @pytest.fixture(name="command_args")

@@ -17,20 +17,25 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+from __future__ import annotations
 
 import os
 import platform
 import shutil
 
-from collections.abc import Iterable
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
-from _pytest.nodes import Item
-from _pytest.runner import CallInfo
 
-from molecule.scenario import Scenario
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from _pytest.nodes import Item
+    from _pytest.runner import CallInfo
+
+    from molecule.scenario import Scenario
 
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"

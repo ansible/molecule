@@ -17,10 +17,16 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+from __future__ import annotations
 
-from molecule import config
+from typing import TYPE_CHECKING
+
 from molecule.command import list
 from molecule.driver import base
+
+
+if TYPE_CHECKING:
+    from molecule import config
 
 
 def test_list_execute(capsys, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103

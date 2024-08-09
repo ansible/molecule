@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Base Ansible Galaxy dependency module."""
+from __future__ import annotations
 
 import abc
 import copy

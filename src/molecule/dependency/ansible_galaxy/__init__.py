@@ -1,5 +1,7 @@
 """Base definition for Ansible Galaxy dependencies."""
 
+from __future__ import annotations
+
 from molecule import util
 from molecule.dependency.ansible_galaxy.collections import Collections
 from molecule.dependency.ansible_galaxy.roles import Roles

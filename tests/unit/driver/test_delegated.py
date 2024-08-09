@@ -17,16 +17,21 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+from __future__ import annotations
 
 import os
 
-import pytest
+from typing import TYPE_CHECKING
 
-from pytest_mock import MockerFixture
+import pytest
 
 from molecule import config
 from molecule.driver import delegated
 from tests.conftest import is_subset  # pylint:disable=C0411
+
+
+if TYPE_CHECKING:
+    from pytest_mock import MockerFixture
 
 
 @pytest.fixture()
