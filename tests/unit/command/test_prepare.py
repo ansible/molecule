@@ -21,12 +21,16 @@ from __future__ import annotations
 
 import os
 
-import pytest
+from typing import TYPE_CHECKING
 
-from pytest_mock import MockerFixture
+import pytest
 
 from molecule import config, util
 from molecule.command import prepare
+
+
+if TYPE_CHECKING:
+    from pytest_mock import MockerFixture
 
 
 @pytest.fixture()

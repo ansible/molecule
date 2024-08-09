@@ -19,16 +19,22 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
-from typing import Any
-from unittest.mock import Mock
+from typing import TYPE_CHECKING, Any
 
 from click.testing import CliRunner
-from pytest import LogCaptureFixture  # noqa: PT013
-from pytest_mock import MockerFixture
 
-from molecule import config
 from molecule.command import converge
 from molecule.shell import main
+
+
+if TYPE_CHECKING:
+    from unittest.mock import Mock
+
+    import pytest
+
+    from pytest_mock import MockerFixture
+
+    from molecule import config
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
@@ -36,7 +42,7 @@ from molecule.shell import main
 # throughout patched.assert_called unit tests.
 def test_converge_execute(  # noqa: D103
     mocker: MockerFixture,  # noqa: ARG001
-    caplog: LogCaptureFixture,
+    caplog: pytest.LogCaptureFixture,
     patched_ansible_converge: Mock,
     patched_config_validate: Any,  # noqa: ANN401, ARG001
     config_instance: config.Config,

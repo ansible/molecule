@@ -21,14 +21,18 @@ from __future__ import annotations
 
 import os
 
-import pytest
+from typing import TYPE_CHECKING
 
-from pytest_mock import MockerFixture
+import pytest
 
 from molecule import config, platforms, scenario, state, util
 from molecule.dependency import ansible_galaxy, shell
 from molecule.provisioner import ansible
 from molecule.verifier.ansible import Ansible as AnsibleVerifier
+
+
+if TYPE_CHECKING:
+    from pytest_mock import MockerFixture
 
 
 def test_args_member(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103

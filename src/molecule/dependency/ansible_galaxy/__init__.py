@@ -1,4 +1,5 @@
 """Base definition for Ansible Galaxy dependencies."""
+
 from __future__ import annotations
 
 from molecule import util

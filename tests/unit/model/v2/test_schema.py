@@ -19,10 +19,14 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from molecule.model import schema_v3
 from molecule.util import run_command
+
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 def test_base_config(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103

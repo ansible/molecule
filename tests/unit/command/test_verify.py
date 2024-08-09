@@ -19,10 +19,15 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
-from pytest_mock import MockerFixture
+from typing import TYPE_CHECKING
 
-from molecule import config
 from molecule.command import verify
+
+
+if TYPE_CHECKING:
+    from pytest_mock import MockerFixture
+
+    from molecule import config
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables

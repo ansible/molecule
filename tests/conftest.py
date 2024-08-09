@@ -23,15 +23,19 @@ import os
 import platform
 import shutil
 
-from collections.abc import Iterable
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
-from _pytest.nodes import Item
-from _pytest.runner import CallInfo
 
-from molecule.scenario import Scenario
+if TYPE_CHECKING:
+    from collections.abc import Iterable
+
+    from _pytest.nodes import Item
+    from _pytest.runner import CallInfo
+
+    from molecule.scenario import Scenario
 
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"

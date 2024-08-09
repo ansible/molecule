@@ -327,8 +327,6 @@ src/molecule/driver/delegated.py
 src/molecule/interpolation.py
 	DOC101: Method `InvalidInterpolation.__init__`: Docstring contains fewer arguments than in function signature.
 	DOC103: Method `InvalidInterpolation.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [place: Exception, string: str].
-	DOC101: Method `Interpolator.__init__`: Docstring contains fewer arguments than in function signature.
-	DOC103: Method `Interpolator.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [mapping: MutableMapping, templater: type['TemplateWithDefaults']].
 	DOC601: Class `TemplateWithDefaults`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
 	DOC603: Class `TemplateWithDefaults`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [idpattern: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
 --------------------

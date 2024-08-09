@@ -21,12 +21,16 @@ from __future__ import annotations
 
 import os
 
-from pathlib import Path
-from unittest.mock import Mock
+from typing import TYPE_CHECKING
 
 import pytest
 
 from molecule.command.init import scenario
+
+
+if TYPE_CHECKING:
+    from pathlib import Path
+    from unittest.mock import Mock
 
 
 @pytest.fixture(name="command_args")

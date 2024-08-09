@@ -21,13 +21,17 @@ from __future__ import annotations
 
 import os
 
-import pytest
+from typing import TYPE_CHECKING
 
-from pytest_mock import MockerFixture
+import pytest
 
 from molecule import config
 from molecule.driver import delegated
 from tests.conftest import is_subset  # pylint:disable=C0411
+
+
+if TYPE_CHECKING:
+    from pytest_mock import MockerFixture
 
 
 @pytest.fixture()

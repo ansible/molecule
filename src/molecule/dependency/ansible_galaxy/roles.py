@@ -1,4 +1,5 @@
 """Ansible Galaxy dependencies for lists of roles."""
+
 from __future__ import annotations
 
 import logging

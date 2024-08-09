@@ -19,12 +19,17 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import pytest
 
-from pytest_mock import MockerFixture
-
-from molecule import config
 from molecule.command import create
+
+
+if TYPE_CHECKING:
+    from pytest_mock import MockerFixture
+
+    from molecule import config
 
 
 @pytest.fixture()

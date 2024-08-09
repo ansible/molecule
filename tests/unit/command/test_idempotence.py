@@ -19,14 +19,19 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
-from unittest.mock import Mock
+from typing import TYPE_CHECKING
 
 import pytest
 
-from pytest_mock import MockerFixture
-
-from molecule import config
 from molecule.command import idempotence
+
+
+if TYPE_CHECKING:
+    from unittest.mock import Mock
+
+    from pytest_mock import MockerFixture
+
+    from molecule import config
 
 
 @pytest.fixture()

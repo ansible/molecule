@@ -1,3 +1,5 @@
+"""Test the molecule text module."""
+
 from __future__ import annotations
 
 from molecule.text import (

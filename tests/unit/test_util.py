@@ -23,18 +23,21 @@ import binascii
 import os
 import warnings
 
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pytest
-
-from pytest_mock import MockerFixture
 
 from molecule import util
 from molecule.api import IncompatibleMoleculeRuntimeWarning, MoleculeRuntimeWarning
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
 from molecule.text import strip_ansi_escape
+
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from pytest_mock import MockerFixture
 
 
 def test_print_debug():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103

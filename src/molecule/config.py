@@ -25,8 +25,8 @@ import logging
 import os
 import warnings
 
-from collections.abc import MutableMapping
 from pathlib import Path
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from ansible_compat.ports import cache, cached_property
@@ -39,6 +39,10 @@ from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
 from molecule.util import boolean
+
+
+if TYPE_CHECKING:
+    from collections.abc import MutableMapping
 
 
 LOG = logging.getLogger(__name__)
