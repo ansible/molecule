@@ -19,6 +19,9 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Molecule version information."""
+from __future__ import annotations
+
+
 try:
     from ._version import (  # type: ignore[import-not-found, unused-ignore]
         __version__,

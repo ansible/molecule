@@ -1,4 +1,6 @@
-from molecule.text import (  # noqa: D100
+from __future__ import annotations
+
+from molecule.text import (
     camelize,
     strip_ansi_color,
     strip_ansi_escape,

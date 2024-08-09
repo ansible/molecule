@@ -15,6 +15,7 @@
 # Taken from Docker Compose:
 # https://github.com/docker/compose/blob/master/compose/config/interpolation.py
 """Interpolation Module."""
+from __future__ import annotations
 
 import string
 
@@ -77,7 +78,7 @@ class Interpolator:
 
     def __init__(
         self,
-        templater: type["TemplateWithDefaults"],
+        templater: type[TemplateWithDefaults],
         mapping: MutableMapping,  # type: ignore[type-arg]
     ) -> None:
         """Construct Interpolator."""
