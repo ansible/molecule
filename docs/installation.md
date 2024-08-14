@@ -28,7 +28,7 @@ packages.
 
 [pip] is the only supported installation method.
 
-{{ install_from_adt("ansible-navigator") }}
+{{ install_from_adt("molecule") }}
 
 ```bash
 $ python3 -m pip install molecule ansible-core
