@@ -30,10 +30,14 @@ from molecule.status import Status
 
 
 class Driver:
-    """Driver Class."""
+    """Driver Class.
+
+    Attributes:
+        title: Short description of the driver.
+    """
 
     __metaclass__ = ABCMeta
-    title = ""  # Short description of the driver.
+    title = ""
 
     def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
         """Initialize code for all :ref:`Driver` classes.

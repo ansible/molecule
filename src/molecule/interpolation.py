@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING
 
 
 if TYPE_CHECKING:
-    from collections.abc import MutableMapping
+    from collections.abc import Mapping, MutableMapping
 
 
 class InvalidInterpolation(Exception):  # noqa: N818
@@ -96,7 +96,7 @@ class Interpolator:
 
     def interpolate(self, string: str, keep_string=None) -> str:  # type: ignore[no-untyped-def]  # pylint: disable=redefined-outer-name  # noqa: ANN001, D102
         try:
-            return self.templater(string).substitute(self.mapping, keep_string)  # type: ignore[no-any-return, no-untyped-call]
+            return self.templater(string).substitute(self.mapping, keep_string)
         except ValueError as e:
             raise InvalidInterpolation(string, e) from e
 
@@ -107,7 +107,7 @@ class TemplateWithDefaults(string.Template):
     idpattern = r"[_a-z][_a-z0-9]*(?::?-[^}]+)?"
 
     # pylint: disable=too-many-return-statements  # pylint: disable=useless-suppression
-    def substitute(self, mapping, keep_string):  # type: ignore[no-untyped-def]  # pylint: disable=arguments-differ  # noqa: ANN001, ANN201, D102
+    def substitute(self, mapping: Mapping[str, object], keep_string: str | None) -> str:  # type: ignore[override]  # pylint: disable=arguments-differ  # noqa: D102
         # Helper function for .sub()
         def convert(mo):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PLR0911
             # Check the most common path first.

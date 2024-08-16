@@ -242,7 +242,7 @@ src/molecule/dependency/ansible_galaxy/__init__.py
 --------------------
 src/molecule/dependency/ansible_galaxy/base.py
 	DOC601: Class `AnsibleGalaxyBase`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-	DOC603: Class `AnsibleGalaxyBase`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [FILTER_OPTS: , __metaclass__: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+	DOC603: Class `AnsibleGalaxyBase`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [__metaclass__: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
 	DOC101: Method `AnsibleGalaxyBase.__init__`: Docstring contains fewer arguments than in function signature.
 	DOC106: Method `AnsibleGalaxyBase.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
 	DOC107: Method `AnsibleGalaxyBase.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
@@ -262,7 +262,7 @@ src/molecule/dependency/ansible_galaxy/roles.py
 --------------------
 src/molecule/dependency/base.py
 	DOC601: Class `Base`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-	DOC603: Class `Base`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [BACKOFF: , RETRY: , SLEEP: , __metaclass__: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+	DOC603: Class `Base`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [__metaclass__: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
 	DOC106: Method `Base.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
 	DOC107: Method `Base.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
 	DOC201: Method `Base.execute_with_retries` does not have a return section in docstring
@@ -280,7 +280,7 @@ src/molecule/dependency/shell.py
 --------------------
 src/molecule/driver/base.py
 	DOC601: Class `Driver`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-	DOC603: Class `Driver`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [__metaclass__: , title: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+	DOC603: Class `Driver`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [__metaclass__: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
 	DOC106: Method `Driver.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
 	DOC107: Method `Driver.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
 	DOC101: Method `Driver.name`: Docstring contains fewer arguments than in function signature.
