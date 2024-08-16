@@ -33,7 +33,11 @@ LOG = logging.getLogger(__name__)
 
 
 class AnsibleGalaxyBase(base.Base):
-    """Ansible Galaxy dependency base class."""
+    """Ansible Galaxy dependency base class.
+
+    Attributes:
+        FILTER_OPTS: Keys to remove from the dictionary returned by options().
+    """
 
     __metaclass__ = abc.ABCMeta
 
