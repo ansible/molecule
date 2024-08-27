@@ -79,4 +79,4 @@ def matrix(ctx, scenario_name, subcommand):  # type: ignore[no-untyped-def] # pr
     command_args = {"subcommand": subcommand}
 
     s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
-    s.print_matrix()  # type: ignore[no-untyped-call]
+    s.print_matrix()

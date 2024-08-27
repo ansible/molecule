@@ -22,7 +22,13 @@ from __future__ import annotations
 
 import logging
 
+from typing import TYPE_CHECKING
+
 from molecule import util
+
+
+if TYPE_CHECKING:
+    from molecule.scenario import Scenario
 
 
 LOG = logging.getLogger(__name__)
@@ -42,7 +48,7 @@ class Scenarios:
         self._scenario_name = scenario_name
         self._scenarios = self.all
 
-    def next(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def next(self) -> Scenario:  # noqa: D102
         if not self._scenarios:
             raise StopIteration
         return self._scenarios.pop(0)
@@ -54,14 +60,14 @@ class Scenarios:
     __next__ = next  # Python 3.X compatibility
 
     @property
-    def all(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
+    def all(self) -> list[Scenario]:
         """Return a list containing all scenario objects.
 
         Returns:
             list
         """
         if self._scenario_name:
-            scenarios = self._filter_for_scenario()  # type: ignore[no-untyped-call]
+            scenarios = self._filter_for_scenario()
             self._verify()  # type: ignore[no-untyped-call]
 
             return scenarios
@@ -70,7 +76,7 @@ class Scenarios:
         scenarios.sort(key=lambda x: x.directory)
         return scenarios
 
-    def print_matrix(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def print_matrix(self) -> None:  # noqa: D102
         msg = "Test matrix"
         LOG.info(msg)
 
@@ -94,7 +100,7 @@ class Scenarios:
             msg = f"Scenario '{self._scenario_name}' not found.  Exiting."
             util.sysexit_with_message(msg)
 
-    def _filter_for_scenario(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
+    def _filter_for_scenario(self) -> list[Scenario]:
         """Find the scenario matching the provided scenario name and returns a list.
 
         Returns:
