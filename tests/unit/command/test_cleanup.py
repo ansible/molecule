@@ -34,12 +34,12 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture()
-def _command_provisioner_section_with_cleanup_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _command_provisioner_section_with_cleanup_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"provisioner": {"name": "ansible", "playbooks": {"cleanup": "cleanup.yml"}}}
 
 
 @pytest.fixture()
-def _patched_ansible_cleanup(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
+def _patched_ansible_cleanup(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     return mocker.patch("molecule.provisioner.ansible.Ansible.cleanup")
 
 
