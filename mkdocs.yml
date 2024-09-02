@@ -49,9 +49,9 @@ extra:
     - icon: simple/matrix
       link: https://matrix.to/#/#devtools:ansible.com
       name: Matrix
-    - icon: fontawesome/solid/comments
-      link: https://github.com/ansible/molecule/discussions
-      name: Discussions
+    - icon: fontawesome/brands/discourse
+      link: https://forum.ansible.com/c/project/7
+      name: Ansible forum
     - icon: fontawesome/brands/github-alt
       link: https://github.com/ansible/molecule
 
