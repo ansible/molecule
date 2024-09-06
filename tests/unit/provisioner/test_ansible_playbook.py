@@ -28,24 +28,24 @@ from molecule.provisioner import ansible_playbook
 
 
 @pytest.fixture()
-def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202
     _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance)
 
     return _instance  # noqa: RET504
 
 
 @pytest.fixture()
-def _provisioner_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _provisioner_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"provisioner": {"name": "ansible", "env": {"FOO": "bar"}}}
 
 
 @pytest.fixture()
-def _verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"verifier": {"name": "ansible", "env": {"FOO": "bar"}}}
 
 
 @pytest.fixture()
-def _provisioner_verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _provisioner_verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "provisioner": {"name": "ansible", "env": {"FOO": "bar"}},
         "verifier": {"name": "ansible", "env": {"FOO": "baz"}},
@@ -53,7 +53,7 @@ def _provisioner_verifier_section_data():  # type: ignore[no-untyped-def]  # noq
 
 
 @pytest.fixture()
-def _instance_for_verifier_env(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _instance_for_verifier_env(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202
     _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance, True)  # noqa: FBT003
     return _instance  # noqa: RET504
 
@@ -86,7 +86,7 @@ def test_env_in_verify_override_provision(_instance_for_verifier_env):  # type: 
 
 
 @pytest.fixture()
-def _inventory_directory(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
+def _inventory_directory(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     return _instance._config.provisioner.inventory_directory
 
 

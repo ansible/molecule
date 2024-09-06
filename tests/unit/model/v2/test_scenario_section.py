@@ -25,7 +25,7 @@ from molecule.model import schema_v3
 
 
 @pytest.fixture()
-def _model_scenario_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_scenario_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "scenario": {
             "name": "foo",
@@ -44,7 +44,7 @@ def test_scenario(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN2
 
 
 @pytest.fixture()
-def _model_scenario_errors_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_scenario_errors_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"scenario": {"name": 0}}
 
 

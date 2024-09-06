@@ -28,7 +28,7 @@ from molecule.verifier import testinfra
 
 
 @pytest.fixture()
-def _patched_testinfra_get_tests(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
+def _patched_testinfra_get_tests(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     m = mocker.patch("molecule.verifier.testinfra.Testinfra._get_tests")
     m.return_value = ["foo.py", "bar.py"]
 
@@ -36,7 +36,7 @@ def _patched_testinfra_get_tests(mocker):  # type: ignore[no-untyped-def]  # noq
 
 
 @pytest.fixture()
-def _verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "verifier": {
             "name": "testinfra",
@@ -51,7 +51,7 @@ def _verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, P
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture()
-def _instance(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005, ARG001
+def _instance(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, ARG001
     return testinfra.Testinfra(config_instance)
 
 
@@ -166,7 +166,7 @@ def test_testinfra_directory_property(_instance):  # type: ignore[no-untyped-def
 
 
 @pytest.fixture()
-def _verifier_testinfra_directory_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _verifier_testinfra_directory_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"verifier": {"name": "testinfra", "directory": "/tmp/foo/bar"}}  # noqa: S108
 
 
