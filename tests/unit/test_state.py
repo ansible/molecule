@@ -27,7 +27,7 @@ from molecule import config, state, util
 
 
 @pytest.fixture()
-def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202
     return state.State(config_instance)
 
 

@@ -25,7 +25,7 @@ from molecule.model import schema_v3
 
 
 @pytest.fixture()
-def _model_driver_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_driver_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "driver": {
             "name": "default",
@@ -43,7 +43,7 @@ def test_driver(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
 
 
 @pytest.fixture()
-def _model_driver_errors_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_driver_errors_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "driver": {
             "name": 0,
@@ -52,7 +52,7 @@ def _model_driver_errors_section_data():  # type: ignore[no-untyped-def]  # noqa
 
 
 @pytest.fixture()
-def _model_driver_errors_section_data_no_prefix():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_driver_errors_section_data_no_prefix():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "driver": {
             "name": "random_name",
@@ -81,7 +81,7 @@ def test_driver_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN
 
 
 @pytest.fixture()
-def _model_driver_provider_name_nullable_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_driver_provider_name_nullable_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"driver": {"provider": {"name": None}}}
 
 
@@ -95,27 +95,27 @@ def test_driver_provider_name_nullable(config):  # type: ignore[no-untyped-def] 
 
 
 @pytest.fixture()
-def _model_driver_allows_delegated_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_driver_allows_delegated_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"driver": {"name": "default"}}
 
 
 @pytest.fixture()
-def _model_driver_allows_molecule_section_data1():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_driver_allows_molecule_section_data1():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"driver": {"name": "molecule-test_driver.name"}}
 
 
 @pytest.fixture()
-def _model_driver_allows_molecule_section_data2():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_driver_allows_molecule_section_data2():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"driver": {"name": "molecule_test_driver.name"}}
 
 
 @pytest.fixture()
-def _model_driver_allows_custom_section_data1():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_driver_allows_custom_section_data1():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"driver": {"name": "custom-test_driver.name"}}
 
 
 @pytest.fixture()
-def _model_driver_allows_custom_section_data2():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_driver_allows_custom_section_data2():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"driver": {"name": "custom_test_driver.name"}}
 
 
