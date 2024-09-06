@@ -105,7 +105,7 @@ def pytest_collection_modifyitems(items, config):  # type: ignore[no-untyped-def
 
 
 @pytest.fixture(autouse=True)
-def reset_pytest_vars(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT004
+def reset_pytest_vars(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     """Make PYTEST_* env vars inaccessible to subprocesses."""
     for var_name in tuple(os.environ):
         if var_name.startswith("PYTEST_"):

@@ -25,7 +25,7 @@ from molecule.model import schema_v3
 
 
 @pytest.fixture()
-def _model_verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "verifier": {
             "name": "testinfra",
@@ -44,7 +44,7 @@ def test_verifier(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN2
 
 
 @pytest.fixture()
-def _model_verifier_errors_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_verifier_errors_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "verifier": {
             "name": 0,
@@ -64,12 +64,12 @@ def test_verifier_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: A
 
 
 @pytest.fixture()
-def _model_verifier_allows_testinfra_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_verifier_allows_testinfra_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"verifier": {"name": "testinfra"}}
 
 
 @pytest.fixture()
-def _model_verifier_allows_ansible_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_verifier_allows_ansible_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"verifier": {"name": "ansible"}}
 
 

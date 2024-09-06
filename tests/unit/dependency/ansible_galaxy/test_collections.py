@@ -28,7 +28,7 @@ from molecule.dependency.ansible_galaxy import collections
 
 
 @pytest.fixture()
-def _patched_ansible_galaxy_has_requirements_file(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
+def _patched_ansible_galaxy_has_requirements_file(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     m = mocker.patch(
         "molecule.dependency.ansible_galaxy.collections.Collections._has_requirements_file",
     )
@@ -38,7 +38,7 @@ def _patched_ansible_galaxy_has_requirements_file(mocker):  # type: ignore[no-un
 
 
 @pytest.fixture()
-def _dependency_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _dependency_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "dependency": {
             "name": "galaxy",
@@ -52,7 +52,7 @@ def _dependency_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202,
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture()
-def _instance(  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _instance(  # type: ignore[no-untyped-def]  # noqa: ANN202
     _dependency_section_data,  # noqa: ANN001
     patched_config_validate,  # noqa: ANN001, ARG001
     config_instance: config.Config,

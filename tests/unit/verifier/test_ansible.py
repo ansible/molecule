@@ -11,7 +11,7 @@ from molecule.verifier import ansible
 
 
 @pytest.fixture()
-def _patched_ansible_verify(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
+def _patched_ansible_verify(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     m = mocker.patch("molecule.provisioner.ansible.Ansible.verify")
     m.return_value = "patched-ansible-verify-stdout"
 
@@ -19,7 +19,7 @@ def _patched_ansible_verify(mocker):  # type: ignore[no-untyped-def]  # noqa: AN
 
 
 @pytest.fixture()
-def _verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"verifier": {"name": "ansible", "env": {"FOO": "bar"}}}
 
 
@@ -27,7 +27,7 @@ def _verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, P
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture()
-def _instance(  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _instance(  # type: ignore[no-untyped-def]  # noqa: ANN202
     _verifier_section_data,  # noqa: ANN001
     patched_config_validate,  # noqa: ANN001, ARG001
     config_instance: config.Config,
