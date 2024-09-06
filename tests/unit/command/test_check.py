@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture()
-def _patched_ansible_check(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
+def _patched_ansible_check(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     return mocker.patch("molecule.provisioner.ansible.Ansible.check")
 
 

@@ -68,7 +68,7 @@ def config(molecule_file: Path, request: pytest.FixtureRequest) -> dict[str, Any
 
 
 @pytest.fixture()
-def _model_platforms_delegated_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _model_platforms_delegated_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return """
 ---
 platforms:

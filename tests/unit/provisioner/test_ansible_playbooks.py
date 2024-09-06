@@ -29,12 +29,12 @@ from tests.unit.conftest import os_split  # pylint:disable=C0411
 
 
 @pytest.fixture()
-def _provisioner_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _provisioner_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"provisioner": {"name": "ansible", "options": {}, "config_options": {}}}
 
 
 @pytest.fixture()
-def _instance(_provisioner_section_data, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
+def _instance(_provisioner_section_data, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     return ansible_playbooks.AnsiblePlaybooks(config_instance)
 
 
@@ -100,7 +100,7 @@ def test_get_playbook_returns_bundled_driver_playbook_when_local_not_found(  # t
 
 
 @pytest.fixture()
-def _provisioner_driver_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _provisioner_driver_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "provisioner": {
             "name": "ansible",
@@ -112,7 +112,7 @@ def _provisioner_driver_section_data():  # type: ignore[no-untyped-def]  # noqa:
 
 
 @pytest.fixture()
-def _provisioner_driver_playbook_key_missing_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _provisioner_driver_playbook_key_missing_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "provisioner": {
             "name": "ansible",

@@ -91,7 +91,7 @@ def test_dependency_property(config_instance: config.Config):  # type: ignore[no
 
 
 @pytest.fixture()
-def _config_dependency_shell_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _config_dependency_shell_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"dependency": {"name": "shell", "command": "bin/command"}}
 
 
@@ -105,7 +105,7 @@ def test_dependency_property_is_shell(config_instance: config.Config):  # type: 
 
 
 @pytest.fixture()
-def _config_driver_delegated_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _config_driver_delegated_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"driver": {"name": "default", "options": {"managed": False}}}
 
 

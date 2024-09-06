@@ -34,7 +34,7 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture()
-def _command_provisioner_section_with_side_effect_data():  # type: ignore[no-untyped-def]  # noqa: ANN202, PT005
+def _command_provisioner_section_with_side_effect_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "provisioner": {
             "name": "ansible",
@@ -44,7 +44,7 @@ def _command_provisioner_section_with_side_effect_data():  # type: ignore[no-unt
 
 
 @pytest.fixture()
-def _patched_ansible_side_effect(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PT005
+def _patched_ansible_side_effect(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     return mocker.patch("molecule.provisioner.ansible.Ansible.side_effect")
 
 
