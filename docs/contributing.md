@@ -1,16 +1,8 @@
 # Contributing
 
-- To see what's discussed see the [discussions
-  ](https://github.com/ansible-community/molecule/discussions).
-- Join the Molecule [community working
-  group](https://github.com/ansible/community/wiki/molecule) if you
-  would like to influence the direction of the project.
-- Join us in `#ansible-devtools` on
-  [libera.chat](https://web.libera.chat/?channel=#ansible-molecule) matrix/irc,
-  or [molecule discussions](https://github.com/ansible-community/molecule/discussions).
-- The full list of Ansible email lists and IRC channels can be found in
-  the [communication
-  page](https://docs.ansible.com/ansible/latest/community/communication.html).
+Noticed a bug or have an idea to improve Ansible Molecule?
+Want to write some documentation or share your expertise on the forum?
+There are many ways to get involved and contribute, find out how.
 
 ## Guidelines
 
@@ -28,6 +20,30 @@
 - Run all the tests to ensure nothing else was accidentally broken.
 - Reformat the code by following the formatting section below.
 - Submit a pull request.
+
+## Talk to us
+
+Connect with the Ansible community!
+
+Join the Ansible forum to ask questions, get help, and interact with the
+community.
+
+- [Get Help](https://forum.ansible.com/c/help/6): get help or help others.
+  Please add appropriate tags if you start new discussions, for example use the
+  `molecule`, `molecule6`, or `devtools` tags.
+- [Social Spaces](https://forum.ansible.com/c/chat/4): meet and interact with
+  fellow enthusiasts.
+- [News & Announcements](https://forum.ansible.com/c/news/5): track project-wide
+  announcements including social events.
+
+To get release announcements and important changes from the community, see the
+[Bullhorn newsletter](https://docs.ansible.com/ansible/devel/community/communication.html#the-bullhorn).
+
+You can find more information in the
+[Ansible communication guide](https://docs.ansible.com/ansible/devel/community/communication.html).
+
+Possible security bugs should be reported via email to
+<mailto:security@ansible.com>.
 
 ## Code Of Conduct
 

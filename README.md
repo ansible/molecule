@@ -5,7 +5,7 @@
 [![image](https://github.com/ansible-community/molecule/workflows/tox/badge.svg)](https://github.com/ansible-community/molecule/actions)
 [![Python Black Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
 [![Ansible Code of Conduct](https://img.shields.io/badge/Code%20of%20Conduct-silver.svg)](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html)
-[![Discussions](https://img.shields.io/badge/Discussions-silver.svg)](https://github.com/ansible-community/molecule/discussions)
+[![Discussions](https://img.shields.io/badge/Discussions-silver.svg)](https://forum.ansible.com/tag/molecule)
 [![Repository License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
 Molecule project is designed to aid in the development and testing of
@@ -32,21 +32,14 @@ python3 -m molecule ...  # python module calling method
 
 # Documentation
 
-Read the documentation and more at <https://molecule.readthedocs.io/>.
+Read the documentation and more at <https://ansible.readthedocs.io/projects/molecule/>.
 
 # Get Involved
 
-- Join us in the `#ansible-devtools` irc channel on
-  [libera.chat](https://web.libera.chat/?channel=#ansible-devtools).
-- Check github
-  [discussions](https://github.com/ansible-community/molecule/discussions).
-- Join the community working group by checking the
-  [wiki](https://github.com/ansible/community/wiki/Molecule).
-- Want to know about releases, subscribe to [ansible-announce
-  list](https://groups.google.com/group/ansible-announce).
-- For the full list of Ansible email Lists, IRC channels see the
-  [communication
-  page](https://docs.ansible.com/ansible/latest/community/communication.html).
+See the [Talk to us](https://ansible.readthedocs.io/projects/molecule/contributing/#talk-to-us) section of the documentation to ask questions, find help, and join the conversation.
+
+For complete details, see the
+[Ansible communication guide](https://docs.ansible.com/ansible/devel/community/communication.html).
 
 If you want to get moving fast and make a quick patch:
 
