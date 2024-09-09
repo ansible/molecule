@@ -57,3 +57,16 @@
                       - [ sudo, yum, install, -y, qemu-guest-agent ]  # Installs qemu-guest-agent
                       - [ sudo, systemctl, start, qemu-guest-agent ]  # Starts qemu-guest-agent
                 name: cloudinitdisk
+
+- name: Fetch VM pod info
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Pod
+    label_selectors:
+      - "vm.kubevirt.io/name={{ vm.name }}"
+    namespace: "{{ vm.namespace }}"
+  register: vm_pod_info
+
+- name: Extract the nodename from the VM pod info
+  ansible.builtin.set_fact:
+    nodeport_host: "{{ vm_pod_info.resources | map(attribute='spec.nodeName') | list | first }}"

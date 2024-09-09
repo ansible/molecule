@@ -14,7 +14,7 @@
       loop_control:
         loop_var: vm
 
-    - name: Delete VM Instance in KubeVirt
+    - name: Delete NodePort Service in KubeVirt
       kubernetes.core.k8s:
         state: absent
         kind: Service
