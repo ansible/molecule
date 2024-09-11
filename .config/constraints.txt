@@ -8,7 +8,7 @@ ansi2html==1.9.2
 ansible-compat==24.9.0
 ansible-core==2.17.4
 ansible-lint==24.9.0
-astroid==3.3.2
+astroid==3.2.4
 attrs==24.2.0
 babel==2.16.0
 beautifulsoup4==4.12.3
