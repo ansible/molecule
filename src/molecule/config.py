@@ -39,11 +39,12 @@ from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
 from molecule.util import boolean
-from molecule.verifier.base import Verifier
 
 
 if TYPE_CHECKING:
     from collections.abc import MutableMapping
+
+    from molecule.verifier.base import Verifier
 
 
 LOG = logging.getLogger(__name__)
