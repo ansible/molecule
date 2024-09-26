@@ -6,8 +6,7 @@ import logging
 import traceback
 
 from collections import OrderedDict
-from collections.abc import Hashable
-from typing import Any, TypeVar
+from typing import TYPE_CHECKING
 
 import pluggy
 
@@ -17,8 +16,11 @@ from molecule.driver.base import Driver
 from molecule.verifier.base import Verifier
 
 
+if TYPE_CHECKING:
+    from molecule.config import Config
+
+
 LOG = logging.getLogger(__name__)
-K = TypeVar("K", bound=Hashable)
 
 
 class MoleculeRuntimeWarning(RuntimeWarning):
@@ -30,11 +32,14 @@ class IncompatibleMoleculeRuntimeWarning(MoleculeRuntimeWarning):
 
 
 @cache
-def drivers(config: Any | None = None) -> dict[str, Driver]:  # noqa: ANN401
+def drivers(config: Config | None = None) -> dict[str, Driver]:
     """Return list of active drivers.
 
     Args:
         config: plugin config
+
+    Returns:
+        A dictionary of active drivers by name.
     """
     plugins = OrderedDict()
     pm = pluggy.PluginManager("molecule.driver")
@@ -63,8 +68,15 @@ def drivers(config: Any | None = None) -> dict[str, Driver]:  # noqa: ANN401
 
 
 @cache
-def verifiers(config=None) -> dict[str, Verifier]:  # type: ignore[no-untyped-def]  # noqa: ANN001
-    """Return list of active verifiers."""
+def verifiers(config: Config | None = None) -> dict[str, Verifier]:
+    """Return list of active verifiers.
+
+    Args:
+        config: plugin config
+
+    Returns:
+        A dictionary of active verifiers by name.
+    """
     plugins = OrderedDict()
     pm = pluggy.PluginManager("molecule.verifier")
     try:
