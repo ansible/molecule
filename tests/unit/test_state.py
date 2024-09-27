@@ -31,29 +31,29 @@ def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  
     return state.State(config_instance)
 
 
-def test_state_file_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_state_file_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     x = os.path.join(_instance._config.scenario.ephemeral_directory, "state.yml")  # noqa: PTH118
 
     assert x == _instance.state_file
 
 
-def test_converged(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_converged(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert not _instance.converged
 
 
-def test_created(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_created(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert not _instance.created
 
 
-def test_state_driver(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_state_driver(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert not _instance.driver
 
 
-def test_prepared(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_prepared(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert not _instance.prepared
 
 
-def test_reset(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_reset(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert not _instance.converged
 
     _instance.change_state("converged", True)  # noqa: FBT003
@@ -63,7 +63,7 @@ def test_reset(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN2
     assert not _instance.converged
 
 
-def test_reset_persists(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_reset_persists(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert not _instance.converged
 
     _instance.change_state("converged", True)  # noqa: FBT003
@@ -76,36 +76,36 @@ def test_reset_persists(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN
     assert not d.get("converged")
 
 
-def test_change_state_converged(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_change_state_converged(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     _instance.change_state("converged", True)  # noqa: FBT003
 
     assert _instance.converged
 
 
-def test_change_state_created(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_change_state_created(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     _instance.change_state("created", True)  # noqa: FBT003
 
     assert _instance.created
 
 
-def test_change_state_driver(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_change_state_driver(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     _instance.change_state("driver", "foo")
 
     assert _instance.driver == "foo"
 
 
-def test_change_state_prepared(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_change_state_prepared(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     _instance.change_state("prepared", True)  # noqa: FBT003
 
     assert _instance.prepared
 
 
-def test_change_state_raises(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_change_state_raises(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     with pytest.raises(state.InvalidState):
         _instance.change_state("invalid-state", True)  # noqa: FBT003
 
 
-def test_get_data_loads_existing_state_file(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_get_data_loads_existing_state_file(  # type: ignore[no-untyped-def]  # noqa: ANN201
     _instance,  # noqa: ANN001, PT019
     molecule_data,  # noqa: ANN001, ARG001
     config_instance: config.Config,

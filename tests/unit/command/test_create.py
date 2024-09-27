@@ -41,7 +41,7 @@ def _patched_create_setup(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN0
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.mark.skip(reason="create not running for delegated")
-def test_create_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_create_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201
     mocker: MockerFixture,  # noqa: ARG001
     caplog,  # noqa: ANN001
     command_patched_ansible_create,  # noqa: ANN001
@@ -62,7 +62,7 @@ def test_create_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
 
 
 @pytest.mark.skip(reason="create not running for delegated")
-def test_execute_skips_when_instances_already_created(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_execute_skips_when_instances_already_created(  # type: ignore[no-untyped-def]  # noqa: ANN201
     caplog,  # noqa: ANN001
     command_patched_ansible_create,  # noqa: ANN001
     config_instance: config.Config,

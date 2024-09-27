@@ -35,15 +35,15 @@ def _instance(  # type: ignore[no-untyped-def]  # noqa: ANN202
     return ansible.Ansible(config_instance)
 
 
-def test_verifier_config_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_verifier_config_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert isinstance(_instance._config, config.Config)
 
 
-def test_verifier_default_options_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_verifier_default_options_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.default_options == {}
 
 
-def test_verifier_ansible_default_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_verifier_ansible_default_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert "MOLECULE_FILE" in _instance.default_env
     assert "MOLECULE_INVENTORY_FILE" in _instance.default_env
     assert "MOLECULE_SCENARIO_DIRECTORY" in _instance.default_env
@@ -55,19 +55,19 @@ def test_verifier_ansible_default_env_property(_instance):  # type: ignore[no-un
     ["_verifier_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_verifier_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_verifier_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.env["FOO"] == "bar"
 
 
-def test_verifier_name_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_verifier_name_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.name == "ansible"
 
 
-def test_ansible_enabled_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_ansible_enabled_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.enabled
 
 
-def test_verifier_directory_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_verifier_directory_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     parts = _instance.directory.split(os.path.sep)
     # Unused by Ansible verifier
     assert parts[-3:] == ["molecule", "default", "tests"]
@@ -78,7 +78,7 @@ def test_verifier_directory_property(_instance):  # type: ignore[no-untyped-def]
     ["_verifier_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_verifier_ansible_options_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_verifier_ansible_options_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     x = {}  # type: ignore[var-annotated]
 
     assert x == _instance.options
@@ -89,14 +89,14 @@ def test_verifier_ansible_options_property(_instance):  # type: ignore[no-untype
     ["_verifier_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_verifier_ansible_options_property_handles_cli_args(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_verifier_ansible_options_property_handles_cli_args(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     _instance._config.args = {"debug": True}
     x = {}  # type: ignore[var-annotated]
 
     assert x == _instance.options
 
 
-def test_ansible_execute(caplog, _patched_ansible_verify, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_ansible_execute(caplog, _patched_ansible_verify, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     _instance.execute()
 
     _patched_ansible_verify.assert_called_once_with(None)
@@ -108,7 +108,7 @@ def test_ansible_execute(caplog, _patched_ansible_verify, _instance):  # type: i
     assert msg in caplog.text
 
 
-def test_execute_does_not_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_execute_does_not_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201
     patched_ansible_converge,  # noqa: ANN001
     caplog: pytest.LogCaptureFixture,
     _instance,  # noqa: ANN001, PT019

@@ -63,7 +63,7 @@ def _instance_for_verifier_env(config_instance: config.Config):  # type: ignore[
     ["_provisioner_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_env_in_provision(_instance_for_verifier_env):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_env_in_provision(_instance_for_verifier_env):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance_for_verifier_env._env["FOO"] == "bar"
 
 
@@ -72,7 +72,7 @@ def test_env_in_provision(_instance_for_verifier_env):  # type: ignore[no-untype
     ["_verifier_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_env_in_verifier(_instance_for_verifier_env):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_env_in_verifier(_instance_for_verifier_env):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance_for_verifier_env._env["FOO"] == "bar"
 
 
@@ -81,7 +81,7 @@ def test_env_in_verifier(_instance_for_verifier_env):  # type: ignore[no-untyped
     ["_provisioner_verifier_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_env_in_verify_override_provision(_instance_for_verifier_env):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_env_in_verify_override_provision(_instance_for_verifier_env):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance_for_verifier_env._env["FOO"] == "baz"
 
 
@@ -90,19 +90,19 @@ def _inventory_directory(_instance):  # type: ignore[no-untyped-def]  # noqa: AN
     return _instance._config.provisioner.inventory_directory
 
 
-def test_ansible_command_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_ansible_command_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance._ansible_command is None
 
 
-def test_ansible_playbook_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_ansible_playbook_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance._playbook == "playbook"
 
 
-def test_config_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_config_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert isinstance(_instance._config, config.Config)
 
 
-def test_bake(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_bake(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     pb = _instance._config.provisioner.playbooks.converge
     _instance._playbook = pb
     _instance.bake()
@@ -120,7 +120,7 @@ def test_bake(_inventory_directory, _instance):  # type: ignore[no-untyped-def] 
     assert _instance._ansible_command == args
 
 
-def test_bake_removes_non_interactive_options_from_non_converge_playbooks(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_bake_removes_non_interactive_options_from_non_converge_playbooks(  # type: ignore[no-untyped-def]  # noqa: ANN201
     _inventory_directory,  # noqa: ANN001, PT019
     _instance,  # noqa: ANN001, PT019
 ):
@@ -138,7 +138,7 @@ def test_bake_removes_non_interactive_options_from_non_converge_playbooks(  # ty
     assert _instance._ansible_command == args
 
 
-def test_bake_has_ansible_args(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_bake_has_ansible_args(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     _instance._config.ansible_args = ("foo", "bar")
     _instance._config.config["provisioner"]["ansible_args"] = ("frob", "nitz")
     _instance.bake()
@@ -159,7 +159,7 @@ def test_bake_has_ansible_args(_inventory_directory, _instance):  # type: ignore
     assert _instance._ansible_command == args
 
 
-def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     for action in ["create", "destroy"]:
         _instance._config.ansible_args = ("foo", "bar")
         _instance._config.action = action
@@ -177,7 +177,7 @@ def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):  # ty
         assert _instance._ansible_command == args
 
 
-def test_bake_idem_does_have_skip_tag(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_bake_idem_does_have_skip_tag(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     _instance._config.action = "idempotence"
     _instance.bake()
 
@@ -193,13 +193,13 @@ def test_bake_idem_does_have_skip_tag(_inventory_directory, _instance):  # type:
     assert _instance._ansible_command == args
 
 
-def test_execute_playbook(patched_run_command, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
+def test_execute_playbook(patched_run_command, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001
     _instance._ansible_command = "patched-command"
     result = _instance.execute()
     assert result == "patched-run-command-stdout"
 
 
-def test_ansible_execute_bakes(_inventory_directory, patched_run_command, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
+def test_ansible_execute_bakes(_inventory_directory, patched_run_command, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001
     _instance.execute()
 
     assert _instance._ansible_command is not None
@@ -216,7 +216,7 @@ def test_ansible_execute_bakes(_inventory_directory, patched_run_command, _insta
     assert _instance._ansible_command == args
 
 
-def test_execute_bakes_with_ansible_args(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_execute_bakes_with_ansible_args(  # type: ignore[no-untyped-def]  # noqa: ANN201
     _inventory_directory,  # noqa: ANN001, PT019
     patched_run_command,  # noqa: ANN001, ARG001
     _instance,  # noqa: ANN001, PT019
@@ -240,7 +240,7 @@ def test_execute_bakes_with_ansible_args(  # type: ignore[no-untyped-def]  # noq
     assert _instance._ansible_command == args
 
 
-def test_executes_catches_and_exits_return_code(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_executes_catches_and_exits_return_code(  # type: ignore[no-untyped-def]  # noqa: ANN201
     patched_run_command,  # noqa: ANN001
     _instance,  # noqa: ANN001, PT019
 ):
@@ -258,14 +258,14 @@ def test_executes_catches_and_exits_return_code(  # type: ignore[no-untyped-def]
     assert e.value.code == 1
 
 
-def test_add_cli_arg(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_add_cli_arg(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance._cli == {}
 
     _instance.add_cli_arg("foo", "bar")
     assert _instance._cli == {"foo": "bar"}
 
 
-def test_add_env_arg(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_add_env_arg(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert "foo" not in _instance._env
 
     _instance.add_env_arg("foo", "bar")

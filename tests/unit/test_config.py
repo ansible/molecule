@@ -35,21 +35,21 @@ if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
 
-def test_args_member(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_args_member(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert config_instance.args == {}
 
 
-def test_command_args_member(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_command_args_member(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     x = {"subcommand": "test"}
 
     assert x == config_instance.command_args
 
 
-def test_debug_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_debug_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert not config_instance.debug
 
 
-def test_env_file_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_env_file_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     config_instance.args = {"env_file": ".env"}
     result = config_instance.env_file
 
@@ -58,35 +58,35 @@ def test_env_file_property(config_instance: config.Config):  # type: ignore[no-u
     assert util.abs_path(x) == result
 
 
-def test_subcommand_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_subcommand_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert config_instance.subcommand == "test"
 
 
-def test_action_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_action_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert config_instance.action is None
 
 
-def test_action_setter(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_action_setter(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     config_instance.action = "foo"
 
     assert config_instance.action == "foo"
 
 
-def test_init_calls_validate(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
+def test_init_calls_validate(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001
     patched_config_validate.assert_called_once_with()
 
 
-def test_project_directory_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_project_directory_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert os.getcwd() == config_instance.project_directory  # noqa: PTH109
 
 
-def test_molecule_directory_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_molecule_directory_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     x = os.path.join(os.getcwd(), "molecule")  # noqa: PTH109, PTH118
 
     assert x == config_instance.molecule_directory
 
 
-def test_dependency_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_dependency_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert isinstance(config_instance.dependency, ansible_galaxy.AnsibleGalaxy)
 
 
@@ -100,7 +100,7 @@ def _config_dependency_shell_section_data():  # type: ignore[no-untyped-def]  # 
     ["_config_dependency_shell_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_dependency_property_is_shell(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_dependency_property_is_shell(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert isinstance(config_instance.dependency, shell.Shell)
 
 
@@ -109,7 +109,7 @@ def _config_driver_delegated_section_data():  # type: ignore[no-untyped-def]  # 
     return {"driver": {"name": "default", "options": {"managed": False}}}
 
 
-def test_env(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_env(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     config_instance.args = {"env_file": ".env"}
     env_file = config_instance.args.get("env_file")
     assert isinstance(env_file, str)
@@ -134,27 +134,27 @@ def test_env(config_instance: config.Config):  # type: ignore[no-untyped-def]  #
     assert x == config_instance.env
 
 
-def test_platforms_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_platforms_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert isinstance(config_instance.platforms, platforms.Platforms)
 
 
-def test_provisioner_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_provisioner_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert isinstance(config_instance.provisioner, ansible.Ansible)
 
 
-def test_scenario_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_scenario_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert isinstance(config_instance.scenario, scenario.Scenario)
 
 
-def test_state_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_state_property(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert isinstance(config_instance.state, state.State)
 
 
-def test_verifier_property_is_ansible(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_verifier_property_is_ansible(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert isinstance(config_instance.verifier, AnsibleVerifier)
 
 
-def test_get_driver_name_from_state_file(config_instance: config.Config, mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_get_driver_name_from_state_file(config_instance: config.Config, mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     config_instance.state.change_state("driver", "state-driver")
 
     with pytest.raises(SystemExit):
@@ -164,17 +164,17 @@ def test_get_driver_name_from_state_file(config_instance: config.Config, mocker)
     assert config_instance._get_driver_name() == "state-driver"  # type: ignore[no-untyped-call]
 
 
-def test_get_driver_name_from_cli(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_get_driver_name_from_cli(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     config_instance.command_args = {"driver_name": "cli-driver"}
 
     assert config_instance._get_driver_name() == "cli-driver"  # type: ignore[no-untyped-call]
 
 
-def test_get_driver_name(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_get_driver_name(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert config_instance._get_driver_name() == "default"  # type: ignore[no-untyped-call]
 
 
-def test_get_driver_name_raises_when_different_driver_used(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_get_driver_name_raises_when_different_driver_used(  # type: ignore[no-untyped-def]  # noqa: ANN201
     caplog: pytest.LogCaptureFixture,
     config_instance: config.Config,
 ):
@@ -193,11 +193,11 @@ def test_get_driver_name_raises_when_different_driver_used(  # type: ignore[no-u
     assert msg in caplog.text
 
 
-def test_get_config(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_get_config(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert isinstance(config_instance._get_config(), dict)
 
 
-def test_get_config_with_base_config(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_get_config_with_base_config(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     config_instance.args = {"base_config": ["./foo.yml"]}
     contents = {"foo": "bar"}
     util.write_file(config_instance.args["base_config"][0], util.safe_dump(contents))
@@ -206,7 +206,7 @@ def test_get_config_with_base_config(config_instance: config.Config):  # type: i
     assert result["foo"] == "bar"
 
 
-def test_get_config_with_multiple_base_configs(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_get_config_with_multiple_base_configs(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     config_instance.args = {"base_config": ["./foo.yml", "./foo2.yml"]}
     contents = {"foo": "bar", "foo2": "bar"}
     util.write_file(config_instance.args["base_config"][0], util.safe_dump(contents))
@@ -218,53 +218,53 @@ def test_get_config_with_multiple_base_configs(config_instance: config.Config): 
     assert result["foo2"] == "bar2"
 
 
-def test_reget_config(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_reget_config(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert isinstance(config_instance._reget_config(), dict)  # type: ignore[no-untyped-call]
 
 
-def test_interpolate(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_interpolate(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     string = "foo: $HOME"
     x = f"foo: {os.environ['HOME']}"
 
     assert x == config_instance._interpolate(string, os.environ, "")
 
 
-def test_interpolate_curly(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_interpolate_curly(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     string = "foo: ${HOME}"
     x = f"foo: {os.environ['HOME']}"
 
     assert x == config_instance._interpolate(string, os.environ, "")
 
 
-def test_interpolate_default(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_interpolate_default(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     string = "foo: ${NONE-default}"
     x = "foo: default"
 
     assert x == config_instance._interpolate(string, os.environ, "")
 
 
-def test_interpolate_default_colon(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_interpolate_default_colon(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     string = "foo: ${NONE:-default}"
     x = "foo: default"
 
     assert x == config_instance._interpolate(string, os.environ, "")
 
 
-def test_interpolate_default_variable(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_interpolate_default_variable(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     string = "foo: ${NONE:-$HOME}"
     x = f"foo: {os.environ['HOME']}"
 
     assert x == config_instance._interpolate(string, os.environ, "")
 
 
-def test_interpolate_curly_default_variable(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_interpolate_curly_default_variable(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     string = "foo: ${NONE-$HOME}"
     x = f"foo: {os.environ['HOME']}"
 
     assert x == config_instance._interpolate(string, os.environ, "")
 
 
-def test_interpolate_raises_on_failed_interpolation(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_interpolate_raises_on_failed_interpolation(  # type: ignore[no-untyped-def]  # noqa: ANN201
     caplog: pytest.LogCaptureFixture,
     config_instance: config.Config,
 ):
@@ -283,7 +283,7 @@ def test_interpolate_raises_on_failed_interpolation(  # type: ignore[no-untyped-
     assert msg in caplog.text
 
 
-def test_get_defaults(config_instance: config.Config, mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_get_defaults(config_instance: config.Config, mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     mocker.patch.object(
         config_instance,
         "molecule_file",
@@ -293,7 +293,7 @@ def test_get_defaults(config_instance: config.Config, mocker):  # type: ignore[n
     assert defaults["scenario"]["name"] == "test_scenario_name"
 
 
-def test_validate(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_validate(  # type: ignore[no-untyped-def]  # noqa: ANN201
     mocker: MockerFixture,
     config_instance: config.Config,
     patched_logger_debug,  # noqa: ANN001
@@ -308,7 +308,7 @@ def test_validate(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     m.assert_called_with(config_instance.config)
 
 
-def test_validate_exists_when_validation_fails(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_validate_exists_when_validation_fails(  # type: ignore[no-untyped-def]  # noqa: ANN201
     mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
     config_instance: config.Config,
@@ -325,15 +325,15 @@ def test_validate_exists_when_validation_fails(  # type: ignore[no-untyped-def] 
     assert msg in caplog.text
 
 
-def test_molecule_directory():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_molecule_directory():  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert config.molecule_directory("/foo/bar") == "/foo/bar/molecule"
 
 
-def test_molecule_file():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_molecule_file():  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert config.molecule_file("/foo/bar") == "/foo/bar/molecule.yml"
 
 
-def test_set_env_from_file(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_set_env_from_file(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     config_instance.args = {"env_file": ".env"}
     contents = {"foo": "bar", "BAZ": "zzyzx"}
     env_file = config_instance.args.get("env_file")
@@ -344,7 +344,7 @@ def test_set_env_from_file(config_instance: config.Config):  # type: ignore[no-u
     assert contents == env
 
 
-def test_set_env_from_file_returns_original_env_when_env_file_not_found(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_set_env_from_file_returns_original_env_when_env_file_not_found(  # type: ignore[no-untyped-def]  # noqa: ANN201
     config_instance: config.Config,  # noqa: ARG001
 ):
     env = config.set_env_from_file({}, "file-not-found")
@@ -352,7 +352,7 @@ def test_set_env_from_file_returns_original_env_when_env_file_not_found(  # type
     assert env == {}
 
 
-def test_write_config(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_write_config(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201
     config_instance.write()
 
     assert os.path.isfile(config_instance.config_file)  # noqa: PTH113

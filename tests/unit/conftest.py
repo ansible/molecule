@@ -38,11 +38,11 @@ if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
 
-def write_molecule_file(filename: str, data: Any) -> None:  # noqa: ANN401, D103
+def write_molecule_file(filename: str, data: Any) -> None:  # noqa: ANN401
     util.write_file(filename, util.safe_dump(data))
 
 
-def os_split(s: str) -> tuple[str, ...]:  # noqa: D103
+def os_split(s: str) -> tuple[str, ...]:
     rest, tail = os.path.split(s)
     if rest in ("", os.path.sep):
         return (tail,)
@@ -122,27 +122,27 @@ def config_instance(
 
 
 @pytest.fixture()
-def patched_print_debug(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def patched_print_debug(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     return mocker.patch("molecule.util.print_debug")
 
 
 @pytest.fixture()
-def patched_logger_info(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def patched_logger_info(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     return mocker.patch("logging.Logger.info")
 
 
 @pytest.fixture()
-def patched_logger_debug(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def patched_logger_debug(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     return mocker.patch("logging.Logger.debug")
 
 
 @pytest.fixture()
-def patched_logger_error(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def patched_logger_error(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     return mocker.patch("logging.Logger.error")
 
 
 @pytest.fixture()
-def patched_run_command(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def patched_run_command(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     m = mocker.patch("molecule.util.run_command")
     m.return_value = CompletedProcess(
         args="foo",
@@ -155,7 +155,7 @@ def patched_run_command(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001
 
 
 @pytest.fixture()
-def patched_ansible_converge(mocker: MockerFixture) -> Mock:  # noqa: D103
+def patched_ansible_converge(mocker: MockerFixture) -> Mock:
     m = mocker.patch("molecule.provisioner.ansible.Ansible.converge")
     m.return_value = "patched-ansible-converge-stdout"
 
@@ -163,27 +163,27 @@ def patched_ansible_converge(mocker: MockerFixture) -> Mock:  # noqa: D103
 
 
 @pytest.fixture()
-def patched_add_or_update_vars(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def patched_add_or_update_vars(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     return mocker.patch("molecule.provisioner.ansible.Ansible._add_or_update_vars")
 
 
 @pytest.fixture()
-def patched_ansible_galaxy(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def patched_ansible_galaxy(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     return mocker.patch("molecule.dependency.ansible_galaxy.AnsibleGalaxy.execute")
 
 
 @pytest.fixture()
-def patched_default_verifier(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def patched_default_verifier(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     return mocker.patch("molecule.verifier.ansible.Ansible.execute")
 
 
 @pytest.fixture()
-def patched_scenario_setup(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def patched_scenario_setup(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     mocker.patch("molecule.config.Config.env")
 
     return mocker.patch("molecule.scenario.Scenario._setup")
 
 
 @pytest.fixture()
-def patched_config_validate(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def patched_config_validate(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     return mocker.patch("molecule.config.Config._validate")

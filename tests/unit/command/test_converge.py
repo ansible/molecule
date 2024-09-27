@@ -40,7 +40,7 @@ if TYPE_CHECKING:
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_converge_execute(  # noqa: D103
+def test_converge_execute(
     mocker: MockerFixture,  # noqa: ARG001
     caplog: pytest.LogCaptureFixture,
     patched_ansible_converge: Mock,
@@ -58,7 +58,7 @@ def test_converge_execute(  # noqa: D103
     assert config_instance.state.converged
 
 
-def test_ansible_args_passed_to_scenarios_get_configs(mocker: MockerFixture) -> None:  # noqa: D103
+def test_ansible_args_passed_to_scenarios_get_configs(mocker: MockerFixture) -> None:
     # Scenarios patch is needed to safely invoke CliRunner
     # in the test environment and block scenario execution
     mocker.patch("molecule.scenarios.Scenarios")

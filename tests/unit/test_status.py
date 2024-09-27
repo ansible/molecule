@@ -38,25 +38,25 @@ def _instance():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return s  # noqa: RET504
 
 
-def test__instance_name_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test__instance_name_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.instance_name is None
 
 
-def test_status_driver_name_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_status_driver_name_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.driver_name is None
 
 
-def test_status_provisioner_name_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_status_provisioner_name_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.provisioner_name is None
 
 
-def test_status_scenario_name_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_status_scenario_name_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.scenario_name is None
 
 
-def test_status_created_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_status_created_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.created is None
 
 
-def test_status_converged_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_status_converged_attribute(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.converged is None

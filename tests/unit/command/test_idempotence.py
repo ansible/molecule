@@ -49,7 +49,7 @@ def _instance(patched_config_validate, config_instance: config.Config):  # type:
     return idempotence.Idempotence(config_instance)
 
 
-def test_idempotence_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_idempotence_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201
     mocker: MockerFixture,  # noqa: ARG001
     caplog: pytest.LogCaptureFixture,
     patched_ansible_converge,  # noqa: ANN001
@@ -69,7 +69,7 @@ def test_idempotence_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D
     assert msg in caplog.text
 
 
-def test_execute_raises_when_not_converged(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_execute_raises_when_not_converged(  # type: ignore[no-untyped-def]  # noqa: ANN201
     caplog: pytest.LogCaptureFixture,
     patched_ansible_converge,  # noqa: ANN001, ARG001
     _instance,  # noqa: ANN001, PT019
@@ -84,7 +84,7 @@ def test_execute_raises_when_not_converged(  # type: ignore[no-untyped-def]  # n
     assert msg in caplog.text
 
 
-def test_execute_raises_when_fails_idempotence(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_execute_raises_when_fails_idempotence(  # type: ignore[no-untyped-def]  # noqa: ANN201
     mocker: MockerFixture,  # noqa: ARG001
     caplog: pytest.LogCaptureFixture,
     patched_ansible_converge,  # noqa: ANN001, ARG001
@@ -101,7 +101,7 @@ def test_execute_raises_when_fails_idempotence(  # type: ignore[no-untyped-def] 
     assert msg in caplog.text
 
 
-def test_is_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_is_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     output = """
 PLAY RECAP ***********************************************************
 check-command-01: ok=3    changed=0    unreachable=0    failed=0
@@ -110,7 +110,7 @@ check-command-01: ok=3    changed=0    unreachable=0    failed=0
     assert _instance._is_idempotent(output)
 
 
-def test_is_idempotent_not_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_is_idempotent_not_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     output = """
 PLAY RECAP ***********************************************************
 check-command-01: ok=2    changed=1    unreachable=0    failed=0
@@ -120,7 +120,7 @@ check-command-02: ok=2    changed=1    unreachable=0    failed=0
     assert not _instance._is_idempotent(output)
 
 
-def test_non_idempotent_tasks_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_non_idempotent_tasks_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     output = """
 PLAY [all] ***********************************************************
 
@@ -138,7 +138,7 @@ check-command-01: ok=3    changed=0    unreachable=0    failed=0
     assert result == []
 
 
-def test_non_idempotent_tasks_not_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_non_idempotent_tasks_not_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     output = """
 PLAY [all] ***********************************************************
 

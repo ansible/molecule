@@ -82,7 +82,7 @@ get_section_logger_tests = [
     get_section_logger_tests,
     indirect=True,
 )
-def test_get_section_loggers(_patched_logger_env):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_get_section_loggers(_patched_logger_env):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     expected_section_loggers = _patched_logger_env
     get_section_loggers.cache_clear()
     section_loggers = get_section_loggers()
@@ -94,22 +94,22 @@ def test_get_section_loggers(_patched_logger_env):  # type: ignore[no-untyped-de
     get_section_logger_tests,
     indirect=True,
 )
-def test_section_loggers_do_not_change_behavior(_patched_logger_env, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_section_loggers_do_not_change_behavior(_patched_logger_env, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     dummy_return = _instance.execute()
     assert dummy_return is True
 
 
-def test_markup_detection_pycolors0(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_markup_detection_pycolors0(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     monkeypatch.setenv("PY_COLORS", "0")
     assert not should_do_markup()
 
 
-def test_markup_detection_pycolors1(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_markup_detection_pycolors1(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     monkeypatch.setenv("PY_COLORS", "1")
     assert should_do_markup()
 
 
-def test_markup_detection_tty_yes(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_markup_detection_tty_yes(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     mocker.patch("sys.stdout.isatty", return_value=True)
     mocker.patch("os.environ", {"TERM": "xterm"})
     assert should_do_markup()
@@ -117,7 +117,7 @@ def test_markup_detection_tty_yes(mocker):  # type: ignore[no-untyped-def]  # no
     mocker.stopall()
 
 
-def test_markup_detection_tty_no(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_markup_detection_tty_no(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     mocker.patch("os.environ", {})
     mocker.patch("sys.stdout.isatty", return_value=False)
     assert not should_do_markup()
@@ -125,7 +125,7 @@ def test_markup_detection_tty_no(mocker):  # type: ignore[no-untyped-def]  # noq
     mocker.stopall()
 
 
-def test_logger_class():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_logger_class():  # type: ignore[no-untyped-def]  # noqa: ANN201
     class FooLogger(logging.getLoggerClass()):  # type: ignore[misc]
         """stub logger that subclasses logging.getLoggerClass()."""
 

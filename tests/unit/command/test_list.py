@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from molecule import config
 
 
-def test_list_execute(capsys, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
+def test_list_execute(capsys, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001
     l = list.List(config_instance)  # noqa: E741
     x = [
         base.Status(  # type: ignore[attr-defined]

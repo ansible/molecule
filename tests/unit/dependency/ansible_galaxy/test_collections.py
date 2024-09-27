@@ -61,21 +61,21 @@ def _instance(  # type: ignore[no-untyped-def]  # noqa: ANN202
 
 
 @pytest.fixture(name="role_file")
-def fixture_role_file(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def fixture_role_file(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     return os.path.join(_instance._config.scenario.directory, "collections.yml")  # noqa: PTH118
 
 
-def test_collections_config_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_collections_config_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert isinstance(_instance._config, config.Config)
 
 
-def test_collections_default_options_property(_instance, role_file):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_collections_default_options_property(_instance, role_file):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     x = {"requirements-file": role_file, "force": False}
 
     assert x == _instance.default_options
 
 
-def test_collections_default_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_collections_default_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     env = _instance.default_env
 
     assert "MOLECULE_FILE" in env
@@ -84,11 +84,11 @@ def test_collections_default_env_property(_instance):  # type: ignore[no-untyped
     assert "MOLECULE_INSTANCE_CONFIG" in env
 
 
-def test_collections_name_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_collections_name_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.name == "galaxy"
 
 
-def test_collections_enabled_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_collections_enabled_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.enabled
 
 
@@ -97,7 +97,7 @@ def test_collections_enabled_property(_instance):  # type: ignore[no-untyped-def
     ["_dependency_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_collections_options_property(_instance, role_file):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_collections_options_property(_instance, role_file):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     x = {
         "force": False,
         "requirements-file": role_file,
@@ -113,7 +113,7 @@ def test_collections_options_property(_instance, role_file):  # type: ignore[no-
     ["_dependency_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_collections_options_property_handles_cli_args(role_file, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_collections_options_property_handles_cli_args(role_file, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     _instance._config.args = {"debug": True}
     x = {
         "force": False,
@@ -130,7 +130,7 @@ def test_collections_options_property_handles_cli_args(role_file, _instance):  #
     ["_dependency_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_collections_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_collections_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.env["FOO"] == "bar"
 
 
@@ -139,7 +139,7 @@ def test_collections_env_property(_instance):  # type: ignore[no-untyped-def]  #
     ["_dependency_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_collections_bake(_instance, role_file):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_collections_bake(_instance, role_file):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     _instance.bake()
     args = [
         "ansible-galaxy",
@@ -154,7 +154,7 @@ def test_collections_bake(_instance, role_file):  # type: ignore[no-untyped-def]
     assert _instance._sh_command == args
 
 
-def test_collections_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_collections_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201
     patched_run_command,  # noqa: ANN001
     _patched_ansible_galaxy_has_requirements_file,  # noqa: ANN001, PT019
     caplog,  # noqa: ANN001
@@ -173,7 +173,7 @@ def test_collections_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D
     assert msg in caplog.text
 
 
-def test_collections_execute_does_not_execute_when_disabled(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_collections_execute_does_not_execute_when_disabled(  # type: ignore[no-untyped-def]  # noqa: ANN201
     patched_run_command,  # noqa: ANN001
     caplog,  # noqa: ANN001
     _instance,  # noqa: ANN001, PT019
@@ -187,7 +187,7 @@ def test_collections_execute_does_not_execute_when_disabled(  # type: ignore[no-
     assert msg in caplog.text
 
 
-def test_collections_execute_does_not_execute_when_no_requirements_file(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_collections_execute_does_not_execute_when_no_requirements_file(  # type: ignore[no-untyped-def]  # noqa: ANN201
     patched_run_command,  # noqa: ANN001
     _patched_ansible_galaxy_has_requirements_file,  # noqa: ANN001, PT019
     caplog,  # noqa: ANN001
@@ -202,7 +202,7 @@ def test_collections_execute_does_not_execute_when_no_requirements_file(  # type
     assert msg in caplog.text
 
 
-def test_collections_execute_bakes(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_collections_execute_bakes(  # type: ignore[no-untyped-def]  # noqa: ANN201
     patched_run_command,  # noqa: ANN001
     _instance,  # noqa: ANN001, PT019
     role_file,  # noqa: ANN001, ARG001
@@ -213,7 +213,7 @@ def test_collections_execute_bakes(  # type: ignore[no-untyped-def]  # noqa: ANN
     assert patched_run_command.call_count == 1
 
 
-def test_collections_executes_catches_and_exits_return_code(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_collections_executes_catches_and_exits_return_code(  # type: ignore[no-untyped-def]  # noqa: ANN201
     patched_run_command,  # noqa: ANN001
     _patched_ansible_galaxy_has_requirements_file,  # noqa: ANN001, PT019
     _instance,  # noqa: ANN001, PT019
@@ -225,13 +225,13 @@ def test_collections_executes_catches_and_exits_return_code(  # type: ignore[no-
     assert e.value.code == 1
 
 
-def test_collections_setup(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_collections_setup(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     _instance._setup()
 
 
-def test_collections_role_file(role_file, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_collections_role_file(role_file, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert role_file == _instance.requirements_file
 
 
-def test_collections_has_requirements_file(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_collections_has_requirements_file(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert not _instance._has_requirements_file()

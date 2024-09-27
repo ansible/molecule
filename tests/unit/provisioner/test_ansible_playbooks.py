@@ -38,43 +38,43 @@ def _instance(_provisioner_section_data, config_instance: config.Config):  # typ
     return ansible_playbooks.AnsiblePlaybooks(config_instance)
 
 
-def test_cleanup_property_is_optional(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_cleanup_property_is_optional(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance._config.provisioner.playbooks.cleanup is None
 
 
 @pytest.mark.skip(reason="create not running for delegated")
-def test_create_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_create_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     x = os.path.join(_instance._get_playbook_directory(), "default", "create.yml")  # noqa: PTH118
 
     assert x == _instance._config.provisioner.playbooks.create
 
 
-def test_converge_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_converge_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     x = os.path.join(_instance._config.scenario.directory, "converge.yml")  # noqa: PTH118
 
     assert x == _instance._config.provisioner.playbooks.converge
 
 
 @pytest.mark.skip(reason="destroy not running for delegated")
-def test_destroy_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_destroy_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     x = os.path.join(_instance._get_playbook_directory(), "default", "destroy.yml")  # noqa: PTH118
 
     assert x == _instance._config.provisioner.playbooks.destroy
 
 
-def test_prepare_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_prepare_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance._config.provisioner.playbooks.prepare is None
 
 
-def test_side_effect_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_side_effect_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance._config.provisioner.playbooks.side_effect is None
 
 
-def test_verify_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_verify_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance._config.provisioner.playbooks.verify is None
 
 
-def test_get_playbook_directory(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_get_playbook_directory(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     result = _instance._get_playbook_directory()
     parts = os_split(result)
     x = ("molecule", "provisioner", "ansible", "playbooks")
@@ -82,7 +82,7 @@ def test_get_playbook_directory(_instance):  # type: ignore[no-untyped-def]  # n
     assert x == parts[-4:]
 
 
-def test_get_playbook(tmpdir, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
+def test_get_playbook(tmpdir, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001
     x = os.path.join(_instance._config.scenario.directory, "create.yml")  # noqa: PTH118
     util.write_file(x, "")
 
@@ -90,7 +90,7 @@ def test_get_playbook(tmpdir, _instance):  # type: ignore[no-untyped-def]  # noq
 
 
 @pytest.mark.skip(reason="create not running for delegated")
-def test_get_playbook_returns_bundled_driver_playbook_when_local_not_found(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_get_playbook_returns_bundled_driver_playbook_when_local_not_found(  # type: ignore[no-untyped-def]  # noqa: ANN201
     tmpdir,  # noqa: ANN001, ARG001
     _instance,  # noqa: ANN001, PT019
 ):
@@ -128,7 +128,7 @@ def _provisioner_driver_playbook_key_missing_section_data():  # type: ignore[no-
     ["_provisioner_driver_playbook_key_missing_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(  # type: ignore[no-untyped-def]  # noqa: ANN201
     tmpdir,  # noqa: ANN001, ARG001
     _instance,  # noqa: ANN001, PT019
 ):
@@ -138,7 +138,7 @@ def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(  # type
     assert x == _instance._get_playbook("side_effect")
 
 
-def test_get_bundled_driver_playbook(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_get_bundled_driver_playbook(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     result = _instance._get_bundled_driver_playbook("create")
     parts = os_split(result)
     x = ("molecule", "driver", "playbooks", "create.yml")

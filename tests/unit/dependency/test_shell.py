@@ -49,17 +49,17 @@ def _instance(  # type: ignore[no-untyped-def]  # noqa: ANN202
     return shell.Shell(config_instance)
 
 
-def test_shell_config_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_shell_config_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert isinstance(_instance._config, config.Config)
 
 
-def test_shell_default_options_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_shell_default_options_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     x = {}  # type: ignore[var-annotated]
 
     assert x == _instance.default_options
 
 
-def test_shell_default_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_shell_default_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert "MOLECULE_FILE" in _instance.default_env
     assert "MOLECULE_INVENTORY_FILE" in _instance.default_env
     assert "MOLECULE_SCENARIO_DIRECTORY" in _instance.default_env
@@ -71,11 +71,11 @@ def test_shell_default_env_property(_instance):  # type: ignore[no-untyped-def] 
     ["_dependency_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_shell_name_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_shell_name_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.name == "shell"
 
 
-def test_shell_enabled_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_shell_enabled_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.enabled
 
 
@@ -84,7 +84,7 @@ def test_shell_enabled_property(_instance):  # type: ignore[no-untyped-def]  # n
     ["_dependency_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_shell_options_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_shell_options_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     x = {"foo": "bar"}
 
     assert x == _instance.options
@@ -95,7 +95,7 @@ def test_shell_options_property(_instance):  # type: ignore[no-untyped-def]  # n
     ["_dependency_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_shell_options_property_handles_cli_args(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_shell_options_property_handles_cli_args(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     _instance._config.args = {}
     x = {"foo": "bar"}
 
@@ -107,11 +107,11 @@ def test_shell_options_property_handles_cli_args(_instance):  # type: ignore[no-
     ["_dependency_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_shell_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_shell_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance.env["FOO"] == "bar"
 
 
-def test_shell_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_shell_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201
     patched_run_command,  # noqa: ANN001
     caplog: pytest.LogCaptureFixture,
     _instance,  # noqa: ANN001, PT019
@@ -129,7 +129,7 @@ def test_shell_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     assert msg in caplog.text
 
 
-def test_shell_execute_does_not_execute_when_disabled(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_shell_execute_does_not_execute_when_disabled(  # type: ignore[no-untyped-def]  # noqa: ANN201
     patched_run_command,  # noqa: ANN001
     caplog: pytest.LogCaptureFixture,
     _instance,  # noqa: ANN001, PT019
@@ -148,7 +148,7 @@ def test_shell_execute_does_not_execute_when_disabled(  # type: ignore[no-untype
     ["_dependency_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_dependency_execute_bakes(patched_run_command, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_dependency_execute_bakes(patched_run_command, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     _instance.execute()
     assert patched_run_command.call_count == 1
 
@@ -158,12 +158,12 @@ def test_dependency_execute_bakes(patched_run_command, _instance):  # type: igno
     ["_dependency_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_dep_executes_catches_and_exits_return_code(patched_run_command, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_dep_executes_catches_and_exits_return_code(patched_run_command, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     patched_run_command.side_effect = SystemExit(1)
     with pytest.raises(SystemExit) as e:
         _instance.execute()
     assert e.value.code == 1
 
 
-def test_has_command_configured(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_has_command_configured(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     assert _instance._has_command_configured()

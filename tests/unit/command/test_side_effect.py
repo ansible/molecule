@@ -56,7 +56,7 @@ def _patched_ansible_side_effect(mocker):  # type: ignore[no-untyped-def]  # noq
     ["_command_provisioner_section_with_side_effect_data"],  # noqa: PT007
     indirect=True,
 )
-def test_side_effect_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_side_effect_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201
     mocker: MockerFixture,  # noqa: ARG001
     _patched_ansible_side_effect,  # noqa: ANN001, PT019
     caplog,  # noqa: ANN001
@@ -75,7 +75,7 @@ def test_side_effect_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D
     _patched_ansible_side_effect.assert_called_once_with(None)
 
 
-def test_side_effect_execute_skips_when_playbook_not_configured(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_side_effect_execute_skips_when_playbook_not_configured(  # type: ignore[no-untyped-def]  # noqa: ANN201
     caplog,  # noqa: ANN001
     _patched_ansible_side_effect,  # noqa: ANN001, PT019
     config_instance: config.Config,

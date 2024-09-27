@@ -48,7 +48,7 @@ mac_on_gh = pytest.mark.skipif(
 )
 
 
-def is_subset(subset, superset):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def is_subset(subset, superset):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     # Checks if first dict is a subset of the second one
     if isinstance(subset, dict):
         return all(
@@ -76,7 +76,7 @@ def resources_folder_path() -> Path:
     return FIXTURES_DIR / "resources"
 
 
-def pytest_collection_modifyitems(items, config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def pytest_collection_modifyitems(items, config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     marker = config.getoption("-m")
     is_sharded = False
     shard_id = 0

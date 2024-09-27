@@ -24,6 +24,6 @@ import pytest
 from molecule import shell
 
 
-def test_shell() -> None:  # noqa: D103
+def test_shell() -> None:
     with pytest.raises(SystemExit):
         shell.main()  # pylint: disable=no-value-for-parameter

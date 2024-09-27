@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-def test_base_config(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_base_config(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 

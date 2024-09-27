@@ -35,12 +35,12 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture(name="scenario_to_test")
-def fixture_scenario_to_test(request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def fixture_scenario_to_test(request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     return request.param
 
 
 @pytest.fixture(name="scenario_name")
-def fixture_scenario_name(request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def fixture_scenario_name(request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     try:
         return request.param
     except AttributeError:
@@ -48,7 +48,7 @@ def fixture_scenario_name(request):  # type: ignore[no-untyped-def]  # noqa: ANN
 
 
 @pytest.fixture(name="driver_name")
-def fixture_driver_name(request: FixtureRequest) -> str | None:  # noqa: D103
+def fixture_driver_name(request: FixtureRequest) -> str | None:
     try:
         # https://stackoverflow.com/q/65334215/99834
         return request.param  # type: ignore  # noqa: PGH003

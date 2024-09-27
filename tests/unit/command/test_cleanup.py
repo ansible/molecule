@@ -51,7 +51,7 @@ def _patched_ansible_cleanup(mocker):  # type: ignore[no-untyped-def]  # noqa: A
     ["_command_provisioner_section_with_cleanup_data"],  # noqa: PT007
     indirect=True,
 )
-def test_cleanup_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_cleanup_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201
     mocker: MockerFixture,  # noqa: ARG001
     _patched_ansible_cleanup,  # noqa: ANN001, PT019
     caplog,  # noqa: ANN001
@@ -69,7 +69,7 @@ def test_cleanup_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     _patched_ansible_cleanup.assert_called_once_with()
 
 
-def test_cleanup_execute_skips_when_playbook_not_configured(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_cleanup_execute_skips_when_playbook_not_configured(  # type: ignore[no-untyped-def]  # noqa: ANN201
     caplog,  # noqa: ANN001
     _patched_ansible_cleanup,  # noqa: ANN001, PT019
     config_instance: config.Config,

@@ -54,7 +54,7 @@ def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  
     )
 
 
-def test_all_ordered(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_all_ordered(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019
     result = _instance.all
 
     assert len(result) == 3  # noqa: PLR2004

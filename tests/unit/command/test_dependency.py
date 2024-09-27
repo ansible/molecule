@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_dependency_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_dependency_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201
     mocker: MockerFixture,  # noqa: ARG001
     caplog,  # noqa: ANN001
     patched_ansible_galaxy,  # noqa: ANN001

@@ -368,7 +368,7 @@ required-imports = ["from __future__ import annotations"]
 
 [tool.ruff.lint.per-file-ignores]
 "_version.py" = ["SIM108"]
-"tests/**" = ["SLF001", "S101", "S602", "T201"]
+"tests/**" = ["D103", "SLF001", "S101", "S602", "T201"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

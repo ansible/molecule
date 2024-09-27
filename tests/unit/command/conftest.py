@@ -23,12 +23,12 @@ import pytest
 
 
 @pytest.fixture()
-def command_patched_ansible_create(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def command_patched_ansible_create(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     return mocker.patch("molecule.provisioner.ansible.Ansible.create")
 
 
 @pytest.fixture()
-def command_driver_delegated_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def command_driver_delegated_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN201
     x = {
         "driver": {
             "name": "default",
@@ -43,5 +43,5 @@ def command_driver_delegated_section_data():  # type: ignore[no-untyped-def]  # 
 
 
 @pytest.fixture()
-def command_driver_delegated_managed_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def command_driver_delegated_managed_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN201
     return {"driver": {"name": "default", "managed": True}}

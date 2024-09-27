@@ -38,7 +38,7 @@ def _model_driver_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN20
 
 
 @pytest.mark.parametrize("config", ["_model_driver_section_data"], indirect=True)  # noqa: PT007
-def test_driver(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_driver(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
@@ -68,7 +68,7 @@ def _model_driver_errors_section_data_no_prefix():  # type: ignore[no-untyped-de
     ],
     indirect=True,
 )
-def test_driver_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_driver_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     base_error_msg = "is not one of ['azure', 'ec2', 'delegated', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd', 'molecule-*', 'molecule_*', 'custom-*', 'custom_*']"  # noqa: E501
 
     driver_name = str(config["driver"]["name"])
@@ -90,7 +90,7 @@ def _model_driver_provider_name_nullable_section_data():  # type: ignore[no-unty
     ["_model_driver_provider_name_nullable_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_driver_provider_name_nullable(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_driver_provider_name_nullable(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
@@ -131,5 +131,5 @@ def _model_driver_allows_custom_section_data2():  # type: ignore[no-untyped-def]
     ],
     indirect=True,
 )
-def test_driver_allows_name(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_driver_allows_name(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
