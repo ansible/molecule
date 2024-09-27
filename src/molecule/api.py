@@ -5,41 +5,22 @@ from __future__ import annotations
 import logging
 import traceback
 
-from collections import UserList
-from typing import Any
+from collections import OrderedDict
+from typing import TYPE_CHECKING
 
 import pluggy
 
 from ansible_compat.ports import cache
 
-from molecule.driver.base import Driver  # noqa: F401
-from molecule.verifier.base import Verifier  # noqa: F401
+from molecule.driver.base import Driver
+from molecule.verifier.base import Verifier
+
+
+if TYPE_CHECKING:
+    from molecule.config import Config
 
 
 LOG = logging.getLogger(__name__)
-
-
-class UserListMap(UserList):  # type: ignore[type-arg]
-    """A list where you can also access elements by their name.
-
-    Example:
-    -------
-    foo['boo']
-    foo.boo
-    """
-
-    def __getitem__(self, i):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN204
-        """Implement indexing."""
-        if isinstance(i, int):
-            return super().__getitem__(i)
-        return self.__dict__[i]
-
-    def get(self, key, default):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D102
-        return self.__dict__.get(key, default)
-
-    def append(self, item) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, D102
-        self.__dict__[str(item)] = item
-        super().append(item)
 
 
 class MoleculeRuntimeWarning(RuntimeWarning):
@@ -51,13 +32,16 @@ class IncompatibleMoleculeRuntimeWarning(MoleculeRuntimeWarning):
 
 
 @cache
-def drivers(config: Any | None = None) -> UserListMap:  # noqa: ANN401
+def drivers(config: Config | None = None) -> dict[str, Driver]:
     """Return list of active drivers.
 
     Args:
         config: plugin config
+
+    Returns:
+        A dictionary of active drivers by name.
     """
-    plugins = UserListMap()
+    plugins = OrderedDict()
     pm = pluggy.PluginManager("molecule.driver")
     try:
         pm.load_setuptools_entrypoints("molecule.driver")
@@ -65,19 +49,35 @@ def drivers(config: Any | None = None) -> UserListMap:  # noqa: ANN401
         # These are not fatal because a broken driver should not make the entire
         # tool unusable.
         LOG.error("Failed to load driver entry point %s", traceback.format_exc())  # noqa: TRY400
-    for p in pm.get_plugins():
-        try:
-            plugins.append(p(config))
-        except (Exception, SystemExit) as e:  # noqa: PERF203
-            LOG.error("Failed to load %s driver: %s", pm.get_name(p), str(e))  # noqa: TRY400
-    plugins.sort()
+    for plugin in pm.get_plugins():
+        if issubclass(plugin, Driver):
+            try:
+                driver = plugin(config)
+                plugins[driver.name] = driver
+            except (Exception, SystemExit, TypeError) as e:
+                LOG.error(  # noqa: TRY400
+                    "Failed to load %s driver: %s",
+                    pm.get_name(plugin),
+                    str(e),
+                )
+        else:
+            msg = f"Skipped loading plugin class {plugin} because is not a subclass of Driver."
+            LOG.error(msg)
+
     return plugins
 
 
 @cache
-def verifiers(config=None) -> UserListMap:  # type: ignore[no-untyped-def]  # noqa: ANN001
-    """Return list of active verifiers."""
-    plugins = UserListMap()
+def verifiers(config: Config | None = None) -> dict[str, Verifier]:
+    """Return list of active verifiers.
+
+    Args:
+        config: plugin config
+
+    Returns:
+        A dictionary of active verifiers by name.
+    """
+    plugins = OrderedDict()
     pm = pluggy.PluginManager("molecule.verifier")
     try:
         pm.load_setuptools_entrypoints("molecule.verifier")
@@ -85,10 +85,21 @@ def verifiers(config=None) -> UserListMap:  # type: ignore[no-untyped-def]  # no
         # These are not fatal because a broken verifier should not make the entire
         # tool unusable.
         LOG.error("Failed to load verifier entry point %s", traceback.format_exc())  # noqa: TRY400
-    for p in pm.get_plugins():
+    for plugin_class in pm.get_plugins():
         try:
-            plugins.append(p(config))
+            if issubclass(plugin_class, Verifier):
+                plugin = plugin_class(config)
+                plugins[plugin.name] = plugin
         except Exception as e:  # noqa: BLE001, PERF203
-            LOG.error("Failed to load %s driver: %s", pm.get_name(p), str(e))  # noqa: TRY400
-    plugins.sort()
+            LOG.error("Failed to load %s driver: %s", pm.get_name(plugin), str(e))  # noqa: TRY400
     return plugins
+
+
+__all__ = (
+    "Driver",
+    "IncompatibleMoleculeRuntimeWarning",
+    "MoleculeRuntimeWarning",
+    "Verifier",
+    "drivers",
+    "verifiers",
+)

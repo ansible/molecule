@@ -44,11 +44,9 @@ LOG = logging.getLogger(__name__)
 def drivers(ctx, format):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201, A002, ARG001
     """List drivers."""
     drivers = []  # pylint: disable=redefined-outer-name
-    for driver in api.drivers():
-        description = driver
-        if format != "plain":
-            description = driver
-        else:
+    for driver in api.drivers().values():
+        description = str(driver)
+        if format == "plain":
             description = f"{driver!s:16s}[logging.level.notset] {driver.title} Version {driver.version} from {driver.module} python module.)[/logging.level.notset]"  # noqa: E501
         drivers.append([driver, description])
         console.print(description)

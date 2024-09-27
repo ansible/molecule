@@ -154,7 +154,15 @@ def test_verifier_property_is_ansible(config_instance: config.Config):  # type: 
     assert isinstance(config_instance.verifier, AnsibleVerifier)
 
 
-def test_get_driver_name_from_state_file(config_instance: config.Config, mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_verifier_property_invalid(config_instance: config.Config) -> None:  # noqa: D103
+    config_instance.config["verifier"]["name"] = "missing"
+    del config_instance.verifier
+
+    with pytest.raises(RuntimeError, match="Unable to find 'missing' verifier driver."):
+        config_instance.verifier  # noqa: B018
+
+
+def test_get_driver_name_from_state_file(config_instance: config.Config, mocker) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, D103
     config_instance.state.change_state("driver", "state-driver")
 
     with pytest.raises(SystemExit):
@@ -164,20 +172,20 @@ def test_get_driver_name_from_state_file(config_instance: config.Config, mocker)
     assert config_instance._get_driver_name() == "state-driver"  # type: ignore[no-untyped-call]
 
 
-def test_get_driver_name_from_cli(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_get_driver_name_from_cli(config_instance: config.Config) -> None:  # noqa: D103
     config_instance.command_args = {"driver_name": "cli-driver"}
 
     assert config_instance._get_driver_name() == "cli-driver"  # type: ignore[no-untyped-call]
 
 
-def test_get_driver_name(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_get_driver_name(config_instance: config.Config) -> None:  # noqa: D103
     assert config_instance._get_driver_name() == "default"  # type: ignore[no-untyped-call]
 
 
-def test_get_driver_name_raises_when_different_driver_used(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_get_driver_name_raises_when_different_driver_used(  # noqa: D103
     caplog: pytest.LogCaptureFixture,
     config_instance: config.Config,
-):
+) -> None:
     config_instance.state.change_state("driver", "foo")
     config_instance.command_args = {"driver_name": "bar"}
     with pytest.raises(SystemExit) as e:
@@ -218,7 +226,7 @@ def test_get_config_with_multiple_base_configs(config_instance: config.Config): 
     assert result["foo2"] == "bar2"
 
 
-def test_reget_config(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_reget_config(config_instance: config.Config) -> None:  # noqa: D103
     assert isinstance(config_instance._reget_config(), dict)  # type: ignore[no-untyped-call]
 
 
@@ -293,11 +301,11 @@ def test_get_defaults(config_instance: config.Config, mocker):  # type: ignore[n
     assert defaults["scenario"]["name"] == "test_scenario_name"
 
 
-def test_validate(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_validate(  # type: ignore[no-untyped-def]  # noqa: D103
     mocker: MockerFixture,
     config_instance: config.Config,
     patched_logger_debug,  # noqa: ANN001
-):
+) -> None:
     m = mocker.patch("molecule.model.schema_v3.validate")
     m.return_value = None
 
@@ -308,11 +316,11 @@ def test_validate(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     m.assert_called_with(config_instance.config)
 
 
-def test_validate_exists_when_validation_fails(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_validate_exists_when_validation_fails(  # noqa: D103
     mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
     config_instance: config.Config,
-):
+) -> None:
     m = mocker.patch("molecule.model.schema_v3.validate")
     m.return_value = "validation errors"
 
