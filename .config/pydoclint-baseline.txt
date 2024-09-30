@@ -442,34 +442,6 @@ src/molecule/status.py
 	DOC601: Class `Status`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
 	DOC603: Class `Status`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [converged: str, created: str, driver_name: str, instance_name: str, provisioner_name: str, scenario_name: str]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
 --------------------
-src/molecule/text.py
-	DOC101: Function `camelize`: Docstring contains fewer arguments than in function signature.
-	DOC106: Function `camelize`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Function `camelize`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC103: Function `camelize`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [string: ].
-	DOC201: Function `camelize` does not have a return section in docstring
-	DOC101: Function `chomp`: Docstring contains fewer arguments than in function signature.
-	DOC103: Function `chomp`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [text: str].
-	DOC201: Function `chomp` does not have a return section in docstring
-	DOC101: Function `strip_ansi_escape`: Docstring contains fewer arguments than in function signature.
-	DOC106: Function `strip_ansi_escape`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Function `strip_ansi_escape`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC103: Function `strip_ansi_escape`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [data: ].
-	DOC201: Function `strip_ansi_escape` does not have a return section in docstring
-	DOC101: Function `strip_ansi_color`: Docstring contains fewer arguments than in function signature.
-	DOC106: Function `strip_ansi_color`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Function `strip_ansi_color`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC103: Function `strip_ansi_color`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [data: ].
-	DOC201: Function `strip_ansi_color` does not have a return section in docstring
-	DOC101: Function `underscore`: Docstring contains fewer arguments than in function signature.
-	DOC106: Function `underscore`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Function `underscore`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC103: Function `underscore`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [string: ].
-	DOC201: Function `underscore` does not have a return section in docstring
-	DOC101: Function `title`: Docstring contains fewer arguments than in function signature.
-	DOC103: Function `title`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [word: str].
-	DOC201: Function `title` does not have a return section in docstring
---------------------
 src/molecule/util.py
 	DOC101: Function `print_debug`: Docstring contains fewer arguments than in function signature.
 	DOC103: Function `print_debug`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [data: str, title: str].
