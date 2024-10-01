@@ -445,42 +445,19 @@ src/molecule/status.py
 src/molecule/util.py
 	DOC101: Function `print_debug`: Docstring contains fewer arguments than in function signature.
 	DOC103: Function `print_debug`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [data: str, title: str].
-	DOC001: Function/method `print_environment_vars`: Potential formatting errors in docstring. Error message: Expected a colon in '``os.environ``.'.
-	DOC101: Function `print_environment_vars`: Docstring contains fewer arguments than in function signature.
-	DOC103: Function `print_environment_vars`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [env: dict[str, str | None] | None].
 	DOC101: Function `sysexit`: Docstring contains fewer arguments than in function signature.
 	DOC103: Function `sysexit`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [code: int].
-	DOC101: Function `sysexit_with_message`: Docstring contains fewer arguments than in function signature.
-	DOC103: Function `sysexit_with_message`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [code: int, detail: MutableMapping | None, msg: str, warns: Iterable[WarningMessage]].
-	DOC107: Function `run_command`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
 	DOC501: Function `run_command` has "raise" statements, but the docstring does not have a "Raises" section
-	DOC101: Function `os_walk`: Docstring contains fewer arguments than in function signature.
-	DOC106: Function `os_walk`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Function `os_walk`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC103: Function `os_walk`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [directory: , excludes: , followlinks: , pattern: ].
 	DOC402: Function `os_walk` has "yield" statements, but the docstring does not have a "Yields" section
 	DOC404: Function `os_walk` yield type(s) in docstring not consistent with the return annotation. Return annotation exists, but docstring "yields" section does not exist or has 0 type(s).
-	DOC101: Function `render_template`: Docstring contains fewer arguments than in function signature.
-	DOC106: Function `render_template`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Function `render_template`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC103: Function `render_template`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [**kwargs: , template: ].
-	DOC201: Function `render_template` does not have a return section in docstring
 	DOC101: Function `molecule_prepender`: Docstring contains fewer arguments than in function signature.
 	DOC103: Function `molecule_prepender`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [content: str].
 	DOC201: Function `molecule_prepender` does not have a return section in docstring
-	DOC107: Function `safe_dump`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC106: Function `safe_load`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Function `safe_load`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
 	DOC101: Function `instance_with_scenario_name`: Docstring contains fewer arguments than in function signature.
 	DOC106: Function `instance_with_scenario_name`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
 	DOC107: Function `instance_with_scenario_name`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
 	DOC103: Function `instance_with_scenario_name`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [instance_name: , scenario_name: ].
 	DOC201: Function `instance_with_scenario_name` does not have a return section in docstring
-	DOC101: Function `verbose_flag`: Docstring contains fewer arguments than in function signature.
-	DOC106: Function `verbose_flag`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Function `verbose_flag`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC103: Function `verbose_flag`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [options: ].
-	DOC201: Function `verbose_flag` does not have a return section in docstring
 	DOC101: Function `filter_verbose_permutation`: Docstring contains fewer arguments than in function signature.
 	DOC106: Function `filter_verbose_permutation`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
 	DOC107: Function `filter_verbose_permutation`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
@@ -493,27 +470,9 @@ src/molecule/util.py
 	DOC106: Function `validate_parallel_cmd_args`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
 	DOC107: Function `validate_parallel_cmd_args`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
 	DOC103: Function `validate_parallel_cmd_args`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [cmd_args: ].
-	DOC101: Function `find_vcs_root`: Docstring contains fewer arguments than in function signature.
-	DOC106: Function `find_vcs_root`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Function `find_vcs_root`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC103: Function `find_vcs_root`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [default: , dirs: , location: ].
-	DOC201: Function `find_vcs_root` does not have a return section in docstring
 	DOC101: Function `lookup_config_file`: Docstring contains fewer arguments than in function signature.
 	DOC103: Function `lookup_config_file`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [filename: str].
 	DOC201: Function `lookup_config_file` does not have a return section in docstring
-	DOC101: Function `boolean`: Docstring contains fewer arguments than in function signature.
-	DOC107: Function `boolean`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC103: Function `boolean`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [strict: , value: Any].
-	DOC201: Function `boolean` does not have a return section in docstring
-	DOC501: Function `boolean` has "raise" statements, but the docstring does not have a "Raises" section
-	DOC101: Function `dict2args`: Docstring contains fewer arguments than in function signature.
-	DOC103: Function `dict2args`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [data: dict].
-	DOC201: Function `dict2args` does not have a return section in docstring
-	DOC101: Function `bool2args`: Docstring contains fewer arguments than in function signature.
-	DOC103: Function `bool2args`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [data: bool].
-	DOC201: Function `bool2args` does not have a return section in docstring
-	DOC101: Function `print_as_yaml`: Docstring contains fewer arguments than in function signature.
-	DOC103: Function `print_as_yaml`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [data: Any].
 --------------------
 src/molecule/verifier/base.py
 	DOC601: Class `Verifier`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)

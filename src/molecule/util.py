@@ -27,8 +27,9 @@ import os
 import re
 import sys
 
+from pathlib import Path
 from subprocess import CalledProcessError, CompletedProcess
-from typing import TYPE_CHECKING, Any, NoReturn
+from typing import TYPE_CHECKING, Any, AnyStr, NoReturn
 
 import jinja2
 import yaml
@@ -42,7 +43,8 @@ from molecule.constants import MOLECULE_HEADER
 
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, MutableMapping
+    from collections.abc import Generator, Iterable, MutableMapping
+    from io import TextIOWrapper
     from warnings import WarningMessage
 
 LOG = logging.getLogger(__name__)
@@ -51,8 +53,18 @@ LOG = logging.getLogger(__name__)
 class SafeDumper(yaml.SafeDumper):
     """SafeDumper YAML Class."""
 
-    def increase_indent(self, flow=False, indentless=False):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, FBT002, ARG002, D102
-        return super().increase_indent(flow, False)  # noqa: FBT003
+    def increase_indent(
+        self,
+        flow: bool = False,  # noqa: FBT001, FBT002
+        indentless: bool = False,  # noqa: ARG002, FBT001, FBT002
+    ) -> None:
+        """Increase indent of the YAML structure.
+
+        Args:
+            flow: Whether to reset indenting on newline.
+            indentless: Whether to skip additional indenting.
+        """
+        return super().increase_indent(flow, indentless=False)
 
 
 def print_debug(title: str, data: str) -> None:
@@ -60,12 +72,11 @@ def print_debug(title: str, data: str) -> None:
     console.print(f"DEBUG: {title}:\n{data}")
 
 
-def print_environment_vars(env: dict[str, str | None] | None) -> None:
+def print_environment_vars(env: dict[str, str] | None) -> None:
     """Print ``Ansible`` and ``Molecule`` environment variables and returns None.
 
     Args:
-        env: A dict containing the shell's environment as collected by
-        ``os.environ``.
+        env: A dict containing the shell's environment as collected by ``os.environ``.
     """
     if env:
         ansible_env = {k: v for (k, v) in env.items() if "ANSIBLE_" in k}
@@ -88,9 +99,9 @@ def print_environment_vars(env: dict[str, str | None] | None) -> None:
 
 def do_report() -> None:
     """Dump html report atexit."""
-    report_file = os.environ["MOLECULE_REPORT"]
+    report_file = Path(os.environ["MOLECULE_REPORT"])
     LOG.info("Writing %s report.", report_file)
-    with open(report_file, "w") as f:  # noqa: PTH123
+    with report_file.open("w") as f:
         f.write(console.export_html())
         f.close()
 
@@ -103,10 +114,17 @@ def sysexit(code: int = 1) -> NoReturn:
 def sysexit_with_message(
     msg: str,
     code: int = 1,
-    detail: MutableMapping | None = None,  # type: ignore[type-arg]
+    detail: MutableMapping[str, Any] | None = None,
     warns: Iterable[WarningMessage] = (),
 ) -> None:
-    """Exit with an error message."""
+    """Exit with an error message.
+
+    Args:
+        msg: The message to display.
+        code: The return code to exit with.
+        detail: A potentially complex object that will be displayed alongside msg.
+        warns: A series of warnings to send alongside the message.
+    """
     # detail is usually a multi-line string which is not suitable for normal
     # logger.
     if detail:
@@ -119,25 +137,26 @@ def sysexit_with_message(
     sysexit(code)
 
 
-def run_command(  # type: ignore[no-untyped-def]  # noqa: PLR0913
+def run_command(  # noqa: PLR0913
     cmd: list[str],
-    env=None,  # noqa: ANN001
-    debug=False,  # noqa: ANN001, FBT002
-    echo=False,  # noqa: ANN001, FBT002, ARG001
-    quiet=False,  # noqa: ANN001, FBT002, ARG001
-    check=False,  # noqa: ANN001, FBT002
-    cwd=None,  # noqa: ANN001
-) -> CompletedProcess:  # type: ignore[type-arg]
+    env: dict[str, str] | None = None,
+    cwd: Path | None = None,
+    *,
+    debug: bool = False,
+    echo: bool = False,  # noqa: ARG001
+    quiet: bool = False,  # noqa: ARG001
+    check: bool = False,
+) -> CompletedProcess[str]:
     """Execute the given command and returns None.
 
     Args:
         cmd: A list of strings containing the command to run.
         env: A dict containing the shell's environment.
+        cwd: An optional Path to the working directory.
         debug: An optional bool to toggle debug output.
         echo: An optional bool to toggle command echo.
         quiet: An optional bool to toggle command output.
         check: An optional bool to toggle command error checking.
-        cwd: An optional string to define the working directory.
 
     Returns:
         A completed process object.
@@ -164,28 +183,50 @@ def run_command(  # type: ignore[no-untyped-def]  # noqa: PLR0913
     return result
 
 
-def os_walk(directory, pattern, excludes=[], followlinks=False):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, FBT002, B006
-    """Navigate recursively and retried files based on pattern."""
+def os_walk(
+    directory: str | Path,
+    pattern: str,
+    excludes: list[str] | None = None,
+    *,
+    followlinks: bool = False,
+) -> Generator[str, None, None]:
+    """Navigate recursively and retried files based on pattern.
+
+    Args:
+        directory: The base directory.
+        pattern: A pattern against which to match files on.
+        excludes: A list of directory names to not look in.
+        followlinks: Whether or not to follow symbolic links.
+    """
+    if excludes is None:
+        excludes = []
+
     for root, dirs, files in os.walk(directory, topdown=True, followlinks=followlinks):
         dirs[:] = [d for d in dirs if d not in excludes]
         for basename in files:
             if fnmatch.fnmatch(basename, pattern):
-                filename = os.path.join(root, basename)  # noqa: PTH118
+                filename = Path(root) / basename
 
-                yield filename
+                yield str(filename)
 
 
-def render_template(template, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN003, ANN201
-    """Render a jinaj2 template."""
+def render_template(template: str, **kwargs: dict[str, Any]) -> str:
+    """Render a jinaj2 template.
+
+    Args:
+        template: The jinja template to render.
+        **kwargs: Values to render in the template.
+
+    Returns:
+        The rendered template.
+    """
     t = jinja2.Environment(
         autoescape=jinja2.select_autoescape(
             default_for_string=False,
             default=False,
         ),
     )
-    t = t.from_string(template)  # type: ignore[assignment]
-
-    return t.render(kwargs)  # type: ignore[attr-defined]
+    return t.from_string(template).render(kwargs)
 
 
 def write_file(filename: str, content: str, header: str | None = None) -> None:
@@ -220,15 +261,15 @@ def file_prepender(filename: str) -> None:
         f.write(molecule_prepender(content))
 
 
-def safe_dump(data: Any, explicit_start=True) -> str:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN401, FBT002
+def safe_dump(data: object, explicit_start: bool = True) -> str:  # noqa: FBT001, FBT002
     """Dump the provided data to a YAML document and returns a string.
 
     Args:
-        data: A string containing the data to dump.
+        data: The object to dump.
         explicit_start: An optional bool to toggle explicit document start.
 
     Returns:
-        str
+        The YAML document in a string.
     """
     return yaml.dump(
         data,
@@ -238,14 +279,14 @@ def safe_dump(data: Any, explicit_start=True) -> str:  # type: ignore[no-untyped
     )
 
 
-def safe_load(string) -> dict:  # type: ignore[no-untyped-def, type-arg]  # noqa: ANN001
+def safe_load(string: TextIOWrapper) -> dict[str, Any]:
     """Parse the provided string returns a dict.
 
     Args:
         string: A string to be parsed.
 
     Returns:
-        dict
+        A dict of the parsed string.
     """
     try:
         return yaml.safe_load(string) or {}
@@ -254,16 +295,19 @@ def safe_load(string) -> dict:  # type: ignore[no-untyped-def, type-arg]  # noqa
     return {}
 
 
-def safe_load_file(filename: str):  # type: ignore[no-untyped-def]  # noqa: ANN201
+def safe_load_file(filename: str | Path) -> dict[str, Any]:
     """Parse the provided YAML file and returns a dict.
 
     Args:
-        filename: A string containing an absolute path to the file to parse.
+        filename: The file to parse.
 
     Returns:
-        dict
+        A dict of the parsed string.
     """
-    with open(filename) as stream:  # noqa: PTH123
+    if isinstance(filename, str):
+        filename = Path(filename)
+
+    with filename.open() as stream:
         return safe_load(stream)
 
 
@@ -272,20 +316,27 @@ def instance_with_scenario_name(instance_name, scenario_name):  # type: ignore[n
     return f"{instance_name}-{scenario_name}"
 
 
-def verbose_flag(options):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
-    """Return computed verbosity flag."""
+def verbose_flag(options: dict[str, str | bool]) -> list[str]:
+    """Return computed verbosity flag.
+
+    Args:
+        options: Full commandline options list.
+
+    Returns:
+        The appropriate verbosity option.
+    """
     verbose = "v"
-    verbose_flag = []  # pylint: disable=redefined-outer-name
+    flags = []
     for _i in range(3):
         if options.get(verbose):
-            verbose_flag = [f"-{verbose}"]
+            flags = [f"-{verbose}"]
             del options[verbose]
             if options.get("verbose"):
                 del options["verbose"]
             break
         verbose = verbose + "v"
 
-    return verbose_flag
+    return flags
 
 
 def filter_verbose_permutation(options):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
@@ -347,18 +398,32 @@ def _filter_platforms(config, platform_name):  # type: ignore[no-untyped-def]  #
 
 
 @cache
-def find_vcs_root(location="", dirs=(".git", ".hg", ".svn"), default=None) -> str:  # type: ignore[no-untyped-def]  # noqa: ANN001
-    """Return current repository root directory."""
+def find_vcs_root(
+    location: str | Path = "",
+    dirs: tuple[str, ...] = (".git", ".hg", ".svn"),
+    default: str | None = None,
+) -> str | None:
+    """Return current repository root directory.
+
+    Args:
+        location: Location to begin searching from.
+        dirs: VCS config directory names to look for.
+        default: Default value to return if no VCS directory found.
+
+    Returns:
+        The ancestor path containing VCS folders or default if none are found.
+    """
     if not location:
-        location = os.getcwd()  # noqa: PTH109
-    prev, location = None, os.path.abspath(location)  # noqa: PTH100
+        location = Path.cwd()
+    if isinstance(location, str):
+        location = Path(location)
+
+    prev, location = None, location.absolute()
     while prev != location:
-        if any(os.path.isdir(os.path.join(location, d)) for d in dirs):  # noqa: PTH112, PTH118
-            return location  # type: ignore[no-any-return]
-        prev, location = location, os.path.abspath(  # noqa: PTH100
-            os.path.join(location, os.pardir),  # noqa: PTH118
-        )
-    return default  # type: ignore[no-any-return]
+        if any((location / d).is_dir() for d in dirs):
+            return str(location)
+        prev, location = (location, location.parent)
+    return default
 
 
 def lookup_config_file(filename: str) -> str | None:
@@ -371,8 +436,19 @@ def lookup_config_file(filename: str) -> str | None:
     return None
 
 
-def boolean(value: Any, strict=True) -> bool:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN401, FBT002
-    """Evaluate any object as boolean matching ansible behavior."""
+def boolean(value: bool | AnyStr, *, strict: bool = True) -> bool:
+    """Evaluate any object as boolean matching ansible behavior.
+
+    Args:
+        value: The value to evaluate as a boolean.
+        strict: If True, invalid booleans will raises TypeError instead of returning False.
+
+    Returns:
+        The boolean value of value.
+
+    Raises:
+        TypeError: If value does not resolve to a valid boolean and strict is True.
+    """
     # Based on https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/parsing/convert_bool.py
 
     BOOLEANS_TRUE = frozenset(("y", "yes", "on", "1", "true", "t", 1, 1.0, True))  # noqa: N806
@@ -382,9 +458,7 @@ def boolean(value: Any, strict=True) -> bool:  # type: ignore[no-untyped-def]  #
     if isinstance(value, bool):
         return value
 
-    normalized_value = value
-    if isinstance(value, str | bytes):
-        normalized_value = str(value).lower().strip()
+    normalized_value = str(value).lower().strip()
 
     if normalized_value in BOOLEANS_TRUE:
         return True
@@ -396,8 +470,15 @@ def boolean(value: Any, strict=True) -> bool:  # type: ignore[no-untyped-def]  #
     )
 
 
-def dict2args(data: dict) -> list[str]:  # type: ignore[type-arg]
-    """Convert a dictionary of options to command like arguments."""
+def dict2args(data: dict[str, str | bool]) -> list[str]:
+    """Convert a dictionary of options to command like arguments.
+
+    Args:
+        data: Arguments dictionary to flatten.
+
+    Returns:
+        A list of command-like flags represented by the dictionary.
+    """
     result = []
     # keep sorting in order to achieve a predictable behavior
     for k, v in sorted(data.items()):
@@ -410,13 +491,24 @@ def dict2args(data: dict) -> list[str]:  # type: ignore[type-arg]
     return result
 
 
-def bool2args(data: bool) -> list[str]:  # noqa: FBT001, ARG001
-    """Convert a boolean value to command line argument (flag)."""
+def bool2args(data: bool) -> list[str]:  # noqa: ARG001, FBT001
+    """Convert a boolean value to command line argument (flag).
+
+    Args:
+        data: A boolean value.
+
+    Returns:
+        An empty list
+    """
     return []
 
 
-def print_as_yaml(data: Any) -> None:  # noqa: ANN401
-    """Render python object as yaml on console."""
+def print_as_yaml(data: object) -> None:
+    """Render python object as yaml on console.
+
+    Args:
+        data: A YAML object.
+    """
     # https://github.com/Textualize/rich/discussions/990#discussioncomment-342217
     result = Syntax(code=safe_dump(data), lexer="yaml", background_color="default")
     console.print(result)
