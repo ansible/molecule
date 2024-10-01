@@ -68,7 +68,12 @@ class SafeDumper(yaml.SafeDumper):
 
 
 def print_debug(title: str, data: str) -> None:
-    """Print debug information."""
+    """Print debug information.
+
+    Args:
+        title: A title to describe the data.
+        data: The data to print.
+    """
     console.print(f"DEBUG: {title}:\n{data}")
 
 
@@ -107,7 +112,11 @@ def do_report() -> None:
 
 
 def sysexit(code: int = 1) -> NoReturn:
-    """Perform a system exit with given code, default 1."""
+    """Perform a system exit with given code.
+
+    Args:
+        code: The return code to emit.
+    """
     sys.exit(code)
 
 
@@ -160,6 +169,9 @@ def run_command(  # noqa: PLR0913
 
     Returns:
         A completed process object.
+
+    Raises:
+        CalledProcessError: If return code is nonzero and check is True.
     """
     args = cmd
 
@@ -197,6 +209,9 @@ def os_walk(
         pattern: A pattern against which to match files on.
         excludes: A list of directory names to not look in.
         followlinks: Whether or not to follow symbolic links.
+
+    Yields:
+        File paths that match the filters provided.
     """
     if excludes is None:
         excludes = []
@@ -245,17 +260,27 @@ def write_file(filename: str, content: str, header: str | None = None) -> None:
 
 
 def molecule_prepender(content: str) -> str:
-    """Return molecule identification header."""
+    """Return molecule identification header.
+
+    Args:
+        content: Molecule content to prepend.
+
+    Returns:
+        Provided content prepended with MOLECULE_HEADER.
+    """
     return MOLECULE_HEADER + "\n\n" + content
 
 
-def file_prepender(filename: str) -> None:
+def file_prepender(filename: str | Path) -> None:
     """Prepend an informational header on files managed by Molecule and returns None.
 
     Args:
         filename: A string containing the target filename.
     """
-    with open(filename, "r+") as f:  # noqa: PTH123
+    if isinstance(filename, str):
+        filename = Path(filename)
+
+    with filename.open("r+") as f:
         content = f.read()
         f.seek(0, 0)
         f.write(molecule_prepender(content))
@@ -311,8 +336,16 @@ def safe_load_file(filename: str | Path) -> dict[str, Any]:
         return safe_load(stream)
 
 
-def instance_with_scenario_name(instance_name, scenario_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
-    """Format instance name that includes scenario."""
+def instance_with_scenario_name(instance_name: str, scenario_name: str) -> str:
+    """Format instance name that includes scenario.
+
+    Args:
+        instance_name: Name of the instance.
+        scenario_name: Name of the scenario.
+
+    Returns:
+        Combined instance and scenario names.
+    """
     return f"{instance_name}-{scenario_name}"
 
 
@@ -339,19 +372,39 @@ def verbose_flag(options: dict[str, str | bool]) -> list[str]:
     return flags
 
 
-def filter_verbose_permutation(options):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
-    """Clean verbose information."""
+def filter_verbose_permutation(options: dict[str, Any]) -> dict[str, Any]:
+    """Clean verbose information.
+
+    Args:
+        options: Dictionary of commandline options.
+
+    Returns:
+        Dictionary of options without verbose options included.
+    """
     return {k: options[k] for k in options if not re.match("^[v]+$", k)}
 
 
-def abs_path(path: str) -> str | None:
-    """Return absolute path."""
+def abs_path(path: str | Path) -> str | None:
+    """Return absolute path.
+
+    Args:
+        path: File path to resolve absolute path from.
+
+    Returns:
+        Absolute path of path.
+    """
     if path:
-        return os.path.abspath(path)  # noqa: PTH100
+        if isinstance(path, str):
+            path = Path(path)
+
+        return str(path.resolve())
     return None
 
 
-def merge_dicts(a: MutableMapping, b: MutableMapping) -> MutableMapping:  # type: ignore[type-arg]
+def merge_dicts(
+    a: MutableMapping[str, Any],
+    b: MutableMapping[str, Any],
+) -> MutableMapping[str, Any]:
     """Merge the values of b into a and returns a new dict.
 
     This function uses the same algorithm as Ansible's `combine(recursive=True)` filter.
@@ -361,7 +414,7 @@ def merge_dicts(a: MutableMapping, b: MutableMapping) -> MutableMapping:  # type
         b: the dictionary to import
 
     Returns:
-        dict
+        A dictionary with b applied on to a
     """
     result = copy.deepcopy(a)
 
@@ -374,8 +427,12 @@ def merge_dicts(a: MutableMapping, b: MutableMapping) -> MutableMapping:  # type
     return result
 
 
-def validate_parallel_cmd_args(cmd_args):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
-    """Prevents use of options incompatible with parallel mode."""
+def validate_parallel_cmd_args(cmd_args: dict[str, Any]) -> None:
+    """Prevents use of options incompatible with parallel mode.
+
+    Args:
+        cmd_args: Arguments to validate.
+    """
     if cmd_args.get("parallel") and cmd_args.get("destroy") == "never":
         msg = 'Combining "--parallel" and "--destroy=never" is not supported'
         sysexit_with_message(msg)
@@ -401,8 +458,8 @@ def _filter_platforms(config, platform_name):  # type: ignore[no-untyped-def]  #
 def find_vcs_root(
     location: str | Path = "",
     dirs: tuple[str, ...] = (".git", ".hg", ".svn"),
-    default: str | None = None,
-) -> str | None:
+    default: str = "",
+) -> str:
     """Return current repository root directory.
 
     Args:
@@ -427,12 +484,19 @@ def find_vcs_root(
 
 
 def lookup_config_file(filename: str) -> str | None:
-    """Return config file PATH."""
+    """Return config file PATH.
+
+    Args:
+        filename: Config file name to find.and
+
+    Returns:
+        Path to config file or None if not found.
+    """
     for path in [find_vcs_root(default="~"), "~"]:
-        f = os.path.expanduser(f"{path}/{filename}")  # noqa: PTH111
-        if os.path.isfile(f):  # noqa: PTH113
+        f = (Path(path) / filename).expanduser()
+        if f.is_file():
             LOG.info("Found config file %s", f)
-            return f
+            return str(f)
     return None
 
 

@@ -442,38 +442,6 @@ src/molecule/status.py
 	DOC601: Class `Status`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
 	DOC603: Class `Status`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [converged: str, created: str, driver_name: str, instance_name: str, provisioner_name: str, scenario_name: str]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
 --------------------
-src/molecule/util.py
-	DOC101: Function `print_debug`: Docstring contains fewer arguments than in function signature.
-	DOC103: Function `print_debug`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [data: str, title: str].
-	DOC101: Function `sysexit`: Docstring contains fewer arguments than in function signature.
-	DOC103: Function `sysexit`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [code: int].
-	DOC501: Function `run_command` has "raise" statements, but the docstring does not have a "Raises" section
-	DOC402: Function `os_walk` has "yield" statements, but the docstring does not have a "Yields" section
-	DOC404: Function `os_walk` yield type(s) in docstring not consistent with the return annotation. Return annotation exists, but docstring "yields" section does not exist or has 0 type(s).
-	DOC101: Function `molecule_prepender`: Docstring contains fewer arguments than in function signature.
-	DOC103: Function `molecule_prepender`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [content: str].
-	DOC201: Function `molecule_prepender` does not have a return section in docstring
-	DOC101: Function `instance_with_scenario_name`: Docstring contains fewer arguments than in function signature.
-	DOC106: Function `instance_with_scenario_name`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Function `instance_with_scenario_name`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC103: Function `instance_with_scenario_name`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [instance_name: , scenario_name: ].
-	DOC201: Function `instance_with_scenario_name` does not have a return section in docstring
-	DOC101: Function `filter_verbose_permutation`: Docstring contains fewer arguments than in function signature.
-	DOC106: Function `filter_verbose_permutation`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Function `filter_verbose_permutation`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC103: Function `filter_verbose_permutation`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [options: ].
-	DOC201: Function `filter_verbose_permutation` does not have a return section in docstring
-	DOC101: Function `abs_path`: Docstring contains fewer arguments than in function signature.
-	DOC103: Function `abs_path`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [path: str].
-	DOC201: Function `abs_path` does not have a return section in docstring
-	DOC101: Function `validate_parallel_cmd_args`: Docstring contains fewer arguments than in function signature.
-	DOC106: Function `validate_parallel_cmd_args`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-	DOC107: Function `validate_parallel_cmd_args`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-	DOC103: Function `validate_parallel_cmd_args`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [cmd_args: ].
-	DOC101: Function `lookup_config_file`: Docstring contains fewer arguments than in function signature.
-	DOC103: Function `lookup_config_file`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [filename: str].
-	DOC201: Function `lookup_config_file` does not have a return section in docstring
---------------------
 src/molecule/verifier/base.py
 	DOC601: Class `Verifier`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
 	DOC603: Class `Verifier`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [__metaclass__: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
@@ -558,6 +526,7 @@ tests/fixtures/integration/test_command/scenarios/verifier/molecule/testinfra-pr
 --------------------
 tests/integration/conftest.py
 	DOC201: Function `_with_scenario` does not have a return section in docstring
+	DOC405: Function `_with_scenario` has both "return" and "yield" statements. Please use Generator[YieldType, SendType, ReturnType] as the return type annotation, and put your yield type in YieldType and return type in ReturnType. More details in https://jsh9.github.io/pydoclint/notes_generator_vs_iterator.html
 --------------------
 tests/integration/test_command.py
 	DOC601: Class `ParamDefault`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)

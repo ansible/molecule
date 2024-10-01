@@ -90,6 +90,7 @@ allow-init-docstring = true
 arg-type-hints-in-docstring = false
 baseline = ".config/pydoclint-baseline.txt"
 check-return-types = false
+check-yield-types = false
 exclude = '\.cache|\.git|\.tox|build|out|venv'
 should-document-private-class-attributes = true
 show-filenames-in-every-violation-message = true
