@@ -556,7 +556,7 @@ class Ansible(base.Base):
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
         if self._config.debug:
-            o = util.filter_verbose_permutation(o)  # type: ignore[no-untyped-call]
+            o = util.filter_verbose_permutation(o)
 
         return util.merge_dicts(self.default_options, o)
 
@@ -768,7 +768,7 @@ class Ansible(base.Base):
 
     def write_config(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
         """Write the provisioner's config file to disk and returns None."""
-        template = util.render_template(  # type: ignore[no-untyped-call]
+        template = util.render_template(
             self._get_config_template(),  # type: ignore[no-untyped-call]
             config_options=self.config_options,
         )

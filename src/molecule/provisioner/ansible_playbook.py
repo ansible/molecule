@@ -64,7 +64,7 @@ class AnsiblePlaybook:
         # inventory sources located under
         self.add_cli_arg("inventory", self._config.provisioner.inventory_directory)  # type: ignore[no-untyped-call]
         options = util.merge_dicts(self._config.provisioner.options, self._cli)
-        verbose_flag = util.verbose_flag(options)  # type: ignore[no-untyped-call]
+        verbose_flag = util.verbose_flag(options)
         if self._playbook != self._config.provisioner.playbooks.converge:  # noqa: SIM102
             if options.get("become"):
                 del options["become"]

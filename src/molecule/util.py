@@ -77,7 +77,7 @@ def print_debug(title: str, data: str) -> None:
     console.print(f"DEBUG: {title}:\n{data}")
 
 
-def print_environment_vars(env: dict[str, str] | None) -> None:
+def print_environment_vars(env: MutableMapping[str, str | None] | None) -> None:
     """Print ``Ansible`` and ``Molecule`` environment variables and returns None.
 
     Args:
@@ -148,7 +148,7 @@ def sysexit_with_message(
 
 def run_command(  # noqa: PLR0913
     cmd: list[str],
-    env: dict[str, str] | None = None,
+    env: MutableMapping[str, Any] | None = None,
     cwd: Path | None = None,
     *,
     debug: bool = False,
@@ -225,7 +225,7 @@ def os_walk(
                 yield str(filename)
 
 
-def render_template(template: str, **kwargs: dict[str, Any]) -> str:
+def render_template(template: str, **kwargs: str) -> str:
     """Render a jinaj2 template.
 
     Args:
@@ -304,7 +304,7 @@ def safe_dump(data: object, explicit_start: bool = True) -> str:  # noqa: FBT001
     )
 
 
-def safe_load(string: TextIOWrapper) -> dict[str, Any]:
+def safe_load(string: str | TextIOWrapper) -> dict[str, Any]:
     """Parse the provided string returns a dict.
 
     Args:
@@ -349,7 +349,7 @@ def instance_with_scenario_name(instance_name: str, scenario_name: str) -> str:
     return f"{instance_name}-{scenario_name}"
 
 
-def verbose_flag(options: dict[str, str | bool]) -> list[str]:
+def verbose_flag(options: MutableMapping[str, Any]) -> list[str]:
     """Return computed verbosity flag.
 
     Args:
@@ -555,7 +555,7 @@ def dict2args(data: dict[str, str | bool]) -> list[str]:
     return result
 
 
-def bool2args(data: bool) -> list[str]:  # noqa: ARG001, FBT001
+def bool2args(data: bool | list[str]) -> list[str]:  # noqa: ARG001
     """Convert a boolean value to command line argument (flag).
 
     Args:

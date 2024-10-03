@@ -36,16 +36,19 @@ from molecule.text import strip_ansi_escape
 
 if TYPE_CHECKING:
     from pathlib import Path
+    from unittest.mock import Mock
 
     from pytest_mock import MockerFixture
 
+    ComplexDict = dict[str, str | int | list["ComplexDict"] | "ComplexDict"]
 
-def test_print_debug():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+
+def test_print_debug() -> None:  # noqa: D103
     expected = "DEBUG: test_title:\ntest_data\n"
     with console.capture() as capture:
         util.print_debug("test_title", "test_data")
 
-    result = strip_ansi_escape(capture.get())  # type: ignore[no-untyped-call]
+    result = strip_ansi_escape(capture.get())
     assert result == expected
 
 
@@ -72,25 +75,25 @@ ANSIBLE_BAR=bar ANSIBLE_FOO=foo MOLECULE_BAR=bar MOLECULE_FOO=foo
 
     with console.capture() as capture:
         util.print_environment_vars(env)
-    result = strip_ansi_escape(capture.get())  # type: ignore[no-untyped-call]
+    result = strip_ansi_escape(capture.get())
     assert result == expected
 
 
-def test_sysexit():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_sysexit() -> None:  # noqa: D103
     with pytest.raises(SystemExit) as e:
         util.sysexit()
 
     assert e.value.code == 1
 
 
-def test_sysexit_with_custom_code():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_sysexit_with_custom_code() -> None:  # noqa: D103
     with pytest.raises(SystemExit) as e:
         util.sysexit(2)
 
     assert e.value.code == 2  # noqa: PLR2004
 
 
-def test_sysexit_with_message(caplog: pytest.LogCaptureFixture):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_sysexit_with_message(caplog: pytest.LogCaptureFixture) -> None:  # noqa: D103
     with pytest.raises(SystemExit) as e:
         util.sysexit_with_message("foo")
 
@@ -99,7 +102,7 @@ def test_sysexit_with_message(caplog: pytest.LogCaptureFixture):  # type: ignore
     assert "foo" in caplog.text
 
 
-def test_sysexit_with_warns(caplog: pytest.LogCaptureFixture):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_sysexit_with_warns(caplog: pytest.LogCaptureFixture) -> None:  # noqa: D103
     with pytest.raises(SystemExit) as e:  # noqa: PT012
         with warnings.catch_warnings(record=True) as warns:
             warnings.filterwarnings("default", category=MoleculeRuntimeWarning)
@@ -113,7 +116,9 @@ def test_sysexit_with_warns(caplog: pytest.LogCaptureFixture):  # type: ignore[n
     assert "xxx" in caplog.text
 
 
-def test_sysexit_with_message_and_custom_code(caplog: pytest.LogCaptureFixture):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_sysexit_with_message_and_custom_code(  # noqa: D103
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     with pytest.raises(SystemExit) as e:
         util.sysexit_with_message("foo", 2)
 
@@ -122,14 +127,17 @@ def test_sysexit_with_message_and_custom_code(caplog: pytest.LogCaptureFixture):
     assert "foo" in caplog.text
 
 
-def test_run_command():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_run_command() -> None:  # noqa: D103
     cmd = ["ls"]
     x = util.run_command(cmd)
 
     assert x.returncode == 0
 
 
-def test_run_command_with_debug(mocker: MockerFixture, patched_print_debug):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_run_command_with_debug(  # noqa: D103
+    mocker: MockerFixture,
+    patched_print_debug: Mock,
+) -> None:
     env = {"ANSIBLE_FOO": "foo", "MOLECULE_BAR": "bar"}
     util.run_command(["ls"], debug=True, env=env)
     x = [
@@ -141,7 +149,7 @@ def test_run_command_with_debug(mocker: MockerFixture, patched_print_debug):  # 
     assert x == patched_print_debug.mock_calls
 
 
-def test_run_command_baked_cmd_env():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_run_command_baked_cmd_env() -> None:  # noqa: D103
     cmd = ["printenv", "myvar"]
     result = util.run_command(cmd, env={"myvar": "value2"})
     assert result.returncode == 0
@@ -156,10 +164,10 @@ def test_run_command_baked_cmd_env():  # type: ignore[no-untyped-def]  # noqa: A
     assert result.returncode == 1
 
 
-def test_run_command_with_debug_handles_no_env(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_run_command_with_debug_handles_no_env(  # noqa: D103
     mocker: MockerFixture,  # noqa: ARG001
-    patched_print_debug,  # noqa: ANN001
-):
+    patched_print_debug: Mock,
+) -> None:
     cmd = ["ls"]
     util.run_command(cmd, debug=True)
     # when env is empty we expect not to print anything
@@ -168,31 +176,31 @@ def test_run_command_with_debug_handles_no_env(  # type: ignore[no-untyped-def] 
     assert empty_list == patched_print_debug.mock_calls
 
 
-def test_os_walk(test_cache_path):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_os_walk(test_cache_path: Path) -> None:  # noqa: D103
     scenarios = ["scenario1", "scenario2", "scenario3"]
     mol_dir = test_cache_path / "molecule"
     for scenario in scenarios:
-        scenario_directory = os.path.join(mol_dir, scenario)  # noqa: PTH118
-        molecule_file = os.path.join(scenario_directory, "molecule.yml")  # noqa: PTH118
+        scenario_directory = mol_dir / scenario
+        molecule_file = scenario_directory / "molecule.yml"
         os.makedirs(scenario_directory, exist_ok=True)  # noqa: PTH103
-        util.write_file(molecule_file, "")
+        util.write_file(str(molecule_file), "")
 
-    result = list(util.os_walk(mol_dir, "molecule.yml"))  # type: ignore[no-untyped-call]
+    result = list(util.os_walk(mol_dir, "molecule.yml"))
     assert len(result) == 3  # noqa: PLR2004
 
 
-def test_render_template():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_render_template() -> None:  # noqa: D103
     template = "{{ foo }} = {{ bar }}"
 
-    assert util.render_template(template, foo="foo", bar="bar") == "foo = bar"  # type: ignore[no-untyped-call]
+    assert util.render_template(template, foo="foo", bar="bar") == "foo = bar"
 
 
-def test_render_template_quoted():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_render_template_quoted() -> None:  # noqa: D103
     template = """
     {{ 'url = "quoted_str"' }}
     """.strip()
 
-    assert util.render_template(template) == 'url = "quoted_str"'  # type: ignore[no-untyped-call]
+    assert util.render_template(template) == 'url = "quoted_str"'
 
 
 def test_write_file(test_cache_path: Path) -> None:
@@ -218,7 +226,7 @@ def test_molecule_prepender(tmp_path: Path) -> None:  # noqa: D103
     assert x == fname.read_text()
 
 
-def test_safe_dump():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_safe_dump() -> None:  # noqa: D103
     x = """
 ---
 foo: bar
@@ -227,7 +235,7 @@ foo: bar
     assert x == util.safe_dump({"foo": "bar"})
 
 
-def test_safe_dump_with_increase_indent():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_safe_dump_with_increase_indent() -> None:  # noqa: D103
     data = {"foo": [{"foo": "bar", "baz": "zzyzx"}]}
 
     x = """
@@ -272,13 +280,13 @@ def test_safe_load_file(test_cache_path: Path) -> None:
 
 
 def test_instance_with_scenario_name() -> None:  # noqa: D103
-    assert util.instance_with_scenario_name("foo", "bar") == "foo-bar"  # type: ignore[no-untyped-call]
+    assert util.instance_with_scenario_name("foo", "bar") == "foo-bar"
 
 
 def test_verbose_flag() -> None:  # noqa: D103
     options = {"verbose": True, "v": True}
 
-    assert util.verbose_flag(options) == ["-v"]  # type: ignore[no-untyped-call]
+    assert util.verbose_flag(options) == ["-v"]
     # pylint: disable=use-implicit-booleaness-not-comparison
     assert options == {}
 
@@ -286,7 +294,7 @@ def test_verbose_flag() -> None:  # noqa: D103
 def test_verbose_flag_extra_verbose() -> None:  # noqa: D103
     options = {"verbose": True, "vvv": True}
 
-    assert util.verbose_flag(options) == ["-vvv"]  # type: ignore[no-untyped-call]
+    assert util.verbose_flag(options) == ["-vvv"]
     # pylint: disable=use-implicit-booleaness-not-comparison
     assert options == {}
 
@@ -295,7 +303,7 @@ def test_verbose_flag_preserves_verbose_option() -> None:  # noqa: D103
     options = {"verbose": True}
 
     # pylint: disable=use-implicit-booleaness-not-comparison
-    assert util.verbose_flag(options) == []  # type: ignore[no-untyped-call]
+    assert util.verbose_flag(options) == []
     assert options == {"verbose": True}
 
 
@@ -310,7 +318,7 @@ def test_filter_verbose_permutation() -> None:  # noqa: D103
     }
 
     x = {"vfoo": True, "foo": True, "bar": True}
-    assert x == util.filter_verbose_permutation(options)  # type: ignore[no-untyped-call]
+    assert x == util.filter_verbose_permutation(options)
 
 
 def test_abs_path() -> None:
@@ -342,5 +350,5 @@ def test_abs_path_with_empty_path() -> None:
         ),
     ],
 )
-def test_merge_dicts(a, b, x) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, D103
+def test_merge_dicts(a: ComplexDict, b: ComplexDict, x: ComplexDict) -> None:  # noqa: D103
     assert x == util.merge_dicts(a, b)
