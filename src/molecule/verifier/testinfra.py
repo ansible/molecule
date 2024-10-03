@@ -123,7 +123,7 @@ class Testinfra(Verifier):
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
         if self._config.debug:
-            o = util.filter_verbose_permutation(o)  # type: ignore[no-untyped-call]
+            o = util.filter_verbose_permutation(o)
 
         return util.merge_dicts(self.default_options, o)
 
@@ -150,7 +150,7 @@ class Testinfra(Verifier):
     def bake(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
         """Bake a ``testinfra`` command so it's ready to execute and returns None."""
         options = self.options
-        verbose_flag = util.verbose_flag(options)  # type: ignore[no-untyped-call]
+        verbose_flag = util.verbose_flag(options)
         args = verbose_flag
 
         self._testinfra_command = [  # type: ignore[assignment]
@@ -202,7 +202,7 @@ class Testinfra(Verifier):
             tests = []
             for arg in action_args:
                 args_tests = list(
-                    util.os_walk(  # type: ignore[no-untyped-call]
+                    util.os_walk(
                         os.path.join(self._config.scenario.directory, arg),  # noqa: PTH118
                         "test_*.py",
                         followlinks=True,
@@ -212,7 +212,7 @@ class Testinfra(Verifier):
             return sorted(tests)
         return sorted(
             list(
-                util.os_walk(  # type: ignore[no-untyped-call]
+                util.os_walk(
                     self.directory,
                     "test_*.py",
                     followlinks=True,

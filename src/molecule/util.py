@@ -29,7 +29,7 @@ import sys
 
 from pathlib import Path
 from subprocess import CalledProcessError, CompletedProcess
-from typing import TYPE_CHECKING, Any, AnyStr, NoReturn
+from typing import TYPE_CHECKING
 
 import jinja2
 import yaml
@@ -45,6 +45,7 @@ from molecule.constants import MOLECULE_HEADER
 if TYPE_CHECKING:
     from collections.abc import Generator, Iterable, MutableMapping
     from io import TextIOWrapper
+    from typing import Any, AnyStr, NoReturn
     from warnings import WarningMessage
 
 LOG = logging.getLogger(__name__)
@@ -77,7 +78,7 @@ def print_debug(title: str, data: str) -> None:
     console.print(f"DEBUG: {title}:\n{data}")
 
 
-def print_environment_vars(env: MutableMapping[str, str | None] | None) -> None:
+def print_environment_vars(env: MutableMapping[str, str] | None) -> None:
     """Print ``Ansible`` and ``Molecule`` environment variables and returns None.
 
     Args:
@@ -148,7 +149,7 @@ def sysexit_with_message(
 
 def run_command(  # noqa: PLR0913
     cmd: list[str],
-    env: MutableMapping[str, Any] | None = None,
+    env: dict[str, str] | None = None,
     cwd: Path | None = None,
     *,
     debug: bool = False,

@@ -106,6 +106,6 @@ def test(  # type: ignore[no-untyped-def]  # noqa: ANN201, PLR0913
         scenario_name = None
 
     if parallel:
-        util.validate_parallel_cmd_args(command_args)  # type: ignore[no-untyped-call]
+        util.validate_parallel_cmd_args(command_args)
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)

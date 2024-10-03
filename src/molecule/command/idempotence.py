@@ -88,7 +88,7 @@ class Idempotence(base.Base):
         output = re.sub(r"\n\s*\n*", "\n", output)
 
         # Remove ansi escape sequences.
-        output = strip_ansi_escape(output)  # type: ignore[no-untyped-call]
+        output = strip_ansi_escape(output)
 
         # Split the output into a list and go through it.
         output_lines = output.split("\n")
