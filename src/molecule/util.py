@@ -306,7 +306,7 @@ def safe_dump(data: object, explicit_start: bool = True) -> str:  # noqa: FBT001
     )
 
 
-def safe_load(string: str | TextIOWrapper) -> dict[str, Any]:
+def safe_load(string: str | TextIOWrapper):  # type: ignore[no-untyped-def]  # noqa: ANN201
     """Parse the provided string returns a dict.
 
     Args:
@@ -322,7 +322,7 @@ def safe_load(string: str | TextIOWrapper) -> dict[str, Any]:
     return {}
 
 
-def safe_load_file(filename: str | Path) -> dict[str, Any]:
+def safe_load_file(filename: str | Path):  # type: ignore[no-untyped-def]  # noqa: ANN201
     """Parse the provided YAML file and returns a dict.
 
     Args:
