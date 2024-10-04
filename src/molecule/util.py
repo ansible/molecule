@@ -403,7 +403,10 @@ def abs_path(path: str | Path) -> str | None:
     return None
 
 
-def merge_dicts(a: MutableMapping, b: MutableMapping) -> MutableMapping:  # type: ignore[type-arg]
+def merge_dicts(
+    a: MutableMapping[str, Any],
+    b: MutableMapping[str, Any],
+) -> MutableMapping[str, Any]:
     """Merge the values of b into a and returns a new dict.
 
     This function uses the same algorithm as Ansible's `combine(recursive=True)` filter.

@@ -20,7 +20,7 @@
 """Unittest for v2 config format."""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -29,6 +29,7 @@ from molecule import util
 
 if TYPE_CHECKING:
     from pathlib import Path
+    from typing import Any, LiteralString
 
 
 @pytest.fixture(name="molecule_file")
@@ -62,13 +63,13 @@ def config(molecule_file: Path, request: pytest.FixtureRequest) -> dict[str, Any
             d2 = util.safe_load(request.getfixturevalue(request.param))
         else:
             d2 = request.getfixturevalue(request.param)
-        d = util.merge_dicts(d, d2)  # type: ignore[assignment]
+        d = util.merge_dicts(d, d2)
 
-    return d
+    return d  # type: ignore[no-any-return]
 
 
 @pytest.fixture()
-def _model_platforms_delegated_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
+def _model_platforms_delegated_section_data() -> LiteralString:
     return """
 ---
 platforms:
