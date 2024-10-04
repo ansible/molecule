@@ -48,6 +48,7 @@ if TYPE_CHECKING:
     from typing import Any, AnyStr, NoReturn
     from warnings import WarningMessage
 
+
 LOG = logging.getLogger(__name__)
 
 
@@ -78,7 +79,7 @@ def print_debug(title: str, data: str) -> None:
     console.print(f"DEBUG: {title}:\n{data}")
 
 
-def print_environment_vars(env: MutableMapping[str, str] | None) -> None:
+def print_environment_vars(env: dict[str, str] | None) -> None:
     """Print ``Ansible`` and ``Molecule`` environment variables and returns None.
 
     Args:
@@ -402,10 +403,7 @@ def abs_path(path: str | Path) -> str | None:
     return None
 
 
-def merge_dicts(
-    a: MutableMapping[str, Any],
-    b: MutableMapping[str, Any],
-) -> MutableMapping[str, Any]:
+def merge_dicts(a: MutableMapping, b: MutableMapping) -> MutableMapping:  # type: ignore[type-arg]
     """Merge the values of b into a and returns a new dict.
 
     This function uses the same algorithm as Ansible's `combine(recursive=True)` filter.
@@ -419,11 +417,12 @@ def merge_dicts(
     """
     result = copy.deepcopy(a)
 
-    for k, v in b.items():
-        if k in a and isinstance(a[k], dict) and isinstance(v, dict):
-            result[k] = merge_dicts(a[k], v)
+    for k, b_v in b.items():
+        a_v = a.get(k)
+        if a_v is not None and isinstance(a_v, dict) and isinstance(b_v, dict):
+            result[k] = merge_dicts(a_v, b_v)
         else:
-            result[k] = v
+            result[k] = b_v
 
     return result
 

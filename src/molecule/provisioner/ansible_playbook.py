@@ -111,7 +111,7 @@ class AnsiblePlaybook:
             cwd = self._config.scenario_path
             result = util.run_command(
                 cmd=self._ansible_command,  # type: ignore[arg-type]
-                env=self._env,
+                env=self._env,  # type: ignore[arg-type]
                 debug=self._config.debug,
                 cwd=cwd,
             )

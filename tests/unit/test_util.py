@@ -23,7 +23,7 @@ import binascii
 import os
 import warnings
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -35,12 +35,12 @@ from molecule.text import strip_ansi_escape
 
 
 if TYPE_CHECKING:
+    from collections.abc import MutableMapping
     from pathlib import Path
+    from typing import Any
     from unittest.mock import Mock
 
     from pytest_mock import MockerFixture
-
-    ComplexDict = dict[str, str | int | list["ComplexDict"] | "ComplexDict"]
 
 
 def test_print_debug() -> None:  # noqa: D103
@@ -56,10 +56,10 @@ def test_print_environment_vars(capsys: pytest.CaptureFixture[str]) -> None:  # 
     env = {
         "ANSIBLE_FOO": "foo",
         "ANSIBLE_BAR": "bar",
-        "ANSIBLE": None,
+        "ANSIBLE": "",
         "MOLECULE_FOO": "foo",
         "MOLECULE_BAR": "bar",
-        "MOLECULE": None,
+        "MOLECULE": "",
     }
     expected = """DEBUG: ANSIBLE ENVIRONMENT:
 ANSIBLE_BAR: bar
@@ -350,5 +350,5 @@ def test_abs_path_with_empty_path() -> None:
         ),
     ],
 )
-def test_merge_dicts(a: ComplexDict, b: ComplexDict, x: ComplexDict) -> None:  # noqa: D103
+def test_merge_dicts(a: MutableMapping, b: MutableMapping, x: MutableMapping) -> None:  # type: ignore[type-arg]  # noqa: D103
     assert x == util.merge_dicts(a, b)
