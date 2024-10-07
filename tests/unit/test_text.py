@@ -11,30 +11,30 @@ from molecule.text import (
 )
 
 
-def test_camelize():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    assert camelize("foo") == "Foo"  # type: ignore[no-untyped-call]
-    assert camelize("foo_bar") == "FooBar"  # type: ignore[no-untyped-call]
-    assert camelize("foo_bar_baz") == "FooBarBaz"  # type: ignore[no-untyped-call]
+def test_camelize() -> None:  # noqa: D103
+    assert camelize("foo") == "Foo"
+    assert camelize("foo_bar") == "FooBar"
+    assert camelize("foo_bar_baz") == "FooBarBaz"
 
 
-def test_strip_ansi_color():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_strip_ansi_color() -> None:  # noqa: D103
     s = "foo\x1b[0m\x1b[0m\x1b[0m\n\x1b[0m\x1b[0m\x1b[0m\x1b[0m\x1b[0m"
 
-    assert strip_ansi_color(s) == "foo\n"  # type: ignore[no-untyped-call]
+    assert strip_ansi_color(s) == "foo\n"
 
 
-def test_strip_ansi_escape():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_strip_ansi_escape() -> None:  # noqa: D103
     string = "ls\r\n\x1b[00m\x1b[01;31mfoo\x1b[00m\r\n\x1b[01;31m"
 
-    assert strip_ansi_escape(string) == "ls\r\nfoo\r\n"  # type: ignore[no-untyped-call]
+    assert strip_ansi_escape(string) == "ls\r\nfoo\r\n"
 
 
-def test_title():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_title() -> None:  # noqa: D103
     assert title("foo") == "Foo"
     assert title("foo_bar") == "Foo Bar"
 
 
-def test_underscore():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    assert underscore("Foo") == "foo"  # type: ignore[no-untyped-call]
-    assert underscore("FooBar") == "foo_bar"  # type: ignore[no-untyped-call]
-    assert underscore("FooBarBaz") == "foo_bar_baz"  # type: ignore[no-untyped-call]
+def test_underscore() -> None:  # noqa: D103
+    assert underscore("Foo") == "foo"
+    assert underscore("FooBar") == "foo_bar"
+    assert underscore("FooBarBaz") == "foo_bar_baz"

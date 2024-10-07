@@ -176,7 +176,7 @@ def execute_subcommand(
     """
     (subcommand, *args) = subcommand_and_args.split(" ")
     command_module = getattr(molecule.command, subcommand)
-    command = getattr(command_module, text.camelize(subcommand))  # type: ignore[no-untyped-call]
+    command = getattr(command_module, text.camelize(subcommand))
 
     # knowledge of the current action is used by some provisioners
     # to ensure they behave correctly during certain sequence steps,

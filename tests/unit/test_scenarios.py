@@ -78,7 +78,7 @@ def test_all_filters_on_scenario_name_property(_instance):  # type: ignore[no-un
 def test_print_matrix(capsys, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
     with console.capture() as capture:
         _instance.print_matrix()
-    result = chomp(strip_ansi_escape(capture.get()))  # type: ignore[no-untyped-call]
+    result = chomp(strip_ansi_escape(capture.get()))
 
     matrix_out = """---
 default:

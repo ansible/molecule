@@ -89,7 +89,7 @@ class AnsibleGalaxyBase(base.Base):
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
         if self._config.debug:
-            o = util.filter_verbose_permutation(o)  # type: ignore[no-untyped-call]
+            o = util.filter_verbose_permutation(o)
 
         o = util.merge_dicts(self.default_options, o)
         return self.filter_options(o, self.FILTER_OPTS)  # type: ignore[no-untyped-call]
@@ -101,7 +101,7 @@ class AnsibleGalaxyBase(base.Base):
     def bake(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
         """Bake an ``ansible-galaxy`` command so it's ready to execute and returns None."""
         options = self.options
-        verbose_flag = util.verbose_flag(options)  # type: ignore[no-untyped-call]
+        verbose_flag = util.verbose_flag(options)
 
         self._sh_command = [
             self.command,

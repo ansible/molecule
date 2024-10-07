@@ -94,7 +94,7 @@ def github_actions_groups(func: Callable) -> Callable:  # type: ignore[type-arg]
     def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN002, ANN003, ANN202
         self = args[0]
         scenario = self._config.scenario.name
-        subcommand = underscore(self.__class__.__name__)  # type: ignore[no-untyped-call]
+        subcommand = underscore(self.__class__.__name__)
         console.print(
             "::group::",
             f"[ci_info]Molecule[/] [scenario]{scenario}[/] > [action]{subcommand}[/]",
@@ -122,7 +122,7 @@ def gitlab_ci_sections(func: Callable) -> Callable:  # type: ignore[type-arg]
     def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN002, ANN003, ANN202
         self = args[0]
         scenario = self._config.scenario.name
-        subcommand = underscore(self.__class__.__name__)  # type: ignore[no-untyped-call]
+        subcommand = underscore(self.__class__.__name__)
         console.print(
             f"section_start:{int(time.time())}:{scenario}.{subcommand}",
             end=clear_line,
@@ -159,7 +159,7 @@ def travis_ci_folds(func: Callable) -> Callable:  # type: ignore[type-arg]
     def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN002, ANN003, ANN202
         self = args[0]
         scenario = self._config.scenario.name
-        subcommand = underscore(self.__class__.__name__)  # type: ignore[no-untyped-call]
+        subcommand = underscore(self.__class__.__name__)
         console.print(
             f"travis_fold:start:{scenario}.{subcommand}",
             f"[ci_info]Molecule[/] [scenario]{scenario}[/] > [action]{subcommand}[/]",
@@ -190,7 +190,7 @@ def section_logger(func: Callable) -> Callable:  # type: ignore[type-arg]
         LOG.info(
             "[info]Running [scenario]%s[/] > [action]%s[/][/]",
             self._config.scenario.name,
-            underscore(self.__class__.__name__),  # type: ignore[no-untyped-call]
+            underscore(self.__class__.__name__),
             extra={"markup": True},
         )
         rt = func(*args, **kwargs)

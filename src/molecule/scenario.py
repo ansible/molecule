@@ -72,8 +72,8 @@ class Scenario:
             self.config.state.state_file,
             *self.config.driver.safe_files,
         ]
-        files = util.os_walk(self.ephemeral_directory, "*")  # type: ignore[no-untyped-call]
-        for f in files:
+        existing_files = util.os_walk(self.ephemeral_directory, "*")
+        for f in existing_files:
             if not any(sf for sf in safe_files if fnmatch.fnmatch(f, sf)):
                 try:
                     os.remove(f)  # noqa: PTH107
