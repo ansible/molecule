@@ -246,19 +246,20 @@ def render_template(template: str, **kwargs: str) -> str:
     return t.from_string(template).render(kwargs)
 
 
-def write_file(filename: str, content: str, header: str | None = None) -> None:
-    """Write a file with the given filename and content and returns None.
+def write_file(filename: str | Path, content: str, header: str | None = None) -> None:
+    """Write a file with the given filename and content.
 
     Args:
-        filename: A string containing the target filename.
+        filename: The target file.
         content: A string containing the data to be written.
         header: A header, if None it will use default header.
     """
     if header is None:
         content = MOLECULE_HEADER + "\n\n" + content
 
-    with open(filename, "w") as f:  # noqa: PTH123
-        f.write(content)
+    if isinstance(filename, str):
+        filename = Path(filename)
+    filename.write_text(content)
 
 
 def molecule_prepender(content: str) -> str:
