@@ -55,7 +55,11 @@ LOCAL_CONFIG = lookup_config_file(LOCAL_CONFIG_SEARCH)
 ENV_FILE = ".env.yml"
 
 
-def print_version(ctx: click.Context, param: click.Option, value: bool) -> None:
+def print_version(
+    ctx: click.Context,
+    param: click.Option,  # noqa: ARG001
+    value: bool,  # noqa: FBT001
+) -> None:
     """Print version information.
 
     Args:
@@ -65,15 +69,20 @@ def print_version(ctx: click.Context, param: click.Option, value: bool) -> None:
     """
     if not value or ctx.resilient_parsing:
         return
-    console.print(f"{param=} {value=}")
 
     v = packaging.version.Version(molecule.__version__)
     color = "bright_yellow" if v.is_prerelease else "green"
-    msg = f"molecule [{color}]{v}[/] using python [repr.number]{sys.version_info[0]}.{sys.version_info[1]}[/] \n"
+    msg = (
+        f"molecule [{color}]{v}[/] "
+        f"using python [repr.number]{sys.version_info[0]}.{sys.version_info[1]}[/] \n"
+    )
 
     msg += f"    [repr.attrib_name]ansible[/][dim]:[/][repr.number]{app.runtime.version}[/]"
     for driver in drivers().values():
-        msg += f"\n    [repr.attrib_name]{driver!s}[/][dim]:[/][repr.number]{driver.version}[/][dim] from {driver.module}"
+        msg += (
+            f"\n    [repr.attrib_name]{driver!s}[/][dim]:[/][repr.number]{driver.version}[/][dim] "
+            f"from {driver.module}"
+        )
         if driver.required_collections:
             msg += " requiring collections:"
             for name, version in driver.required_collections.items():
@@ -84,7 +93,7 @@ def print_version(ctx: click.Context, param: click.Option, value: bool) -> None:
     ctx.exit()
 
 
-@click_group_ex()
+@click_group_ex()  # type: ignore[no-untyped-call, misc]
 @click.option(
     "--debug/--no-debug",
     default=MOLECULE_DEBUG,
@@ -129,7 +138,7 @@ def print_version(ctx: click.Context, param: click.Option, value: bool) -> None:
 @click.pass_context
 def main(
     ctx: click.Context,
-    debug: bool,
+    debug: bool,  # noqa: FBT001
     verbose: int,
     base_config: list[str],
     env_file: str,
