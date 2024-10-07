@@ -120,8 +120,8 @@ class State:
         self._write_state_file()
 
     @property
-    def state_file(self) -> Path:  # noqa: D102
-        return self._state_file
+    def state_file(self) -> str:  # noqa: D102
+        return str(self._state_file)
 
     @property
     def converged(self) -> bool:  # noqa: D102
@@ -173,7 +173,7 @@ class State:
         self._data[key] = value  # type: ignore[literal-required]
 
     def _get_data(self) -> StateData:
-        if self.state_file.is_file():
+        if self._state_file.is_file():
             return self._load_file()
         return self._default_data()
 
@@ -189,7 +189,7 @@ class State:
         }
 
     def _load_file(self) -> StateData:
-        return cast(StateData, util.safe_load_file(str(self.state_file)))
+        return cast(StateData, util.safe_load_file(self._state_file))
 
     def _write_state_file(self) -> None:
         util.write_file(self.state_file, util.safe_dump(self._data))
