@@ -55,18 +55,25 @@ LOCAL_CONFIG = lookup_config_file(LOCAL_CONFIG_SEARCH)
 ENV_FILE = ".env.yml"
 
 
-def print_version(ctx, param, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001
-    """Print version information."""
+def print_version(ctx: click.Context, param: click.Option, value: bool) -> None:
+    """Print version information.
+
+    Args:
+        ctx: Click context object.
+        param: Reference to the --version option.
+        value: Value of --version.
+    """
     if not value or ctx.resilient_parsing:
         return
+    console.print(f"{param=} {value=}")
 
     v = packaging.version.Version(molecule.__version__)
     color = "bright_yellow" if v.is_prerelease else "green"
-    msg = f"molecule [{color}]{v}[/] using python [repr.number]{sys.version_info[0]}.{sys.version_info[1]}[/] \n"  # noqa: E501
+    msg = f"molecule [{color}]{v}[/] using python [repr.number]{sys.version_info[0]}.{sys.version_info[1]}[/] \n"
 
     msg += f"    [repr.attrib_name]ansible[/][dim]:[/][repr.number]{app.runtime.version}[/]"
     for driver in drivers().values():
-        msg += f"\n    [repr.attrib_name]{driver!s}[/][dim]:[/][repr.number]{driver.version}[/][dim] from {driver.module}"  # noqa: E501
+        msg += f"\n    [repr.attrib_name]{driver!s}[/][dim]:[/][repr.number]{driver.version}[/][dim] from {driver.module}"
         if driver.required_collections:
             msg += " requiring collections:"
             for name, version in driver.required_collections.items():
@@ -77,7 +84,7 @@ def print_version(ctx, param, value):  # type: ignore[no-untyped-def]  # noqa: A
     ctx.exit()
 
 
-@click_group_ex()  # type: ignore[no-untyped-call]
+@click_group_ex()
 @click.option(
     "--debug/--no-debug",
     default=MOLECULE_DEBUG,
@@ -120,13 +127,26 @@ def print_version(ctx, param, value):  # type: ignore[no-untyped-def]  # noqa: A
     is_eager=True,
 )
 @click.pass_context
-def main(ctx, debug, verbose, base_config, env_file):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
+def main(
+    ctx: click.Context,
+    debug: bool,
+    verbose: int,
+    base_config: list[str],
+    env_file: str,
+) -> None:  # pragma: no cover
     """Molecule aids in the development and testing of Ansible roles.
 
     To enable autocomplete for a supported shell execute command below after
     replacing SHELL with either bash, zsh, or fish:
 
         eval "$(_MOLECULE_COMPLETE=SHELL_source molecule)"
+
+    Args:
+        ctx: Click context object.
+        debug: Debug option value.
+        verbose: Verbose option value.
+        base_config: Base config option value.
+        env_file: Environment variable file option value.
     """
     ctx.obj = {}
     ctx.obj["args"] = {}

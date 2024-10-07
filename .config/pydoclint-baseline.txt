@@ -424,17 +424,6 @@ src/molecule/scenarios.py
     DOC107: Method `Scenarios.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC201: Method `Scenarios.__iter__` does not have a return section in docstring
 --------------------
-src/molecule/shell.py
-    DOC101: Function `print_version`: Docstring contains fewer arguments than in function signature.
-    DOC106: Function `print_version`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Function `print_version`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Function `print_version`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [ctx: , param: , value: ].
-    DOC201: Function `print_version` does not have a return section in docstring
-    DOC101: Function `main`: Docstring contains fewer arguments than in function signature.
-    DOC106: Function `main`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Function `main`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Function `main`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [base_config: , ctx: , debug: , env_file: , verbose: ].
---------------------
 src/molecule/status.py
     DOC601: Class `Status`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
     DOC603: Class `Status`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [converged: str, created: str, driver_name: str, instance_name: str, provisioner_name: str, scenario_name: str]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
