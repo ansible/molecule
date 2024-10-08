@@ -29,9 +29,14 @@ import shutil
 
 from pathlib import Path
 from time import sleep
+from typing import TYPE_CHECKING
 
 from molecule import scenarios, util
 from molecule.constants import RC_TIMEOUT
+
+
+if TYPE_CHECKING:
+    from molecule.config import Config
 
 
 LOG = logging.getLogger(__name__)
@@ -40,7 +45,7 @@ LOG = logging.getLogger(__name__)
 class Scenario:
     """A Molecule scenario."""
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
+    def __init__(self, config: Config) -> None:
         """Initialize a new scenario class and returns None.
 
         Args:
@@ -48,7 +53,7 @@ class Scenario:
         """
         self._lock = None
         self.config = config
-        self._setup()  # type: ignore[no-untyped-call]
+        self._setup()
 
     def _remove_scenario_state_directory(self) -> None:
         """Remove scenario cached disk stored state."""
@@ -76,7 +81,7 @@ class Scenario:
         for f in existing_files:
             if not any(sf for sf in safe_files if fnmatch.fnmatch(f, sf)):
                 try:
-                    os.remove(f)  # noqa: PTH107
+                    Path(f).unlink()
                 except OSError as e:
                     if e.errno != errno.ENOENT:
                         raise
@@ -87,20 +92,20 @@ class Scenario:
                 os.removedirs(dirpath)
 
     @property
-    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def name(self) -> str:  # noqa: D102
         return self.config.config["scenario"]["name"]
 
     @property
-    def directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def directory(self) -> Path:  # noqa: D102
         if self.config.molecule_file:
             return os.path.dirname(self.config.molecule_file)  # noqa: PTH120
-        return os.getcwd()  # noqa: PTH109
+        return Path.cwd()
 
     @property
-    def ephemeral_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def ephemeral_directory(self):  # noqa: D102
         path = os.getenv("MOLECULE_EPHEMERAL_DIRECTORY", None)
         if not path:
-            project_directory = os.path.basename(self.config.project_directory)  # noqa: PTH119
+            project_directory = Path(self.config.project_directory)
 
             if self.config.is_parallel:
                 project_directory = f"{project_directory}-{self.config._run_uuid}"  # noqa: SLF001
@@ -134,60 +139,62 @@ class Scenario:
         return path
 
     @property
-    def inventory_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def inventory_directory(self):  # noqa: D102
         return os.path.join(self.ephemeral_directory, "inventory")  # noqa: PTH118
 
     @property
-    def check_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def check_sequence(self):  # noqa: D102
         return self.config.config["scenario"]["check_sequence"]
 
     @property
-    def cleanup_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def cleanup_sequence(self):  # noqa: D102
         return self.config.config["scenario"]["cleanup_sequence"]
 
     @property
-    def converge_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def converge_sequence(self):  # noqa: D102
         return self.config.config["scenario"]["converge_sequence"]
 
     @property
-    def create_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def create_sequence(self):  # noqa: D102
         return self.config.config["scenario"]["create_sequence"]
 
     @property
-    def dependency_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def dependency_sequence(self):  # noqa: D102
         return ["dependency"]
 
     @property
-    def destroy_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def destroy_sequence(self):  # noqa: D102
         return self.config.config["scenario"]["destroy_sequence"]
 
     @property
-    def idempotence_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def idempotence_sequence(self):  # noqa: D102
         return ["idempotence"]
 
     @property
-    def prepare_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def prepare_sequence(self):  # noqa: D102
         return ["prepare"]
 
     @property
-    def side_effect_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def side_effect_sequence(self):  # noqa: D102
         return ["side_effect"]
 
     @property
-    def syntax_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def syntax_sequence(self):  # noqa: D102
         return ["syntax"]
 
     @property
-    def test_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def test_sequence(self):  # noqa: D102
         return self.config.config["scenario"]["test_sequence"]
 
     @property
-    def verify_sequence(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def verify_sequence(self):  # noqa: D102
         return ["verify"]
 
     @property
     def sequence(self) -> list[str]:
-        """Select the sequence based on scenario and subcommand of the provided scenario object and returns a list."""  # noqa: E501
+        """Select the sequence based on scenario and subcommand of the provided
+        scenario object and returns a list.
+        """
         result = []
         our_scenarios = scenarios.Scenarios([self.config])
         matrix = our_scenarios._get_matrix()  # type: ignore[no-untyped-call]  # noqa: SLF001
@@ -202,7 +209,7 @@ class Scenario:
             pass
         return result
 
-    def _setup(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
+    def _setup(self) -> None:
         """Prepare the scenario for Molecule and returns None."""
         if not os.path.isdir(self.inventory_directory):  # noqa: PTH112
             os.makedirs(self.inventory_directory, exist_ok=True)  # noqa: PTH103
@@ -213,16 +220,23 @@ def ephemeral_directory(path: str | None = None) -> str:
 
     Molecule users should not make any assumptions about its location,
     permissions or its content as this may change in future release.
+
+    Raises:
+        RuntimeError: If ephemeral directory location cannot be determined
     """
-    d = os.getenv("MOLECULE_EPHEMERAL_DIRECTORY")
+    d: str | Path | None = os.getenv("MOLECULE_EPHEMERAL_DIRECTORY")
     if not d:
-        d = os.getenv("XDG_CACHE_HOME", os.path.expanduser("~/.cache"))  # noqa: PTH111
+        d = os.getenv("XDG_CACHE_HOME", Path("~/.cache").expanduser())
     if not d:
-        raise RuntimeError("Unable to determine ephemeral directory to use.")  # noqa: EM101, TRY003
-    d = os.path.abspath(os.path.join(d, path if path else "molecule"))  # noqa: PTH100, PTH118
+        msg = "Unable to determine ephemeral directory to use."
+        raise RuntimeError(msg)
 
-    if not os.path.isdir(d):  # noqa: PTH112
+    if isinstance(d, str):
+        d = Path(d)
+    d = d.resolve() / (path if path else "molecule")
+
+    if not d.is_dir():
         os.umask(0o077)
-        Path(d).mkdir(mode=0o700, parents=True, exist_ok=True)
+        d.mkdir(mode=0o700, parents=True, exist_ok=True)
 
-    return d
+    return str(d)
