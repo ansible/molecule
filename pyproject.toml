@@ -218,6 +218,7 @@ disable = [
   "R0914", # too-many-locals / ruff PLR0914
   "R0915", # too-many-statements / ruff PLR0915
   "R0916", # too-many-boolean-expressions / ruff PLR0916
+  "R0917", # too-many-positional-expressions / ruff PLR0917
   "R1260", # too-complex / ruff C901
   "R1701", # consider-merging-isinstance / ruff PLR1701
   "R1702", # too-many-nested-blocks / ruff PLR1702
