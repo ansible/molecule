@@ -435,14 +435,6 @@ src/molecule/shell.py
     DOC107: Function `main`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Function `main`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [base_config: , ctx: , debug: , env_file: , verbose: ].
 --------------------
-src/molecule/state.py
-    DOC106: Method `State.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `State.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC106: Method `State.change_state`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `State.change_state`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC501: Method `State.change_state` has "raise" statements, but the docstring does not have a "Raises" section
-    DOC503: Method `State.change_state` exceptions in the "Raises" section in the docstring do not match those in the function body Raises values in the docstring: []. Raised exceptions in the body: ['InvalidState'].
---------------------
 src/molecule/status.py
     DOC601: Class `Status`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
     DOC603: Class `Status`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [converged: str, created: str, driver_name: str, instance_name: str, provisioner_name: str, scenario_name: str]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
