@@ -26,7 +26,7 @@ import os
 import warnings
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 from uuid import uuid4
 
 from ansible_compat.ports import cache, cached_property
@@ -38,6 +38,7 @@ from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
+from molecule.types import ConfigData
 from molecule.util import boolean
 
 
@@ -320,7 +321,7 @@ class Config(metaclass=NewInitCaller):
 
         return driver_name
 
-    def _get_config(self) -> MutableMapping:  # type: ignore[type-arg]
+    def _get_config(self) -> ConfigData:
         """Perform a prioritized recursive merge of config files.
 
         Returns a new dict.  Prior to merging the config files are interpolated with
@@ -345,7 +346,7 @@ class Config(metaclass=NewInitCaller):
 
         return self._combine(env=env)
 
-    def _combine(self, env=os.environ, keep_string=None) -> MutableMapping:  # type: ignore[no-untyped-def, type-arg]  # noqa: ANN001
+    def _combine(self, env=os.environ, keep_string=None) -> ConfigData:  # type: ignore[no-untyped-def]  # noqa: ANN001
         """Perform a prioritized recursive merge of config files.
 
         Returns a new dict.  Prior to merging the config files are interpolated with
@@ -365,19 +366,21 @@ class Config(metaclass=NewInitCaller):
             with open(base_config) as stream:  # noqa: PTH123
                 s = stream.read()
                 interpolated_config = self._interpolate(s, env, keep_string)
-                defaults = util.merge_dicts(
-                    defaults,
+                merged = util.merge_dicts(
+                    defaults,  # type: ignore[arg-type]
                     util.safe_load(interpolated_config),
                 )
+                defaults = cast(ConfigData, merged)
 
         if self.molecule_file:
             with open(self.molecule_file) as stream:  # noqa: PTH123
                 s = stream.read()
                 interpolated_config = self._interpolate(s, env, keep_string)
-                defaults = util.merge_dicts(
-                    defaults,
+                merged = util.merge_dicts(
+                    defaults,  # type: ignore[arg-type]
                     util.safe_load(interpolated_config),
                 )
+                defaults = cast(ConfigData, merged)
 
         return defaults
 
@@ -393,7 +396,7 @@ class Config(metaclass=NewInitCaller):
             util.sysexit_with_message(msg)
         return ""
 
-    def _get_defaults(self) -> MutableMapping:  # type: ignore[type-arg]
+    def _get_defaults(self) -> ConfigData:
         if not self.molecule_file:
             scenario_name = "default"
         else:
