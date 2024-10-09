@@ -62,13 +62,15 @@ class Scenario:
         shutil.rmtree(directory)
 
     def prune(self) -> None:
-        """Prune the scenario ephemeral directory files and returns None.
+        """Prune the scenario ephemeral directory files.
 
         "safe files" will not be pruned, including the ansible configuration
         and inventory used by this scenario, the scenario state file, and
         files declared as "safe_files" in the ``driver`` configuration
         declared in ``molecule.yml``.
 
+        Raises:
+            OSError: if files cannot be removed.
         """
         LOG.info("Pruning extra files from scenario ephemeral directory")
         safe_files = [
@@ -92,20 +94,38 @@ class Scenario:
                 os.removedirs(dirpath)
 
     @property
-    def name(self) -> str:  # noqa: D102
+    def name(self) -> str:
+        """Name of the scenario.
+
+        Returns:
+            The scenario's name.
+        """
         return self.config.config["scenario"]["name"]
 
     @property
-    def directory(self) -> Path:  # noqa: D102
+    def directory(self) -> Path:
+        """Scenario directory.
+
+        Returns:
+            The directory containing the scenario.
+        """
         if self.config.molecule_file:
-            return os.path.dirname(self.config.molecule_file)  # noqa: PTH120
+            return Path(self.config.molecule_file).parent
         return Path.cwd()
 
     @property
-    def ephemeral_directory(self):  # noqa: D102
-        path = os.getenv("MOLECULE_EPHEMERAL_DIRECTORY", None)
+    def ephemeral_directory(self) -> Path:
+        """Acquire the ephemeral directory.
+
+        Returns:
+            The ephemeral directory for this scenario.
+
+        Raises:
+            SystemExit: If lock cannot be acquired before timeout.
+        """
+        path: str | Path | None = os.getenv("MOLECULE_EPHEMERAL_DIRECTORY", None)
         if not path:
-            project_directory = Path(self.config.project_directory)
+            project_directory = self.config.project_directory
 
             if self.config.is_parallel:
                 project_directory = f"{project_directory}-{self.config._run_uuid}"  # noqa: SLF001
@@ -118,8 +138,12 @@ class Scenario:
 
             path = ephemeral_directory(project_scenario_directory)
 
+        if isinstance(path, str):
+            path = Path(path)
+
         if os.environ.get("MOLECULE_PARALLEL", False) and not self._lock:
-            with open(os.path.join(path, ".lock"), "w") as self._lock:  # type: ignore[assignment]  # noqa: PTH118, PTH123
+            lock_file = path / ".lock"
+            with lock_file.open("w") as self._lock:  # type: ignore[assignment]
                 for i in range(1, 5):
                     try:
                         fcntl.lockf(self._lock, fcntl.LOCK_EX | fcntl.LOCK_NB)  # type: ignore[arg-type]
@@ -139,61 +163,131 @@ class Scenario:
         return path
 
     @property
-    def inventory_directory(self):  # noqa: D102
-        return os.path.join(self.ephemeral_directory, "inventory")  # noqa: PTH118
+    def inventory_directory(self) -> Path:
+        """Inventory directory.
+
+        Returns:
+            The directory containing the scenario's inventory.
+        """
+        return self.ephemeral_directory / "inventory"
 
     @property
-    def check_sequence(self):  # noqa: D102
+    def check_sequence(self) -> list[str]:
+        """Check playbook sequence.
+
+        Returns:
+            A list of playbooks to run for 'check'.
+        """
         return self.config.config["scenario"]["check_sequence"]
 
     @property
-    def cleanup_sequence(self):  # noqa: D102
+    def cleanup_sequence(self) -> list[str]:
+        """Cleanup playbook sequence.
+
+        Returns:
+            A list of playbooks to run for 'cleanup'.
+        """
         return self.config.config["scenario"]["cleanup_sequence"]
 
     @property
-    def converge_sequence(self):  # noqa: D102
+    def converge_sequence(self) -> list[str]:
+        """Converge playbook sequence.
+
+        Returns:
+            A list of playbooks to run for 'converge'.
+        """
         return self.config.config["scenario"]["converge_sequence"]
 
     @property
-    def create_sequence(self):  # noqa: D102
+    def create_sequence(self) -> list[str]:
+        """Create playbook sequence.
+
+        Returns:
+            A list of playbooks to run for 'create'.
+        """
         return self.config.config["scenario"]["create_sequence"]
 
     @property
-    def dependency_sequence(self):  # noqa: D102
+    def dependency_sequence(self) -> list[str]:
+        """Dependency playbook sequence.
+
+        Returns:
+            A list of playbooks to run for 'dependency'.
+        """
         return ["dependency"]
 
     @property
-    def destroy_sequence(self):  # noqa: D102
+    def destroy_sequence(self) -> list[str]:
+        """Destroy playbook sequence.
+
+        Returns:
+            A list of playbooks to run for 'destroy'.
+        """
         return self.config.config["scenario"]["destroy_sequence"]
 
     @property
-    def idempotence_sequence(self):  # noqa: D102
+    def idempotence_sequence(self) -> list[str]:
+        """Idempotence playbook sequence.
+
+        Returns:
+            A list of playbooks to run for 'idempotence'.
+        """
         return ["idempotence"]
 
     @property
-    def prepare_sequence(self):  # noqa: D102
+    def prepare_sequence(self) -> list[str]:
+        """Prepare playbook sequence.
+
+        Returns:
+            A list of playbooks to run for 'prepare'.
+        """
         return ["prepare"]
 
     @property
-    def side_effect_sequence(self):  # noqa: D102
+    def side_effect_sequence(self) -> list[str]:
+        """Side effect playbook sequence.
+
+        Returns:
+            A list of playbooks to run for 'side_effect'.
+        """
         return ["side_effect"]
 
     @property
-    def syntax_sequence(self):  # noqa: D102
+    def syntax_sequence(self) -> list[str]:
+        """Syntax playbook sequence.
+
+        Returns:
+            A list of playbooks to run for 'syntax'.
+        """
         return ["syntax"]
 
     @property
-    def test_sequence(self):  # noqa: D102
+    def test_sequence(self) -> list[str]:
+        """Test playbook sequence.
+
+        Returns:
+            A list of playbooks to run for 'test'.
+        """
         return self.config.config["scenario"]["test_sequence"]
 
     @property
-    def verify_sequence(self):  # noqa: D102
+    def verify_sequence(self) -> list[str]:
+        """Verify playbook sequence.
+
+        Returns:
+            A list of playbooks to run for 'verify'.
+        """
         return ["verify"]
 
     @property
     def sequence(self) -> list[str]:
-        """Select the sequence based on scenario and subcommand of the provided
-        scenario object and returns a list.
+        """Select the sequence based on scenario and subcommand of the provided scenario.
+
+        Returns:
+            A list of playbooks to run.
+
+        Raises:
+            RuntimeError: if an unexpected sequence type is requested.
         """
         result = []
         our_scenarios = scenarios.Scenarios([self.config])
@@ -210,16 +304,22 @@ class Scenario:
         return result
 
     def _setup(self) -> None:
-        """Prepare the scenario for Molecule and returns None."""
+        """Prepare the scenario for Molecule."""
         if not os.path.isdir(self.inventory_directory):  # noqa: PTH112
             os.makedirs(self.inventory_directory, exist_ok=True)  # noqa: PTH103
 
 
-def ephemeral_directory(path: str | None = None) -> str:
+def ephemeral_directory(path: str | None = None) -> Path:
     """Return temporary directory to be used by molecule.
 
     Molecule users should not make any assumptions about its location,
     permissions or its content as this may change in future release.
+
+    Args:
+        path: Ephemeral directory name.
+
+    Returns:
+        The full ephemeral directory path.
 
     Raises:
         RuntimeError: If ephemeral directory location cannot be determined
@@ -239,4 +339,4 @@ def ephemeral_directory(path: str | None = None) -> str:
         os.umask(0o077)
         d.mkdir(mode=0o700, parents=True, exist_ok=True)
 
-    return str(d)
+    return d
