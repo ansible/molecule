@@ -22,12 +22,13 @@ from __future__ import annotations
 
 import logging
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from molecule import util
 
 
 if TYPE_CHECKING:
+    from molecule.config import Config
     from molecule.scenario import Scenario
 
 
@@ -37,38 +38,52 @@ LOG = logging.getLogger(__name__)
 class Scenarios:
     """The Scenarios groups one or more scenario objects Molecule will execute."""
 
-    def __init__(self, configs, scenario_name=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
+    def __init__(
+        self,
+        configs: list[Config],
+        scenario_name: str | None = None,
+    ) -> None:
         """Initialize a new scenarios class and returns None.
 
         Args:
-            configs: A list containing Molecule config instances.
-            scenario_name: A string containing the name of the scenario.
+            configs: Molecule config instances.
+            scenario_name: The name of the scenario.
         """
         self._configs = configs
         self._scenario_name = scenario_name
         self._scenarios = self.all
 
-    def next(self) -> Scenario:  # noqa: D102
+    def __iter__(self) -> Self:
+        """Make object iterable.
+
+        Returns:
+            The object itself, as Scenarios is iterable.
+        """
+        return self
+
+    def __next__(self) -> Scenario:
+        """Iterate over Scenario objects.
+
+        Returns:
+            The next Scenario in the sequence.
+
+        Raises:
+            StopIteration: When the scenarios are exhausted.
+        """
         if not self._scenarios:
             raise StopIteration
         return self._scenarios.pop(0)
-
-    def __iter__(self):  # type: ignore[no-untyped-def]  # noqa: ANN204
-        """Make object iterable."""
-        return self
-
-    __next__ = next  # Python 3.X compatibility
 
     @property
     def all(self) -> list[Scenario]:
         """Return a list containing all scenario objects.
 
         Returns:
-            list
+            All Scenario objects.
         """
         if self._scenario_name:
             scenarios = self._filter_for_scenario()
-            self._verify()  # type: ignore[no-untyped-call]
+            self._verify()
 
             return scenarios
 
@@ -76,7 +91,8 @@ class Scenarios:
         scenarios.sort(key=lambda x: x.directory)
         return scenarios
 
-    def print_matrix(self) -> None:  # noqa: D102
+    def print_matrix(self) -> None:
+        """Show the test matrix for all scenarios."""
         msg = "Test matrix"
         LOG.info(msg)
 
@@ -85,7 +101,18 @@ class Scenarios:
             tree[scenario.name] = list(scenario.sequence)
         util.print_as_yaml(tree)
 
-    def sequence(self, scenario_name: str) -> list[str]:  # noqa: D102
+    def sequence(self, scenario_name: str) -> list[str]:
+        """Sequence for a given scenario.
+
+        Args:
+            scenario_name: Name of the scenario to determine the sequence of.
+
+        Returns:
+            A list of steps for that scenario.
+
+        Raises:
+            RuntimeError: If the scenario cannot be found.
+        """
         for scenario in self.all:
             if scenario.name == scenario_name:
                 return list(scenario.sequence)
@@ -93,8 +120,8 @@ class Scenarios:
             f"Unable to find sequence for {scenario_name} scenario.",  # noqa: EM102
         )
 
-    def _verify(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
-        """Verify the specified scenario was found and returns None."""
+    def _verify(self) -> None:
+        """Verify the specified scenario was found."""
         scenario_names = [c.scenario.name for c in self._configs]
         if self._scenario_name not in scenario_names:
             msg = f"Scenario '{self._scenario_name}' not found.  Exiting."
@@ -108,25 +135,11 @@ class Scenarios:
         """
         return [c.scenario for c in self._configs if c.scenario.name == self._scenario_name]
 
-    def _get_matrix(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
-        """Build a matrix of scenarios with sequence to include and returns a dict.
-
-        {
-            scenario_1: {
-                'subcommand': [
-                    'action-1',
-                    'action-2',
-                ],
-            },
-            scenario_2: {
-                'subcommand': [
-                    'action-1',
-                ],
-            },
-        }
+    def _get_matrix(self) -> dict[str, dict[str, list[str]]]:
+        """Build a matrix of scenarios and step sequences.
 
         Returns:
-            dict
+            A dictionary for each scenario listing action sequences for each step.
         """
         return {
             scenario.name: {
