@@ -291,7 +291,7 @@ class Scenario:
         """
         result = []
         our_scenarios = scenarios.Scenarios([self.config])
-        matrix = our_scenarios._get_matrix()  # type: ignore[no-untyped-call]  # noqa: SLF001
+        matrix = our_scenarios._get_matrix()  # noqa: SLF001
 
         try:
             result = matrix[self.name][self.config.subcommand]
