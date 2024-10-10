@@ -29,7 +29,7 @@ import sys
 
 from pathlib import Path
 from subprocess import CalledProcessError, CompletedProcess
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 import jinja2
 import yaml
@@ -47,6 +47,10 @@ if TYPE_CHECKING:
     from io import TextIOWrapper
     from typing import Any, AnyStr, NoReturn
     from warnings import WarningMessage
+
+    Basic = str | float | bool
+    NestedDict = MutableMapping[str, Basic | None | list[Basic | "NestedDict"] | "NestedDict"]
+    _T = TypeVar("_T", bound=NestedDict)
 
 
 LOG = logging.getLogger(__name__)
@@ -246,19 +250,21 @@ def render_template(template: str, **kwargs: str) -> str:
     return t.from_string(template).render(kwargs)
 
 
-def write_file(filename: str, content: str, header: str | None = None) -> None:
+def write_file(filename: str | Path, content: str, header: str | None = None) -> None:
     """Write a file with the given filename and content and returns None.
 
     Args:
-        filename: A string containing the target filename.
+        filename: The target file.
         content: A string containing the data to be written.
         header: A header, if None it will use default header.
     """
     if header is None:
         content = MOLECULE_HEADER + "\n\n" + content
 
-    with open(filename, "w") as f:  # noqa: PTH123
-        f.write(content)
+    if isinstance(filename, str):
+        filename = Path(filename)
+
+    filename.write_text(content)
 
 
 def molecule_prepender(content: str) -> str:
@@ -403,10 +409,7 @@ def abs_path(path: str | Path) -> str | None:
     return None
 
 
-def merge_dicts(
-    a: MutableMapping[str, Any],
-    b: MutableMapping[str, Any],
-) -> MutableMapping[str, Any]:
+def merge_dicts(a: _T, b: _T) -> _T:
     """Merge the values of b into a and returns a new dict.
 
     This function uses the same algorithm as Ansible's `combine(recursive=True)` filter.
