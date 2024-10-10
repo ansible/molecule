@@ -211,7 +211,7 @@ def test_get_config_with_base_config(config_instance: config.Config):  # type: i
     util.write_file(config_instance.args["base_config"][0], util.safe_dump(contents))
     result = config_instance._get_config()
 
-    assert result["foo"] == "bar"
+    assert result["foo"] == "bar"  # type: ignore[typeddict-item]
 
 
 def test_get_config_with_multiple_base_configs(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
@@ -222,8 +222,8 @@ def test_get_config_with_multiple_base_configs(config_instance: config.Config): 
     util.write_file(config_instance.args["base_config"][1], util.safe_dump(contents))
     result = config_instance._get_config()
 
-    assert result["foo"] == "bar"
-    assert result["foo2"] == "bar2"
+    assert result["foo"] == "bar"  # type: ignore[typeddict-item]
+    assert result["foo2"] == "bar2"  # type: ignore[typeddict-item]
 
 
 def test_reget_config(config_instance: config.Config) -> None:  # noqa: D103
