@@ -22,12 +22,14 @@ from __future__ import annotations
 
 import logging
 
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING
 
 from molecule import util
 
 
 if TYPE_CHECKING:
+    from typing import Self
+
     from molecule.config import Config
     from molecule.scenario import Scenario
 
