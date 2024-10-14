@@ -48,8 +48,9 @@ if TYPE_CHECKING:
     from typing import Any, AnyStr, NoReturn
     from warnings import WarningMessage
 
-    Basic = str | float | bool
-    NestedDict = MutableMapping[str, Basic | None | list[Basic | "NestedDict"] | "NestedDict"]
+    from ansible_compat.types import JSON
+
+    NestedDict = MutableMapping[str, JSON]
     _T = TypeVar("_T", bound=NestedDict)
 
 
