@@ -29,7 +29,7 @@ import sys
 
 from pathlib import Path
 from subprocess import CalledProcessError, CompletedProcess
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 import jinja2
 import yaml
@@ -47,6 +47,11 @@ if TYPE_CHECKING:
     from io import TextIOWrapper
     from typing import Any, AnyStr, NoReturn
     from warnings import WarningMessage
+
+    from ansible_compat.types import JSON
+
+    NestedDict = MutableMapping[str, JSON]
+    _T = TypeVar("_T", bound=NestedDict)
 
 
 LOG = logging.getLogger(__name__)
@@ -404,10 +409,7 @@ def abs_path(path: str | Path) -> str | None:
     return None
 
 
-def merge_dicts(
-    a: MutableMapping[str, Any],
-    b: MutableMapping[str, Any],
-) -> MutableMapping[str, Any]:
+def merge_dicts(a: _T, b: _T) -> _T:
     """Merge the values of b into a and returns a new dict.
 
     This function uses the same algorithm as Ansible's `combine(recursive=True)` filter.

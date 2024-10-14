@@ -86,7 +86,7 @@ class AnsiblePlaybook:
 
         self._ansible_command = [  # type: ignore[assignment]
             "ansible-playbook",
-            *util.dict2args(options),  # type: ignore[arg-type]
+            *util.dict2args(options),
             *util.bool2args(verbose_flag),
             *ansible_args,
             self._playbook,  # must always go last
@@ -111,7 +111,7 @@ class AnsiblePlaybook:
             cwd = self._config.scenario_path
             result = util.run_command(
                 cmd=self._ansible_command,  # type: ignore[arg-type]
-                env=self._env,  # type: ignore[arg-type]
+                env=self._env,
                 debug=self._config.debug,
                 cwd=cwd,
             )
