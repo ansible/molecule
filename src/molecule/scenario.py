@@ -103,18 +103,19 @@ class Scenario:
         return self.config.config["scenario"]["name"]
 
     @property
-    def directory(self) -> Path:
+    def directory(self) -> str:
         """Scenario directory.
 
         Returns:
             The directory containing the scenario.
         """
+        path = Path.cwd()
         if self.config.molecule_file:
-            return Path(self.config.molecule_file).parent
-        return Path.cwd()
+            path = Path(self.config.molecule_file).parent
+        return str(path)
 
     @property
-    def ephemeral_directory(self) -> Path:
+    def ephemeral_directory(self) -> str:
         """Acquire the ephemeral directory.
 
         Returns:
@@ -160,16 +161,17 @@ class Scenario:
                     LOG.warning("Timedout trying to acquire lock on %s", path)
                     raise SystemExit(RC_TIMEOUT)
 
-        return path
+        return str(path)
 
     @property
-    def inventory_directory(self) -> Path:
+    def inventory_directory(self) -> str:
         """Inventory directory.
 
         Returns:
             The directory containing the scenario's inventory.
         """
-        return self.ephemeral_directory / "inventory"
+        path = Path(self.ephemeral_directory) / "inventory"
+        return str(path)
 
     @property
     def check_sequence(self) -> list[str]:
@@ -305,8 +307,9 @@ class Scenario:
 
     def _setup(self) -> None:
         """Prepare the scenario for Molecule."""
-        if not os.path.isdir(self.inventory_directory):  # noqa: PTH112
-            os.makedirs(self.inventory_directory, exist_ok=True)  # noqa: PTH103
+        inventory = Path(self.inventory_directory)
+        if not inventory.is_dir():
+            inventory.mkdir(exist_ok=True, parents=True)
 
 
 def ephemeral_directory(path: str | None = None) -> Path:
