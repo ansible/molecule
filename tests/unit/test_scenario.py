@@ -46,7 +46,7 @@ def _instance(
 
 
 def test_prune(_instance: scenario.Scenario) -> None:  # noqa: PT019, D103
-    e_dir = _instance.ephemeral_directory
+    e_dir = Path(_instance.ephemeral_directory)
     # prune data also includes files in the scenario inventory dir,
     # which is "<e_dir>/inventory" by default.
     # items are created in listed order, directories first, safe before pruned
@@ -112,10 +112,10 @@ def test_ephemeral_directory_property(  # noqa: D103
 def test_scenario_inventory_directory_property(  # noqa: D103
     _instance: scenario.Scenario,  # noqa: PT019
 ) -> None:
-    ephemeral_directory = _instance.config.scenario.ephemeral_directory
+    ephemeral_directory = Path(_instance.config.scenario.ephemeral_directory)
     e_dir = ephemeral_directory / "inventory"
 
-    assert e_dir == _instance.inventory_directory
+    assert str(e_dir) == _instance.inventory_directory
 
 
 def test_check_sequence_property(  # noqa: D103
@@ -231,8 +231,8 @@ def test_setup_creates_ephemeral_and_inventory_directories(  # noqa: D103
     shutil.rmtree(ephemeral_dir)
     _instance._setup()
 
-    assert ephemeral_dir.is_dir()
-    assert inventory_dir.is_dir()
+    assert Path(ephemeral_dir).is_dir()
+    assert Path(inventory_dir).is_dir()
 
 
 def test_ephemeral_directory() -> None:  # noqa: D103
