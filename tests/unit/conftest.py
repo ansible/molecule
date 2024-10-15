@@ -38,8 +38,8 @@ if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
 
-def write_molecule_file(filename: str, data: Any) -> None:  # noqa: ANN401, D103
-    util.write_file(filename, util.safe_dump(data))
+def write_molecule_file(file: Path, data: Any) -> None:  # noqa: ANN401, D103
+    util.write_file(file, util.safe_dump(data))
 
 
 def os_split(s: str) -> tuple[str, ...]:  # noqa: D103
@@ -102,7 +102,7 @@ def config_instance(
     molecule_dir = test_cache_path / "molecule" / "default"
     molecule_dir.mkdir(parents=True, exist_ok=True)
     molecule_file = molecule_dir / "molecule.yml"
-    write_molecule_file(str(molecule_file), mdc)
+    write_molecule_file(molecule_file, mdc)
 
     def _filter_ignored_scenarios(scenario_paths: list[str]) -> list[str]:
         return scenario_paths
