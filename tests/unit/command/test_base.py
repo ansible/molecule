@@ -43,7 +43,7 @@ FIXTURE_DIR = Path(__file__).parent.parent.parent / "fixtures" / "unit" / "test_
 class ExtendedBase(base.Base):
     """ExtendedBase Class."""
 
-    def execute(self: ExtendedBase, action_args: list[str] | None = None) -> None:
+    def execute(self, action_args: list[str] | None = None) -> None:
         """No-op the execute method.
 
         Args:

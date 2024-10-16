@@ -50,13 +50,13 @@ class Scenario:
         self.config = config
         self._setup()  # type: ignore[no-untyped-call]
 
-    def _remove_scenario_state_directory(self: Scenario) -> None:
+    def _remove_scenario_state_directory(self) -> None:
         """Remove scenario cached disk stored state."""
         directory = str(Path(self.ephemeral_directory).parent)
         LOG.info("Removing %s", directory)
         shutil.rmtree(directory)
 
-    def prune(self: Scenario) -> None:
+    def prune(self) -> None:
         """Prune the scenario ephemeral directory files and returns None.
 
         "safe files" will not be pruned, including the ansible configuration
