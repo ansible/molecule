@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from typing import Any
 
 
-class DependencyData(TypedDict):
+class DependencyData(TypedDict, total=False):
     """Molecule dependency configuration.
 
     Attributes:
@@ -27,7 +27,7 @@ class DependencyData(TypedDict):
     env: dict[str, Any]
 
 
-class DriverData(TypedDict):
+class DriverData(TypedDict, total=False):
     """Molecule driver configuration.
 
     Attributes:
@@ -175,31 +175,7 @@ class ConfigData(TypedDict):
     verifier: VerifierData
 
 
-class CommandArgs(TypedDict, total=False):
-    """Class representing commandline arguments passed to molecule.
-
-    These arguments may or may not be passed depending on the command being called.
-
-    Attributes:
-        destroy: Destroy strategy to use.
-        driver_name: Name of driver to use.
-        force: Whether to enable force mode.
-        parallel: Whether to enable parallel mode.
-        platform_name: Name of the platform to target.
-        scenario_name: Name of the scenario to target.
-        subcommand: Name of subcommand being run.
-    """
-
-    destroy: Literal["always", "never"]
-    driver_name: str
-    force: bool
-    parallel: bool
-    platform_name: str
-    scenario_name: str
-    subcommand: str
-
-
-class Args(TypedDict, total=False):
+class MoleculeArgs(TypedDict, total=False):
     """Class representing base arguments passed to all Molecule commands.
 
     Attributes:
@@ -213,3 +189,31 @@ class Args(TypedDict, total=False):
     debug: bool
     env_file: str
     verbose: int
+
+
+class CommandArgs(TypedDict, total=False):
+    """Class representing commandline arguments passed to molecule.
+
+    These arguments may or may not be passed depending on the command being called.
+
+    Attributes:
+        destroy: Destroy strategy to use.
+        driver_name: Name of driver to use.
+        force: Whether to enable force mode.
+        format: Output format
+        host: Host to access.
+        parallel: Whether to enable parallel mode.
+        platform_name: Name of the platform to target.
+        scenario_name: Name of the scenario to target.
+        subcommand: Name of subcommand being run.
+    """
+
+    destroy: Literal["always", "never"]
+    driver_name: str
+    force: bool
+    format: Literal["simple", "plain", "yaml"]
+    host: str
+    parallel: bool
+    platform_name: str
+    scenario_name: str
+    subcommand: str

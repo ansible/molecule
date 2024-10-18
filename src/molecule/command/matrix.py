@@ -22,10 +22,16 @@ from __future__ import annotations
 
 import logging
 
+from typing import TYPE_CHECKING
+
 import click
 
 from molecule import scenarios
 from molecule.command import base
+
+
+if TYPE_CHECKING:
+    from molecule.types import CommandArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -76,7 +82,7 @@ class Matrix(base.Base):  # pylint: disable=abstract-method
 def matrix(ctx, scenario_name, subcommand):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
     """List matrix of steps used to test instances."""
     args = ctx.obj.get("args")
-    command_args = {"subcommand": subcommand}
+    command_args: CommandArgs = {"subcommand": subcommand}
 
     s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
     s.print_matrix()

@@ -22,9 +22,15 @@ from __future__ import annotations
 
 import logging
 
+from typing import TYPE_CHECKING
+
 import click
 
 from molecule.command import base
+
+
+if TYPE_CHECKING:
+    from molecule.types import CommandArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -35,7 +41,7 @@ class Converge(base.Base):
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to perform a `molecule converge` and returns None."""
-        self._config.provisioner.converge()
+        self._config.provisioner.converge()  # type: ignore[union-attr]
         self._config.state.change_state("converged", True)  # noqa: FBT003
 
 
@@ -52,6 +58,6 @@ def converge(ctx, scenario_name, ansible_args):  # type: ignore[no-untyped-def] 
     """Use the provisioner to configure instances (dependency, create, prepare converge)."""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args = {"subcommand": subcommand}
+    command_args: CommandArgs = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)

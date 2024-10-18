@@ -22,9 +22,15 @@ from __future__ import annotations
 
 import logging
 
+from typing import TYPE_CHECKING
+
 import click
 
 from molecule.command import base
+
+
+if TYPE_CHECKING:
+    from molecule.types import CommandArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -35,12 +41,12 @@ class Cleanup(base.Base):
 
     def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
         """Execute the actions necessary to cleanup the instances and returns None."""
-        if not self._config.provisioner.playbooks.cleanup:
+        if not self._config.provisioner.playbooks.cleanup:  # type: ignore[union-attr]
             msg = "Skipping, cleanup playbook not configured."
             LOG.warning(msg)
             return
 
-        self._config.provisioner.cleanup()
+        self._config.provisioner.cleanup()  # type: ignore[union-attr]
 
 
 @base.click_command_ex()
@@ -58,6 +64,6 @@ def cleanup(ctx, scenario_name="default"):  # type: ignore[no-untyped-def] # pra
     """
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args = {"subcommand": subcommand}
+    command_args: CommandArgs = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)

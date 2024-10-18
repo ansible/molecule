@@ -22,10 +22,16 @@ from __future__ import annotations
 
 import logging
 
+from typing import TYPE_CHECKING
+
 import click
 
 from molecule.api import drivers
 from molecule.command import base
+
+
+if TYPE_CHECKING:
+    from molecule.types import CommandArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -43,7 +49,7 @@ def reset(ctx, scenario_name):  # type: ignore[no-untyped-def] # pragma: no cove
     """Reset molecule temporary folders."""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args = {"subcommand": subcommand}
+    command_args: CommandArgs = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
     for driver in drivers().values():

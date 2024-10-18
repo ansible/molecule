@@ -50,6 +50,8 @@ if TYPE_CHECKING:
 
     from ansible_compat.types import JSON
 
+    from molecule.types import CommandArgs
+
     NestedDict = MutableMapping[str, JSON]
     _T = TypeVar("_T", bound=NestedDict)
 
@@ -433,7 +435,7 @@ def merge_dicts(a: _T, b: _T) -> _T:
     return result
 
 
-def validate_parallel_cmd_args(cmd_args: dict[str, Any]) -> None:
+def validate_parallel_cmd_args(cmd_args: CommandArgs) -> None:
     """Prevents use of options incompatible with parallel mode.
 
     Args:

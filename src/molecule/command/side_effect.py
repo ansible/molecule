@@ -22,9 +22,15 @@ from __future__ import annotations
 
 import logging
 
+from typing import TYPE_CHECKING
+
 import click
 
 from molecule.command import base
+
+
+if TYPE_CHECKING:
+    from molecule.types import CommandArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -38,12 +44,12 @@ class SideEffect(base.Base):
 
     def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
         """Execute the actions necessary to perform a `molecule side-effect` and returns None."""
-        if not self._config.provisioner.playbooks.side_effect:
+        if not self._config.provisioner.playbooks.side_effect:  # type: ignore[union-attr]
             msg = "Skipping, side effect playbook not configured."
             LOG.warning(msg)
             return
 
-        self._config.provisioner.side_effect(action_args)
+        self._config.provisioner.side_effect(action_args)  # type: ignore[union-attr]
 
 
 @base.click_command_ex()
@@ -58,6 +64,6 @@ def side_effect(ctx, scenario_name):  # type: ignore[no-untyped-def] # pragma: n
     """Use the provisioner to perform side-effects to the instances."""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args = {"subcommand": subcommand}
+    command_args: CommandArgs = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
