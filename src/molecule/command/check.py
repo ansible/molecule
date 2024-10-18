@@ -23,10 +23,16 @@ from __future__ import annotations
 import logging
 import os
 
+from typing import TYPE_CHECKING
+
 import click
 
 from molecule import util
 from molecule.command import base
+
+
+if TYPE_CHECKING:
+    from molecule.types import CommandArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -38,7 +44,7 @@ class Check(base.Base):
 
     def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
         """Execute the actions necessary to perform a `molecule check` and returns None."""
-        self._config.provisioner.check()
+        self._config.provisioner.check()  # type: ignore[union-attr]
 
 
 @base.click_command_ex()
@@ -58,7 +64,7 @@ def check(ctx, scenario_name, parallel):  # type: ignore[no-untyped-def] # pragm
     """Use the provisioner to perform a Dry-Run (destroy, dependency, create, prepare, converge)."""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args = {"parallel": parallel, "subcommand": subcommand}
+    command_args: CommandArgs = {"parallel": parallel, "subcommand": subcommand}
 
     if parallel:
         util.validate_parallel_cmd_args(command_args)

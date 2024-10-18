@@ -22,11 +22,17 @@ from __future__ import annotations
 
 import logging
 
+from typing import TYPE_CHECKING
+
 import click
 
 from molecule.api import drivers
 from molecule.command import base
 from molecule.config import DEFAULT_DRIVER
+
+
+if TYPE_CHECKING:
+    from molecule.types import CommandArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -92,12 +98,12 @@ class Prepare(base.Base):
             LOG.warning(msg)
             return
 
-        if not self._config.provisioner.playbooks.prepare:
+        if not self._config.provisioner.playbooks.prepare:  # type: ignore[union-attr]
             msg = "Skipping, prepare playbook not configured."
             LOG.warning(msg)
             return
 
-        self._config.provisioner.prepare()
+        self._config.provisioner.prepare()  # type: ignore[union-attr]
         self._config.state.change_state("prepared", True)  # noqa: FBT003
 
 
@@ -125,7 +131,7 @@ def prepare(ctx, scenario_name, driver_name, force):  # type: ignore[no-untyped-
     """Use the provisioner to prepare the instances into a particular starting state."""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args = {
+    command_args: CommandArgs = {
         "subcommand": subcommand,
         "driver_name": driver_name,
         "force": force,

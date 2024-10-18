@@ -23,11 +23,17 @@ from __future__ import annotations
 import logging
 import re
 
+from typing import TYPE_CHECKING
+
 import click
 
 from molecule import util
 from molecule.command import base
 from molecule.text import strip_ansi_escape
+
+
+if TYPE_CHECKING:
+    from molecule.types import CommandArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -46,7 +52,7 @@ class Idempotence(base.Base):
             msg = "Instances not converged.  Please converge instances first."
             util.sysexit_with_message(msg)
 
-        output = self._config.provisioner.converge()
+        output = self._config.provisioner.converge()  # type: ignore[union-attr]
 
         idempotent = self._is_idempotent(output)  # type: ignore[no-untyped-call]
         if idempotent:
@@ -121,6 +127,6 @@ def idempotence(ctx, scenario_name, ansible_args):  # type: ignore[no-untyped-de
     """
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args = {"subcommand": subcommand}
+    command_args: CommandArgs = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)
