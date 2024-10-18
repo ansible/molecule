@@ -68,17 +68,7 @@ def ansible_version() -> Version:
     return app.runtime.version
 
 
-# https://stackoverflow.com/questions/16017397/injecting-function-call-after-init-with-decorator
-class NewInitCaller(type):
-    """NewInitCaller."""
-
-    def __call__(cls, *args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN002, ANN003, ANN204, D102
-        obj = type.__call__(cls, *args, **kwargs)
-        obj.after_init()
-        return obj
-
-
-class Config(metaclass=NewInitCaller):
+class Config:
     """Config Class.
 
     Molecule searches the current directory for ``molecule.yml`` files by
@@ -125,7 +115,7 @@ class Config(metaclass=NewInitCaller):
         self.runtime = app.runtime
         self.scenario_path = Path(molecule_file).parent
 
-    def after_init(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+        # Former after_init() contents
         self.config = self._reget_config()  # type: ignore[no-untyped-call]
         if self.molecule_file:
             self._validate()  # type: ignore[no-untyped-call]
