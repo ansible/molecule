@@ -446,15 +446,21 @@ def validate_parallel_cmd_args(cmd_args: CommandArgs) -> None:
         sysexit_with_message(msg)
 
 
-def _parallelize_platforms(config, run_uuid):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
-    def parallelize(platform):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+def _parallelize_platforms(
+    config: dict[str, list[dict[str, str]]],
+    run_uuid: str,
+) -> list[dict[str, str]]:
+    def parallelize(platform: dict[str, str]) -> dict[str, str]:
         platform["name"] = f"{platform['name']}-{run_uuid}"
         return platform
 
-    return [parallelize(platform) for platform in config["platforms"]]  # type: ignore[no-untyped-call]
+    return [parallelize(platform) for platform in config["platforms"]]
 
 
-def _filter_platforms(config, platform_name):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+def _filter_platforms(
+    config: dict[str, list[dict[str, str]]],
+    platform_name: str,
+) -> list[dict[str, str]]:
     for platform in config["platforms"]:
         if platform["name"] == platform_name:
             return [platform]
