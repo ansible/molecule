@@ -23,12 +23,18 @@ from __future__ import annotations
 import logging
 import os
 
+from typing import TYPE_CHECKING
+
 import click
 
 from molecule import util
 from molecule.api import drivers
 from molecule.command import base
 from molecule.config import DEFAULT_DRIVER
+
+
+if TYPE_CHECKING:
+    from molecule.types import CommandArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -94,7 +100,7 @@ def test(  # type: ignore[no-untyped-def]  # noqa: ANN201, PLR0913
     """Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy)."""  # noqa: E501
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args = {
+    command_args: CommandArgs = {
         "parallel": parallel,
         "destroy": destroy,
         "subcommand": subcommand,

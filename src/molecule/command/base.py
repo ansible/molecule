@@ -49,6 +49,7 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from molecule.scenario import Scenario
+    from molecule.types import CommandArgs, MoleculeArgs
 
 LOG = logging.getLogger(__name__)
 MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
@@ -90,15 +91,15 @@ class Base(metaclass=abc.ABCMeta):
     def _setup(self) -> None:
         """Prepare Molecule's provisioner and returns None."""
         self._config.write()
-        self._config.provisioner.write_config()
-        self._config.provisioner.manage_inventory()
+        self._config.provisioner.write_config()  # type: ignore[union-attr]
+        self._config.provisioner.manage_inventory()  # type: ignore[union-attr]
 
 
 def execute_cmdline_scenarios(
     scenario_name: str | None,
-    args: dict[str, Any],
-    command_args: dict[str, Any],
-    ansible_args: tuple[()] | tuple[str] = (),
+    args: MoleculeArgs,
+    command_args: CommandArgs,
+    ansible_args: tuple[str, ...] = (),
 ) -> None:
     """Execute scenario sequences based on parsed command-line arguments.
 
@@ -225,8 +226,8 @@ def filter_ignored_scenarios(scenario_paths) -> list[str]:  # type: ignore[no-un
 
 
 def get_configs(
-    args: dict[str, Any],
-    command_args: dict[str, Any],
+    args: MoleculeArgs,
+    command_args: CommandArgs,
     ansible_args: tuple[str, ...] = (),
     glob_str: str = MOLECULE_GLOB,
 ) -> list[config.Config]:

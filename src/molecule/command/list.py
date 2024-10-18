@@ -22,6 +22,8 @@ from __future__ import annotations
 
 import logging
 
+from typing import TYPE_CHECKING
+
 import click
 
 from rich import box
@@ -35,6 +37,10 @@ from molecule.console import console
 from molecule.status import Status
 
 
+if TYPE_CHECKING:
+    from molecule.types import CommandArgs
+
+
 LOG = logging.getLogger(__name__)
 
 
@@ -43,7 +49,7 @@ class List(base.Base):
 
     def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
         """Execute the actions necessary to perform a `molecule list` and returns None."""
-        return self._config.driver.status()
+        return self._config.driver.status()  # type: ignore[no-untyped-call]
 
 
 @base.click_command_ex()
@@ -60,7 +66,7 @@ def list(ctx, scenario_name, format):  # type: ignore[no-untyped-def] # pragma: 
     """List status of instances."""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args = {"subcommand": subcommand, "format": format}
+    command_args: CommandArgs = {"subcommand": subcommand, "format": format}
 
     statuses = []
     s = scenarios.Scenarios(

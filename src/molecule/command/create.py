@@ -22,11 +22,17 @@ from __future__ import annotations
 
 import logging
 
+from typing import TYPE_CHECKING
+
 import click
 
 from molecule.api import drivers
 from molecule.command import base
 from molecule.config import DEFAULT_DRIVER
+
+
+if TYPE_CHECKING:
+    from molecule.types import CommandArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -44,7 +50,7 @@ class Create(base.Base):
             LOG.warning(msg)
             return
 
-        self._config.provisioner.create()
+        self._config.provisioner.create()  # type: ignore[union-attr]
 
         self._config.state.change_state("created", True)  # noqa: FBT003
 
@@ -67,6 +73,6 @@ def create(ctx, scenario_name, driver_name):  # type: ignore[no-untyped-def] # p
     """Use the provisioner to start the instances."""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args = {"subcommand": subcommand, "driver_name": driver_name}
+    command_args: CommandArgs = {"subcommand": subcommand, "driver_name": driver_name}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)

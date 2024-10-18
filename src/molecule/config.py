@@ -48,7 +48,7 @@ if TYPE_CHECKING:
     from molecule.dependency.base import Base as Dependency
     from molecule.driver.base import Driver
     from molecule.state import State
-    from molecule.types import Args, CommandArgs, ConfigData
+    from molecule.types import CommandArgs, ConfigData, MoleculeArgs
     from molecule.verifier.base import Verifier
 
 
@@ -98,7 +98,7 @@ class Config:
     def __init__(
         self,
         molecule_file: str,  # pylint: disable=redefined-outer-name
-        args: Args = {},  # noqa: B006
+        args: MoleculeArgs = {},  # noqa: B006
         command_args: CommandArgs = {},  # noqa: B006
         ansible_args: tuple[str, ...] = (),
     ) -> None:

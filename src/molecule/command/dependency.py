@@ -22,9 +22,15 @@ from __future__ import annotations
 
 import logging
 
+from typing import TYPE_CHECKING
+
 import click
 
 from molecule.command import base
+
+
+if TYPE_CHECKING:
+    from molecule.types import CommandArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -35,7 +41,7 @@ class Dependency(base.Base):
 
     def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
         """Execute the actions necessary to perform a `molecule dependency` and returns None."""
-        self._config.dependency.execute()
+        self._config.dependency.execute()  # type: ignore[union-attr]
 
 
 @base.click_command_ex()
@@ -50,6 +56,6 @@ def dependency(ctx, scenario_name):  # type: ignore[no-untyped-def] # pragma: no
     """Manage the role's dependencies."""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args = {"subcommand": subcommand}
+    command_args: CommandArgs = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
