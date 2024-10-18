@@ -22,7 +22,13 @@ from __future__ import annotations
 
 import logging
 
+from typing import TYPE_CHECKING
+
 from molecule import util
+
+
+if TYPE_CHECKING:
+    from molecule.config import Config
 
 
 LOG = logging.getLogger(__name__)
@@ -69,7 +75,12 @@ class Platforms:
     ```
     """
 
-    def __init__(self, config, parallelize_platforms=False, platform_name=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, FBT002
+    def __init__(
+        self,
+        config: Config,
+        parallelize_platforms: bool = False,  # noqa: FBT001, FBT002
+        platform_name: str | None = None,
+    ) -> None:
         """Initialize a new platform class and returns None.
 
         Args:
@@ -78,17 +89,22 @@ class Platforms:
             platform_name: One platform to target only, defaults to None.
         """
         if platform_name:
-            config.config["platforms"] = util._filter_platforms(  # type: ignore[no-untyped-call]  # noqa: SLF001
-                config.config,
+            config.config["platforms"] = util._filter_platforms(  # noqa: SLF001
+                config.config,  # type: ignore[arg-type]
                 platform_name,
             )
         if parallelize_platforms:
-            config.config["platforms"] = util._parallelize_platforms(  # type: ignore[no-untyped-call]  # noqa: SLF001
-                config.config,
+            config.config["platforms"] = util._parallelize_platforms(  # noqa: SLF001
+                config.config,  # type: ignore[arg-type]
                 config._run_uuid,  # noqa: SLF001
             )
         self._config = config
 
     @property
-    def instances(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
-        return self._config.config["platforms"]
+    def instances(self) -> list[dict[str, str]]:
+        """The platforms defined in the config.
+
+        Returns:
+            The list of platforms in the config.
+        """
+        return self._config.config["platforms"]  # type: ignore[no-any-return]
