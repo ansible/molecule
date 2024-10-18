@@ -198,24 +198,6 @@ src/molecule/command/verify.py
     DOC107: Function `verify`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Function `verify`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [ctx: , scenario_name: ].
 --------------------
-src/molecule/config.py
-    DOC201: Function `ansible_version` does not have a return section in docstring
-    DOC107: Method `Config.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC201: Method `Config.driver` does not have a return section in docstring
-    DOC101: Method `Config._combine`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `Config._combine`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Config._combine`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `Config._combine`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [env: , keep_string: ].
-    DOC101: Function `molecule_directory`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `molecule_directory`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [path: str].
-    DOC201: Function `molecule_directory` does not have a return section in docstring
-    DOC101: Function `molecule_file`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `molecule_file`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [path: str].
-    DOC201: Function `molecule_file` does not have a return section in docstring
-    DOC101: Function `set_env_from_file`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `set_env_from_file`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [env: MutableMapping[str, str], env_file: str].
-    DOC201: Function `set_env_from_file` does not have a return section in docstring
---------------------
 src/molecule/console.py
     DOC101: Function `to_bool`: Docstring contains fewer arguments than in function signature.
     DOC103: Function `to_bool`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [a: Any].

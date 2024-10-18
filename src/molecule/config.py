@@ -43,7 +43,12 @@ from molecule.util import boolean
 
 if TYPE_CHECKING:
     from collections.abc import MutableMapping
+    from typing import Literal
 
+    from molecule.dependency.base import Base as Dependency
+    from molecule.driver.base import Driver
+    from molecule.state import State
+    from molecule.types import Args, CommandArgs, ConfigData
     from molecule.verifier.base import Verifier
 
 
@@ -60,7 +65,11 @@ MOLECULE_EMBEDDED_DATA_DIR = os.path.dirname(data_module)  # noqa: PTH120
 
 @cache
 def ansible_version() -> Version:
-    """Retrieve Ansible version."""
+    """Retrieve Ansible version.
+
+    Returns:
+        Molecule version information.
+    """
     warnings.warn(  # noqa: B028
         "molecule.config.ansible_version is deprecated, will be removed in the future.",
         category=DeprecationWarning,
@@ -86,12 +95,12 @@ class Config:
 
     # pylint: disable=too-many-instance-attributes
     # Config objects should be allowed to have any number of attributes
-    def __init__(  # type: ignore[no-untyped-def]
+    def __init__(
         self,
         molecule_file: str,  # pylint: disable=redefined-outer-name
-        args={},  # noqa: ANN001, B006
-        command_args={},  # noqa: ANN001, B006
-        ansible_args=(),  # noqa: ANN001
+        args: Args = {},  # noqa: B006
+        command_args: CommandArgs = {},  # noqa: B006
+        ansible_args: tuple[str, ...] = (),
     ) -> None:
         """Initialize a new config class and returns None.
 
@@ -106,7 +115,7 @@ class Config:
         self.command_args = command_args
         self.ansible_args = ansible_args
         self.config = self._get_config()
-        self._action = None
+        self._action: str | None = None
         self._run_uuid = str(uuid4())
         self.project_directory = os.getenv(
             "MOLECULE_PROJECT_DIRECTORY",
@@ -116,15 +125,17 @@ class Config:
         self.scenario_path = Path(molecule_file).parent
 
         # Former after_init() contents
-        self.config = self._reget_config()  # type: ignore[no-untyped-call]
+        self.config = self._reget_config()
         if self.molecule_file:
-            self._validate()  # type: ignore[no-untyped-call]
+            self._validate()
 
     def write(self) -> None:  # noqa: D102
         util.write_file(self.config_file, util.safe_dump(self.config))
 
     @property
-    def ansible_collections_path(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
+    def ansible_collections_path(
+        self,
+    ) -> Literal["ANSIBLE_COLLECTIONS_PATH", "ANSIBLE_COLLECTIONS_PATHS"]:
         """Return collection path variable for current version of Ansible."""
         # https://github.com/ansible/ansible/pull/70007
         if self.runtime.version >= Version("2.10.0.dev0"):
@@ -132,47 +143,55 @@ class Config:
         return "ANSIBLE_COLLECTIONS_PATHS"
 
     @property
-    def config_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
-        return os.path.join(self.scenario.ephemeral_directory, MOLECULE_FILE)  # noqa: PTH118
+    def config_file(self) -> str:  # noqa: D102
+        path = Path(self.scenario.ephemeral_directory) / MOLECULE_FILE
+        return str(path)
 
     @property
-    def is_parallel(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def is_parallel(self) -> bool:  # noqa: D102
         return self.command_args.get("parallel", False)
 
     @property
-    def platform_name(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def platform_name(self) -> str | None:  # noqa: D102
         return self.command_args.get("platform_name", None)
 
     @property
-    def debug(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def debug(self) -> bool:  # noqa: D102
         return self.args.get("debug", MOLECULE_DEBUG)
 
     @property
-    def env_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def env_file(self) -> str | None:  # noqa: D102
         return util.abs_path(self.args.get("env_file"))
 
     @property
-    def subcommand(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def subcommand(self) -> str:  # noqa: D102
         return self.command_args["subcommand"]
 
     @property
-    def action(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def action(self) -> str | None:  # noqa: D102
         return self._action
 
     @action.setter
-    def action(self, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+    def action(self, value: str) -> None:
         self._action = value
 
     @property
-    def cache_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def cache_directory(
+        self,
+    ) -> Literal["molecule", "molecule_parallel"]:
+        """Proper cache directory to use.
+
+        Returns:
+            Either "molecule" or "molecule_parallel" if in parallel mode.
+        """
         return "molecule_parallel" if self.is_parallel else "molecule"
 
     @property
-    def molecule_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def molecule_directory(self) -> str:  # noqa: D102
         return molecule_directory(self.project_directory)
 
     @cached_property
-    def dependency(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def dependency(self) -> Dependency | None:  # noqa: D102
         dependency_name = self.config["dependency"]["name"]
         if dependency_name == "galaxy":
             return ansible_galaxy.AnsibleGalaxy(self)
@@ -181,9 +200,13 @@ class Config:
         return None
 
     @cached_property
-    def driver(self):  # type: ignore[no-untyped-def] # noqa: ANN201
-        """Return driver name."""
-        driver_name = self._get_driver_name()  # type: ignore[no-untyped-call]
+    def driver(self) -> Driver:
+        """Return driver.
+
+        Returns:
+            The driver for this scenario.
+        """
+        driver_name = self._get_driver_name()
         driver = None
 
         api_drivers = api.drivers(config=self)
@@ -197,27 +220,27 @@ class Config:
         return driver
 
     @property
-    def env(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def env(self) -> dict[str, str]:  # noqa: D102
         return {
             "MOLECULE_DEBUG": str(self.debug),
             "MOLECULE_FILE": self.config_file,
             "MOLECULE_ENV_FILE": str(self.env_file),
             "MOLECULE_STATE_FILE": self.state.state_file,
-            "MOLECULE_INVENTORY_FILE": self.provisioner.inventory_file,
+            "MOLECULE_INVENTORY_FILE": self.provisioner.inventory_file,  # type: ignore[union-attr]
             "MOLECULE_EPHEMERAL_DIRECTORY": self.scenario.ephemeral_directory,
             "MOLECULE_SCENARIO_DIRECTORY": self.scenario.directory,
             "MOLECULE_PROJECT_DIRECTORY": self.project_directory,
             "MOLECULE_INSTANCE_CONFIG": self.driver.instance_config,
-            "MOLECULE_DEPENDENCY_NAME": self.dependency.name,
+            "MOLECULE_DEPENDENCY_NAME": self.dependency.name,  # type: ignore[union-attr]
             "MOLECULE_DRIVER_NAME": self.driver.name,
-            "MOLECULE_PROVISIONER_NAME": self.provisioner.name,
+            "MOLECULE_PROVISIONER_NAME": self.provisioner.name,  # type: ignore[union-attr]
             "MOLECULE_SCENARIO_NAME": self.scenario.name,
             "MOLECULE_VERIFIER_NAME": self.verifier.name,
             "MOLECULE_VERIFIER_TEST_DIRECTORY": self.verifier.directory,
         }
 
     @cached_property
-    def platforms(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def platforms(self) -> platforms.Platforms:  # noqa: D102
         return platforms.Platforms(
             self,
             parallelize_platforms=self.is_parallel,
@@ -225,18 +248,18 @@ class Config:
         )
 
     @cached_property
-    def provisioner(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def provisioner(self) -> ansible.Ansible | None:  # noqa: D102
         provisioner_name = self.config["provisioner"]["name"]
         if provisioner_name == "ansible":
             return ansible.Ansible(self)
         return None
 
     @cached_property
-    def scenario(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def scenario(self) -> scenario.Scenario:  # noqa: D102
         return scenario.Scenario(self)
 
     @cached_property
-    def state(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def state(self) -> State:  # noqa: D102
         myState = state.State(self)  # noqa: N806
         # look at state file for molecule.yml date modified and warn if they do not match
         if self.molecule_file and os.path.isfile(self.molecule_file):  # noqa: PTH113
@@ -269,7 +292,7 @@ class Config:
             raise RuntimeError(msg)
         return api.verifiers(self)[name]
 
-    def _get_driver_name(self):  # type: ignore[no-untyped-def] # noqa: ANN202
+    def _get_driver_name(self) -> str:
         # the state file contains the driver from the last run
         driver_from_state_file = self.state.driver
         # the user may supply a driver on the command line
@@ -310,7 +333,7 @@ class Config:
 
         return driver_name
 
-    def _get_config(self) -> MutableMapping:  # type: ignore[type-arg]
+    def _get_config(self) -> ConfigData:
         """Perform a prioritized recursive merge of config files.
 
         Returns a new dict.  Prior to merging the config files are interpolated with
@@ -321,7 +344,7 @@ class Config:
         """
         return self._combine(keep_string=MOLECULE_KEEP_STRING)
 
-    def _reget_config(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
+    def _reget_config(self) -> ConfigData:
         """Perform the same prioritized recursive merge from `get_config`.
 
         Interpolates the ``keep_string`` left behind in the original
@@ -330,12 +353,16 @@ class Config:
         Returns:
             dict: The merged config.
         """
-        env = util.merge_dicts(os.environ, self.env)
+        env = util.merge_dicts(os.environ, self.env)  # type: ignore[type-var]
         env = set_env_from_file(env, self.env_file)
 
         return self._combine(env=env)
 
-    def _combine(self, env=os.environ, keep_string=None) -> MutableMapping:  # type: ignore[no-untyped-def, type-arg]  # noqa: ANN001
+    def _combine(
+        self,
+        env: MutableMapping[str, str] = os.environ,
+        keep_string: str | None = None,
+    ) -> ConfigData:
         """Perform a prioritized recursive merge of config files.
 
         Returns a new dict.  Prior to merging the config files are interpolated with
@@ -345,6 +372,10 @@ class Config:
         2. Loads a base config (if provided) and merges on top of defaults.
         3. Loads the scenario's ``molecule file`` and merges on top of previous
            merge.
+
+        Args:
+            env: The current set of environment variables to consider.
+            keep_string: String to avoid templating.
 
         Returns:
             dict: The merged config.
@@ -371,7 +402,12 @@ class Config:
 
         return defaults
 
-    def _interpolate(self, stream: str, env: MutableMapping, keep_string: str) -> str:  # type: ignore[type-arg]
+    def _interpolate(
+        self,
+        stream: str,
+        env: MutableMapping[str, str],
+        keep_string: str | None,
+    ) -> str:
         env = set_env_from_file(env, self.env_file)
 
         i = interpolation.Interpolator(interpolation.TemplateWithDefaults, env)
@@ -383,7 +419,7 @@ class Config:
             util.sysexit_with_message(msg)
         return ""
 
-    def _get_defaults(self) -> MutableMapping:  # type: ignore[type-arg]
+    def _get_defaults(self) -> ConfigData:
         if not self.molecule_file:
             scenario_name = "default"
         else:
@@ -476,7 +512,8 @@ class Config:
             },
         }
 
-    def _validate(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
+    def _validate(self) -> None:
+        """Validate molecule file."""
         msg = f"Validating schema {self.molecule_file}."
         LOG.debug(msg)
 
@@ -487,17 +524,42 @@ class Config:
 
 
 def molecule_directory(path: str) -> str:
-    """Return directory of the current scenario."""
+    """Return directory of the current scenario.
+
+    Args:
+        path: Base molecule directory.
+
+    Returns:
+        The current scenario's directory.
+    """
     return os.path.join(path, MOLECULE_DIRECTORY)  # noqa: PTH118
 
 
 def molecule_file(path: str) -> str:
-    """Return file path of current scenario."""
+    """Return file path of current scenario.
+
+    Args:
+        path: Base molecule directory.
+
+    Returns:
+        The path to the molecule file.
+    """
     return os.path.join(path, MOLECULE_FILE)  # noqa: PTH118
 
 
-def set_env_from_file(env: MutableMapping[str, str], env_file: str) -> MutableMapping:  # type: ignore[type-arg]
-    """Load environment from file."""
+def set_env_from_file(
+    env: MutableMapping[str, str],
+    env_file: str | None,
+) -> MutableMapping[str, str]:
+    """Load environment from file.
+
+    Args:
+        env: Currently known environment variables.
+        env_file: File from which to load more environment variables.
+
+    Returns:
+        The combined set of environment variables.
+    """
     if env_file and os.path.exists(env_file):  # noqa: PTH110
         env = copy.copy(env)
         d = util.safe_load_file(env_file)
