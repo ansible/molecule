@@ -78,7 +78,7 @@ class Base(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def execute(
-        self: Base,
+        self,
         action_args: list[str] | None = None,
     ) -> None:  # pragma: no cover
         """Abstract method to execute the command.
