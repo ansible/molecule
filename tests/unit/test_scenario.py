@@ -237,7 +237,8 @@ def test_setup_creates_ephemeral_and_inventory_directories(  # noqa: D103
 
 def test_ephemeral_directory() -> None:  # noqa: D103
     # assure we can write to ephemeral directory
-    assert os.access(scenario.ephemeral_directory("foo/bar"), os.W_OK)
+    path = Path("foo/bar")
+    assert os.access(scenario.ephemeral_directory(path), os.W_OK)
 
 
 def test_ephemeral_directory_overridden_via_env_var(
@@ -253,7 +254,8 @@ def test_ephemeral_directory_overridden_via_env_var(
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", "foo/bar")
 
-    assert os.access(scenario.ephemeral_directory("foo/bar"), os.W_OK)
+    path = Path("foo/bar")
+    assert os.access(scenario.ephemeral_directory(path), os.W_OK)
 
 
 def test_ephemeral_directory_overridden_via_env_var_uses_absolute_path(

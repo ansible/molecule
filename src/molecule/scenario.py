@@ -123,12 +123,12 @@ class Scenario:
         """
         path: str | Path | None = os.getenv("MOLECULE_EPHEMERAL_DIRECTORY", None)
         if not path:
-            project_directory = self.config.project_directory
+            project_directory = Path(self.config.project_directory).name
 
             if self.config.is_parallel:
                 project_directory = f"{project_directory}-{self.config._run_uuid}"  # noqa: SLF001
 
-            project_scenario_directory = os.path.join(  # noqa: PTH118
+            project_scenario_directory = Path(
                 self.config.cache_directory,
                 project_directory,
                 self.name,
@@ -309,7 +309,7 @@ class Scenario:
             inventory.mkdir(exist_ok=True, parents=True)
 
 
-def ephemeral_directory(path: str | None = None) -> Path:
+def ephemeral_directory(path: Path | None = None) -> Path:
     """Return temporary directory to be used by molecule.
 
     Molecule users should not make any assumptions about its location,
