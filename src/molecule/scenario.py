@@ -20,7 +20,6 @@
 """Molecule Scenario Module."""
 from __future__ import annotations
 
-import errno
 import fcntl
 import fnmatch
 import logging
@@ -68,9 +67,6 @@ class Scenario:
         and inventory used by this scenario, the scenario state file, and
         files declared as "safe_files" in the ``driver`` configuration
         declared in ``molecule.yml``.
-
-        Raises:
-            OSError: if files cannot be removed.
         """
         LOG.info("Pruning extra files from scenario ephemeral directory")
 
@@ -87,11 +83,7 @@ class Scenario:
         existing_files = util.os_walk(self.ephemeral_directory, "*")
         for f in existing_files:
             if not any(sf for sf in safe_files if fnmatch.fnmatch(f, sf)):
-                try:
-                    Path(f).unlink()
-                except OSError as e:
-                    if e.errno != errno.ENOENT:
-                        raise
+                Path(f).unlink(missing_ok=True)
 
         # Remove empty directories.
         for dirpath, dirs, files in os.walk(self.ephemeral_directory, topdown=False):
