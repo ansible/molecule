@@ -25,10 +25,16 @@ import os
 import shlex
 import subprocess
 
+from typing import TYPE_CHECKING
+
 import click
 
 from molecule import scenarios, util
 from molecule.command import base
+
+
+if TYPE_CHECKING:
+    from molecule.types import CommandArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -90,7 +96,7 @@ class Login(base.Base):
     def _get_login(self, hostname):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN202
         # ruff: noqa: S605,S607
         lines, columns = os.popen("stty size", "r").read().split()
-        login_options = self._config.driver.login_options(hostname)
+        login_options = self._config.driver.login_options(hostname)  # type: ignore[no-untyped-call]
         login_options["columns"] = columns
         login_options["lines"] = lines
         if not self._config.driver.login_cmd_template:
@@ -119,7 +125,7 @@ def login(ctx, host, scenario_name):  # type: ignore[no-untyped-def] # pragma: n
     """Log in to one instance."""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args = {"subcommand": subcommand, "host": host}
+    command_args: CommandArgs = {"subcommand": subcommand, "host": host}
 
     s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
     for scenario in s.all:

@@ -36,6 +36,8 @@ if TYPE_CHECKING:
 
     from pytest_mock import MockerFixture
 
+    from molecule.types import CommandArgs, MoleculeArgs
+
 
 FIXTURE_DIR = Path(__file__).parent.parent.parent / "fixtures" / "unit" / "test_base"
 
@@ -213,7 +215,7 @@ def test_command_setup(
         instance: An instance of ExtendedBase.
 
     """
-    assert Path(instance._config.provisioner.inventory_file).parent.is_dir()
+    assert Path(instance._config.provisioner.inventory_file).parent.is_dir()  # type: ignore[union-attr]
     assert Path(instance._config.config_file).is_file()
 
     patched_manage_inventory.assert_called_once_with()
@@ -230,8 +232,8 @@ def test_execute_cmdline_scenarios(patched_execute_scenario: MagicMock) -> None:
         patched_execute_scenario: Mocked execute_scenario function.
     """
     scenario_name = None
-    args: dict[str, str] = {}
-    command_args = {"destroy": "always", "subcommand": "test"}
+    args: MoleculeArgs = {}
+    command_args: CommandArgs = {"destroy": "always", "subcommand": "test"}
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
     scenario_count = 1
@@ -250,8 +252,8 @@ def test_execute_cmdline_scenarios_prune(
         patched_prune: Mocked prune function.
     """
     scenario_name = "default"
-    args: dict[str, str] = {}
-    command_args = {"destroy": "always", "subcommand": "test"}
+    args: MoleculeArgs = {}
+    command_args: CommandArgs = {"destroy": "always", "subcommand": "test"}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
@@ -271,8 +273,8 @@ def test_execute_cmdline_scenarios_no_prune(
         patched_execute_subcommand: Mocked execute_subcommand function.
     """
     scenario_name = "default"
-    args: dict[str, str] = {}
-    command_args = {"destroy": "never", "subcommand": "test"}
+    args: MoleculeArgs = {}
+    command_args: CommandArgs = {"destroy": "never", "subcommand": "test"}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
@@ -299,8 +301,8 @@ def test_execute_cmdline_scenarios_exit_destroy(
         patched_sysexit: Mocked util.sysexit function.
     """
     scenario_name = "default"
-    args: dict[str, str] = {}
-    command_args = {"destroy": "always", "subcommand": "test"}
+    args: MoleculeArgs = {}
+    command_args: CommandArgs = {"destroy": "always", "subcommand": "test"}
     patched_execute_scenario.side_effect = SystemExit()
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
@@ -333,8 +335,8 @@ def test_execute_cmdline_scenarios_exit_nodestroy(
         patched_sysexit: Mocked util.sysexit function.
     """
     scenario_name = "default"
-    args: dict[str, str] = {}
-    command_args = {"destroy": "never", "subcommand": "test"}
+    args: MoleculeArgs = {}
+    command_args: CommandArgs = {"destroy": "never", "subcommand": "test"}
 
     patched_execute_scenario.side_effect = SystemExit()
 

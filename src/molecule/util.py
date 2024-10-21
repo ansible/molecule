@@ -50,6 +50,8 @@ if TYPE_CHECKING:
 
     from ansible_compat.types import JSON
 
+    from molecule.types import CommandArgs
+
     NestedDict = MutableMapping[str, JSON]
     _T = TypeVar("_T", bound=NestedDict)
 
@@ -392,7 +394,7 @@ def filter_verbose_permutation(options: dict[str, Any]) -> dict[str, Any]:
     return {k: options[k] for k in options if not re.match("^[v]+$", k)}
 
 
-def abs_path(path: str | Path) -> str | None:
+def abs_path(path: str | Path | None) -> str | None:
     """Return absolute path.
 
     Args:
@@ -433,7 +435,7 @@ def merge_dicts(a: _T, b: _T) -> _T:
     return result
 
 
-def validate_parallel_cmd_args(cmd_args: dict[str, Any]) -> None:
+def validate_parallel_cmd_args(cmd_args: CommandArgs) -> None:
     """Prevents use of options incompatible with parallel mode.
 
     Args:
