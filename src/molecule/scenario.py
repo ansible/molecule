@@ -73,12 +73,17 @@ class Scenario:
             OSError: if files cannot be removed.
         """
         LOG.info("Pruning extra files from scenario ephemeral directory")
+
         safe_files = [
-            self.config.provisioner.config_file,
-            self.config.provisioner.inventory_file,
             self.config.state.state_file,
             *self.config.driver.safe_files,
         ]
+        if self.config.provisioner is not None:
+            safe_files += [
+                self.config.provisioner.config_file,
+                self.config.provisioner.inventory_file,
+            ]
+
         existing_files = util.os_walk(self.ephemeral_directory, "*")
         for f in existing_files:
             if not any(sf for sf in safe_files if fnmatch.fnmatch(f, sf)):
