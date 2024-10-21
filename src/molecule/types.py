@@ -61,6 +61,16 @@ class InventoryData(TypedDict):
     links: dict[str, str]
 
 
+class PlatformData(TypedDict):
+    """Platform data for a Molecule run.
+
+    Attributes:
+        name: Name of the platform.
+    """
+
+    name: str
+
+
 class PlaybookData(TypedDict):
     """Playbooks for a scenario.
 
@@ -167,7 +177,7 @@ class ConfigData(TypedDict):
 
     dependency: DependencyData
     driver: DriverData
-    platforms: list[str]
+    platforms: list[PlatformData]
     prerun: bool
     role_name_check: int
     provisioner: ProvisionerData

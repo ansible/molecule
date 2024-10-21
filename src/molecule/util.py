@@ -29,7 +29,7 @@ import sys
 
 from pathlib import Path
 from subprocess import CalledProcessError, CompletedProcess
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING
 
 import jinja2
 import yaml
@@ -45,12 +45,12 @@ from molecule.constants import MOLECULE_HEADER
 if TYPE_CHECKING:
     from collections.abc import Generator, Iterable, MutableMapping
     from io import TextIOWrapper
-    from typing import Any, AnyStr, NoReturn
+    from typing import Any, AnyStr, NoReturn, TypeVar
     from warnings import WarningMessage
 
     from ansible_compat.types import JSON
 
-    from molecule.types import CommandArgs
+    from molecule.types import CommandArgs, ConfigData, PlatformData
 
     NestedDict = MutableMapping[str, JSON]
     _T = TypeVar("_T", bound=NestedDict)
@@ -447,10 +447,10 @@ def validate_parallel_cmd_args(cmd_args: CommandArgs) -> None:
 
 
 def _parallelize_platforms(
-    config: dict[str, list[dict[str, str]]],
+    config: ConfigData,
     run_uuid: str,
-) -> list[dict[str, str]]:
-    def parallelize(platform: dict[str, str]) -> dict[str, str]:
+) -> list[PlatformData]:
+    def parallelize(platform: PlatformData) -> PlatformData:
         platform["name"] = f"{platform['name']}-{run_uuid}"
         return platform
 
@@ -458,9 +458,9 @@ def _parallelize_platforms(
 
 
 def _filter_platforms(
-    config: dict[str, list[dict[str, str]]],
+    config: ConfigData,
     platform_name: str,
-) -> list[dict[str, str]]:
+) -> list[PlatformData]:
     for platform in config["platforms"]:
         if platform["name"] == platform_name:
             return [platform]

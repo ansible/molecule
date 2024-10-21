@@ -29,6 +29,7 @@ from molecule import util
 
 if TYPE_CHECKING:
     from molecule.config import Config
+    from molecule.types import PlatformData
 
 
 LOG = logging.getLogger(__name__)
@@ -90,21 +91,21 @@ class Platforms:
         """
         if platform_name:
             config.config["platforms"] = util._filter_platforms(  # noqa: SLF001
-                config.config,  # type: ignore[arg-type]
+                config.config,
                 platform_name,
             )
         if parallelize_platforms:
             config.config["platforms"] = util._parallelize_platforms(  # noqa: SLF001
-                config.config,  # type: ignore[arg-type]
+                config.config,
                 config._run_uuid,  # noqa: SLF001
             )
         self._config = config
 
     @property
-    def instances(self) -> list[dict[str, str]]:
+    def instances(self) -> list[PlatformData]:
         """The platforms defined in the config.
 
         Returns:
             The list of platforms in the config.
         """
-        return self._config.config["platforms"]  # type: ignore[no-any-return]
+        return self._config.config["platforms"]
