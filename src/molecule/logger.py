@@ -25,7 +25,7 @@ import os
 import time
 
 from functools import wraps
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Protocol, cast
 
 from ansible_compat.ports import cache
 from enrich.logging import RichHandler
@@ -36,23 +36,12 @@ from molecule.text import underscore
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
-    from typing import Any, ParamSpec, Protocol, TypeVar
+    from typing import Any, ParamSpec, TypeVar
 
     from molecule.config import Config
 
     P = ParamSpec("P")
     R = TypeVar("R")
-
-    class HasConfig(Protocol):
-        """A class with a _config attribute.
-
-        There are a few such classes in Molecule. We just care that it's one of them.
-
-        Attributes:
-            _config: A Config instance.
-        """
-
-        _config: Config
 
 
 LOG = logging.getLogger(__name__)
@@ -61,6 +50,18 @@ LOG_LEVEL_LUT = {
     0: logging.INFO,
     1: logging.DEBUG,
 }
+
+
+class HasConfig(Protocol):
+    """A class with a _config attribute.
+
+    There are a few such classes in Molecule. We just care that it's one of them.
+
+    Attributes:
+        _config: A Config instance.
+    """
+
+    _config: Config
 
 
 def configure() -> None:
