@@ -300,24 +300,6 @@ src/molecule/interpolation.py
     DOC601: Class `TemplateWithDefaults`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
     DOC603: Class `TemplateWithDefaults`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [idpattern: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
 --------------------
-src/molecule/logger.py
-    DOC101: Function `get_logger`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `get_logger`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [name: str].
-    DOC201: Function `get_logger` does not have a return section in docstring
-    DOC101: Function `github_actions_groups`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `github_actions_groups`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [func: Callable].
-    DOC201: Function `github_actions_groups` does not have a return section in docstring
-    DOC101: Function `gitlab_ci_sections`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `gitlab_ci_sections`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [func: Callable].
-    DOC201: Function `gitlab_ci_sections` does not have a return section in docstring
-    DOC101: Function `travis_ci_folds`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `travis_ci_folds`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [func: Callable].
-    DOC201: Function `travis_ci_folds` does not have a return section in docstring
-    DOC101: Function `section_logger`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `section_logger`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [func: Callable].
-    DOC201: Function `section_logger` does not have a return section in docstring
-    DOC201: Function `get_section_loggers` does not have a return section in docstring
---------------------
 src/molecule/model/schema_v3.py
     DOC101: Function `validate`: Docstring contains fewer arguments than in function signature.
     DOC106: Function `validate`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
