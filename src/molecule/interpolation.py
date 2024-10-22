@@ -24,6 +24,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, MutableMapping
+    from re import Match
 
 
 class InvalidInterpolation(Exception):  # noqa: N818
@@ -83,7 +84,7 @@ class Interpolator:
     def __init__(
         self,
         templater: type[TemplateWithDefaults],
-        mapping: MutableMapping,  # type: ignore[type-arg]
+        mapping: MutableMapping[str, str],
     ) -> None:
         """Construct Interpolator.
 
@@ -94,7 +95,23 @@ class Interpolator:
         self.templater = templater
         self.mapping = mapping
 
-    def interpolate(self, string: str, keep_string=None) -> str:  # type: ignore[no-untyped-def]  # pylint: disable=redefined-outer-name  # noqa: ANN001, D102
+    def interpolate(
+        self,
+        string: str,  # pylint: disable=redefined-outer-name
+        keep_string: str | None = None,
+    ) -> str:
+        """Template string with this Interpolator's mapping.
+
+        Args:
+            string: The string to modify.
+            keep_string: A substring to keep intact, regardless of mapping.
+
+        Returns:
+            The modified string.
+
+        Raises:
+            InvalidInterpolation: When the interpolation fails.
+        """
         try:
             return self.templater(string).substitute(self.mapping, keep_string)
         except ValueError as e:
@@ -107,9 +124,23 @@ class TemplateWithDefaults(string.Template):
     idpattern = r"[_a-z][_a-z0-9]*(?::?-[^}]+)?"
 
     # pylint: disable=too-many-return-statements  # pylint: disable=useless-suppression
-    def substitute(self, mapping: Mapping[str, object], keep_string: str | None) -> str:  # type: ignore[override]  # pylint: disable=arguments-differ  # noqa: D102
+    def substitute(  # type: ignore[override]  # pylint: disable=arguments-differ
+        self,
+        mapping: Mapping[str, str],
+        keep_string: str | None,
+    ) -> str:
+        """Substitute substrings according to a mapping.
+
+        Args:
+            mapping: The mapping to apply to the string.
+            keep_string: A substring to keep intact, regardless of mapping.
+
+        Returns:
+            The converted string.
+        """
+
         # Helper function for .sub()
-        def convert(mo):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, PLR0911
+        def convert(mo: Match[str]) -> str | None:  # noqa: PLR0911
             # Check the most common path first.
             named = mo.group("named") or mo.group("braced")
             if named is not None:
@@ -136,4 +167,4 @@ class TemplateWithDefaults(string.Template):
                 return None
             return None
 
-        return self.pattern.sub(convert, self.template)
+        return self.pattern.sub(convert, self.template)  # type: ignore[arg-type]
