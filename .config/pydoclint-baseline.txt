@@ -364,26 +364,6 @@ src/molecule/provisioner/base.py
     DOC107: Method `Base.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC202: Method `Base.name` has a return section in docstring, but there are no return statements or annotations
 --------------------
-src/molecule/scenario.py
-    DOC106: Method `Scenario.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Scenario.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC501: Method `Scenario.prune` has "raise" statements, but the docstring does not have a "Raises" section
-    DOC503: Method `Scenario.prune` exceptions in the "Raises" section in the docstring do not match those in the function body Raises values in the docstring: []. Raised exceptions in the body: ['OSError'].
-    DOC501: Method `Scenario.sequence` has "raise" statements, but the docstring does not have a "Raises" section
-    DOC503: Method `Scenario.sequence` exceptions in the "Raises" section in the docstring do not match those in the function body Raises values in the docstring: []. Raised exceptions in the body: ['RuntimeError'].
-    DOC101: Function `ephemeral_directory`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `ephemeral_directory`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [path: str | None].
-    DOC201: Function `ephemeral_directory` does not have a return section in docstring
-    DOC501: Function `ephemeral_directory` has "raise" statements, but the docstring does not have a "Raises" section
-    DOC503: Function `ephemeral_directory` exceptions in the "Raises" section in the docstring do not match those in the function body Raises values in the docstring: []. Raised exceptions in the body: ['RuntimeError'].
---------------------
-src/molecule/scenarios.py
-    DOC601: Class `Scenarios`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `Scenarios`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [__next__: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC106: Method `Scenarios.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Scenarios.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC201: Method `Scenarios.__iter__` does not have a return section in docstring
---------------------
 src/molecule/status.py
     DOC601: Class `Status`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
     DOC603: Class `Status`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [converged: str, created: str, driver_name: str, instance_name: str, provisioner_name: str, scenario_name: str]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
