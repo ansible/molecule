@@ -29,7 +29,7 @@ from molecule.text import chomp, strip_ansi_escape
 
 
 @pytest.fixture()
-def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202
+def _instance(config_instance: config.Config) -> scenarios.Scenarios:
     config_instance_1 = copy.deepcopy(config_instance)
 
     config_instance_2 = copy.deepcopy(config_instance)
@@ -38,30 +38,38 @@ def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  
     return scenarios.Scenarios([config_instance_1, config_instance_2])
 
 
-def test_configs_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_configs_private_member(  # noqa: D103
+    _instance: scenarios.Scenarios,  # noqa: PT019
+) -> None:
     assert len(_instance._configs) == 2  # noqa: PLR2004
     assert isinstance(_instance._configs[0], config.Config)
     assert isinstance(_instance._configs[1], config.Config)
 
 
-def test_scenario_name_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_scenario_name_private_member(  # noqa: D103
+    _instance: scenarios.Scenarios,  # noqa: PT019
+) -> None:
     assert _instance._scenario_name is None
 
 
-def test_scenarios_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_scenarios_private_member(  # noqa: D103
+    _instance: scenarios.Scenarios,  # noqa: PT019
+) -> None:
     assert len(_instance._scenarios) == 2  # noqa: PLR2004
     assert isinstance(_instance._scenarios[0], scenario.Scenario)
     assert isinstance(_instance._scenarios[1], scenario.Scenario)
 
 
-def test_scenarios_iterator(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_scenarios_iterator(  # noqa: D103
+    _instance: scenarios.Scenarios,  # noqa: PT019
+) -> None:
     s = list(_instance)
 
     assert s[0].name == "default"
     assert s[1].name == "foo"
 
 
-def test_all_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_all_property(_instance: scenarios.Scenarios) -> None:  # noqa: PT019, D103
     result = _instance.all
 
     assert len(result) == 2  # noqa: PLR2004
@@ -69,13 +77,18 @@ def test_all_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN00
     assert result[1].name == "foo"
 
 
-def test_all_filters_on_scenario_name_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_all_filters_on_scenario_name_property(  # noqa: D103
+    _instance: scenarios.Scenarios,  # noqa: PT019
+) -> None:
     _instance._scenario_name = "default"
 
     assert len(_instance.all) == 1
 
 
-def test_print_matrix(capsys, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
+def test_print_matrix(  # noqa: D103
+    capsys: pytest.CaptureFixture[str],  # noqa: ARG001
+    _instance: scenarios.Scenarios,  # noqa: PT019
+) -> None:
     with console.capture() as capture:
         _instance.print_matrix()
     result = chomp(strip_ansi_escape(capture.get()))
@@ -110,13 +123,18 @@ foo:
     assert matrix_out in result
 
 
-def test_verify_does_not_raise_when_found(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_verify_does_not_raise_when_found(  # noqa: D103
+    _instance: scenarios.Scenarios,  # noqa: PT019
+) -> None:
     _instance._scenario_name = "default"
 
-    assert _instance._verify() is None
+    _instance._verify()
 
 
-def test_verify_raises_when_scenario_not_found(_instance, caplog):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_verify_raises_when_scenario_not_found(  # noqa: D103
+    _instance: scenarios.Scenarios,  # noqa: PT019
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     _instance._scenario_name = "invalid"
     with pytest.raises(SystemExit) as e:
         _instance._verify()
@@ -127,7 +145,9 @@ def test_verify_raises_when_scenario_not_found(_instance, caplog):  # type: igno
     assert msg in caplog.text
 
 
-def test_filter_for_scenario(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_filter_for_scenario(  # noqa: D103
+    _instance: scenarios.Scenarios,  # noqa: PT019
+) -> None:
     _instance._scenario_name = "default"
     result = _instance._filter_for_scenario()
     assert len(result) == 1
@@ -138,7 +158,7 @@ def test_filter_for_scenario(_instance):  # type: ignore[no-untyped-def]  # noqa
     assert result == []
 
 
-def test_get_matrix(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_get_matrix(_instance: scenarios.Scenarios) -> None:  # noqa: PT019, D103
     matrix = {
         "default": {
             "idempotence": ["idempotence"],
