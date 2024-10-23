@@ -25,7 +25,7 @@ import os
 import time
 
 from functools import wraps
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Protocol, cast
 
 from ansible_compat.ports import cache
 from enrich.logging import RichHandler
@@ -36,6 +36,12 @@ from molecule.text import underscore
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
+    from typing import Any, ParamSpec, TypeVar
+
+    from molecule.config import Config
+
+    P = ParamSpec("P")
+    R = TypeVar("R")
 
 
 LOG = logging.getLogger(__name__)
@@ -44,6 +50,18 @@ LOG_LEVEL_LUT = {
     0: logging.INFO,
     1: logging.DEBUG,
 }
+
+
+class HasConfig(Protocol):
+    """A class with a _config attribute.
+
+    There are a few such classes in Molecule. We just care that it's one of them.
+
+    Attributes:
+        _config: A Config instance.
+    """
+
+    _config: Config
 
 
 def configure() -> None:
@@ -83,16 +101,29 @@ def get_logger(name: str) -> logging.Logger:
     """Return a child logger.
 
     Returned logger inherits configuration from the molecule logger.
+
+    Args:
+        name: Name of the child logger.
+
+    Returns:
+        A child logger of molecule.
     """
     return logging.getLogger("molecule." + name)
 
 
-def github_actions_groups(func: Callable) -> Callable:  # type: ignore[type-arg]
-    """Print group indicators before/after execution of a method."""
+def github_actions_groups(func: Callable[P, R]) -> Callable[P, R]:
+    """Print group indicators before/after execution of a method.
+
+    Args:
+        func: The function to wrap.
+
+    Returns:
+        The wrapped function.
+    """
 
     @wraps(func)
-    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN002, ANN003, ANN202
-        self = args[0]
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        self = cast(HasConfig, args[0])
         scenario = self._config.scenario.name
         subcommand = underscore(self.__class__.__name__)
         console.print(
@@ -111,16 +142,23 @@ def github_actions_groups(func: Callable) -> Callable:  # type: ignore[type-arg]
     return wrapper
 
 
-def gitlab_ci_sections(func: Callable) -> Callable:  # type: ignore[type-arg]
-    """Print group indicators before/after execution of a method."""
+def gitlab_ci_sections(func: Callable[P, R]) -> Callable[P, R]:
+    """Print group indicators before/after execution of a method.
+
+    Args:
+        func: The function to wrap.
+
+    Returns:
+        The wrapped function.
+    """
     # GitLab requires:
     #  - \r (carriage return)
     #  - \e[0K (clear line ANSI escape code. We use \033 for the \e escape char)
     clear_line = "\r\033[0K"
 
     @wraps(func)
-    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN002, ANN003, ANN202
-        self = args[0]
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        self = cast(HasConfig, args[0])
         scenario = self._config.scenario.name
         subcommand = underscore(self.__class__.__name__)
         console.print(
@@ -152,12 +190,19 @@ def gitlab_ci_sections(func: Callable) -> Callable:  # type: ignore[type-arg]
     return wrapper
 
 
-def travis_ci_folds(func: Callable) -> Callable:  # type: ignore[type-arg]
-    """Print group indicators before/after execution of a method."""
+def travis_ci_folds(func: Callable[P, R]) -> Callable[P, R]:
+    """Print group indicators before/after execution of a method.
+
+    Args:
+        func: The function to wrap.
+
+    Returns:
+        The wrapped function.
+    """
 
     @wraps(func)
-    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN002, ANN003, ANN202
-        self = args[0]
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        self = cast(HasConfig, args[0])
         scenario = self._config.scenario.name
         subcommand = underscore(self.__class__.__name__)
         console.print(
@@ -181,12 +226,19 @@ def travis_ci_folds(func: Callable) -> Callable:  # type: ignore[type-arg]
     return wrapper
 
 
-def section_logger(func: Callable) -> Callable:  # type: ignore[type-arg]
-    """Wrap effective execution of a method."""
+def section_logger(func: Callable[P, R]) -> Callable[P, R]:
+    """Wrap effective execution of a method.
+
+    Args:
+        func: The function to wrap.
+
+    Returns:
+        The wrapped function.
+    """
 
     @wraps(func)
-    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN002, ANN003, ANN202
-        self = args[0]
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        self = cast(HasConfig, args[0])
         LOG.info(
             "[info]Running [scenario]%s[/] > [action]%s[/][/]",
             self._config.scenario.name,
@@ -201,8 +253,12 @@ def section_logger(func: Callable) -> Callable:  # type: ignore[type-arg]
 
 
 @cache
-def get_section_loggers() -> Iterable[Callable]:  # type: ignore[type-arg]
-    """Return a list of section wrappers to be added."""
+def get_section_loggers() -> Iterable[Callable[..., Any]]:
+    """Return a list of section wrappers to be added.
+
+    Returns:
+        A list of logging decorators.
+    """
     default_section_loggers = [section_logger]
     if not os.getenv("CI"):
         return default_section_loggers
