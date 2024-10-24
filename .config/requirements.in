@@ -1,5 +1,5 @@
 ansible-compat >= 24.6.1
-ansible-core >= 2.12.10
+ansible-core >= 2.15.0
 click >= 8.0, < 9
 click-help-colors
 enrich >= 1.2.7
