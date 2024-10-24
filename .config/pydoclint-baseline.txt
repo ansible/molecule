@@ -1,15 +1,3 @@
-src/molecule/command/base.py
-    DOC303: Class `Base`: The __init__() docstring does not need a "Returns" section, because it cannot return anything
-    DOC302: Class `Base`: The class docstring does not need a "Returns" section, because __init__() cannot return anything
-    DOC501: Function `execute_cmdline_scenarios` has "raise" statements, but the docstring does not have a "Raises" section
-    DOC503: Function `execute_cmdline_scenarios` exceptions in the "Raises" section in the docstring do not match those in the function body Raises values in the docstring: []. Raised exceptions in the body: ['SystemExit'].
-    DOC201: Function `execute_subcommand` does not have a return section in docstring
-    DOC201: Function `click_group_ex` does not have a return section in docstring
-    DOC201: Function `click_command_ex` does not have a return section in docstring
-    DOC101: Function `result_callback`: Docstring contains fewer arguments than in function signature.
-    DOC106: Function `result_callback`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC103: Function `result_callback`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [**kwargs: , *args: ].
---------------------
 src/molecule/command/check.py
     DOC101: Method `Check.execute`: Docstring contains fewer arguments than in function signature.
     DOC106: Method `Check.execute`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
