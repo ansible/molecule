@@ -27,28 +27,30 @@ from molecule.command import check
 
 
 if TYPE_CHECKING:
+    from unittest.mock import MagicMock, Mock
+
     from pytest_mock import MockerFixture
 
     from molecule import config
 
 
 @pytest.fixture()
-def _patched_ansible_check(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+def _patched_ansible_check(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.provisioner.ansible.Ansible.check")
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_check_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_check_execute(  # noqa: D103
     mocker: MockerFixture,  # noqa: ARG001
-    caplog,  # noqa: ANN001
-    _patched_ansible_check,  # noqa: ANN001, PT019
-    patched_config_validate,  # noqa: ANN001, ARG001
+    caplog: pytest.LogCaptureFixture,
+    _patched_ansible_check: Mock,  # noqa: PT019
+    patched_config_validate: Mock,  # noqa: ARG001
     config_instance: config.Config,
-):
+) -> None:
     c = check.Check(config_instance)
-    c.execute()  # type: ignore[no-untyped-call]
+    c.execute()
 
     assert "default" in caplog.text
     assert "check" in caplog.text

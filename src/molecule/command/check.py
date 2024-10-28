@@ -44,7 +44,7 @@ class Check(base.Base):
 
     def execute(
         self,
-        action_args: MoleculeArgs | None = None,  # noqa: ARG002
+        action_args: list[str] | None = None,  # noqa: ARG002
     ) -> None:
         """Execute the actions necessary to perform a `molecule check`.
 
@@ -52,7 +52,7 @@ class Check(base.Base):
             action_args: Molecule cli arguments. Unused.
         """
         if self._config.provisioner is not None:
-            self._config.provisioner.check()
+            self._config.provisioner.check()  # type: ignore[no-untyped-call]
 
 
 @base.click_command_ex()

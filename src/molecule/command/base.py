@@ -51,7 +51,7 @@ if TYPE_CHECKING:
     from molecule.scenario import Scenario
     from molecule.types import CommandArgs, MoleculeArgs
 
-    ClickGroup = Callable[[Callable[..., MoleculeArgs]], click.Command]
+    ClickGroup = Callable[[Callable[..., None]], click.Command]
 
 LOG = logging.getLogger(__name__)
 MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
@@ -79,7 +79,7 @@ class Base(abc.ABC):
     @abc.abstractmethod
     def execute(
         self,
-        action_args: MoleculeArgs | None = None,
+        action_args: list[str] | None = None,
     ) -> None:  # pragma: no cover
         """Abstract method to execute the command.
 
