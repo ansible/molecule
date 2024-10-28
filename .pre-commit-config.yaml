@@ -23,8 +23,6 @@ repos:
     rev: v3.1.0
     hooks:
       - id: add-trailing-comma
-        args:
-          - --py36-plus
 
   - repo: https://github.com/Lucas-C/pre-commit-hooks.git
     rev: v1.5.5
