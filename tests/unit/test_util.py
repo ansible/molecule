@@ -329,7 +329,7 @@ def test_abs_path() -> None:
 
 def test_abs_path_with_empty_path() -> None:
     """Test the `abs_path` function with an empty path."""
-    assert util.abs_path("") is None
+    assert util.abs_path("") == ""
 
 
 @pytest.mark.parametrize(

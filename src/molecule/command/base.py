@@ -252,7 +252,7 @@ def get_configs(
     scenario_paths = filter_ignored_scenarios(scenario_paths)
     configs = [
         config.Config(
-            molecule_file=util.abs_path(c),  # type: ignore[arg-type]
+            molecule_file=util.abs_path(c),
             args=args,
             command_args=command_args,
             ansible_args=ansible_args,

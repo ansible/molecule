@@ -394,7 +394,7 @@ def filter_verbose_permutation(options: dict[str, Any]) -> dict[str, Any]:
     return {k: options[k] for k in options if not re.match("^[v]+$", k)}
 
 
-def abs_path(path: str | Path | None) -> str | None:
+def abs_path(path: str | Path | None) -> str:
     """Return absolute path.
 
     Args:
@@ -408,7 +408,7 @@ def abs_path(path: str | Path | None) -> str | None:
             path = Path(path)
 
         return str(path.resolve())
-    return None
+    return ""
 
 
 def merge_dicts(a: _T, b: _T) -> _T:
