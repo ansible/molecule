@@ -51,6 +51,8 @@ if TYPE_CHECKING:
     from molecule.scenario import Scenario
     from molecule.types import CommandArgs, MoleculeArgs
 
+    ClickGroup = Callable[[Callable[..., MoleculeArgs]], click.Command]
+
 LOG = logging.getLogger(__name__)
 MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
 MOLECULE_DEFAULT_SCENARIO_NAME = "default"
@@ -64,9 +66,6 @@ class Base(abc.ABC):
 
         Args:
             c: An instance of a Molecule config.
-
-        Returns:
-            None
         """
         self._config = c
         self._setup()
@@ -80,7 +79,7 @@ class Base(abc.ABC):
     @abc.abstractmethod
     def execute(
         self,
-        action_args: list[str] | None = None,
+        action_args: MoleculeArgs | None = None,
     ) -> None:  # pragma: no cover
         """Abstract method to execute the command.
 
@@ -115,6 +114,9 @@ def execute_cmdline_scenarios(
         args: ``args`` dict from ``click`` command context
         command_args: dict of command arguments, including the target
         ansible_args: Optional tuple of arguments to pass to the `ansible-playbook` command
+
+    Raises:
+        SystemExit: If scenario exits prematurely.
     """
     glob_str = MOLECULE_GLOB
     if scenario_name:
@@ -175,6 +177,9 @@ def execute_subcommand(
     Args:
         current_config: An instance of a Molecule config.
         subcommand_and_args: A string representing the subcommand and arguments.
+
+    Returns:
+        The result of the subcommand.
     """
     (subcommand, *args) = subcommand_and_args.split(" ")
     command_module = getattr(molecule.command, subcommand)
@@ -296,8 +301,12 @@ def _get_subcommand(string: str) -> str:
     return string.split(".")[-1]
 
 
-def click_group_ex() -> Callable[[Callable[..., Any]], click.Command]:
-    """Return extended version of click.group()."""
+def click_group_ex() -> ClickGroup:
+    """Return extended version of click.group().
+
+    Returns:
+        Click command group.
+    """
     # Color coding used to group command types, documented only here as we may
     # decide to change them later.
     # green : (default) as sequence step
@@ -323,8 +332,12 @@ def click_group_ex() -> Callable[[Callable[..., Any]], click.Command]:
     )
 
 
-def click_command_ex() -> Callable[[Callable[..., Any]], click.Command]:
-    """Return extended version of click.command()."""
+def click_command_ex() -> ClickGroup:
+    """Return extended version of click.command().
+
+    Returns:
+        Click command group.
+    """
     return click.command(
         cls=HelpColorsCommand,
         help_headers_color="yellow",
@@ -336,7 +349,12 @@ def result_callback(
     *args: object,  # noqa: ARG001
     **kwargs: object,  # noqa: ARG001
 ) -> NoReturn:
-    """Click natural exit callback."""
+    """Click natural exit callback.
+
+    Args:
+        *args: Unused.
+        **kwargs: Unused.
+    """
     # We want to be used we run out custom exit code, regardless if run was
     # a success or failure.
     util.sysexit(0)
