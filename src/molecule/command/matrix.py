@@ -31,7 +31,7 @@ from molecule.command import base
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs
+    from molecule.types import CommandArgs, MoleculeArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -79,9 +79,19 @@ class Matrix(base.Base):
 # NOTE(retr0h): Cannot introspect base.Base for `click.Choice`, since
 # subclasses have not all loaded at this point.
 @click.argument("subcommand", nargs=1, type=click.UNPROCESSED)
-def matrix(ctx, scenario_name, subcommand):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
-    """List matrix of steps used to test instances."""
-    args = ctx.obj.get("args")
+def matrix(
+    ctx: click.Context,
+    scenario_name: str,
+    subcommand: str,
+) -> None:  # pragma: no cover
+    """List matrix of steps used to test instances.
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        scenario_name: Name of the scenario to target.
+        subcommand: Subcommand to target.
+    """
+    args: MoleculeArgs = ctx.obj.get("args")
     command_args: CommandArgs = {"subcommand": subcommand}
 
     s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)

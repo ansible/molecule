@@ -30,29 +30,31 @@ from molecule.command import prepare
 
 
 if TYPE_CHECKING:
+    from unittest.mock import MagicMock, Mock
+
     from pytest_mock import MockerFixture
 
 
 @pytest.fixture()
-def _patched_ansible_prepare(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+def _patched_ansible_prepare(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.provisioner.ansible.Ansible.prepare")
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_prepare_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_prepare_execute(  # noqa: D103
     mocker: MockerFixture,  # noqa: ARG001
-    caplog,  # noqa: ANN001
-    _patched_ansible_prepare,  # noqa: ANN001, PT019
-    patched_config_validate,  # noqa: ANN001, ARG001
+    caplog: pytest.LogCaptureFixture,
+    _patched_ansible_prepare: Mock,  # noqa: PT019
+    patched_config_validate: Mock,  # noqa: ARG001
     config_instance: config.Config,
-):
+) -> None:
     pb = os.path.join(config_instance.scenario.directory, "prepare.yml")  # noqa: PTH118
     util.write_file(pb, "")
 
     p = prepare.Prepare(config_instance)
-    p.execute()  # type: ignore[no-untyped-call]
+    p.execute()
 
     assert "default" in caplog.text
     assert "prepare" in caplog.text
@@ -62,14 +64,14 @@ def test_prepare_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     assert config_instance.state.prepared
 
 
-def test_execute_skips_when_instances_already_prepared(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    caplog,  # noqa: ANN001
-    _patched_ansible_prepare,  # noqa: ANN001, PT019
+def test_execute_skips_when_instances_already_prepared(  # noqa: D103
+    caplog: pytest.LogCaptureFixture,
+    _patched_ansible_prepare: Mock,  # noqa: PT019
     config_instance: config.Config,
-):
+) -> None:
     config_instance.state.change_state("prepared", True)  # noqa: FBT003
     p = prepare.Prepare(config_instance)
-    p.execute()  # type: ignore[no-untyped-call]
+    p.execute()
 
     msg = "Skipping, instances already prepared."
     assert msg in caplog.text
@@ -77,13 +79,13 @@ def test_execute_skips_when_instances_already_prepared(  # type: ignore[no-untyp
     assert not _patched_ansible_prepare.called
 
 
-def test_prepare_execute_skips_when_playbook_not_configured(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    caplog,  # noqa: ANN001
-    _patched_ansible_prepare,  # noqa: ANN001, PT019
+def test_prepare_execute_skips_when_playbook_not_configured(  # noqa: D103
+    caplog: pytest.LogCaptureFixture,
+    _patched_ansible_prepare: Mock,  # noqa: PT019
     config_instance: config.Config,
-):
+) -> None:
     p = prepare.Prepare(config_instance)
-    p.execute()  # type: ignore[no-untyped-call]
+    p.execute()
 
     msg = "Skipping, prepare playbook not configured."
     assert msg in caplog.text
@@ -91,12 +93,12 @@ def test_prepare_execute_skips_when_playbook_not_configured(  # type: ignore[no-
     assert not _patched_ansible_prepare.called
 
 
-def test_execute_when_instances_already_prepared_but_force_provided(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_execute_when_instances_already_prepared_but_force_provided(  # noqa: D103
     mocker: MockerFixture,  # noqa: ARG001
-    caplog,  # noqa: ANN001, ARG001
-    _patched_ansible_prepare,  # noqa: ANN001, PT019
+    caplog: pytest.LogCaptureFixture,  # noqa: ARG001
+    _patched_ansible_prepare: Mock,  # noqa: PT019
     config_instance: config.Config,
-):
+) -> None:
     pb = os.path.join(config_instance.scenario.directory, "prepare.yml")  # noqa: PTH118
     util.write_file(pb, "")
 
@@ -104,6 +106,6 @@ def test_execute_when_instances_already_prepared_but_force_provided(  # type: ig
     config_instance.command_args = {"force": True}
 
     p = prepare.Prepare(config_instance)
-    p.execute()  # type: ignore[no-untyped-call]
+    p.execute()
 
     _patched_ansible_prepare.assert_called_once_with()

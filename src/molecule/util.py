@@ -134,7 +134,7 @@ def sysexit_with_message(
     code: int = 1,
     detail: MutableMapping[str, Any] | None = None,
     warns: Iterable[WarningMessage] = (),
-) -> None:
+) -> NoReturn:
     """Exit with an error message.
 
     Args:

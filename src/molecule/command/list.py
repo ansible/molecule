@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import logging
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 import click
 
@@ -38,7 +38,7 @@ from molecule.status import Status
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs
+    from molecule.types import CommandArgs, MoleculeArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -47,12 +47,22 @@ LOG = logging.getLogger(__name__)
 class List(base.Base):
     """List command shows information about current scenarios."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
-        """Execute the actions necessary to perform a `molecule list` and returns None."""
-        return self._config.driver.status()  # type: ignore[no-untyped-call]
+    def execute(  # type: ignore[override]
+        self,
+        action_args: list[str] | None = None,  # noqa: ARG002
+    ) -> list[Status]:
+        """Execute the actions necessary to perform a `molecule list`.
+
+        Args:
+            action_args: Arguments for this command. Unused.
+
+        Returns:
+            List of statuses.
+        """
+        return self._config.driver.status()  # type: ignore[no-untyped-call, no-any-return]
 
 
-@base.click_command_ex()
+@base.click_command_ex(name="list")
 @click.pass_context
 @click.option("--scenario-name", "-s", help="Name of the scenario to target.")
 @click.option(
@@ -62,9 +72,19 @@ class List(base.Base):
     default="simple",
     help="Change output format. (simple)",
 )
-def list(ctx, scenario_name, format):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201, A001, A002
-    """List status of instances."""
-    args = ctx.obj.get("args")
+def list_(
+    ctx: click.Context,
+    scenario_name: str,
+    format: Literal["simple", "plain", "yaml"],  # noqa: A002
+) -> None:  # pragma: no cover
+    """List status of instances.
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        scenario_name: Name of the scenario to target.
+        format: Output format type.
+    """
+    args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand, "format": format}
 
@@ -78,18 +98,21 @@ def list(ctx, scenario_name, format):  # type: ignore[no-untyped-def] # pragma: 
 
     headers = [text.title(name) for name in Status._fields]
     if format in ["simple", "plain"]:
-        table_format = format  # "simple"
+        table_format = format
 
         if format == "plain":
             headers = []
-            table_format = format
-        _print_tabulate_data(headers, statuses, table_format)  # type: ignore[no-untyped-call]
+        _print_tabulate_data(headers, statuses, table_format)
     else:
-        _print_yaml_data(headers, statuses)  # type: ignore[no-untyped-call]
+        _print_yaml_data(headers, statuses)
 
 
-def _print_tabulate_data(headers, data, table_format):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN202
-    """Show the tabulate data on the screen and returns None.
+def _print_tabulate_data(
+    headers: list[str],
+    data: list[Status],
+    table_format: str,
+) -> None:  # pragma: no cover
+    """Show the tabulate data on the screen.
 
     Args:
         headers: A list of column headers.
@@ -108,7 +131,16 @@ def _print_tabulate_data(headers, data, table_format):  # type: ignore[no-untype
         console.print(t)
 
 
-def _print_yaml_data(headers, data):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN202
+def _print_yaml_data(
+    headers: list[str],
+    data: list[Status],
+) -> None:  # pragma: no cover
+    """Show the tabulate data on the screen in yaml format.
+
+    Args:
+        headers: A list of column headers.
+        data: A list of tabular data to display.
+    """
     l = [  # noqa: E741
         dict(zip(headers, [getattr(datum, field) for field in datum._fields], strict=False))
         for datum in data

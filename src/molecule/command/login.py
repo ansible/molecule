@@ -34,6 +34,7 @@ from molecule.command import base
 
 
 if TYPE_CHECKING:
+    from molecule import config
     from molecule.types import CommandArgs
 
 
@@ -43,22 +44,30 @@ LOG = logging.getLogger(__name__)
 class Login(base.Base):
     """Login Command Class."""
 
-    def __init__(self, c) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
-        """Construct Login."""
+    def __init__(self, c: config.Config) -> None:
+        """Construct Login.
+
+        Args:
+            c: An instance of a Molecule config.
+        """
         super().__init__(c)
         self._pt = None
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
-        """Execute the actions necessary to perform a `molecule login` and returns None."""
+    def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
+        """Execute the actions necessary to perform a `molecule login`.
+
+        Args:
+            action_args: Arguments for this command. Unused.
+        """
         c = self._config
         if (not c.state.created) and c.driver.managed:
             base.execute_subcommand(c, "create")
 
         hosts = [d["name"] for d in self._config.platforms.instances]
-        hostname = self._get_hostname(hosts)  # type: ignore[no-untyped-call]
-        self._get_login(hostname)  # type: ignore[no-untyped-call]
+        hostname = self._get_hostname(hosts)
+        self._get_login(hostname)
 
-    def _get_hostname(self, hosts):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+    def _get_hostname(self, hosts: list[str]) -> str:
         hostname = self._config.command_args.get("host")
         host_list = "\n".join(sorted(hosts))
         if hostname is None:
@@ -93,7 +102,7 @@ class Login(base.Base):
 
         return match[0]
 
-    def _get_login(self, hostname):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN202
+    def _get_login(self, hostname: str) -> None:  # pragma: no cover
         # ruff: noqa: S605,S607
         lines, columns = os.popen("stty size", "r").read().split()
         login_options = self._config.driver.login_options(hostname)  # type: ignore[no-untyped-call]
@@ -121,8 +130,18 @@ class Login(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
-def login(ctx, host, scenario_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
-    """Log in to one instance."""
+def login(
+    ctx: click.Context,
+    host: str,
+    scenario_name: str,
+) -> None:  # pragma: no cover
+    """Log in to one instance.
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        host: Host to access.
+        scenario_name: Name of the scenario to target.
+    """
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand, "host": host}
