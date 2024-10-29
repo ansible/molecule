@@ -22,17 +22,22 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from molecule.command import list
-from molecule.driver import base
+from molecule.status import Status
 
 
 if TYPE_CHECKING:
+    import pytest
+
     from molecule import config
 
 
-def test_list_execute(capsys, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG001, D103
+def test_list_execute(  # noqa: D103
+    capsys: pytest.CaptureFixture[str],  # noqa: ARG001
+    config_instance: config.Config,
+) -> None:
     l = list.List(config_instance)  # noqa: E741
     x = [
-        base.Status(  # type: ignore[attr-defined]
+        Status(
             instance_name="instance-1",
             driver_name="default",
             provisioner_name="ansible",
@@ -40,7 +45,7 @@ def test_list_execute(capsys, config_instance: config.Config):  # type: ignore[n
             created="false",
             converged="false",
         ),
-        base.Status(  # type: ignore[attr-defined]
+        Status(
             instance_name="instance-2",
             driver_name="default",
             provisioner_name="ansible",
@@ -50,4 +55,4 @@ def test_list_execute(capsys, config_instance: config.Config):  # type: ignore[n
         ),
     ]
 
-    assert x == l.execute()  # type: ignore[no-untyped-call]
+    assert x == l.execute()
