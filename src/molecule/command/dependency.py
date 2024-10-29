@@ -30,7 +30,7 @@ from molecule.command import base
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs
+    from molecule.types import CommandArgs, MoleculeArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -39,9 +39,14 @@ LOG = logging.getLogger(__name__)
 class Dependency(base.Base):
     """Dependency Command Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
-        """Execute the actions necessary to perform a `molecule dependency` and returns None."""
-        self._config.dependency.execute()  # type: ignore[union-attr]
+    def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
+        """Execute the actions necessary to perform a `molecule dependency`.
+
+        Args:
+            action_args: Arguments for this command. Unused.
+        """
+        if self._config.dependency:
+            self._config.dependency.execute()  # type: ignore[no-untyped-call]
 
 
 @base.click_command_ex()
@@ -52,9 +57,17 @@ class Dependency(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
-def dependency(ctx, scenario_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
-    """Manage the role's dependencies."""
-    args = ctx.obj.get("args")
+def dependency(
+    ctx: click.Context,
+    scenario_name: str,
+) -> None:  # pragma: no cover
+    """Manage the role's dependencies.
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        scenario_name: Name of the scenario to target.
+    """
+    args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand}
 
