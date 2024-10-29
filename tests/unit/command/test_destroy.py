@@ -27,18 +27,20 @@ from molecule.command import destroy
 
 
 if TYPE_CHECKING:
+    from unittest.mock import MagicMock, Mock
+
     from pytest_mock import MockerFixture
 
     from molecule import config
 
 
 @pytest.fixture()
-def _patched_ansible_destroy(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+def _patched_ansible_destroy(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.provisioner.ansible.Ansible.destroy")
 
 
 @pytest.fixture()
-def _patched_destroy_setup(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+def _patched_destroy_setup(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.command.destroy.Destroy._setup")
 
 
@@ -46,15 +48,15 @@ def _patched_destroy_setup(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.mark.skip(reason="destroy not running for delegated")
-def test_destroy_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_destroy_execute(  # noqa: D103
     mocker: MockerFixture,  # noqa: ARG001
-    caplog,  # noqa: ANN001
-    patched_config_validate,  # noqa: ANN001, ARG001
-    _patched_ansible_destroy,  # noqa: ANN001, PT019
+    caplog: pytest.LogCaptureFixture,
+    patched_config_validate: Mock,  # noqa: ARG001
+    _patched_ansible_destroy: Mock,  # noqa: PT019
     config_instance: config.Config,
-):
+) -> None:
     d = destroy.Destroy(config_instance)
-    d.execute()  # type: ignore[no-untyped-call]
+    d.execute()
 
     assert "destroy" in caplog.text
 
@@ -71,16 +73,16 @@ def test_destroy_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     ["command_driver_delegated_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_execute_skips_when_destroy_strategy_is_never(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    _patched_destroy_setup,  # noqa: ANN001, PT019
-    caplog,  # noqa: ANN001
-    _patched_ansible_destroy,  # noqa: ANN001, PT019
+def test_execute_skips_when_destroy_strategy_is_never(  # noqa: D103
+    _patched_destroy_setup: Mock,  # noqa: PT019
+    caplog: pytest.LogCaptureFixture,
+    _patched_ansible_destroy: Mock,  # noqa: PT019
     config_instance: config.Config,
-):
+) -> None:
     config_instance.command_args = {"destroy": "never"}
 
     d = destroy.Destroy(config_instance)
-    d.execute()  # type: ignore[no-untyped-call]
+    d.execute()
 
     msg = "Skipping, '--destroy=never' requested."
     assert msg in caplog.text

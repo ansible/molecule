@@ -33,7 +33,7 @@ from molecule.text import strip_ansi_escape
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs
+    from molecule.types import CommandArgs, MoleculeArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -46,24 +46,29 @@ class Idempotence(base.Base):
     the scenario will be considered idempotent.
     """
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
-        """Execute the actions necessary to perform a `molecule idempotence` and returns None."""
+    def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
+        """Execute the actions necessary to perform a `molecule idempotence`.
+
+        Args:
+            action_args: Arguments for this command. Unused.
+        """
         if not self._config.state.converged:
             msg = "Instances not converged.  Please converge instances first."
             util.sysexit_with_message(msg)
 
-        output = self._config.provisioner.converge()  # type: ignore[union-attr]
+        if self._config.provisioner:
+            output = self._config.provisioner.converge()  # type: ignore[no-untyped-call]
 
-        idempotent = self._is_idempotent(output)  # type: ignore[no-untyped-call]
-        if idempotent:
-            msg = "Idempotence completed successfully."
-            LOG.info(msg)
-        else:
-            details = "\n".join(self._non_idempotent_tasks(output))  # type: ignore[no-untyped-call]
-            msg = f"Idempotence test failed because of the following tasks:\n{details}"
-            util.sysexit_with_message(msg)
+            idempotent = self._is_idempotent(output)
+            if idempotent:
+                msg = "Idempotence completed successfully."
+                LOG.info(msg)
+            else:
+                details = "\n".join(self._non_idempotent_tasks(output))
+                msg = f"Idempotence test failed because of the following tasks:\n{details}"
+                util.sysexit_with_message(msg)
 
-    def _is_idempotent(self, output):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+    def _is_idempotent(self, output: str) -> bool:
         """Parse the output of the provisioning for changed and returns a bool.
 
         Args:
@@ -80,7 +85,7 @@ class Idempotence(base.Base):
 
         return not bool(changed)
 
-    def _non_idempotent_tasks(self, output):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+    def _non_idempotent_tasks(self, output: str) -> list[str]:
         """Parse the output to identify the non idempotent tasks.
 
         Args:
@@ -120,12 +125,21 @@ class Idempotence(base.Base):
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
-def idempotence(ctx, scenario_name, ansible_args):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
+def idempotence(
+    ctx: click.Context,
+    scenario_name: str,
+    ansible_args: tuple[str, ...],
+) -> None:  # pragma: no cover
     """Use the provisioner to configure the instances.
 
     After parse the output to determine idempotence.
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        scenario_name: Name of the scenario to target.
+        ansible_args: Arguments to forward to Ansible.
     """
-    args = ctx.obj.get("args")
+    args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand}
 

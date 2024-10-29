@@ -34,7 +34,7 @@ from molecule.config import DEFAULT_DRIVER
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs
+    from molecule.types import CommandArgs, MoleculeArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -44,14 +44,19 @@ MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
 class Destroy(base.Base):
     """Destroy Command Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
-        """Execute the actions necessary to perform a `molecule destroy` and returns None."""
+    def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
+        """Execute the actions necessary to perform a `molecule destroy`.
+
+        Args:
+            action_args: Arguments for this command. Unused.
+        """
         if self._config.command_args.get("destroy") == "never":
             msg = "Skipping, '--destroy=never' requested."
             LOG.warning(msg)
             return
 
-        self._config.provisioner.destroy()  # type: ignore[union-attr]
+        if self._config.provisioner:
+            self._config.provisioner.destroy()  # type: ignore[no-untyped-call]
         self._config.state.reset()
 
 
@@ -80,9 +85,23 @@ class Destroy(base.Base):
     default=False,
     help="Enable or disable parallel mode. Default is disabled.",
 )
-def destroy(ctx, scenario_name, driver_name, __all, parallel):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
-    """Use the provisioner to destroy the instances."""
-    args = ctx.obj.get("args")
+def destroy(
+    ctx: click.Context,
+    scenario_name: str | None,
+    driver_name: str,
+    __all: bool,  # noqa: FBT001
+    parallel: bool,  # noqa: FBT001
+) -> None:  # pragma: no cover
+    """Use the provisioner to destroy the instances.
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        scenario_name: Name of the scenario to target.
+        driver_name: Molecule driver to use.
+        __all: Whether molecule should target scenario_name or all scenarios.
+        parallel: Whether the scenario(s) should be run in parallel mode.
+    """
+    args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
         "parallel": parallel,

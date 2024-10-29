@@ -41,8 +41,16 @@ LOG = logging.getLogger(__name__)
     default="simple",
     help="Change output format. (simple)",
 )
-def drivers(ctx, format):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201, A002, ARG001
-    """List drivers."""
+def drivers(
+    ctx: click.Context,  # noqa: ARG001
+    format: str,  # noqa: A002
+) -> None:  # pragma: no cover
+    """List drivers.
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        format: Output format to use.
+    """
     drivers = []  # pylint: disable=redefined-outer-name
     for driver in api.drivers().values():
         description = str(driver)
