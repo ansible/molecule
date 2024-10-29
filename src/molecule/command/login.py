@@ -68,7 +68,7 @@ class Login(base.Base):
         self._get_login(hostname)
 
     def _get_hostname(self, hosts: list[str]) -> str:
-        hostname = self._config.command_args["host"]
+        hostname = self._config.command_args.get("host")
         host_list = "\n".join(sorted(hosts))
         if hostname is None:
             if len(hosts) == 1:
