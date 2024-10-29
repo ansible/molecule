@@ -32,7 +32,7 @@ from molecule.config import DEFAULT_DRIVER
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs
+    from molecule.types import CommandArgs, MoleculeArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -91,20 +91,25 @@ class Prepare(base.Base):
         molecule.yml.
     """
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
-        """Execute the actions necessary to prepare the instances and returns None."""
+    def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
+        """Execute the actions necessary to prepare the instances.
+
+        Args:
+            action_args: Arguments for this command. Unused.
+        """
         if self._config.state.prepared and not self._config.command_args.get("force"):
             msg = "Skipping, instances already prepared."
             LOG.warning(msg)
             return
 
-        if not self._config.provisioner.playbooks.prepare:  # type: ignore[union-attr]
-            msg = "Skipping, prepare playbook not configured."
-            LOG.warning(msg)
-            return
+        if self._config.provisioner:
+            if not self._config.provisioner.playbooks.prepare:
+                msg = "Skipping, prepare playbook not configured."
+                LOG.warning(msg)
+                return
 
-        self._config.provisioner.prepare()  # type: ignore[union-attr]
-        self._config.state.change_state("prepared", True)  # noqa: FBT003
+            self._config.provisioner.prepare()  # type: ignore[no-untyped-call]
+            self._config.state.change_state("prepared", value=True)
 
 
 @base.click_command_ex()
@@ -127,9 +132,21 @@ class Prepare(base.Base):
     default=False,
     help="Enable or disable force mode. Default is disabled.",
 )
-def prepare(ctx, scenario_name, driver_name, force):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
-    """Use the provisioner to prepare the instances into a particular starting state."""
-    args = ctx.obj.get("args")
+def prepare(
+    ctx: click.Context,
+    scenario_name: str,
+    driver_name: str,
+    force: bool,  # noqa: FBT001
+) -> None:  # pragma: no cover
+    """Use the provisioner to prepare the instances into a particular starting state.
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        scenario_name: Name of the scenario to target.
+        driver_name: Name of the Molecule driver to use.
+        force: Whether to use force mode.
+    """
+    args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
         "subcommand": subcommand,
