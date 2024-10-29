@@ -30,7 +30,7 @@ from molecule.command import base
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs
+    from molecule.types import CommandArgs, MoleculeArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -39,14 +39,19 @@ LOG = logging.getLogger(__name__)
 class Cleanup(base.Base):
     """Cleanup Command Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
-        """Execute the actions necessary to cleanup the instances and returns None."""
-        if not self._config.provisioner.playbooks.cleanup:  # type: ignore[union-attr]
-            msg = "Skipping, cleanup playbook not configured."
-            LOG.warning(msg)
-            return
+    def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
+        """Execute the actions necessary to cleanup the instances.
 
-        self._config.provisioner.cleanup()  # type: ignore[union-attr]
+        Args:
+            action_args: Arguments for this command. Unused.
+        """
+        if self._config.provisioner:
+            if not self._config.provisioner.playbooks.cleanup:
+                msg = "Skipping, cleanup playbook not configured."
+                LOG.warning(msg)
+                return
+
+            self._config.provisioner.cleanup()  # type: ignore[no-untyped-call]
 
 
 @base.click_command_ex()
@@ -57,12 +62,19 @@ class Cleanup(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
-def cleanup(ctx, scenario_name="default"):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
+def cleanup(
+    ctx: click.Context,
+    scenario_name: str = "default",
+) -> None:  # pragma: no cover
     """Use the provisioner to cleanup any changes.
 
     Any changes made to external systems during the stages of testing.
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        scenario_name: Name of the scenario to target.
     """
-    args = ctx.obj.get("args")
+    args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand}
 

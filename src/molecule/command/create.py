@@ -32,7 +32,7 @@ from molecule.config import DEFAULT_DRIVER
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs
+    from molecule.types import CommandArgs, MoleculeArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -41,8 +41,12 @@ LOG = logging.getLogger(__name__)
 class Create(base.Base):
     """Create Command Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
-        """Execute the actions necessary to perform a `molecule create` and returns None."""
+    def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
+        """Execute the actions necessary to perform a `molecule create`.
+
+        Args:
+            action_args: Arguments for this command. Unused.
+        """
         self._config.state.change_state("driver", self._config.driver.name)
 
         if self._config.state.created:
@@ -50,9 +54,10 @@ class Create(base.Base):
             LOG.warning(msg)
             return
 
-        self._config.provisioner.create()  # type: ignore[union-attr]
+        if self._config.provisioner:
+            self._config.provisioner.create()  # type: ignore[no-untyped-call]
 
-        self._config.state.change_state("created", True)  # noqa: FBT003
+        self._config.state.change_state("created", value=True)
 
 
 @base.click_command_ex()
@@ -69,9 +74,19 @@ class Create(base.Base):
     type=click.Choice([str(s) for s in drivers()]),
     help=f"Name of driver to use. ({DEFAULT_DRIVER})",
 )
-def create(ctx, scenario_name, driver_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
-    """Use the provisioner to start the instances."""
-    args = ctx.obj.get("args")
+def create(
+    ctx: click.Context,
+    scenario_name: str,
+    driver_name: str,
+) -> None:  # pragma: no cover
+    """Use the provisioner to start the instances.
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        scenario_name: Name of the scenario to target.
+        driver_name: Name of the Molecule driver to use.
+    """
+    args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand, "driver_name": driver_name}
 

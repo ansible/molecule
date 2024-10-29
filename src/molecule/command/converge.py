@@ -30,7 +30,7 @@ from molecule.command import base
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs
+    from molecule.types import CommandArgs, MoleculeArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -40,9 +40,14 @@ class Converge(base.Base):
     """Converge Command Class."""
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
-        """Execute the actions necessary to perform a `molecule converge` and returns None."""
-        self._config.provisioner.converge()  # type: ignore[union-attr]
-        self._config.state.change_state("converged", True)  # noqa: FBT003
+        """Execute the actions necessary to perform a `molecule converge`.
+
+        Args:
+            action_args: Arguments for this command. Unused.
+        """
+        if self._config.provisioner:
+            self._config.provisioner.converge()  # type: ignore[no-untyped-call]
+        self._config.state.change_state("converged", value=True)
 
 
 @base.click_command_ex()
@@ -54,9 +59,19 @@ class Converge(base.Base):
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
-def converge(ctx, scenario_name, ansible_args):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
-    """Use the provisioner to configure instances (dependency, create, prepare converge)."""
-    args = ctx.obj.get("args")
+def converge(
+    ctx: click.Context,
+    scenario_name: str,
+    ansible_args: tuple[str],
+) -> None:  # pragma: no cover
+    """Use the provisioner to configure instances (dependency, create, prepare converge).
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        scenario_name: Name of the scenario to target.
+        ansible_args: Arguments to forward to Ansible.
+    """
+    args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand}
 

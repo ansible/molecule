@@ -42,14 +42,11 @@ MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
 class Check(base.Base):
     """Check Command Class."""
 
-    def execute(
-        self,
-        action_args: list[str] | None = None,  # noqa: ARG002
-    ) -> None:
+    def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to perform a `molecule check`.
 
         Args:
-            action_args: Molecule cli arguments. Unused.
+            action_args: Arguments for this command. Unused.
         """
         if self._config.provisioner is not None:
             self._config.provisioner.check()  # type: ignore[no-untyped-call]
@@ -78,7 +75,7 @@ def check(  # pragma: no cover
 
     Args:
         ctx: Click context object holding commandline arguments.
-        scenario_name: Name of the scenario to run.
+        scenario_name: Name of the scenario to target.
         parallel: Whether the scenario(s) should be run in parallel.
     """
     args: MoleculeArgs = ctx.obj.get("args")
