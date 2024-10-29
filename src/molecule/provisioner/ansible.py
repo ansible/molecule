@@ -805,7 +805,7 @@ class Ansible(base.Base):
                 vars_target = self.group_vars
 
             if vars_target:
-                target_vars_directory = Path(util.abs_path(Path(self.inventory_directory) / target))
+                target_vars_directory = util.abs_path(Path(self.inventory_directory) / target)
                 if not target_vars_directory.is_dir():
                     target_vars_directory.mkdir()
 

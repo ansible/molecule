@@ -23,6 +23,7 @@ import binascii
 import os
 import warnings
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
@@ -36,7 +37,6 @@ from molecule.text import strip_ansi_escape
 
 if TYPE_CHECKING:
     from collections.abc import MutableMapping
-    from pathlib import Path
     from typing import Any
     from unittest.mock import Mock
 
@@ -325,6 +325,12 @@ def test_abs_path() -> None:
     """Test the `abs_path` function."""
     test_dir = "/foo/../foo"
     assert util.abs_path(test_dir) == "/foo"
+
+
+def test_abs_path_with_path() -> None:
+    """Test the `abs_path` function."""
+    test_dir = Path("/foo/../foo")
+    assert util.abs_path(test_dir) == Path("/foo")
 
 
 def test_abs_path_with_empty_path() -> None:

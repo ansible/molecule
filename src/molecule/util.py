@@ -29,7 +29,7 @@ import sys
 
 from pathlib import Path
 from subprocess import CalledProcessError, CompletedProcess
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload
 
 import jinja2
 import yaml
@@ -394,7 +394,15 @@ def filter_verbose_permutation(options: dict[str, Any]) -> dict[str, Any]:
     return {k: options[k] for k in options if not re.match("^[v]+$", k)}
 
 
-def abs_path(path: str | Path | None) -> str:
+@overload
+def abs_path(path: Path) -> Path: ...
+
+
+@overload
+def abs_path(path: str | None) -> str: ...
+
+
+def abs_path(path: str | Path | None) -> str | Path:
     """Return absolute path.
 
     Args:
@@ -403,12 +411,15 @@ def abs_path(path: str | Path | None) -> str:
     Returns:
         Absolute path of path.
     """
-    if path:
-        if isinstance(path, str):
-            path = Path(path)
+    if not path:
+        return ""
 
-        return str(path.resolve())
-    return ""
+    output_type = type(path)
+    if isinstance(path, str):
+        path = Path(path)
+    path = path.resolve()
+
+    return output_type(path)
 
 
 def merge_dicts(a: _T, b: _T) -> _T:
