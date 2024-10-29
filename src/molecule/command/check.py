@@ -32,7 +32,7 @@ from molecule.command import base
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs
+    from molecule.types import CommandArgs, MoleculeArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -42,9 +42,17 @@ MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
 class Check(base.Base):
     """Check Command Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
-        """Execute the actions necessary to perform a `molecule check` and returns None."""
-        self._config.provisioner.check()  # type: ignore[union-attr]
+    def execute(
+        self,
+        action_args: list[str] | None = None,  # noqa: ARG002
+    ) -> None:
+        """Execute the actions necessary to perform a `molecule check`.
+
+        Args:
+            action_args: Molecule cli arguments. Unused.
+        """
+        if self._config.provisioner is not None:
+            self._config.provisioner.check()  # type: ignore[no-untyped-call]
 
 
 @base.click_command_ex()
@@ -60,9 +68,20 @@ class Check(base.Base):
     default=MOLECULE_PARALLEL,
     help="Enable or disable parallel mode. Default is disabled.",
 )
-def check(ctx, scenario_name, parallel):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
-    """Use the provisioner to perform a Dry-Run (destroy, dependency, create, prepare, converge)."""
-    args = ctx.obj.get("args")
+def check(  # pragma: no cover
+    ctx: click.Context,
+    scenario_name: str,
+    *,
+    parallel: bool,
+) -> None:
+    """Use the provisioner to perform a Dry-Run (destroy, dependency, create, prepare, converge).
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        scenario_name: Name of the scenario to run.
+        parallel: Whether the scenario(s) should be run in parallel.
+    """
+    args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"parallel": parallel, "subcommand": subcommand}
 

@@ -93,7 +93,7 @@ def print_version(
     ctx.exit()
 
 
-@click_group_ex()  # type: ignore[no-untyped-call, misc]
+@click_group_ex()
 @click.option(
     "--debug/--no-debug",
     default=MOLECULE_DEBUG,

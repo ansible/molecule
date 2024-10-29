@@ -47,16 +47,20 @@ from molecule.scenario import Scenario
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+    from typing import NoReturn
 
     from molecule.scenario import Scenario
     from molecule.types import CommandArgs, MoleculeArgs
+
+    ClickCommand = Callable[[Callable[..., None]], click.Command]
+    ClickGroup = Callable[[Callable[..., None]], click.Group]
 
 LOG = logging.getLogger(__name__)
 MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
 MOLECULE_DEFAULT_SCENARIO_NAME = "default"
 
 
-class Base(metaclass=abc.ABCMeta):
+class Base(abc.ABC):
     """An abstract base class used to define the command interface."""
 
     def __init__(self, c: config.Config) -> None:
@@ -64,9 +68,6 @@ class Base(metaclass=abc.ABCMeta):
 
         Args:
             c: An instance of a Molecule config.
-
-        Returns:
-            None
         """
         self._config = c
         self._setup()
@@ -75,7 +76,7 @@ class Base(metaclass=abc.ABCMeta):
         """Decorate execute from all subclasses."""
         super().__init_subclass__()
         for wrapper in logger.get_section_loggers():
-            cls.execute = wrapper(cls.execute)  # type: ignore  # noqa: PGH003
+            cls.execute = wrapper(cls.execute)  # type: ignore[method-assign]
 
     @abc.abstractmethod
     def execute(
@@ -91,8 +92,9 @@ class Base(metaclass=abc.ABCMeta):
     def _setup(self) -> None:
         """Prepare Molecule's provisioner and returns None."""
         self._config.write()
-        self._config.provisioner.write_config()  # type: ignore[union-attr]
-        self._config.provisioner.manage_inventory()  # type: ignore[union-attr]
+        if self._config.provisioner is not None:
+            self._config.provisioner.write_config()  # type: ignore[no-untyped-call]
+            self._config.provisioner.manage_inventory()  # type: ignore[no-untyped-call]
 
 
 def execute_cmdline_scenarios(
@@ -114,6 +116,9 @@ def execute_cmdline_scenarios(
         args: ``args`` dict from ``click`` command context
         command_args: dict of command arguments, including the target
         ansible_args: Optional tuple of arguments to pass to the `ansible-playbook` command
+
+    Raises:
+        SystemExit: If scenario exits prematurely.
     """
     glob_str = MOLECULE_GLOB
     if scenario_name:
@@ -174,6 +179,9 @@ def execute_subcommand(
     Args:
         current_config: An instance of a Molecule config.
         subcommand_and_args: A string representing the subcommand and arguments.
+
+    Returns:
+        The result of the subcommand.
     """
     (subcommand, *args) = subcommand_and_args.split(" ")
     command_module = getattr(molecule.command, subcommand)
@@ -204,7 +212,15 @@ def execute_scenario(scenario: Scenario) -> None:
             scenario._remove_scenario_state_directory()  # noqa: SLF001
 
 
-def filter_ignored_scenarios(scenario_paths) -> list[str]:  # type: ignore[no-untyped-def]  # noqa: ANN001, D103
+def filter_ignored_scenarios(scenario_paths: list[str]) -> list[str]:
+    """Filter out candidate scenario paths that are ignored by git.
+
+    Args:
+        scenario_paths: List of candidate scenario paths.
+
+    Returns:
+        Filtered list of scenario paths.
+    """
     command = ["git", "check-ignore", *scenario_paths]
 
     with contextlib.suppress(subprocess.CalledProcessError, FileNotFoundError):
@@ -295,8 +311,12 @@ def _get_subcommand(string: str) -> str:
     return string.split(".")[-1]
 
 
-def click_group_ex():  # type: ignore[no-untyped-def]  # noqa: ANN201
-    """Return extended version of click.group()."""
+def click_group_ex() -> ClickGroup:
+    """Return extended version of click.group().
+
+    Returns:
+        Click command group.
+    """
     # Color coding used to group command types, documented only here as we may
     # decide to change them later.
     # green : (default) as sequence step
@@ -322,8 +342,12 @@ def click_group_ex():  # type: ignore[no-untyped-def]  # noqa: ANN201
     )
 
 
-def click_command_ex() -> Callable[[Callable[..., Any]], click.Command]:
-    """Return extended version of click.command()."""
+def click_command_ex() -> ClickCommand:
+    """Return extended version of click.command().
+
+    Returns:
+        Click command group.
+    """
     return click.command(
         cls=HelpColorsCommand,
         help_headers_color="yellow",
@@ -331,8 +355,16 @@ def click_command_ex() -> Callable[[Callable[..., Any]], click.Command]:
     )
 
 
-def result_callback(*args, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN002, ANN003, ANN201, ARG001
-    """Click natural exit callback."""
+def result_callback(
+    *args: object,  # noqa: ARG001
+    **kwargs: object,  # noqa: ARG001
+) -> NoReturn:
+    """Click natural exit callback.
+
+    Args:
+        *args: Unused.
+        **kwargs: Unused.
+    """
     # We want to be used we run out custom exit code, regardless if run was
     # a success or failure.
     util.sysexit(0)
