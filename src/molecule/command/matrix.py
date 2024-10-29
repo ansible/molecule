@@ -37,7 +37,7 @@ if TYPE_CHECKING:
 LOG = logging.getLogger(__name__)
 
 
-class Matrix(base.Base):  # pylint: disable=abstract-method
+class Matrix(base.Base):
     """Matrix Command Class.
 
     .. program:: molecule matrix subcommand

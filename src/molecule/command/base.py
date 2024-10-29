@@ -51,7 +51,8 @@ if TYPE_CHECKING:
     from molecule.scenario import Scenario
     from molecule.types import CommandArgs, MoleculeArgs
 
-    ClickGroup = Callable[[Callable[..., None]], click.Command]
+    ClickCommand = Callable[[Callable[..., None]], click.Command]
+    ClickGroup = Callable[[Callable[..., None]], click.Group]
 
 LOG = logging.getLogger(__name__)
 MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
@@ -332,7 +333,7 @@ def click_group_ex() -> ClickGroup:
     )
 
 
-def click_command_ex() -> ClickGroup:
+def click_command_ex() -> ClickCommand:
     """Return extended version of click.command().
 
     Returns:
