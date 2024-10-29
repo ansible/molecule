@@ -27,6 +27,7 @@ import logging
 import os
 import shutil
 
+from pathlib import Path
 from typing import Any
 
 from ansible_compat.ports import cached_property
@@ -520,8 +521,8 @@ class Ansible(base.Base):
             os.environ,
             {
                 "ANSIBLE_CONFIG": self._config.provisioner.config_file,
-                "ANSIBLE_ROLES_PATH": ":".join(roles_path_list),  # type: ignore[arg-type]
-                self._config.ansible_collections_path: ":".join(collections_path_list),  # type: ignore[arg-type]
+                "ANSIBLE_ROLES_PATH": ":".join(roles_path_list),
+                self._config.ansible_collections_path: ":".join(collections_path_list),
                 "ANSIBLE_LIBRARY": ":".join(self._get_modules_directories()),
                 "ANSIBLE_FILTER_PLUGINS": ":".join(
                     self._get_filter_plugins_directories(),
@@ -804,17 +805,13 @@ class Ansible(base.Base):
                 vars_target = self.group_vars
 
             if vars_target:
-                target_vars_directory = os.path.join(  # noqa: PTH118
-                    self.inventory_directory,
-                    target,
-                )
-
-                if not os.path.isdir(util.abs_path(target_vars_directory)):  # type: ignore[arg-type]  # noqa: PTH112
-                    os.mkdir(util.abs_path(target_vars_directory))  # type: ignore[arg-type]  # noqa: PTH102
+                target_vars_directory = util.abs_path(Path(self.inventory_directory) / target)
+                if not target_vars_directory.is_dir():
+                    target_vars_directory.mkdir()
 
                 for target in vars_target:  # noqa: PLW2901
                     target_var_content = vars_target[target]
-                    path = os.path.join(util.abs_path(target_vars_directory), target)  # type: ignore[arg-type]  # noqa: PTH118
+                    path = target_vars_directory / target
                     util.write_file(path, util.safe_dump(target_var_content))
 
     def _write_inventory(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
