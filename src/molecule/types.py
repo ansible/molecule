@@ -71,7 +71,7 @@ class PlatformData(TypedDict):
     name: str
 
 
-class PlaybookData(TypedDict):
+class PlaybookData(TypedDict, total=False):
     """Playbooks for a scenario.
 
     Attributes:
@@ -93,7 +93,7 @@ class PlaybookData(TypedDict):
     verify: str
 
 
-class ProvisionerData(TypedDict):
+class ProvisionerData(TypedDict, total=False):
     """Molecule provisioner configuration.
 
     Attributes:

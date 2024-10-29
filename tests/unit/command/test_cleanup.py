@@ -30,16 +30,23 @@ from molecule.command import cleanup
 
 
 if TYPE_CHECKING:
+    from typing import Literal
+    from unittest.mock import MagicMock, Mock
+
     from pytest_mock import MockerFixture
+
+    from molecule.types import ProvisionerData
 
 
 @pytest.fixture()
-def _command_provisioner_section_with_cleanup_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
+def _command_provisioner_section_with_cleanup_data() -> (
+    dict[Literal["provisioner"], ProvisionerData]
+):
     return {"provisioner": {"name": "ansible", "playbooks": {"cleanup": "cleanup.yml"}}}
 
 
 @pytest.fixture()
-def _patched_ansible_cleanup(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+def _patched_ansible_cleanup(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.provisioner.ansible.Ansible.cleanup")
 
 
@@ -51,31 +58,31 @@ def _patched_ansible_cleanup(mocker):  # type: ignore[no-untyped-def]  # noqa: A
     ["_command_provisioner_section_with_cleanup_data"],  # noqa: PT007
     indirect=True,
 )
-def test_cleanup_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_cleanup_execute(  # noqa: D103
     mocker: MockerFixture,  # noqa: ARG001
-    _patched_ansible_cleanup,  # noqa: ANN001, PT019
-    caplog,  # noqa: ANN001
-    patched_config_validate,  # noqa: ANN001, ARG001
+    _patched_ansible_cleanup: Mock,  # noqa: PT019
+    caplog: pytest.LogCaptureFixture,
+    patched_config_validate: Mock,  # noqa: ARG001
     config_instance: config.Config,
-):
+) -> None:
     pb = os.path.join(config_instance.scenario.directory, "cleanup.yml")  # noqa: PTH118
     util.write_file(pb, "")
 
     cu = cleanup.Cleanup(config_instance)
-    cu.execute()  # type: ignore[no-untyped-call]
+    cu.execute()
 
     assert "cleanup" in caplog.text
 
     _patched_ansible_cleanup.assert_called_once_with()
 
 
-def test_cleanup_execute_skips_when_playbook_not_configured(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    caplog,  # noqa: ANN001
-    _patched_ansible_cleanup,  # noqa: ANN001, PT019
+def test_cleanup_execute_skips_when_playbook_not_configured(  # noqa: D103
+    caplog: pytest.LogCaptureFixture,
+    _patched_ansible_cleanup: Mock,  # noqa: PT019
     config_instance: config.Config,
-):
+) -> None:
     cu = cleanup.Cleanup(config_instance)
-    cu.execute()  # type: ignore[no-untyped-call]
+    cu.execute()
 
     msg = "Skipping, cleanup playbook not configured."
     assert msg in caplog.text

@@ -27,13 +27,15 @@ from molecule.command import create
 
 
 if TYPE_CHECKING:
+    from unittest.mock import MagicMock, Mock
+
     from pytest_mock import MockerFixture
 
     from molecule import config
 
 
 @pytest.fixture()
-def _patched_create_setup(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+def _patched_create_setup(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.command.create.Create._setup")
 
 
@@ -41,15 +43,15 @@ def _patched_create_setup(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN0
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.mark.skip(reason="create not running for delegated")
-def test_create_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_create_execute(  # noqa: D103
     mocker: MockerFixture,  # noqa: ARG001
-    caplog,  # noqa: ANN001
-    command_patched_ansible_create,  # noqa: ANN001
-    patched_config_validate,  # noqa: ANN001, ARG001
+    caplog: pytest.LogCaptureFixture,
+    command_patched_ansible_create: Mock,
+    patched_config_validate: Mock,  # noqa: ARG001
     config_instance: config.Config,
-):
+) -> None:
     c = create.Create(config_instance)
-    c.execute()  # type: ignore[no-untyped-call]
+    c.execute()
 
     assert "default" in caplog.text
     assert "converge" in caplog.text
@@ -62,14 +64,14 @@ def test_create_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
 
 
 @pytest.mark.skip(reason="create not running for delegated")
-def test_execute_skips_when_instances_already_created(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    caplog,  # noqa: ANN001
-    command_patched_ansible_create,  # noqa: ANN001
+def test_execute_skips_when_instances_already_created(  # noqa: D103
+    caplog: pytest.LogCaptureFixture,
+    command_patched_ansible_create: Mock,
     config_instance: config.Config,
-):
+) -> None:
     config_instance.state.change_state("created", True)  # noqa: FBT003
     c = create.Create(config_instance)
-    c.execute()  # type: ignore[no-untyped-call]
+    c.execute()
 
     msg = "Skipping, instances already created."
     assert msg in caplog.text
