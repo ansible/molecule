@@ -342,14 +342,18 @@ def click_group_ex() -> ClickGroup:
     )
 
 
-def click_command_ex() -> ClickCommand:
+def click_command_ex(name: str | None = None) -> ClickCommand:
     """Return extended version of click.command().
+
+    Args:
+        name: A replacement name in the case the automatic one is insufficient.
 
     Returns:
         Click command group.
     """
     return click.command(
         cls=HelpColorsCommand,
+        name=name,
         help_headers_color="yellow",
         help_options_color="green",
     )

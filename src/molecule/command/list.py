@@ -62,7 +62,7 @@ class List(base.Base):
         return self._config.driver.status()  # type: ignore[no-untyped-call, no-any-return]
 
 
-@base.click_command_ex()
+@base.click_command_ex(name="list")
 @click.pass_context
 @click.option("--scenario-name", "-s", help="Name of the scenario to target.")
 @click.option(
