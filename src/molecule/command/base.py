@@ -29,7 +29,7 @@ import os
 import shutil
 import subprocess
 
-from typing import TYPE_CHECKING, Any, NoReturn
+from typing import TYPE_CHECKING, Any
 
 import click
 import wcmatch.pathlib
@@ -47,6 +47,7 @@ from molecule.scenario import Scenario
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+    from typing import NoReturn
 
     from molecule.scenario import Scenario
     from molecule.types import CommandArgs, MoleculeArgs
@@ -211,7 +212,15 @@ def execute_scenario(scenario: Scenario) -> None:
             scenario._remove_scenario_state_directory()  # noqa: SLF001
 
 
-def filter_ignored_scenarios(scenario_paths: list[str]) -> list[str]:  # noqa: D103
+def filter_ignored_scenarios(scenario_paths: list[str]) -> list[str]:
+    """Filter out candidate scenario paths that are ignored by git.
+
+    Args:
+        scenario_paths: List of candidate scenario paths.
+
+    Returns:
+        Filtered list of scenario paths.
+    """
     command = ["git", "check-ignore", *scenario_paths]
 
     with contextlib.suppress(subprocess.CalledProcessError, FileNotFoundError):
