@@ -31,10 +31,16 @@ from molecule import util
 LOG = logging.getLogger(__name__)
 
 
-class Base:
+class Base(abc.ABC):
     """Init Command Base Class."""
 
-    __metaclass__ = abc.ABCMeta
+    @abc.abstractmethod
+    def execute(self, action_args: list[str] | None = None) -> None:
+        """Abstract method to execute the command.
+
+        Args:
+            action_args: An optional list of arguments to pass to the action.
+        """
 
     def _validate_template_dir(self, template_dir: str) -> None:
         if not Path(template_dir).is_dir():

@@ -1,7 +1,3 @@
-src/molecule/command/init/base.py
-    DOC601: Class `Base`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `Base`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [__metaclass__: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
---------------------
 src/molecule/command/reset.py
     DOC101: Function `reset`: Docstring contains fewer arguments than in function signature.
     DOC106: Function `reset`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
