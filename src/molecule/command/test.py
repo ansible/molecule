@@ -34,7 +34,9 @@ from molecule.config import DEFAULT_DRIVER
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs
+    from typing import Literal
+
+    from molecule.types import CommandArgs, MoleculeArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -45,8 +47,12 @@ MOLECULE_PLATFORM_NAME = os.environ.get("MOLECULE_PLATFORM_NAME", None)
 class Test(base.Base):
     """Test Command Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
-        """Execute the actions necessary to perform a `molecule test` and returns None."""
+    def execute(self, action_args: list[str] | None = None) -> None:
+        """Execute the actions necessary to perform a `molecule test`.
+
+        Args:
+            action_args: Arguments for this command. Unused.
+        """
 
 
 @base.click_command_ex()
@@ -87,18 +93,29 @@ class Test(base.Base):
     help="Enable or disable parallel mode. Default is disabled.",
 )
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
-def test(  # type: ignore[no-untyped-def]  # noqa: ANN201, PLR0913
-    ctx,  # noqa: ANN001
-    scenario_name,  # noqa: ANN001
-    driver_name,  # noqa: ANN001
-    __all,  # noqa: ANN001
-    destroy,  # noqa: ANN001
-    parallel,  # noqa: ANN001
-    ansible_args,  # noqa: ANN001
-    platform_name,  # noqa: ANN001
-):  # pragma: no cover
-    """Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy)."""  # noqa: E501
-    args = ctx.obj.get("args")
+def test(  # noqa: PLR0913
+    ctx: click.Context,
+    scenario_name: str | None,
+    driver_name: str,
+    __all: bool,  # noqa: FBT001
+    destroy: Literal["always", "never"],
+    parallel: bool,  # noqa: FBT001
+    ansible_args: tuple[str, ...],
+    platform_name: str,
+) -> None:  # pragma: no cover
+    """Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy).
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        scenario_name: Name of the scenario to target.
+        driver_name: Name of the driver to use.
+        __all: Whether molecule should target scenario_name or all scenarios.
+        destroy: The destroy strategy to use.
+        parallel: Whether the scenario(s) should be run in parallel mode.
+        ansible_args: Arguments to forward to Ansible.
+        platform_name: Name of the platform to use.
+    """  # noqa: E501
+    args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
         "parallel": parallel,

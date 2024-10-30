@@ -30,7 +30,7 @@ from molecule.command import base
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs
+    from molecule.types import CommandArgs, MoleculeArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -39,8 +39,12 @@ LOG = logging.getLogger(__name__)
 class Verify(base.Base):
     """Verify Command Class."""
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
-        """Execute the actions necessary to perform a `molecule verify` and returns None."""
+    def execute(self, action_args: list[str] | None = None) -> None:
+        """Execute the actions necessary to perform a `molecule verify`.
+
+        Args:
+            action_args: Arguments for this command.
+        """
         self._config.verifier.execute(action_args)
 
 
@@ -52,9 +56,17 @@ class Verify(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
-def verify(ctx, scenario_name="default"):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
-    """Run automated tests against instances."""
-    args = ctx.obj.get("args")
+def verify(
+    ctx: click.Context,
+    scenario_name: str = "default",
+) -> None:  # pragma: no cover
+    """Run automated tests against instances.
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        scenario_name: Name of the scenario to target.
+    """
+    args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand}
 

@@ -42,14 +42,19 @@ class SideEffect(base.Base):
     See the provisioners documentation for further details.
     """
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
-        """Execute the actions necessary to perform a `molecule side-effect` and returns None."""
-        if not self._config.provisioner.playbooks.side_effect:  # type: ignore[union-attr]
-            msg = "Skipping, side effect playbook not configured."
-            LOG.warning(msg)
-            return
+    def execute(self, action_args: list[str] | None = None) -> None:
+        """Execute the actions necessary to perform a `molecule side-effect`.
 
-        self._config.provisioner.side_effect(action_args)  # type: ignore[union-attr]
+        Args:
+            action_args: Arguments for this command.
+        """
+        if self._config.provisioner:
+            if not self._config.provisioner.playbooks.side_effect:
+                msg = "Skipping, side effect playbook not configured."
+                LOG.warning(msg)
+                return
+
+            self._config.provisioner.side_effect(action_args)  # type: ignore[no-untyped-call]
 
 
 @base.click_command_ex()
@@ -60,8 +65,16 @@ class SideEffect(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
-def side_effect(ctx, scenario_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
-    """Use the provisioner to perform side-effects to the instances."""
+def side_effect(
+    ctx: click.Context,
+    scenario_name: str,
+) -> None:  # pragma: no cover
+    """Use the provisioner to perform side-effects to the instances.
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        scenario_name: Name of the scenario to target.
+    """
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand}
