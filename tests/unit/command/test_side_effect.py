@@ -30,11 +30,18 @@ from molecule.command import side_effect
 
 
 if TYPE_CHECKING:
+    from typing import Literal
+    from unittest.mock import MagicMock, Mock
+
     from pytest_mock import MockerFixture
+
+    from molecule.types import ProvisionerData
 
 
 @pytest.fixture()
-def _command_provisioner_section_with_side_effect_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
+def _command_provisioner_section_with_side_effect_data() -> (
+    dict[Literal["provisioner"], ProvisionerData]
+):
     return {
         "provisioner": {
             "name": "ansible",
@@ -44,7 +51,7 @@ def _command_provisioner_section_with_side_effect_data():  # type: ignore[no-unt
 
 
 @pytest.fixture()
-def _patched_ansible_side_effect(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+def _patched_ansible_side_effect(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.provisioner.ansible.Ansible.side_effect")
 
 
@@ -56,18 +63,18 @@ def _patched_ansible_side_effect(mocker):  # type: ignore[no-untyped-def]  # noq
     ["_command_provisioner_section_with_side_effect_data"],  # noqa: PT007
     indirect=True,
 )
-def test_side_effect_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_side_effect_execute(  # noqa: D103
     mocker: MockerFixture,  # noqa: ARG001
-    _patched_ansible_side_effect,  # noqa: ANN001, PT019
-    caplog,  # noqa: ANN001
-    patched_config_validate,  # noqa: ANN001, ARG001
+    _patched_ansible_side_effect: Mock,  # noqa: PT019
+    caplog: pytest.LogCaptureFixture,
+    patched_config_validate: Mock,  # noqa: ARG001
     config_instance: config.Config,
-):
+) -> None:
     pb = os.path.join(config_instance.scenario.directory, "side_effect.yml")  # noqa: PTH118
     util.write_file(pb, "")
 
     se = side_effect.SideEffect(config_instance)
-    se.execute()  # type: ignore[no-untyped-call]
+    se.execute()
 
     assert "default" in caplog.text
     assert "side_effect" in caplog.text
@@ -75,13 +82,13 @@ def test_side_effect_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D
     _patched_ansible_side_effect.assert_called_once_with(None)
 
 
-def test_side_effect_execute_skips_when_playbook_not_configured(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    caplog,  # noqa: ANN001
-    _patched_ansible_side_effect,  # noqa: ANN001, PT019
+def test_side_effect_execute_skips_when_playbook_not_configured(  # noqa: D103
+    caplog: pytest.LogCaptureFixture,
+    _patched_ansible_side_effect: Mock,  # noqa: PT019
     config_instance: config.Config,
-):
+) -> None:
     se = side_effect.SideEffect(config_instance)
-    se.execute()  # type: ignore[no-untyped-call]
+    se.execute()
 
     msg = "Skipping, side effect playbook not configured."
     assert msg in caplog.text
