@@ -29,8 +29,8 @@ from molecule.command.init import scenario
 LOG = logging.getLogger(__name__)
 
 
-@base.click_group_ex()  # type: ignore  # noqa: PGH003
-def init():  # pragma: no cover  # noqa: ANN201
+@base.click_group_ex()
+def init() -> None:  # pragma: no cover
     """Initialize a new scenario."""
 
 
