@@ -523,7 +523,7 @@ class Config:
             util.sysexit_with_message(msg)
 
 
-def molecule_directory(path: str) -> str:
+def molecule_directory(path: str | Path) -> str:
     """Return directory of the current scenario.
 
     Args:
@@ -532,7 +532,9 @@ def molecule_directory(path: str) -> str:
     Returns:
         The current scenario's directory.
     """
-    return os.path.join(path, MOLECULE_DIRECTORY)  # noqa: PTH118
+    if isinstance(path, str):
+        path = Path(path)
+    return str(path / MOLECULE_DIRECTORY)
 
 
 def molecule_file(path: str) -> str:
