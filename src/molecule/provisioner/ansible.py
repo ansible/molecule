@@ -862,7 +862,7 @@ class Ansible(base.Base):
         return ansible_playbook.AnsiblePlaybook(
             playbook,
             self._config,
-            verify,
+            verify=verify,
             **kwargs,
         )
 

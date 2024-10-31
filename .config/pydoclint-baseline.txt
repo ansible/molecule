@@ -118,19 +118,6 @@ src/molecule/provisioner/ansible.py
     DOC201: Method `Ansible._get_modules_directories` does not have a return section in docstring
     DOC201: Method `Ansible._get_filter_plugins_directories` does not have a return section in docstring
 --------------------
-src/molecule/provisioner/ansible_playbook.py
-    DOC106: Method `AnsiblePlaybook.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `AnsiblePlaybook.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC201: Method `AnsiblePlaybook.bake` does not have a return section in docstring
-    DOC101: Method `AnsiblePlaybook.execute`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `AnsiblePlaybook.execute`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `AnsiblePlaybook.execute`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `AnsiblePlaybook.execute`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [action_args: ].
-    DOC106: Method `AnsiblePlaybook.add_cli_arg`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `AnsiblePlaybook.add_cli_arg`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC106: Method `AnsiblePlaybook.add_env_arg`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `AnsiblePlaybook.add_env_arg`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
---------------------
 src/molecule/provisioner/ansible_playbooks.py
     DOC106: Method `AnsiblePlaybooks.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
     DOC107: Method `AnsiblePlaybooks.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints

@@ -54,7 +54,11 @@ def _provisioner_verifier_section_data():  # type: ignore[no-untyped-def]  # noq
 
 @pytest.fixture
 def _instance_for_verifier_env(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202
-    _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance, True)  # noqa: FBT003
+    _instance = ansible_playbook.AnsiblePlaybook(
+        "playbook",
+        config_instance,
+        verify=True,
+    )
     return _instance  # noqa: RET504
 
 
