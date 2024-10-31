@@ -46,7 +46,7 @@ def fixture_command_args() -> dict[str, str]:
 
 
 @pytest.fixture(name="instance")
-def fixture_instance(command_args: dict[str, str]) -> scenario.Scenario:
+def fixture_instance(command_args: scenario.CommandArgs) -> scenario.Scenario:
     """Provide a scenario instance.
 
     Args:
@@ -70,7 +70,7 @@ def test_scenario_execute(
         test_cache_path: Path to the cache directory for the test.
     """
     monkeypatch.chdir(test_cache_path)
-    instance.execute()  # type: ignore[no-untyped-call]
+    instance.execute()
 
     msg = "Initializing new scenario test-scenario..."
     patched_logger_info.assert_any_call(msg)
@@ -97,10 +97,10 @@ def test_execute_scenario_exists(
         test_cache_path: Path to the cache directory for the test.
     """
     monkeypatch.chdir(test_cache_path)
-    instance.execute()  # type: ignore[no-untyped-call]
+    instance.execute()
 
     with pytest.raises(SystemExit) as e:
-        instance.execute()  # type: ignore[no-untyped-call]
+        instance.execute()
 
     assert e.value.code == 1
 

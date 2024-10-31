@@ -22,7 +22,8 @@ from __future__ import annotations
 
 import abc
 import logging
-import os
+
+from pathlib import Path
 
 from molecule import util
 
@@ -30,13 +31,19 @@ from molecule import util
 LOG = logging.getLogger(__name__)
 
 
-class Base:
+class Base(abc.ABC):
     """Init Command Base Class."""
 
-    __metaclass__ = abc.ABCMeta
+    @abc.abstractmethod
+    def execute(self, action_args: list[str] | None = None) -> None:
+        """Abstract method to execute the command.
 
-    def _validate_template_dir(self, template_dir):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
-        if not os.path.isdir(template_dir):  # noqa: PTH112
+        Args:
+            action_args: An optional list of arguments to pass to the action.
+        """
+
+    def _validate_template_dir(self, template_dir: str) -> None:
+        if not Path(template_dir).is_dir():
             util.sysexit_with_message(
                 "The specified template directory (" + str(template_dir) + ") does not exist",
             )

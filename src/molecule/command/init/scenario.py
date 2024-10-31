@@ -25,12 +25,36 @@ import logging
 import os
 import sys
 
+from pathlib import Path
+from typing import TYPE_CHECKING
+
 import click
 
 from molecule import api, config, util
 from molecule.command import base as command_base
 from molecule.command.init import base
 from molecule.config import DEFAULT_DRIVER, MOLECULE_EMBEDDED_DATA_DIR
+
+
+if TYPE_CHECKING:
+    from typing import TypedDict
+
+    class CommandArgs(TypedDict):
+        """Argument dictionary to pass to init-scenario playbook.
+
+        Attributes:
+            dependency_name: Name of the dependency to initialize.
+            driver_name: Name of the driver to initialize.
+            provisioner_name: Name of the provisioner to initialize.
+            scenario_name: Name of the scenario to initialize.
+            subcommand: Name of subcommand to initialize.
+        """
+
+        dependency_name: str
+        driver_name: str
+        provisioner_name: str
+        scenario_name: str
+        subcommand: str
 
 
 LOG = logging.getLogger(__name__)
@@ -59,20 +83,28 @@ class Scenario(base.Base):
         Initialize a new scenario using a embedded template.
     """
 
-    def __init__(self, command_args: dict[str, str]) -> None:
-        """Construct Scenario."""
+    def __init__(self, command_args: CommandArgs) -> None:
+        """Construct Scenario.
+
+        Args:
+            command_args: Arguments to pass to init-scenario playbook.
+        """
         self._command_args = command_args
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002
-        """Execute the actions necessary to perform a `molecule init scenario` and returns None."""
+    def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
+        """Execute the actions necessary to perform a `molecule init scenario`.
+
+        Args:
+            action_args: Arguments for this command. Unused.
+        """
         scenario_name = self._command_args["scenario_name"]
 
         msg = f"Initializing new scenario {scenario_name}..."
         LOG.info(msg)
-        molecule_directory = config.molecule_directory(os.getcwd())  # noqa: PTH109
-        scenario_directory = os.path.join(molecule_directory, scenario_name)  # noqa: PTH118
+        molecule_directory = Path(config.molecule_directory(Path.cwd()))
+        scenario_directory = molecule_directory / scenario_name
 
-        if os.path.isdir(scenario_directory):  # noqa: PTH112
+        if scenario_directory.is_dir():
             msg = f"The directory molecule/{scenario_name} exists. Cannot create new scenario."
             util.sysexit_with_message(msg)
 
@@ -97,14 +129,18 @@ class Scenario(base.Base):
         LOG.info(msg)
 
 
-def _role_exists(ctx, param, value: str):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN202, ARG001
+def _role_exists(
+    ctx: click.Context,  # noqa: ARG001
+    param: str | None,  # noqa: ARG001
+    value: str,
+) -> str:  # pragma: no cover
     # if role name was not mentioned we assume that current directory is the
     # one hosting the role and determining the role name.
     if not value:
-        value = os.path.basename(os.getcwd())  # noqa: PTH109, PTH119
+        value = Path.cwd().name
 
-    role_directory = os.path.join(os.pardir, value)  # noqa: PTH118
-    if not os.path.exists(role_directory):  # noqa: PTH110
+    role_directory = Path.cwd().parent / value
+    if not role_directory.exists():
         msg = f"The role '{value}' not found. Please choose the proper role name."
         util.sysexit_with_message(msg)
     return value
@@ -136,18 +172,25 @@ def _role_exists(ctx, param, value: str):  # type: ignore[no-untyped-def] # prag
     default=command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
     required=False,
 )
-def scenario(  # type: ignore[no-untyped-def]  # noqa: ANN201
-    ctx,  # noqa: ANN001, ARG001
-    dependency_name,  # noqa: ANN001
-    driver_name,  # noqa: ANN001
-    provisioner_name,  # noqa: ANN001
-    scenario_name,  # noqa: ANN001
-):  # pragma: no cover
+def scenario(
+    ctx: click.Context,  # noqa: ARG001
+    dependency_name: str,
+    driver_name: str,
+    provisioner_name: str,
+    scenario_name: str,
+) -> None:  # pragma: no cover
     """Initialize a new scenario for use with Molecule.
 
     If name is not specified the 'default' value will be used.
+
+    Args:
+        ctx: Click context object holding commandline arguments.
+        dependency_name: Name of dependency to initialize.
+        driver_name: Name of driver to use.
+        provisioner_name: Name of provisioner to use.
+        scenario_name: Name of scenario to initialize.
     """
-    command_args = {
+    command_args: CommandArgs = {
         "dependency_name": dependency_name,
         "driver_name": driver_name,
         "provisioner_name": provisioner_name,
@@ -156,4 +199,4 @@ def scenario(  # type: ignore[no-untyped-def]  # noqa: ANN201
     }
 
     s = Scenario(command_args)
-    s.execute()  # type: ignore[no-untyped-call]
+    s.execute()
