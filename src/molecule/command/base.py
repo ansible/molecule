@@ -329,7 +329,7 @@ def click_group_ex() -> ClickGroup:
         context_settings={
             "max_content_width": 9999,
             "color": should_do_markup(),
-            "help_option_names": ['-h', '--help'],
+            "help_option_names": ["-h", "--help"],
         },
         help_headers_color="yellow",
         help_options_color="green",
