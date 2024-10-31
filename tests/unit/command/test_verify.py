@@ -25,6 +25,10 @@ from molecule.command import verify
 
 
 if TYPE_CHECKING:
+    from unittest.mock import Mock
+
+    import pytest
+
     from pytest_mock import MockerFixture
 
     from molecule import config
@@ -33,15 +37,15 @@ if TYPE_CHECKING:
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_verify_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_verify_execute(  # noqa: D103
     mocker: MockerFixture,  # noqa: ARG001
-    caplog,  # noqa: ANN001
-    patched_default_verifier,  # noqa: ANN001, ARG001
-    patched_config_validate,  # noqa: ANN001, ARG001
+    caplog: pytest.LogCaptureFixture,
+    patched_default_verifier: Mock,  # noqa: ARG001
+    patched_config_validate: Mock,  # noqa: ARG001
     config_instance: config.Config,
-):
+) -> None:
     v = verify.Verify(config_instance)
-    v.execute()  # type: ignore[no-untyped-call]
+    v.execute()
 
     assert "default" in caplog.text
     assert "verify" in caplog.text
