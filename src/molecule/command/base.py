@@ -326,7 +326,11 @@ def click_group_ex() -> ClickGroup:
         cls=HelpColorsGroup,
         # Workaround to disable click help line truncation to ~80 chars
         # https://github.com/pallets/click/issues/486
-        context_settings={"max_content_width": 9999, "color": should_do_markup()},
+        context_settings={
+            "max_content_width": 9999,
+            "color": should_do_markup(),
+            "help_option_names": ["-h", "--help"],
+        },
         help_headers_color="yellow",
         help_options_color="green",
         help_options_custom_colors={
