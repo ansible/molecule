@@ -118,20 +118,6 @@ src/molecule/provisioner/ansible.py
     DOC201: Method `Ansible._get_modules_directories` does not have a return section in docstring
     DOC201: Method `Ansible._get_filter_plugins_directories` does not have a return section in docstring
 --------------------
-src/molecule/provisioner/ansible_playbooks.py
-    DOC106: Method `AnsiblePlaybooks.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `AnsiblePlaybooks.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC101: Method `AnsiblePlaybooks._get_playbook`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `AnsiblePlaybooks._get_playbook`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `AnsiblePlaybooks._get_playbook`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `AnsiblePlaybooks._get_playbook`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [section: ].
-    DOC201: Method `AnsiblePlaybooks._get_playbook` does not have a return section in docstring
-    DOC101: Method `AnsiblePlaybooks._normalize_playbook`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `AnsiblePlaybooks._normalize_playbook`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `AnsiblePlaybooks._normalize_playbook`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `AnsiblePlaybooks._normalize_playbook`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [playbook: ].
-    DOC201: Method `AnsiblePlaybooks._normalize_playbook` does not have a return section in docstring
---------------------
 src/molecule/provisioner/base.py
     DOC601: Class `Base`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
     DOC603: Class `Base`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [__metaclass__: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
