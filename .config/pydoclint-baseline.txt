@@ -118,13 +118,6 @@ src/molecule/provisioner/ansible.py
     DOC201: Method `Ansible._get_modules_directories` does not have a return section in docstring
     DOC201: Method `Ansible._get_filter_plugins_directories` does not have a return section in docstring
 --------------------
-src/molecule/provisioner/base.py
-    DOC601: Class `Base`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `Base`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [__metaclass__: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC106: Method `Base.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Base.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC202: Method `Base.name` has a return section in docstring, but there are no return statements or annotations
---------------------
 src/molecule/verifier/base.py
     DOC601: Class `Verifier`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
     DOC603: Class `Verifier`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [__metaclass__: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)

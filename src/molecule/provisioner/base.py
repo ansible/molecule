@@ -22,13 +22,17 @@ from __future__ import annotations
 
 import abc
 
+from typing import TYPE_CHECKING
 
-class Base:
+
+if TYPE_CHECKING:
+    from molecule.config import Config
+
+
+class Base(abc.ABC):
     """Provisioner Base Class."""
 
-    __metaclass__ = abc.ABCMeta
-
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
+    def __init__(self, config: Config) -> None:
         """Initialize code for all :ref:`Provisioner` classes.
 
         Args:
@@ -38,27 +42,27 @@ class Base:
 
     @property
     @abc.abstractmethod
-    def default_options(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201
-        """Get default CLI arguments provided to ``cmd`` as a dict.
-
-        Return:
-            dict
-        """
-
-    @property
-    @abc.abstractmethod
-    def default_env(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201
-        """Get default env variables provided to ``cmd`` as a dict.
-
-        Return:
-            dict
-        """
-
-    @property
-    @abc.abstractmethod
-    def name(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201
-        """Name of the provisioner and returns a string.
+    def default_options(self) -> dict[str, str]:  # pragma: no cover
+        """Get default CLI arguments provided to ``cmd``.
 
         Returns:
-            str
+            The default CLI arguments.
+        """
+
+    @property
+    @abc.abstractmethod
+    def default_env(self) -> dict[str, str]:  # pragma: no cover
+        """Get default env variables provided to ``cmd``.
+
+        Returns:
+            The default env variables.
+        """
+
+    @property
+    @abc.abstractmethod
+    def name(self) -> str:  # pragma: no cover
+        """Name of the provisioner.
+
+        Returns:
+            The provisioner's name.
         """
