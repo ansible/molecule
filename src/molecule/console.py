@@ -32,8 +32,15 @@ theme = Theme(
 
 
 # Based on Ansible implementation
-def to_bool(a: Any) -> bool:  # noqa: ANN401
-    """Return a bool for the arg."""
+def to_bool(a: object) -> bool:
+    """Return a bool for the arg.
+
+    Args:
+        a: A value to coerce to bool.
+
+    Returns:
+        A bool representation of a.
+    """
     if a is None or isinstance(a, bool):
         return bool(a)
     if isinstance(a, str):
@@ -42,7 +49,11 @@ def to_bool(a: Any) -> bool:  # noqa: ANN401
 
 
 def should_do_markup() -> bool:
-    """Decide about use of ANSI colors."""
+    """Decide about use of ANSI colors.
+
+    Returns:
+        Whether the output should be colored.
+    """
     py_colors = None
 
     # https://xkcd.com/927/
