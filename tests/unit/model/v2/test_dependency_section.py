@@ -24,7 +24,7 @@ import pytest
 from molecule.model import schema_v3
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_dependency_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "dependency": {
@@ -45,7 +45,7 @@ def test_dependency(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, AN
     assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_dependency_errors_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"dependency": {"name": 0}}
 
@@ -61,12 +61,12 @@ def test_dependency_has_errors(config):  # type: ignore[no-untyped-def]  # noqa:
     assert x == schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_dependency_allows_galaxy_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"dependency": {"name": "galaxy"}}
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_dependency_allows_shell_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"dependency": {"name": "shell"}}
 
@@ -83,7 +83,7 @@ def test_dependency_allows_shell_name(config):  # type: ignore[no-untyped-def]  
     assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_dependency_shell_errors_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"dependency": {"name": "shell", "command": None}}
 

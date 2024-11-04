@@ -24,7 +24,7 @@ import pytest
 from molecule.model import schema_v3
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_provisioner_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "provisioner": {
@@ -62,7 +62,7 @@ def test_provisioner(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, A
     assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_provisioner_errors_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "provisioner": {
@@ -82,7 +82,7 @@ def test_provisioner_has_errors(config):  # type: ignore[no-untyped-def]  # noqa
     assert x == schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_provisioner_allows_ansible_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"provisioner": {"name": "ansible"}}
 

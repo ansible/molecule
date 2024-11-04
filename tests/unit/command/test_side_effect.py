@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from molecule.types import ProvisionerData
 
 
-@pytest.fixture()
+@pytest.fixture
 def _command_provisioner_section_with_side_effect_data() -> (
     dict[Literal["provisioner"], ProvisionerData]
 ):
@@ -50,7 +50,7 @@ def _command_provisioner_section_with_side_effect_data() -> (
     }
 
 
-@pytest.fixture()
+@pytest.fixture
 def _patched_ansible_side_effect(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.provisioner.ansible.Ansible.side_effect")
 

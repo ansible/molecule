@@ -38,14 +38,14 @@ if TYPE_CHECKING:
     from molecule.types import ProvisionerData
 
 
-@pytest.fixture()
+@pytest.fixture
 def _command_provisioner_section_with_cleanup_data() -> (
     dict[Literal["provisioner"], ProvisionerData]
 ):
     return {"provisioner": {"name": "ansible", "playbooks": {"cleanup": "cleanup.yml"}}}
 
 
-@pytest.fixture()
+@pytest.fixture
 def _patched_ansible_cleanup(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.provisioner.ansible.Ansible.cleanup")
 

@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
 
-@pytest.fixture()
+@pytest.fixture
 def _patched_ansible_playbook(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     m = mocker.patch("molecule.provisioner.ansible_playbook.AnsiblePlaybook")
     m.return_value.execute.return_value = b"patched-ansible-playbook-stdout"
@@ -45,22 +45,22 @@ def _patched_ansible_playbook(mocker):  # type: ignore[no-untyped-def]  # noqa: 
     return m
 
 
-@pytest.fixture()
+@pytest.fixture
 def _patched_write_inventory(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     return mocker.patch("molecule.provisioner.ansible.Ansible._write_inventory")
 
 
-@pytest.fixture()
+@pytest.fixture
 def _patched_remove_vars(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     return mocker.patch("molecule.provisioner.ansible.Ansible._remove_vars")
 
 
-@pytest.fixture()
+@pytest.fixture
 def _patched_link_or_update_vars(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     return mocker.patch("molecule.provisioner.ansible.Ansible._link_or_update_vars")
 
 
-@pytest.fixture()
+@pytest.fixture
 def _provisioner_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "provisioner": {

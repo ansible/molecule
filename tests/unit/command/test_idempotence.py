@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from molecule import config
 
 
-@pytest.fixture()
+@pytest.fixture
 def _patched_is_idempotent(mocker: MockerFixture) -> Mock:
     return mocker.patch("molecule.command.idempotence.Idempotence._is_idempotent")
 
@@ -42,7 +42,7 @@ def _patched_is_idempotent(mocker: MockerFixture) -> Mock:
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-@pytest.fixture()
+@pytest.fixture
 def _instance(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, ARG001
     config_instance.state.change_state("converged", True)  # noqa: FBT003
 

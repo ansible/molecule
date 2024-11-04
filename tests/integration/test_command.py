@@ -73,7 +73,7 @@ PARAMS_DEFAULT: ParamDefault = {
 }
 
 
-@pytest.mark.extensive()
+@pytest.mark.extensive
 @pytest.mark.parametrize(**PARAMS_DEFAULT)
 @pytest.mark.usefixtures("with_scenario")
 @pytest.mark.parametrize(
@@ -112,7 +112,7 @@ def test_command(
         assert "PLAY RECAP" in result.stdout
 
 
-@pytest.mark.extensive()
+@pytest.mark.extensive
 @pytest.mark.parametrize(**PARAMS_DEFAULT)
 @pytest.mark.usefixtures("with_scenario")
 def test_command_idempotence(test_ephemeral_dir_env: dict[str, str], scenario_name: str) -> None:
@@ -200,7 +200,7 @@ def test_command_list_with_format_plain(
     assert result.stdout == "instance        default ansible default false   false\n"
 
 
-@pytest.mark.extensive()
+@pytest.mark.extensive
 @pytest.mark.parametrize(**PARAMS_DEFAULT)
 @pytest.mark.usefixtures("with_scenario")
 @pytest.mark.parametrize(("platform", "missing"), (("instance", False), ("gonzo", True)))

@@ -18,7 +18,7 @@ import pytest
 from molecule import interpolation
 
 
-@pytest.fixture()
+@pytest.fixture
 def _mock_env():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "FOO": "foo",
@@ -29,7 +29,7 @@ def _mock_env():  # type: ignore[no-untyped-def]  # noqa: ANN202
     }
 
 
-@pytest.fixture()
+@pytest.fixture
 def _instance(_mock_env):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     return interpolation.Interpolator(interpolation.TemplateWithDefaults, _mock_env)
 

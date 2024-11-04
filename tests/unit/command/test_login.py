@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from molecule import config
 
 
-@pytest.fixture()
+@pytest.fixture
 def _instance(config_instance: config.Config) -> login.Login:
     config_instance.state.change_state("created", value=True)
 

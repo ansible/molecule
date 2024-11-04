@@ -24,7 +24,7 @@ import pytest
 from molecule.status import Status
 
 
-@pytest.fixture()
+@pytest.fixture
 def _instance():  # type: ignore[no-untyped-def]  # noqa: ANN202
     s = Status(
         instance_name=None,  # type: ignore[arg-type]

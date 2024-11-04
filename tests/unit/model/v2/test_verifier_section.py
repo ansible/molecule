@@ -24,7 +24,7 @@ import pytest
 from molecule.model import schema_v3
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "verifier": {
@@ -43,7 +43,7 @@ def test_verifier(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN2
     assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_verifier_errors_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "verifier": {
@@ -63,12 +63,12 @@ def test_verifier_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: A
     assert x == schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_verifier_allows_testinfra_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"verifier": {"name": "testinfra"}}
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_verifier_allows_ansible_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"verifier": {"name": "ansible"}}
 

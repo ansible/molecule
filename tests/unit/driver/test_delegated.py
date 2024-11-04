@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
 
-@pytest.fixture()
+@pytest.fixture
 def _driver_managed_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "driver": {
@@ -46,7 +46,7 @@ def _driver_managed_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN
     }
 
 
-@pytest.fixture()
+@pytest.fixture
 def _driver_unmanaged_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "driver": {
@@ -58,7 +58,7 @@ def _driver_unmanaged_section_data():  # type: ignore[no-untyped-def]  # noqa: A
     }
 
 
-@pytest.fixture()
+@pytest.fixture
 def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202
     return delegated.Delegated(config_instance)
 
@@ -340,7 +340,7 @@ def test_delegated_created(_instance):  # type: ignore[no-untyped-def]  # noqa: 
     assert _instance._created() == "false"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _driver_options_managed_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"driver": {"options": {"managed": False}}}
 
