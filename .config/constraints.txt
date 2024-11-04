@@ -108,7 +108,7 @@ referencing==0.35.1
 regex==2024.9.11
 regress==2024.8.1
 requests==2.32.3
-resolvelib==1.1.0
+resolvelib==1.0.1
 rich==13.9.4
 rpds-py==0.20.1
 ruamel-yaml==0.18.6
