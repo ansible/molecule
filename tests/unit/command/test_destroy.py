@@ -34,12 +34,12 @@ if TYPE_CHECKING:
     from molecule import config
 
 
-@pytest.fixture()
+@pytest.fixture
 def _patched_ansible_destroy(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.provisioner.ansible.Ansible.destroy")
 
 
-@pytest.fixture()
+@pytest.fixture
 def _patched_destroy_setup(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.command.destroy.Destroy._setup")
 

@@ -42,19 +42,19 @@ class Dummy(Base):
         return True
 
 
-@pytest.fixture()
+@pytest.fixture
 def _dummy_class(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, ARG001
     return Dummy
 
 
-@pytest.fixture()
+@pytest.fixture
 def _instance(_dummy_class, config_instance, _patched_logger_env):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     # _patched_logger_env included here to ensure pytest runs it first
     get_section_loggers.cache_clear()
     return _dummy_class(config_instance)
 
 
-@pytest.fixture()
+@pytest.fixture
 def _patched_logger_env(request, monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     """Parametrize tests with and without CI env vars."""
     envvars = {"CI": None, "GITHUB_ACTIONS": None, "GITLAB_CI": None, "TRAVIS": None}

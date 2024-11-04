@@ -24,7 +24,7 @@ import pytest
 from molecule.model import schema_v3
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_scenario_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "scenario": {
@@ -43,7 +43,7 @@ def test_scenario(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN2
     assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_scenario_errors_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"scenario": {"name": 0}}
 

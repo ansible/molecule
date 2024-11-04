@@ -25,7 +25,7 @@ from molecule import config
 from molecule.dependency import shell
 
 
-@pytest.fixture()
+@pytest.fixture
 def _dependency_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "dependency": {
@@ -40,7 +40,7 @@ def _dependency_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-@pytest.fixture()
+@pytest.fixture
 def _instance(  # type: ignore[no-untyped-def]  # noqa: ANN202
     _dependency_section_data,  # noqa: ANN001
     patched_config_validate,  # noqa: ANN001, ARG001

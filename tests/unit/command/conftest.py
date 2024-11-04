@@ -22,12 +22,12 @@ from __future__ import annotations
 import pytest
 
 
-@pytest.fixture()
+@pytest.fixture
 def command_patched_ansible_create(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     return mocker.patch("molecule.provisioner.ansible.Ansible.create")
 
 
-@pytest.fixture()
+@pytest.fixture
 def command_driver_delegated_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     x = {
         "driver": {
@@ -42,6 +42,6 @@ def command_driver_delegated_section_data():  # type: ignore[no-untyped-def]  # 
     return x  # noqa: RET504
 
 
-@pytest.fixture()
+@pytest.fixture
 def command_driver_delegated_managed_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     return {"driver": {"name": "default", "managed": True}}

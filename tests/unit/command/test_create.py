@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from molecule import config
 
 
-@pytest.fixture()
+@pytest.fixture
 def _patched_create_setup(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.command.create.Create._setup")
 

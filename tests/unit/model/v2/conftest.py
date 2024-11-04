@@ -45,7 +45,7 @@ def fixture_molecule_file(resources_folder_path: Path) -> Path:
     return resources_folder_path / "molecule.yml"
 
 
-@pytest.fixture()
+@pytest.fixture
 def config(molecule_file: Path, request: pytest.FixtureRequest) -> dict[str, Any]:
     """Return merged molecule file data.
 
@@ -68,7 +68,7 @@ def config(molecule_file: Path, request: pytest.FixtureRequest) -> dict[str, Any
     return d  # type: ignore[no-any-return]
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_platforms_delegated_section_data() -> str:
     return """
 ---

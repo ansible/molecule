@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from molecule import config
 
 
-@pytest.fixture()
+@pytest.fixture
 def _patched_ansible_syntax(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.provisioner.ansible.Ansible.syntax")
 

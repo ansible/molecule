@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from typing import Any
 
 
-@pytest.fixture()
+@pytest.fixture
 def _instance(config_instance: config.Config) -> state.State:
     return state.State(config_instance)
 

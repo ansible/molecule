@@ -37,7 +37,7 @@ if TYPE_CHECKING:
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-@pytest.fixture()
+@pytest.fixture
 def _instance(
     patched_config_validate: Mock,  # noqa: ARG001
     config_instance: config.Config,

@@ -81,7 +81,7 @@ def _no_color(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delitem(os.environ, "FORCE_COLOR", raising=False)
 
 
-@pytest.fixture()
+@pytest.fixture
 def resources_folder_path() -> Path:
     """Return the path to the resources folder.
 
@@ -127,7 +127,7 @@ def reset_pytest_vars(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN
             monkeypatch.delenv(var_name, raising=False)
 
 
-@pytest.fixture()
+@pytest.fixture
 def test_fixture_dir(request: pytest.FixtureRequest) -> Path:
     """Provide the fixture directory for a given test.
 

@@ -24,7 +24,7 @@ import pytest
 from molecule.model import schema_v3
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_driver_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "driver": {
@@ -42,7 +42,7 @@ def test_driver(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_driver_errors_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "driver": {
@@ -51,7 +51,7 @@ def _model_driver_errors_section_data():  # type: ignore[no-untyped-def]  # noqa
     }
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_driver_errors_section_data_no_prefix():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "driver": {
@@ -80,7 +80,7 @@ def test_driver_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN
     assert error_msg == schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_driver_provider_name_nullable_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"driver": {"provider": {"name": None}}}
 
@@ -94,27 +94,27 @@ def test_driver_provider_name_nullable(config):  # type: ignore[no-untyped-def] 
     assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_driver_allows_delegated_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"driver": {"name": "default"}}
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_driver_allows_molecule_section_data1():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"driver": {"name": "molecule-test_driver.name"}}
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_driver_allows_molecule_section_data2():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"driver": {"name": "molecule_test_driver.name"}}
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_driver_allows_custom_section_data1():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"driver": {"name": "custom-test_driver.name"}}
 
 
-@pytest.fixture()
+@pytest.fixture
 def _model_driver_allows_custom_section_data2():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {"driver": {"name": "custom_test_driver.name"}}
 

@@ -98,7 +98,7 @@ def test_dependency_property(config_instance: config.Config) -> None:  # noqa: D
     assert isinstance(config_instance.dependency, ansible_galaxy.AnsibleGalaxy)
 
 
-@pytest.fixture()
+@pytest.fixture
 def _config_dependency_shell_section_data() -> dict[Literal["dependency"], DependencyData]:
     return {"dependency": {"name": "shell", "command": "bin/command"}}
 
@@ -112,7 +112,7 @@ def test_dependency_property_is_shell(config_instance: config.Config) -> None:  
     assert isinstance(config_instance.dependency, shell.Shell)
 
 
-@pytest.fixture()
+@pytest.fixture
 def _config_driver_delegated_section_data() -> dict[Literal["driver"], DriverData]:
     return {"driver": {"name": "default", "options": {"managed": False}}}
 

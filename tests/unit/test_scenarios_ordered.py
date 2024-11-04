@@ -26,7 +26,7 @@ import pytest
 from molecule import config, scenarios
 
 
-@pytest.fixture()
+@pytest.fixture
 def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202
     config_instance_1 = copy.deepcopy(config_instance)
     config_instance_1.config["scenario"]["name"] = "two"
