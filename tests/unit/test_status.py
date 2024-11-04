@@ -51,7 +51,7 @@ def test_status_provisioner_name_attribute(_instance: Status) -> None:  # noqa: 
 
 
 def test_status_scenario_name_attribute(_instance: Status) -> None:  # noqa: PT019, D103
-    assert _instance.scenario_name == "name"
+    assert _instance.scenario_name == "scenario"
 
 
 def test_status_created_attribute(_instance: Status) -> None:  # noqa: PT019, D103
