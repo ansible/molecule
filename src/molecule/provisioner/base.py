@@ -42,7 +42,7 @@ class Base(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def default_options(self) -> dict[str, str]:  # pragma: no cover
+    def default_options(self) -> dict[str, str | bool]:  # pragma: no cover
         """Get default CLI arguments provided to ``cmd``.
 
         Returns:
