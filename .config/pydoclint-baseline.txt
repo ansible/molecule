@@ -1,9 +1,3 @@
-src/molecule/console.py
-    DOC101: Function `to_bool`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `to_bool`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [a: Any].
-    DOC201: Function `to_bool` does not have a return section in docstring
-    DOC201: Function `should_do_markup` does not have a return section in docstring
---------------------
 src/molecule/dependency/ansible_galaxy/__init__.py
     DOC101: Method `AnsibleGalaxy.__init__`: Docstring contains fewer arguments than in function signature.
     DOC106: Method `AnsibleGalaxy.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
@@ -94,12 +88,6 @@ src/molecule/driver/delegated.py
     DOC107: Method `Delegated.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Method `Delegated.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [config: ].
 --------------------
-src/molecule/interpolation.py
-    DOC101: Method `InvalidInterpolation.__init__`: Docstring contains fewer arguments than in function signature.
-    DOC103: Method `InvalidInterpolation.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [place: Exception, string: str].
-    DOC601: Class `TemplateWithDefaults`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `TemplateWithDefaults`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [idpattern: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
---------------------
 src/molecule/model/schema_v3.py
     DOC101: Function `validate`: Docstring contains fewer arguments than in function signature.
     DOC106: Function `validate`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
@@ -163,10 +151,6 @@ src/molecule/provisioner/base.py
     DOC106: Method `Base.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
     DOC107: Method `Base.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC202: Method `Base.name` has a return section in docstring, but there are no return statements or annotations
---------------------
-src/molecule/status.py
-    DOC601: Class `Status`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `Status`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [converged: str, created: str, driver_name: str, instance_name: str, provisioner_name: str, scenario_name: str]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
 --------------------
 src/molecule/verifier/base.py
     DOC601: Class `Verifier`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)

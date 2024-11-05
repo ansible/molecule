@@ -35,7 +35,12 @@ class InvalidInterpolation(Exception):  # noqa: N818
         string: str,  # pylint: disable=redefined-outer-name
         place: Exception,
     ) -> None:
-        """Construct InvalidInterpolation."""
+        """Construct InvalidInterpolation.
+
+        Args:
+            string: Error message.
+            place: The original exception with location information.
+        """
         self.string = string
         self.place = place
 
@@ -119,7 +124,11 @@ class Interpolator:
 
 
 class TemplateWithDefaults(string.Template):
-    """TemplateWithDefaults Class."""
+    """TemplateWithDefaults Class.
+
+    Attributes:
+        idpattern: Replacement pattern for base Template class.
+    """
 
     idpattern = r"[_a-z][_a-z0-9]*(?::?-[^}]+)?"
 
