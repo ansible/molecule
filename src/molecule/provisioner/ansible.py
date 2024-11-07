@@ -40,6 +40,8 @@ from molecule.provisioner import ansible_playbook, ansible_playbooks, base
 if TYPE_CHECKING:
     from typing import Any
 
+    Vivify = collections.defaultdict[str, Any | "Vivify"]
+
 
 LOG = logging.getLogger(__name__)
 
@@ -630,7 +632,7 @@ class Ansible(base.Base):
         return self._config.config["provisioner"]["inventory"]["links"]
 
     @property
-    def inventory(self) -> dict:
+    def inventory(self) -> dict[str, str]:
         """Create an inventory structure and returns a dict.
 
         ``` yaml
@@ -717,6 +719,14 @@ class Ansible(base.Base):
         self,
         instance_name: str,
     ) -> dict[str, Any]:
+        """Computed connection options combining instance and provisioner options.
+
+        Args:
+            instance_name: The instance to base the connection options on.
+
+        Returns:
+            The combined connection options.
+        """
         d = self._config.driver.ansible_connection_options(instance_name)  # type: ignore[no-untyped-call]
 
         return util.merge_dicts(
@@ -735,12 +745,12 @@ class Ansible(base.Base):
 
         Args:
             playbook: An optional string containing an absolute path to a playbook.
-            kwargs: An optional keyword arguments.
+            **kwargs: An optional keyword arguments.
 
         Returns:
             str: The output from the ``ansible-playbook`` command.
         """
-        pb = self._get_ansible_playbook(playbook or self.playbooks.converge, **kwargs)
+        pb = self._get_ansible_playbook(playbook or self.playbooks.converge, **kwargs)  # type: ignore[arg-type]
 
         return pb.execute()
 
@@ -750,7 +760,11 @@ class Ansible(base.Base):
         pb.execute()
 
     def side_effect(self, action_args: list[str] | None = None) -> None:
-        """Execute ``ansible-playbook`` against the side_effect playbook and returns None."""
+        """Execute ``ansible-playbook`` against the side_effect playbook.
+
+        Args:
+            action_args: Arguments to pass to the side_effect playbook.
+        """
         if action_args:
             playbooks = [
                 self._get_ansible_playbook(self._config.provisioner.abs_path(playbook))
@@ -778,7 +792,11 @@ class Ansible(base.Base):
         pb.execute()
 
     def verify(self, action_args: list[str] | None = None) -> None:
-        """Execute ``ansible-playbook`` against the verify playbook and returns None."""
+        """Execute ``ansible-playbook`` against the verify playbook.
+
+        Args:
+            action_args: Arguments to pass on to the verify playbook.
+        """
         if action_args:
             playbooks = [self._config.provisioner.abs_path(playbook) for playbook in action_args]
         else:
@@ -895,7 +913,10 @@ class Ansible(base.Base):
             playbook: A string containing an absolute path to a provisioner's playbook.
             verify: An optional bool to toggle the Playbook mode between provision and verify.
                 False: provision; True: verify. Default is False.
-            kwargs: An optional keyword arguments.
+            **kwargs: An optional keyword arguments.
+
+        Returns:
+            An AnsiblePlaybook object.
         """
         return ansible_playbook.AnsiblePlaybook(
             playbook,
@@ -925,11 +946,11 @@ class Ansible(base.Base):
 {% endfor -%}
 """.strip()
 
-    def _vivify(self):  # noqa: ANN202
+    def _vivify(self) -> Vivify:
         """Return an autovivification default dict.
 
-        Return:
-            dict
+        Returns:
+            A defaultdict whose default value is other defaultdict objects (and so on).
         """
         return collections.defaultdict(self._vivify)
 
@@ -949,6 +970,9 @@ class Ansible(base.Base):
         """Return list of ansible module includes directories.
 
         Adds modules directory from molecule and its plugins.
+
+        Returns:
+            List of module includes directories.
         """
         paths: list[str | None] = []
         if os.environ.get("ANSIBLE_LIBRARY"):
@@ -991,7 +1015,11 @@ class Ansible(base.Base):
         return util.abs_path(os.path.join(self._get_plugin_directory(), "filter"))  # noqa: PTH118
 
     def _get_filter_plugins_directories(self) -> list[str]:
-        """Return list of ansible filter plugins includes directories."""
+        """Return list of ansible filter plugins includes directories.
+
+        Returns:
+            List of filter includes directories.
+        """
         paths: list[str | None] = []
         if os.environ.get("ANSIBLE_FILTER_PLUGINS"):
             paths = list(
