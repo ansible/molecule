@@ -61,14 +61,18 @@ class InventoryData(TypedDict):
     links: dict[str, str]
 
 
-class PlatformData(TypedDict):
+class PlatformData(TypedDict, total=False):
     """Platform data for a Molecule run.
 
     Attributes:
         name: Name of the platform.
+        groups: Optional list of groups.
+        children: Optional list of child groups.
     """
 
     name: str
+    groups: list[str]
+    children: list[str]
 
 
 class PlaybookData(TypedDict, total=False):

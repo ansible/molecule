@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 #  Copyright (c) 2015-2018 Cisco Systems, Inc.
 
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -529,10 +530,10 @@ class Ansible(base.Base):
                 list(map(util.abs_path, os.environ["ANSIBLE_ROLES_PATH"].split(":"))),
             )
 
-        env = util.merge_dicts(
-            os.environ,
+        env = util.merge_dicts(  # type: ignore[type-var]
+            dict(os.environ),
             {
-                "ANSIBLE_CONFIG": self._config.provisioner.config_file,
+                "ANSIBLE_CONFIG": self.config_file,
                 "ANSIBLE_ROLES_PATH": ":".join(roles_path_list),
                 self._config.ansible_collections_path: ":".join(collections_path_list),
                 "ANSIBLE_LIBRARY": ":".join(self._get_modules_directories()),
@@ -541,7 +542,7 @@ class Ansible(base.Base):
                 ),
             },
         )
-        env = util.merge_dicts(env, self._config.env)
+        env = util.merge_dicts(env, self._config.env)  # type: ignore[type-var]
 
         return env  # noqa: RET504
 
@@ -736,9 +737,10 @@ class Ansible(base.Base):
 
     def check(self) -> None:
         """Execute ``ansible-playbook`` against the converge playbook with the ``--check`` flag."""
-        pb = self._get_ansible_playbook(self.playbooks.converge)
-        pb.add_cli_arg("check", value=True)
-        pb.execute()
+        if self.playbooks.converge:
+            pb = self._get_ansible_playbook(self.playbooks.converge)
+            pb.add_cli_arg("check", value=True)
+            pb.execute()
 
     def converge(self, playbook: str = "", **kwargs: object) -> str:
         """Execute ``ansible-playbook`` against the converge playbook. unless specified otherwise.
@@ -756,8 +758,9 @@ class Ansible(base.Base):
 
     def destroy(self) -> None:
         """Execute ``ansible-playbook`` against the destroy playbook and returns None."""
-        pb = self._get_ansible_playbook(self.playbooks.destroy)
-        pb.execute()
+        if self.playbooks.destroy:
+            pb = self._get_ansible_playbook(self.playbooks.destroy)
+            pb.execute()
 
     def side_effect(self, action_args: list[str] | None = None) -> None:
         """Execute ``ansible-playbook`` against the side_effect playbook.
@@ -765,31 +768,34 @@ class Ansible(base.Base):
         Args:
             action_args: Arguments to pass to the side_effect playbook.
         """
+        playbooks = []
         if action_args:
             playbooks = [
-                self._get_ansible_playbook(self._config.provisioner.abs_path(playbook))
-                for playbook in action_args
+                self._get_ansible_playbook(self.abs_path(playbook)) for playbook in action_args
             ]
-        else:
+        elif self.playbooks.side_effect:
             playbooks = [self._get_ansible_playbook(self.playbooks.side_effect)]
         for pb in playbooks:
             pb.execute()
 
     def create(self) -> None:
         """Execute ``ansible-playbook`` against the create playbook and returns None."""
-        pb = self._get_ansible_playbook(self.playbooks.create)
-        pb.execute()
+        if self.playbooks.create:
+            pb = self._get_ansible_playbook(self.playbooks.create)
+            pb.execute()
 
     def prepare(self) -> None:
         """Execute ``ansible-playbook`` against the prepare playbook and returns None."""
-        pb = self._get_ansible_playbook(self.playbooks.prepare)
-        pb.execute()
+        if self.playbooks.prepare:
+            pb = self._get_ansible_playbook(self.playbooks.prepare)
+            pb.execute()
 
     def syntax(self) -> None:
         """Execute `ansible-playbook` against the converge playbook with the -syntax-check flag."""
-        pb = self._get_ansible_playbook(self.playbooks.converge)
-        pb.add_cli_arg("syntax-check", True)  # noqa: FBT003
-        pb.execute()
+        if self.playbooks.converge:
+            pb = self._get_ansible_playbook(self.playbooks.converge)
+            pb.add_cli_arg("syntax-check", value=True)
+            pb.execute()
 
     def verify(self, action_args: list[str] | None = None) -> None:
         """Execute ``ansible-playbook`` against the verify playbook.
@@ -797,9 +803,10 @@ class Ansible(base.Base):
         Args:
             action_args: Arguments to pass on to the verify playbook.
         """
+        playbooks = []
         if action_args:
-            playbooks = [self._config.provisioner.abs_path(playbook) for playbook in action_args]
-        else:
+            playbooks = [self.abs_path(playbook) for playbook in action_args]
+        elif self.playbooks.verify:
             playbooks = [self.playbooks.verify]
         if not playbooks:
             LOG.warning("Skipping, verify playbook not configured.")

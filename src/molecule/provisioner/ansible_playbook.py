@@ -58,7 +58,7 @@ class AnsiblePlaybook:
         self._ansible_command: list[str] = []
         self._playbook = playbook
         self._config = config
-        self._cli: dict[str, str] = {}
+        self._cli: dict[str, str | bool] = {}
         self._env: dict[str, str] = {}
         if verify:
             self._env = util.merge_dicts(
@@ -144,7 +144,7 @@ class AnsiblePlaybook:
 
         return result.stdout
 
-    def add_cli_arg(self, name: str, value: str) -> None:
+    def add_cli_arg(self, name: str, value: str | bool) -> None:
         """Add argument to CLI passed to ansible-playbook.
 
         Args:

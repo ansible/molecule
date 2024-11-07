@@ -234,7 +234,7 @@ def os_walk(
                 yield str(filename)
 
 
-def render_template(template: str, **kwargs: str) -> str:
+def render_template(template: str, **kwargs: dict[str, str]) -> str:
     """Render a jinaj2 template.
 
     Args:
