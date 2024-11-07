@@ -51,7 +51,7 @@ class Cleanup(base.Base):
                 LOG.warning(msg)
                 return
 
-            self._config.provisioner.cleanup()  # type: ignore[no-untyped-call]
+            self._config.provisioner.cleanup()
 
 
 @base.click_command_ex()

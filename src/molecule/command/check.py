@@ -49,7 +49,7 @@ class Check(base.Base):
             action_args: Arguments for this command. Unused.
         """
         if self._config.provisioner is not None:
-            self._config.provisioner.check()  # type: ignore[no-untyped-call]
+            self._config.provisioner.check()
 
 
 @base.click_command_ex()

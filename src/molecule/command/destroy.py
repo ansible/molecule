@@ -56,7 +56,7 @@ class Destroy(base.Base):
             return
 
         if self._config.provisioner:
-            self._config.provisioner.destroy()  # type: ignore[no-untyped-call]
+            self._config.provisioner.destroy()
         self._config.state.reset()
 
 

@@ -55,7 +55,7 @@ class Create(base.Base):
             return
 
         if self._config.provisioner:
-            self._config.provisioner.create()  # type: ignore[no-untyped-call]
+            self._config.provisioner.create()
 
         self._config.state.change_state("created", value=True)
 

@@ -57,7 +57,7 @@ class Idempotence(base.Base):
             util.sysexit_with_message(msg)
 
         if self._config.provisioner:
-            output = self._config.provisioner.converge()  # type: ignore[no-untyped-call]
+            output = self._config.provisioner.converge()
 
             idempotent = self._is_idempotent(output)
             if idempotent:
