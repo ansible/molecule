@@ -33,12 +33,13 @@ from tests.unit.conftest import os_split  # pylint:disable=C0411
 
 if TYPE_CHECKING:
     from pathlib import Path
+    from unittest.mock import MagicMock, Mock
 
     from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def _patched_ansible_playbook(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+def _patched_ansible_playbook(mocker: MockerFixture) -> MagicMock:
     m = mocker.patch("molecule.provisioner.ansible_playbook.AnsiblePlaybook")
     m.return_value.execute.return_value = b"patched-ansible-playbook-stdout"
 
@@ -46,17 +47,17 @@ def _patched_ansible_playbook(mocker):  # type: ignore[no-untyped-def]  # noqa: 
 
 
 @pytest.fixture
-def _patched_write_inventory(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+def _patched_write_inventory(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.provisioner.ansible.Ansible._write_inventory")
 
 
 @pytest.fixture
-def _patched_remove_vars(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+def _patched_remove_vars(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.provisioner.ansible.Ansible._remove_vars")
 
 
 @pytest.fixture
-def _patched_link_or_update_vars(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
+def _patched_link_or_update_vars(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.provisioner.ansible.Ansible._link_or_update_vars")
 
 
@@ -352,13 +353,13 @@ def test_playbooks_side_effect_property(instance):  # type: ignore[no-untyped-de
     assert instance.playbooks.side_effect is None
 
 
-def test_check(instance, mocker: MockerFixture, _patched_ansible_playbook):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
+def test_check(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansible_playbook: Mock):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, ARG001, D103
     instance.check()
 
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.converge,
         instance._config,
-        False,  # noqa: FBT003
+        verify=False,
     )
     _patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
         "check",
@@ -367,13 +368,17 @@ def test_check(instance, mocker: MockerFixture, _patched_ansible_playbook):  # t
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_converge(instance, mocker: MockerFixture, _patched_ansible_playbook):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
+def test_converge(  # noqa: D103
+    instance: ansible.Ansible,
+    mocker: MockerFixture,  # noqa: ARG001
+    _patched_ansible_playbook: Mock,  # noqa: PT019
+) -> None:
     result = instance.converge()
 
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.converge,
         instance._config,
-        False,  # noqa: FBT003
+        verify=False,
     )
     # NOTE(retr0h): This is not the true return type.  This is a mock return
     #               which didn't go through str.decode().
@@ -392,7 +397,7 @@ def test_converge_with_playbook(  # type: ignore[no-untyped-def]  # noqa: ANN201
     _patched_ansible_playbook.assert_called_once_with(
         "playbook",
         instance._config,
-        False,  # noqa: FBT003
+        verify=False,
     )
     # NOTE(retr0h): This is not the true return type.  This is a mock return
     #               which didn't go through str.decode().
@@ -401,68 +406,72 @@ def test_converge_with_playbook(  # type: ignore[no-untyped-def]  # noqa: ANN201
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_cleanup(instance, mocker: MockerFixture, _patched_ansible_playbook):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
+def test_cleanup(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansible_playbook: Mock):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, ARG001, D103
     instance.cleanup()
 
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.cleanup,
         instance._config,
-        False,  # noqa: FBT003
+        verify=False,
     )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_destroy(instance, mocker: MockerFixture, _patched_ansible_playbook):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
+def test_destroy(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansible_playbook: Mock):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, ARG001, D103
     instance.destroy()
 
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.destroy,
         instance._config,
-        False,  # noqa: FBT003
+        verify=False,
     )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_side_effect(instance, mocker: MockerFixture, _patched_ansible_playbook):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
+def test_side_effect(  # noqa: D103
+    instance: ansible.Ansible,
+    mocker: MockerFixture,  # noqa: ARG001
+    _patched_ansible_playbook: Mock,  # noqa: PT019
+) -> None:
     instance.side_effect()
 
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.side_effect,
         instance._config,
-        False,  # noqa: FBT003
+        verify=False,
     )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_create(instance, mocker: MockerFixture, _patched_ansible_playbook):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
+def test_create(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansible_playbook: Mock):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, ARG001, D103
     instance.create()
 
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.create,
         instance._config,
-        False,  # noqa: FBT003
+        verify=False,
     )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_prepare(instance, mocker: MockerFixture, _patched_ansible_playbook):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
+def test_prepare(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansible_playbook: Mock):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, ARG001, D103
     instance.prepare()
 
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.prepare,
         instance._config,
-        False,  # noqa: FBT003
+        verify=False,
     )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_syntax(instance, mocker: MockerFixture, _patched_ansible_playbook):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
+def test_syntax(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansible_playbook: Mock):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, ARG001, D103
     instance.syntax()
 
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.converge,
         instance._config,
-        False,  # noqa: FBT003
+        verify=False,
     )
     _patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
         "syntax-check",
@@ -471,7 +480,7 @@ def test_syntax(instance, mocker: MockerFixture, _patched_ansible_playbook):  # 
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_verify(instance, mocker: MockerFixture, _patched_ansible_playbook):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, ARG001, D103
+def test_verify(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansible_playbook: Mock):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, ARG001, D103
     instance.verify()
 
     if instance._config.provisioner.playbooks.verify:
@@ -679,7 +688,7 @@ def test_link_vars(instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, A
     assert os.path.lexists(target_host_vars)
 
 
-def test_link_vars_raises_when_source_not_found(instance, caplog):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_link_vars_raises_when_source_not_found(instance: ansible.Ansible, caplog):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     c = instance._config.config
     c["provisioner"]["inventory"]["links"] = {"foo": "../bar"}
 
@@ -761,7 +770,7 @@ def test_get_modules_directories_default(
     assert paths[4] == "/usr/share/ansible/plugins/modules"
 
 
-def test_get_modules_directories_single_ansible_library(instance, monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_get_modules_directories_single_ansible_library(instance: ansible.Ansible, monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     monkeypatch.setenv("ANSIBLE_LIBRARY", "/abs/path/lib")
 
     paths = instance._get_modules_directories()
@@ -770,7 +779,7 @@ def test_get_modules_directories_single_ansible_library(instance, monkeypatch): 
     assert paths[0] == "/abs/path/lib"
 
 
-def test_get_modules_directories_multi_ansible_library(instance, monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_get_modules_directories_multi_ansible_library(instance: ansible.Ansible, monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
     monkeypatch.setenv("ANSIBLE_LIBRARY", "relpath/lib:/abs/path/lib")
 
     paths = instance._get_modules_directories()
@@ -788,7 +797,11 @@ def test_get_filter_plugin_directory(instance):  # type: ignore[no-untyped-def] 
     assert x == parts[-5:]
 
 
-def test_get_filter_plugins_directories_default(instance, monkeypatch, test_cache_path: Path):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_get_filter_plugins_directories_default(  # noqa: D103
+    instance: ansible.Ansible,
+    monkeypatch: pytest.MonkeyPatch,
+    test_cache_path: Path,
+) -> None:
     monkeypatch.delenv("ANSIBLE_FILTER_PLUGINS", raising=False)
 
     paths = instance._get_filter_plugins_directories()
