@@ -182,13 +182,11 @@ def run_command(  # noqa: PLR0913
     Raises:
         CalledProcessError: If return code is nonzero and check is True.
     """
-    args = cmd
-
     if debug:
         print_environment_vars(env)
 
     result = app.runtime.run(
-        args=args,
+        args=cmd,
         env=env,
         cwd=cwd,
         tee=True,

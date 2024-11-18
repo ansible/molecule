@@ -115,7 +115,7 @@ class AnsiblePlaybook:
         Returns:
             Output from ansible-playbook.
         """
-        if self._ansible_command is None:
+        if not self._ansible_command:
             self.bake()
 
         if not self._playbook:
