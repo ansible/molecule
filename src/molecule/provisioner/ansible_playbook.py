@@ -42,7 +42,7 @@ class AnsiblePlaybook:
 
     def __init__(
         self,
-        playbook: str,
+        playbook: str | None,
         config: Config,
         *,
         verify: bool = False,

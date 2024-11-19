@@ -353,8 +353,14 @@ def test_playbooks_side_effect_property(instance):  # type: ignore[no-untyped-de
     assert instance.playbooks.side_effect is None
 
 
-def test_check(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansible_playbook: Mock):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, ARG001, D103
+def test_check(  # noqa: D103
+    instance: ansible.Ansible,
+    mocker: MockerFixture,  # noqa: ARG001
+    _patched_ansible_playbook: Mock,  # noqa: PT019
+) -> None:
     instance.check()
+
+    assert instance._config.provisioner
 
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.converge,
@@ -363,7 +369,7 @@ def test_check(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansibl
     )
     _patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
         "check",
-        True,  # noqa: FBT003
+        value=True,
     )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
@@ -375,6 +381,8 @@ def test_converge(  # noqa: D103
 ) -> None:
     result = instance.converge()
 
+    assert instance._config.provisioner
+
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.converge,
         instance._config,
@@ -382,16 +390,16 @@ def test_converge(  # noqa: D103
     )
     # NOTE(retr0h): This is not the true return type.  This is a mock return
     #               which didn't go through str.decode().
-    assert result == b"patched-ansible-playbook-stdout"
+    assert result == b"patched-ansible-playbook-stdout"  # type: ignore[comparison-overlap]
 
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_converge_with_playbook(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    instance,  # noqa: ANN001
+def test_converge_with_playbook(  # noqa: D103
+    instance: ansible.Ansible,
     mocker: MockerFixture,  # noqa: ARG001
-    _patched_ansible_playbook,  # noqa: ANN001, PT019
-):
+    _patched_ansible_playbook: Mock,  # noqa: PT019
+) -> None:
     result = instance.converge("playbook")
 
     _patched_ansible_playbook.assert_called_once_with(
@@ -401,13 +409,19 @@ def test_converge_with_playbook(  # type: ignore[no-untyped-def]  # noqa: ANN201
     )
     # NOTE(retr0h): This is not the true return type.  This is a mock return
     #               which didn't go through str.decode().
-    assert result == b"patched-ansible-playbook-stdout"
+    assert result == b"patched-ansible-playbook-stdout"  # type: ignore[comparison-overlap]
 
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_cleanup(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansible_playbook: Mock):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, ARG001, D103
+def test_cleanup(  # noqa: D103
+    instance: ansible.Ansible,
+    mocker: MockerFixture,  # noqa: ARG001
+    _patched_ansible_playbook: Mock,  # noqa: PT019
+) -> None:
     instance.cleanup()
+
+    assert instance._config.provisioner
 
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.cleanup,
@@ -417,8 +431,14 @@ def test_cleanup(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansi
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_destroy(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansible_playbook: Mock):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, ARG001, D103
+def test_destroy(  # noqa: D103
+    instance: ansible.Ansible,
+    mocker: MockerFixture,  # noqa: ARG001
+    _patched_ansible_playbook: Mock,  # noqa: PT019
+) -> None:
     instance.destroy()
+
+    assert instance._config.provisioner
 
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.destroy,
@@ -435,6 +455,8 @@ def test_side_effect(  # noqa: D103
 ) -> None:
     instance.side_effect()
 
+    assert instance._config.provisioner
+
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.side_effect,
         instance._config,
@@ -443,8 +465,14 @@ def test_side_effect(  # noqa: D103
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_create(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansible_playbook: Mock):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, ARG001, D103
+def test_create(  # noqa: D103
+    instance: ansible.Ansible,
+    mocker: MockerFixture,  # noqa: ARG001
+    _patched_ansible_playbook: Mock,  # noqa: PT019
+) -> None:
     instance.create()
+
+    assert instance._config.provisioner
 
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.create,
@@ -454,8 +482,14 @@ def test_create(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansib
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_prepare(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansible_playbook: Mock):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, ARG001, D103
+def test_prepare(  # noqa: D103
+    instance: ansible.Ansible,
+    mocker: MockerFixture,  # noqa: ARG001
+    _patched_ansible_playbook: Mock,  # noqa: PT019
+) -> None:
     instance.prepare()
+
+    assert instance._config.provisioner
 
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.prepare,
@@ -465,8 +499,14 @@ def test_prepare(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansi
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_syntax(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansible_playbook: Mock):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, ARG001, D103
+def test_syntax(  # noqa: D103
+    instance: ansible.Ansible,
+    mocker: MockerFixture,  # noqa: ARG001
+    _patched_ansible_playbook: Mock,  # noqa: PT019
+) -> None:
     instance.syntax()
+
+    assert instance._config.provisioner
 
     _patched_ansible_playbook.assert_called_once_with(
         instance._config.provisioner.playbooks.converge,
@@ -475,13 +515,19 @@ def test_syntax(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansib
     )
     _patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
         "syntax-check",
-        True,  # noqa: FBT003
+        value=True,
     )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_verify(instance: ansible.Ansible, mocker: MockerFixture, _patched_ansible_playbook: Mock):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, ARG001, D103
+def test_verify(  # noqa: D103
+    instance: ansible.Ansible,
+    mocker: MockerFixture,  # noqa: ARG001
+    _patched_ansible_playbook: Mock,  # noqa: PT019
+) -> None:
     instance.verify()
+
+    assert instance._config.provisioner
 
     if instance._config.provisioner.playbooks.verify:
         _patched_ansible_playbook.assert_called_once_with(

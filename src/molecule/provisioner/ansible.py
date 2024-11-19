@@ -712,9 +712,8 @@ class Ansible(base.Base):
 
     def cleanup(self) -> None:
         """Execute `ansible-playbook` against the cleanup playbook and returns None."""
-        if self.playbooks.cleanup:
-            pb = self._get_ansible_playbook(self.playbooks.cleanup)
-            pb.execute()
+        pb = self._get_ansible_playbook(self.playbooks.cleanup)
+        pb.execute()
 
     def connection_options(
         self,
@@ -737,10 +736,9 @@ class Ansible(base.Base):
 
     def check(self) -> None:
         """Execute ``ansible-playbook`` against the converge playbook with the ``--check`` flag."""
-        if self.playbooks.converge:
-            pb = self._get_ansible_playbook(self.playbooks.converge)
-            pb.add_cli_arg("check", value=True)
-            pb.execute()
+        pb = self._get_ansible_playbook(self.playbooks.converge)
+        pb.add_cli_arg("check", value=True)
+        pb.execute()
 
     def converge(self, playbook: str = "", **kwargs: object) -> str:
         """Execute ``ansible-playbook`` against the converge playbook. unless specified otherwise.
@@ -758,9 +756,8 @@ class Ansible(base.Base):
 
     def destroy(self) -> None:
         """Execute ``ansible-playbook`` against the destroy playbook and returns None."""
-        if self.playbooks.destroy:
-            pb = self._get_ansible_playbook(self.playbooks.destroy)
-            pb.execute()
+        pb = self._get_ansible_playbook(self.playbooks.destroy)
+        pb.execute()
 
     def side_effect(self, action_args: list[str] | None = None) -> None:
         """Execute ``ansible-playbook`` against the side_effect playbook.
@@ -773,29 +770,25 @@ class Ansible(base.Base):
             playbooks = [
                 self._get_ansible_playbook(self.abs_path(playbook)) for playbook in action_args
             ]
-        elif self.playbooks.side_effect:
-            playbooks = [self._get_ansible_playbook(self.playbooks.side_effect)]
+        playbooks = [self._get_ansible_playbook(self.playbooks.side_effect)]
         for pb in playbooks:
             pb.execute()
 
     def create(self) -> None:
         """Execute ``ansible-playbook`` against the create playbook and returns None."""
-        if self.playbooks.create:
-            pb = self._get_ansible_playbook(self.playbooks.create)
-            pb.execute()
+        pb = self._get_ansible_playbook(self.playbooks.create)
+        pb.execute()
 
     def prepare(self) -> None:
         """Execute ``ansible-playbook`` against the prepare playbook and returns None."""
-        if self.playbooks.prepare:
-            pb = self._get_ansible_playbook(self.playbooks.prepare)
-            pb.execute()
+        pb = self._get_ansible_playbook(self.playbooks.prepare)
+        pb.execute()
 
     def syntax(self) -> None:
         """Execute `ansible-playbook` against the converge playbook with the -syntax-check flag."""
-        if self.playbooks.converge:
-            pb = self._get_ansible_playbook(self.playbooks.converge)
-            pb.add_cli_arg("syntax-check", value=True)
-            pb.execute()
+        pb = self._get_ansible_playbook(self.playbooks.converge)
+        pb.add_cli_arg("syntax-check", value=True)
+        pb.execute()
 
     def verify(self, action_args: list[str] | None = None) -> None:
         """Execute ``ansible-playbook`` against the verify playbook.
@@ -910,7 +903,7 @@ class Ansible(base.Base):
 
     def _get_ansible_playbook(
         self,
-        playbook: str,
+        playbook: str | None,
         verify: bool = False,  # noqa: FBT001, FBT002
         **kwargs: object,
     ) -> ansible_playbook.AnsiblePlaybook:
