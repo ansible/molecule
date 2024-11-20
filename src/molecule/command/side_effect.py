@@ -54,7 +54,7 @@ class SideEffect(base.Base):
                 LOG.warning(msg)
                 return
 
-            self._config.provisioner.side_effect(action_args)  # type: ignore[no-untyped-call]
+            self._config.provisioner.side_effect(action_args)
 
 
 @base.click_command_ex()

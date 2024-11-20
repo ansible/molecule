@@ -93,8 +93,8 @@ class Base(abc.ABC):
         """Prepare Molecule's provisioner and returns None."""
         self._config.write()
         if self._config.provisioner is not None:
-            self._config.provisioner.write_config()  # type: ignore[no-untyped-call]
-            self._config.provisioner.manage_inventory()  # type: ignore[no-untyped-call]
+            self._config.provisioner.write_config()
+            self._config.provisioner.manage_inventory()
 
 
 def execute_cmdline_scenarios(

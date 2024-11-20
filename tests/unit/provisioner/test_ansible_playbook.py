@@ -28,7 +28,7 @@ from molecule.provisioner import ansible_playbook
 
 
 @pytest.fixture
-def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202
+def _instance(config_instance: config.Config) -> ansible_playbook.AnsiblePlaybook:
     _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance)
 
     return _instance  # noqa: RET504
@@ -54,7 +54,11 @@ def _provisioner_verifier_section_data():  # type: ignore[no-untyped-def]  # noq
 
 @pytest.fixture
 def _instance_for_verifier_env(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202
-    _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance, True)  # noqa: FBT003
+    _instance = ansible_playbook.AnsiblePlaybook(
+        "playbook",
+        config_instance,
+        verify=True,
+    )
     return _instance  # noqa: RET504
 
 
@@ -90,8 +94,10 @@ def _inventory_directory(_instance):  # type: ignore[no-untyped-def]  # noqa: AN
     return _instance._config.provisioner.inventory_directory
 
 
-def test_ansible_command_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
-    assert _instance._ansible_command is None
+def test_ansible_command_private_member(  # noqa: D103
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+) -> None:
+    assert _instance._ansible_command == []
 
 
 def test_ansible_playbook_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103

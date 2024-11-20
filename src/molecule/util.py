@@ -182,13 +182,11 @@ def run_command(  # noqa: PLR0913
     Raises:
         CalledProcessError: If return code is nonzero and check is True.
     """
-    args = cmd
-
     if debug:
         print_environment_vars(env)
 
     result = app.runtime.run(
-        args=args,
+        args=cmd,
         env=env,
         cwd=cwd,
         tee=True,
@@ -234,7 +232,7 @@ def os_walk(
                 yield str(filename)
 
 
-def render_template(template: str, **kwargs: str) -> str:
+def render_template(template: str, **kwargs: str | dict[str, str]) -> str:
     """Render a jinaj2 template.
 
     Args:

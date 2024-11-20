@@ -135,7 +135,7 @@ class Config:
     @property
     def ansible_collections_path(
         self,
-    ) -> Literal["ANSIBLE_COLLECTIONS_PATH", "ANSIBLE_COLLECTIONS_PATHS"]:
+    ) -> str:
         """Return collection path variable for current version of Ansible."""
         # https://github.com/ansible/ansible/pull/70007
         if self.runtime.version >= Version("2.10.0.dev0"):

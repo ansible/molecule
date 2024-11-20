@@ -46,7 +46,7 @@ class Syntax(base.Base):
             action_args: Arguments for this command. Unused.
         """
         if self._config.provisioner:
-            self._config.provisioner.syntax()  # type: ignore[no-untyped-call]
+            self._config.provisioner.syntax()
 
 
 @base.click_command_ex()
