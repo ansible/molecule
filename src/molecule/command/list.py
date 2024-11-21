@@ -59,7 +59,7 @@ class List(base.Base):
         Returns:
             List of statuses.
         """
-        return self._config.driver.status()  # type: ignore[no-untyped-call, no-any-return]
+        return self._config.driver.status()
 
 
 @base.click_command_ex(name="list")

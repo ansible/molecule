@@ -105,7 +105,7 @@ class Login(base.Base):
     def _get_login(self, hostname: str) -> None:  # pragma: no cover
         # ruff: noqa: S605,S607
         lines, columns = os.popen("stty size", "r").read().split()
-        login_options = self._config.driver.login_options(hostname)  # type: ignore[no-untyped-call]
+        login_options = self._config.driver.login_options(hostname)
         login_options["columns"] = columns
         login_options["lines"] = lines
         if not self._config.driver.login_cmd_template:

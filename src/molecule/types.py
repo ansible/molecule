@@ -27,6 +27,16 @@ class DependencyData(TypedDict, total=False):
     env: dict[str, Any]
 
 
+class DriverOptions(TypedDict):
+    """Config options for molecule drivers.
+
+    Attributes:
+        managed: Whether the driver is managed.
+    """
+
+    managed: bool
+
+
 class DriverData(TypedDict, total=False):
     """Molecule driver configuration.
 
@@ -40,7 +50,7 @@ class DriverData(TypedDict, total=False):
 
     name: str
     provider: dict[str, Any]
-    options: dict[str, Any]
+    options: DriverOptions
     ssh_connection_options: list[str]
     safe_files: list[str]
 
