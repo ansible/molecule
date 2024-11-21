@@ -131,7 +131,7 @@ class AnsibleGalaxy(Base):
         return env
 
     @property
-    def default_options(self) -> dict[str, str]:
+    def default_options(self) -> dict[str, str | bool]:
         """Default options across all invokers.
 
         Returns:

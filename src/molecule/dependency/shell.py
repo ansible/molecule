@@ -93,7 +93,7 @@ class Shell(base.Base):
         return self._config.config["dependency"]["command"] or ""
 
     @property
-    def default_options(self) -> dict[str, str]:
+    def default_options(self) -> dict[str, str | bool]:
         """Get default options for shell dependencies (none).
 
         Returns:

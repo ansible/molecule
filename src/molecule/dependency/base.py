@@ -58,7 +58,7 @@ class Base(abc.ABC):
             config: An instance of a Molecule config.
         """
         self._config = config
-        self._sh_command: str | None = None
+        self._sh_command: str | list[str] | None = None
 
     def execute_with_retries(self) -> None:
         """Run dependency downloads with retry and timed back-off."""
@@ -107,7 +107,7 @@ class Base(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def default_options(self) -> dict[str, str]:  # pragma: no cover
+    def default_options(self) -> dict[str, str | bool]:  # pragma: no cover
         """Get default CLI arguments provided to ``cmd``.
 
         Returns:
@@ -145,7 +145,7 @@ class Base(abc.ABC):
         return self._config.config["dependency"]["enabled"]
 
     @property
-    def options(self) -> dict[str, str]:
+    def options(self) -> dict[str, str | bool]:
         """Computed dependency options.
 
         Returns:

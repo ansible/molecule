@@ -25,8 +25,14 @@ import copy
 import logging
 import os
 
+from typing import TYPE_CHECKING
+
 from molecule import util
 from molecule.dependency import base
+
+
+if TYPE_CHECKING:
+    from molecule.config import Config
 
 
 LOG = logging.getLogger(__name__)
@@ -39,12 +45,14 @@ class AnsibleGalaxyBase(base.Base):
         FILTER_OPTS: Keys to remove from the dictionary returned by options().
     """
 
-    __metaclass__ = abc.ABCMeta
-
     FILTER_OPTS = ()
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
-        """Construct AnsibleGalaxy."""
+    def __init__(self, config: Config) -> None:
+        """Construct AnsibleGalaxy.
+
+        Args:
+            config: Molecule Config instance.
+        """
         super().__init__(config)
         self._sh_command = None
 
@@ -52,12 +60,21 @@ class AnsibleGalaxyBase(base.Base):
 
     @property
     @abc.abstractmethod
-    def requirements_file(self):  # type: ignore[no-untyped-def] # cover  # noqa: ANN201, D102
-        pass
+    def requirements_file(self) -> str:  # cover
+        """Path to requirements file.
+
+        Returns:
+            Path to the requirements file for this dependency.
+        """
 
     @property
-    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
-        d = {
+    def default_options(self) -> dict[str, str | bool]:
+        """Default options for this dependency.
+
+        Returns:
+            Default options for this dependency.
+        """
+        d: dict[str, str | bool] = {
             "force": False,
         }
         if self._config.debug:
@@ -65,12 +82,20 @@ class AnsibleGalaxyBase(base.Base):
 
         return d
 
-    def filter_options(self, opts, keys):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
+    def filter_options(
+        self,
+        opts: dict[str, str | bool],
+        keys: tuple[str, ...],
+    ) -> dict[str, str | bool]:
         """Filter certain keys from a dictionary.
 
         Removes all the values of ``keys`` from the dictionary ``opts``, if
         they are present. Returns the resulting dictionary. Does not modify the
         existing one.
+
+        Args:
+            opts: Options dictionary.
+            keys: Key names to exclude from opts.
 
         Returns:
             A copy of ``opts`` without the value of keys
@@ -84,7 +109,12 @@ class AnsibleGalaxyBase(base.Base):
     # NOTE(retr0h): Override the base classes' options() to handle
     # ``ansible-galaxy`` one-off.
     @property
-    def options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def options(self) -> dict[str, str | bool]:
+        """Computed options for this dependency.
+
+        Returns:
+            Merged and filtered options for this dependency.
+        """
         o = self._config.config["dependency"]["options"]
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
@@ -92,13 +122,19 @@ class AnsibleGalaxyBase(base.Base):
             o = util.filter_verbose_permutation(o)
 
         o = util.merge_dicts(self.default_options, o)
-        return self.filter_options(o, self.FILTER_OPTS)  # type: ignore[no-untyped-call]
+        return self.filter_options(o, self.FILTER_OPTS)
 
     @property
-    def default_env(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
-        return util.merge_dicts(os.environ, self._config.env)
+    def default_env(self) -> dict[str, str]:
+        """Default environment variables for this dependency.
 
-    def bake(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
+        Returns:
+            Default environment variables for this dependency.
+        """
+        env = dict(os.environ)
+        return util.merge_dicts(env, self._config.env)  # type: ignore[type-var]
+
+    def bake(self) -> None:
         """Bake an ``ansible-galaxy`` command so it's ready to execute and returns None."""
         options = self.options
         verbose_flag = util.verbose_flag(options)
@@ -110,26 +146,31 @@ class AnsibleGalaxyBase(base.Base):
             *verbose_flag,
         ]
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002, D102
+    def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
+        """Execute dependency.
+
+        Args:
+            action_args: Arguments for this dependency. Unused.
+        """
         if not self.enabled:
             msg = "Skipping, dependency is disabled."
             LOG.warning(msg)
             return
-        super().execute()  # type: ignore[no-untyped-call]
+        super().execute()
 
-        if not self._has_requirements_file():  # type: ignore[no-untyped-call]
+        if not self._has_requirements_file():
             msg = "Skipping, missing the requirements file."
             LOG.warning(msg)
             return
 
         if self._sh_command is None:
-            self.bake()  # type: ignore[no-untyped-call]
+            self.bake()
 
-        self._setup()  # type: ignore[no-untyped-call]
-        self.execute_with_retries()  # type: ignore[no-untyped-call]
+        self._setup()
+        self.execute_with_retries()
 
-    def _setup(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
+    def _setup(self) -> None:
         """Prepare the system for using ``ansible-galaxy`` and returns None."""
 
-    def _has_requirements_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
+    def _has_requirements_file(self) -> bool:
         return os.path.isfile(self.requirements_file)  # noqa: PTH113
