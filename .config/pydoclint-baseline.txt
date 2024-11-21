@@ -42,14 +42,6 @@ src/molecule/dependency/shell.py
     DOC107: Method `Shell.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Method `Shell.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [config: ].
 --------------------
-src/molecule/driver/delegated.py
-    DOC601: Class `Delegated`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `Delegated`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [title: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC101: Method `Delegated.__init__`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `Delegated.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Delegated.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `Delegated.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [config: ].
---------------------
 src/molecule/model/schema_v3.py
     DOC101: Function `validate`: Docstring contains fewer arguments than in function signature.
     DOC106: Function `validate`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
