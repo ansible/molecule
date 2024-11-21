@@ -58,7 +58,7 @@ class Base(abc.ABC):
             config: An instance of a Molecule config.
         """
         self._config = config
-        self._sh_command: list[str] | None = None
+        self._sh_command: str | None = None
 
     def execute_with_retries(self) -> None:
         """Run dependency downloads with retry and timed back-off."""

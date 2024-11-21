@@ -22,7 +22,13 @@ from __future__ import annotations
 
 import logging
 
+from typing import TYPE_CHECKING
+
 from molecule.dependency import base
+
+
+if TYPE_CHECKING:
+    from molecule.config import Config
 
 
 LOG = logging.getLogger(__name__)
@@ -68,35 +74,52 @@ class Shell(base.Base):
     ```
     """
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
-        """Construct Shell."""
+    def __init__(self, config: Config) -> None:
+        """Construct Shell.
+
+        Args:
+            config: Molecule Config instance.
+        """
         super().__init__(config)
-        self._sh_command = None
-
-        # self.command = config..config['dependency']['command']
+        self._sh_command: str | None = None
 
     @property
-    def command(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
-        return self._config.config["dependency"]["command"]
+    def command(self) -> str:
+        """Return shell command.
+
+        Returns:
+            Command defined in Molecule config.
+        """
+        return self._config.config["dependency"]["command"] or ""
 
     @property
-    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def default_options(self) -> dict[str, str]:
+        """Get default options for shell dependencies (none).
+
+        Returns:
+            An empty dictionary.
+        """
         return {}
 
     def bake(self) -> None:
         """Bake a ``shell`` command so it's ready to execute."""
         self._sh_command = self.command
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, ARG002, D102
+    def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
+        """Execute the dependency solver.
+
+        Args:
+            action_args: Arguments for the dependency. Unused.
+        """
         if not self.enabled:
             msg = "Skipping, dependency is disabled."
             LOG.warning(msg)
             return
-        super().execute()  # type: ignore[no-untyped-call]
+        super().execute()
 
         if self._sh_command is None:
             self.bake()
-        self.execute_with_retries()  # type: ignore[no-untyped-call]
+        self.execute_with_retries()
 
-    def _has_command_configured(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
+    def _has_command_configured(self) -> bool:
         return "command" in self._config.config["dependency"]
