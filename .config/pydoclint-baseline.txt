@@ -1,9 +1,3 @@
-src/molecule/dependency/ansible_galaxy/__init__.py
-    DOC101: Method `AnsibleGalaxy.__init__`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `AnsibleGalaxy.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `AnsibleGalaxy.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `AnsibleGalaxy.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [config: ].
---------------------
 src/molecule/dependency/ansible_galaxy/base.py
     DOC601: Class `AnsibleGalaxyBase`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
     DOC603: Class `AnsibleGalaxyBase`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [__metaclass__: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
