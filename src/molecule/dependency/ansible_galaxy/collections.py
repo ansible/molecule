@@ -5,8 +5,14 @@ from __future__ import annotations
 import logging
 import os
 
+from typing import TYPE_CHECKING
+
 from molecule import util
 from molecule.dependency.ansible_galaxy.base import AnsibleGalaxyBase
+
+
+if TYPE_CHECKING:
+    from molecule.types import DependencyOptions
 
 
 LOG = logging.getLogger(__name__)
@@ -15,11 +21,16 @@ LOG = logging.getLogger(__name__)
 class Collections(AnsibleGalaxyBase):
     """Collection-specific Ansible Galaxy dependency handling."""
 
-    FILTER_OPTS = ("role-file",)  # type: ignore  # noqa: PGH003
+    FILTER_OPTS = ("role-file",)
     COMMANDS = ("collection", "install")
 
     @property
-    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def default_options(self) -> DependencyOptions:
+        """Default options for this dependency.
+
+        Returns:
+            Default options for this dependency.
+        """
         general = super().default_options
         specific = util.merge_dicts(
             general,
@@ -34,9 +45,10 @@ class Collections(AnsibleGalaxyBase):
         return specific  # noqa: RET504
 
     @property
-    def default_env(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
-        return super().default_env
+    def requirements_file(self) -> str:
+        """Path to requirements file.
 
-    @property
-    def requirements_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+        Returns:
+            Path to the requirements file for this dependency.
+        """
         return self.options["requirements-file"]

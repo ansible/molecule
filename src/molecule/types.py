@@ -9,6 +9,13 @@ if TYPE_CHECKING:
     from typing import Any
 
 
+DependencyOptions = TypedDict(
+    "DependencyOptions",
+    {"force": bool, "requirements-file": str, "role-file": str, "vvv": bool},
+    total=False,
+)
+
+
 class DependencyData(TypedDict, total=False):
     """Molecule dependency configuration.
 
@@ -23,8 +30,8 @@ class DependencyData(TypedDict, total=False):
     name: str
     command: str | None
     enabled: bool
-    options: dict[str, Any]
-    env: dict[str, Any]
+    options: DependencyOptions
+    env: dict[str, str]
 
 
 class DriverOptions(TypedDict, total=False):
