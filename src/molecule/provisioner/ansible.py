@@ -727,7 +727,7 @@ class Ansible(base.Base):
         Returns:
             The combined connection options.
         """
-        d = self._config.driver.ansible_connection_options(instance_name)  # type: ignore[no-untyped-call]
+        d = self._config.driver.ansible_connection_options(instance_name)
 
         return util.merge_dicts(
             d,

@@ -175,9 +175,9 @@ class AnsiblePlaybooks:
         return None
 
     def _get_bundled_driver_playbook(self, section: Section) -> str:
-        path = self._config.driver.get_playbook(section)  # type: ignore[no-untyped-call]
-        if path:
-            return path  # type: ignore[no-any-return]
+        driver_path = self._config.driver.get_playbook(section)
+        if driver_path:
+            return driver_path
 
         path = Path(
             self._get_playbook_directory(),

@@ -23,23 +23,29 @@ from __future__ import annotations
 import inspect
 import os
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from importlib.metadata import version
+from pathlib import Path
+from typing import TYPE_CHECKING
 
 from molecule.status import Status
 
 
-class Driver:
+if TYPE_CHECKING:
+    from molecule.config import Config
+    from molecule.types import DriverOptions
+
+
+class Driver(ABC):
     """Driver Class.
 
     Attributes:
         title: Short description of the driver.
     """
 
-    __metaclass__ = ABCMeta
     title = ""
 
-    def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
+    def __init__(self, config: Config) -> None:
         """Initialize code for all :ref:`Driver` classes.
 
         Args:
@@ -55,32 +61,35 @@ class Driver:
     @property
     @abstractmethod
     def name(self) -> str:  # pragma: no cover
-        """Name of the driver and returns a string.
+        """Name of the driver.
 
-        :returns: str
+        Returns:
+            Name of the driver.
         """
 
     @name.setter
-    def name(self, value):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN202
-        """Driver name setter and returns None.
+    @abstractmethod
+    def name(self, value: str) -> None:  # pragma: no cover
+        """Driver name setter.
 
-        :returns: None
+        Args:
+            value: New driver name.
         """
 
     @property
-    def testinfra_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
+    def testinfra_options(self) -> dict[str, str]:
         """Testinfra specific options and returns a dict.
 
         :returns: dict
         """
         return {
             "connection": "ansible",
-            "ansible-inventory": self._config.provisioner.inventory_directory,
+            "ansible-inventory": self._config.provisioner.inventory_directory,  # type: ignore[union-attr]
         }
 
     @property
     @abstractmethod
-    def login_cmd_template(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201
+    def login_cmd_template(self) -> str:  # pragma: no cover
         """Get the login command template to be populated by ``login_options`` as a string.
 
         Returns:
@@ -89,7 +98,7 @@ class Driver:
 
     @property
     @abstractmethod
-    def default_ssh_connection_options(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201
+    def default_ssh_connection_options(self) -> list[str]:  # pragma: no cover
         """SSH client options and returns a list.
 
         :returns: list
@@ -97,14 +106,17 @@ class Driver:
 
     @property
     @abstractmethod
-    def default_safe_files(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201
+    def default_safe_files(self) -> list[str]:  # pragma: no cover
         """Generate files to be preserved.
 
         :returns: list
         """
 
     @abstractmethod
-    def login_options(self, instance_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
+    def login_options(
+        self,
+        instance_name: str,
+    ) -> dict[str, str]:  # pragma: no cover
         """Options used in the login command and returns a dict.
 
         Args:
@@ -115,7 +127,10 @@ class Driver:
         """
 
     @abstractmethod
-    def ansible_connection_options(self, instance_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
+    def ansible_connection_options(
+        self,
+        instance_name: str,
+    ) -> dict[str, str]:  # pragma: no cover
         """Ansible specific connection options supplied to inventory and returns a dict.
 
         Args:
@@ -134,48 +149,70 @@ class Driver:
         daemon is running and we have the correct Docker Python dependency.
         Each driver implementation can decide what is the most stable sanity
         check for itself.
-
-        :returns: None
         """
 
     @property
-    def options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def options(self) -> DriverOptions:
+        """Driver options.
+
+        Returns:
+            Dictionary of driver options.
+        """
         return self._config.config["driver"]["options"]
 
     @property
-    def instance_config(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
-        return os.path.join(  # noqa: PTH118
-            self._config.scenario.ephemeral_directory,
-            "instance_config.yml",
+    def instance_config(self) -> str:
+        """Instance config file location.
+
+        Returns:
+            Path to instance_config.yml.
+        """
+        return str(
+            Path(
+                self._config.scenario.ephemeral_directory,
+                "instance_config.yml",
+            ),
         )
 
     @property
-    def ssh_connection_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def ssh_connection_options(self) -> list[str]:
+        """SSH connection options.
+
+        Returns:
+            List of ssh connection options.
+        """
         if self._config.config["driver"]["ssh_connection_options"]:
             return self._config.config["driver"]["ssh_connection_options"]
         return self.default_ssh_connection_options
 
     @property
-    def safe_files(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def safe_files(self) -> list[str]:
+        """Safe files.
+
+        Returns:
+            List of safe files.
+        """
         return self.default_safe_files + self._config.config["driver"]["safe_files"]
 
     @property
-    def delegated(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
-        """Is the dedriver delegated and returns a bool.
+    def delegated(self) -> bool:
+        """Is the driver delegated.
 
-        :returns: bool
+        Returns:
+            Whether the driver is delegated.
         """
         return self.name == "default"
 
     @property
-    def managed(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
-        """Is the driver is managed and returns a bool.
+    def managed(self) -> bool:
+        """Is the driver is managed.
 
-        :returns: bool
+        Returns:
+            Whether the driver is managed.
         """
         return self.options["managed"]
 
-    def status(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
+    def status(self) -> list[Status]:
         """Collect the instances state and returns a list.
 
         !!! note
@@ -186,13 +223,15 @@ class Driver:
             driver to match the options passed to the playbook may prove
             difficult.  Especially in cases where the user is provisioning
             instances off localhost.
-        :returns: list
+
+        Returns:
+            Status for each instance.
         """
         status_list = []
         for platform in self._config.platforms.instances:
             instance_name = platform["name"]
             driver_name = self.name
-            provisioner_name = self._config.provisioner.name
+            provisioner_name = self._config.provisioner.name if self._config.provisioner else ""
             scenario_name = self._config.scenario.name
 
             status_list.append(
@@ -201,14 +240,14 @@ class Driver:
                     driver_name=driver_name,
                     provisioner_name=provisioner_name,
                     scenario_name=scenario_name,
-                    created=self._created(),  # type: ignore[no-untyped-call]
-                    converged=self._converged(),  # type: ignore[no-untyped-call]
+                    created=self._created(),
+                    converged=self._converged(),
                 ),
             )
 
         return status_list
 
-    def _get_ssh_connection_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
+    def _get_ssh_connection_options(self) -> list[str]:
         # LogLevel=ERROR is needed in order to avoid warnings like:
         # Warning: Permanently added ... to the list of known hosts.
         return [
@@ -221,62 +260,107 @@ class Driver:
             "-o StrictHostKeyChecking=no",
         ]
 
-    def _created(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
+    def _created(self) -> str:
         return str(self._config.state.created).lower()
 
-    def _converged(self):  # type: ignore[no-untyped-def]  # noqa: ANN202
+    def _converged(self) -> str:
         return str(self._config.state.converged).lower()
 
-    def __eq__(self, other):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN204
-        """Implement equality comparison."""
+    def __eq__(self, other: object) -> bool:
+        """Implement equality comparison.
+
+        Args:
+            other: object to compare against this one.
+
+        Returns:
+            Whether other matches the name of this driver.
+        """
         # trick that allows us to test if a driver is loaded via:
         # if 'driver-name' in drivers()
         return str(self) == str(other)
 
-    def __lt__(self, other):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN204
-        """Implement lower than comparison."""
+    def __lt__(self, other: object) -> bool:
+        """Implement lower than comparison.
+
+        Args:
+            other: object to compare against this one.
+
+        Returns:
+            Whether other is less than the name of this driver.
+        """
         return str.__lt__(str(self), str(other))
 
-    def __hash__(self):  # type: ignore[no-untyped-def]  # noqa: ANN204
-        """Perform object hash."""
+    def __hash__(self) -> int:
+        """Perform object hash.
+
+        Returns:
+            Hash of driver name.
+        """
         return self.name.__hash__()
 
     def __str__(self) -> str:
-        """Return readable string representation of object."""
+        """Return readable string representation of object.
+
+        Returns:
+            Driver name.
+        """
         return self.name
 
     def __repr__(self) -> str:
-        """Return detailed string representation of object."""
+        """Return detailed string representation of object.
+
+        Returns:
+            Driver name.
+        """
         return self.name
 
-    def __rich__(self):  # type: ignore[no-untyped-def]  # noqa: ANN204
-        """Return rich representation of object."""
+    def __rich__(self) -> str:
+        """Return rich representation of object.
+
+        Returns:
+            Driver name.
+        """
         return self.__str__()
 
-    def get_playbook(self, step):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
+    def get_playbook(self, step: str) -> str | None:
         """Return embedded playbook location or None.
 
         The default location is relative to the file implementing the driver
         class, allowing driver writers to define playbooks without having
         to override this method.
+
+        Args:
+            step: The step to look for a playbook for.
+
+        Returns:
+            The playbook file path, if any.
         """
-        p = os.path.join(  # noqa: PTH118
+        p = Path(
             self._path,
             "playbooks",
             step + ".yml",
         )
-        if os.path.isfile(p):  # noqa: PTH113
-            return p
+        if p.is_file():
+            return str(p)
         return None
 
-    def schema_file(self) -> None | str:  # noqa: D102
-        return None
+    @abstractmethod
+    def schema_file(self) -> str:
+        """Return schema file path.
+
+        Returns:
+            Path to schema file.
+        """
 
     def modules_dir(self) -> str | None:
-        """Return path to ansible modules included with driver."""
-        p = os.path.join(self._path, "modules")  # noqa: PTH118
-        if os.path.isdir(p):  # noqa: PTH112
-            return p
+        """Return path to ansible modules included with driver.
+
+        Returns:
+            Path to modules dir if one exists.
+        """
+        p = Path(self._path, "modules")
+        if p.is_dir():
+            return str(p)
         return None
 
     def reset(self) -> None:
@@ -286,6 +370,7 @@ class Driver:
         by molecule, regardless the scenario name.  Molecule will use metadata
         like labels or tags to annotate resources allocated by it.
         """
+        return
 
     @property
     def required_collections(self) -> dict[str, str]:

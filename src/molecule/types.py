@@ -27,6 +27,20 @@ class DependencyData(TypedDict, total=False):
     env: dict[str, Any]
 
 
+class DriverOptions(TypedDict, total=False):
+    """Config options for molecule drivers.
+
+    Attributes:
+        ansible_connection_options: Options to use with ansible connection plugin.
+        login_cmd_template: Template with which to generate login commands.
+        managed: Whether the driver is managed.
+    """
+
+    ansible_connection_options: dict[str, str]
+    login_cmd_template: str
+    managed: bool
+
+
 class DriverData(TypedDict, total=False):
     """Molecule driver configuration.
 
@@ -40,7 +54,7 @@ class DriverData(TypedDict, total=False):
 
     name: str
     provider: dict[str, Any]
-    options: dict[str, Any]
+    options: DriverOptions
     ssh_connection_options: list[str]
     safe_files: list[str]
 

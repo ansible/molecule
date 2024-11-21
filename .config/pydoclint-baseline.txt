@@ -42,52 +42,6 @@ src/molecule/dependency/shell.py
     DOC107: Method `Shell.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Method `Shell.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [config: ].
 --------------------
-src/molecule/driver/base.py
-    DOC601: Class `Driver`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `Driver`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [__metaclass__: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC106: Method `Driver.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Driver.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC101: Method `Driver.name`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `Driver.name`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Driver.name`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `Driver.name`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [value: ].
-    DOC202: Method `Driver.login_cmd_template` has a return section in docstring, but there are no return statements or annotations
-    DOC106: Method `Driver.login_options`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Driver.login_options`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC202: Method `Driver.login_options` has a return section in docstring, but there are no return statements or annotations
-    DOC106: Method `Driver.ansible_connection_options`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Driver.ansible_connection_options`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC202: Method `Driver.ansible_connection_options` has a return section in docstring, but there are no return statements or annotations
-    DOC201: Method `Driver.status` does not have a return section in docstring
-    DOC101: Method `Driver.__eq__`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `Driver.__eq__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Driver.__eq__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `Driver.__eq__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [other: ].
-    DOC201: Method `Driver.__eq__` does not have a return section in docstring
-    DOC101: Method `Driver.__lt__`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `Driver.__lt__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Driver.__lt__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `Driver.__lt__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [other: ].
-    DOC201: Method `Driver.__lt__` does not have a return section in docstring
-    DOC201: Method `Driver.__hash__` does not have a return section in docstring
-    DOC201: Method `Driver.__str__` does not have a return section in docstring
-    DOC201: Method `Driver.__repr__` does not have a return section in docstring
-    DOC201: Method `Driver.__rich__` does not have a return section in docstring
-    DOC101: Method `Driver.get_playbook`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `Driver.get_playbook`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Driver.get_playbook`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `Driver.get_playbook`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [step: ].
-    DOC201: Method `Driver.get_playbook` does not have a return section in docstring
-    DOC201: Method `Driver.modules_dir` does not have a return section in docstring
---------------------
-src/molecule/driver/delegated.py
-    DOC601: Class `Delegated`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `Delegated`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [title: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC101: Method `Delegated.__init__`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `Delegated.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Delegated.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `Delegated.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [config: ].
---------------------
 src/molecule/model/schema_v3.py
     DOC101: Function `validate`: Docstring contains fewer arguments than in function signature.
     DOC106: Function `validate`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
