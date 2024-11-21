@@ -363,7 +363,6 @@ class Driver(ABC):
             return str(p)
         return None
 
-    @abstractmethod
     def reset(self) -> None:
         """Release all resources owned by molecule.
 
@@ -371,6 +370,7 @@ class Driver(ABC):
         by molecule, regardless the scenario name.  Molecule will use metadata
         like labels or tags to annotate resources allocated by it.
         """
+        return
 
     @property
     def required_collections(self) -> dict[str, str]:
