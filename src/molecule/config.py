@@ -517,7 +517,7 @@ class Config:
         msg = f"Validating schema {self.molecule_file}."
         LOG.debug(msg)
 
-        errors = schema_v3.validate(self.config)  # type: ignore[no-untyped-call]
+        errors = schema_v3.validate(self.config)
         if errors:
             msg = f"Failed to validate {self.molecule_file}\n\n{errors}"
             util.sysexit_with_message(msg)
