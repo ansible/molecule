@@ -33,6 +33,7 @@ from molecule import util
 
 if TYPE_CHECKING:
     from molecule.config import Config
+    from molecule.types import DependencyOptions
 
 
 LOG = logging.getLogger(__name__)
@@ -58,14 +59,12 @@ class Base(abc.ABC):
             config: An instance of a Molecule config.
         """
         self._config = config
-        self._sh_command: str | list[str] | None = None
+        self._sh_command: list[str] = []
 
     def execute_with_retries(self) -> None:
         """Run dependency downloads with retry and timed back-off."""
-        exception = None
-
         try:
-            util.run_command(self._sh_command, debug=self._config.debug, check=True)  # type: ignore[arg-type]
+            util.run_command(self._sh_command, debug=self._config.debug, check=True)
             msg = "Dependency completed successfully."
             LOG.info(msg)
             return  # noqa: TRY300
@@ -82,7 +81,7 @@ class Base(abc.ABC):
             self.SLEEP += self.BACKOFF
 
             try:
-                util.run_command(self._sh_command, debug=self._config.debug, check=True)  # type: ignore[arg-type]
+                util.run_command(self._sh_command, debug=self._config.debug, check=True)
                 msg = "Dependency completed successfully."
                 LOG.info(msg)
                 return  # noqa: TRY300
@@ -90,7 +89,7 @@ class Base(abc.ABC):
                 exception = _exception
 
         LOG.error(str(exception))
-        util.sysexit(exception.returncode)  # type: ignore[union-attr]
+        util.sysexit(exception.returncode)
 
     @abc.abstractmethod
     def execute(
@@ -107,7 +106,7 @@ class Base(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def default_options(self) -> dict[str, str | bool]:  # pragma: no cover
+    def default_options(self) -> DependencyOptions:  # pragma: no cover
         """Get default CLI arguments provided to ``cmd``.
 
         Returns:
@@ -125,7 +124,7 @@ class Base(abc.ABC):
         # dict[str, str] should fit the typevar of merge_dicts, and all types are the same, yet
         # it still complains.
         env = dict(os.environ)
-        return util.merge_dicts(env, self._config.env)  # type: ignore[type-var]
+        return util.merge_dicts(env, self._config.env)
 
     @property
     def name(self) -> str:
@@ -145,7 +144,7 @@ class Base(abc.ABC):
         return self._config.config["dependency"]["enabled"]
 
     @property
-    def options(self) -> dict[str, str | bool]:
+    def options(self) -> DependencyOptions:
         """Computed dependency options.
 
         Returns:

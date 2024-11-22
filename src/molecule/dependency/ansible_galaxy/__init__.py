@@ -12,6 +12,7 @@ from molecule.dependency.base import Base
 
 if TYPE_CHECKING:
     from molecule.config import Config
+    from molecule.types import DependencyOptions
 
 
 class AnsibleGalaxy(Base):
@@ -127,17 +128,17 @@ class AnsibleGalaxy(Base):
         """
         env: dict[str, str] = {}
         for invoker in self.invocations:
-            env = util.merge_dicts(env, invoker.default_env)  # type: ignore[type-var]
+            env = util.merge_dicts(env, invoker.default_env)
         return env
 
     @property
-    def default_options(self) -> dict[str, str | bool]:
+    def default_options(self) -> DependencyOptions:
         """Default options across all invokers.
 
         Returns:
             Merged dictionary of default options for all invokers.
         """
-        opts: dict[str, str] = {}
+        opts: DependencyOptions = {}
         for invoker in self.invocations:
-            opts = util.merge_dicts(opts, invoker.default_options)  # type: ignore[type-var]
+            opts = util.merge_dicts(opts, invoker.default_options)
         return opts

@@ -29,6 +29,7 @@ from molecule.dependency import base
 
 if TYPE_CHECKING:
     from molecule.config import Config
+    from molecule.types import DependencyOptions
 
 
 LOG = logging.getLogger(__name__)
@@ -81,7 +82,7 @@ class Shell(base.Base):
             config: Molecule Config instance.
         """
         super().__init__(config)
-        self._sh_command: str | None = None
+        self._sh_command: list[str] = []
 
     @property
     def command(self) -> str:
@@ -93,7 +94,7 @@ class Shell(base.Base):
         return self._config.config["dependency"]["command"] or ""
 
     @property
-    def default_options(self) -> dict[str, str | bool]:
+    def default_options(self) -> DependencyOptions:
         """Get default options for shell dependencies (none).
 
         Returns:
@@ -103,7 +104,7 @@ class Shell(base.Base):
 
     def bake(self) -> None:
         """Bake a ``shell`` command so it's ready to execute."""
-        self._sh_command = self.command
+        self._sh_command = [self.command]
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the dependency solver.
@@ -117,7 +118,7 @@ class Shell(base.Base):
             return
         super().execute()
 
-        if self._sh_command is None:
+        if not self._sh_command:
             self.bake()
         self.execute_with_retries()
 

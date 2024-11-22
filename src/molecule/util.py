@@ -355,7 +355,7 @@ def instance_with_scenario_name(instance_name: str, scenario_name: str) -> str:
     return f"{instance_name}-{scenario_name}"
 
 
-def verbose_flag(options: MutableMapping[str, Any]) -> list[str]:
+def verbose_flag(options: MutableMapping[str, str | bool]) -> list[str]:
     """Return computed verbosity flag.
 
     Args:
@@ -378,7 +378,7 @@ def verbose_flag(options: MutableMapping[str, Any]) -> list[str]:
     return flags
 
 
-def filter_verbose_permutation(options: dict[str, Any]) -> dict[str, Any]:
+def filter_verbose_permutation(options: dict[str, str | bool]) -> dict[str, str | bool]:
     """Clean verbose information.
 
     Args:

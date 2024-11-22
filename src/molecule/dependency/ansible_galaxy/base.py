@@ -25,6 +25,7 @@ import copy
 import logging
 import os
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from molecule import util
@@ -33,6 +34,7 @@ from molecule.dependency import base
 
 if TYPE_CHECKING:
     from molecule.config import Config
+    from molecule.types import DependencyOptions
 
 
 LOG = logging.getLogger(__name__)
@@ -43,9 +45,11 @@ class AnsibleGalaxyBase(base.Base):
 
     Attributes:
         FILTER_OPTS: Keys to remove from the dictionary returned by options().
+        COMMANDS: Arguments to send to ansible-galaxy to install the appropriate type of content.
     """
 
-    FILTER_OPTS = ()
+    FILTER_OPTS: tuple[str, ...] = ()
+    COMMANDS: tuple[str, ...] = ()
 
     def __init__(self, config: Config) -> None:
         """Construct AnsibleGalaxy.
@@ -54,7 +58,7 @@ class AnsibleGalaxyBase(base.Base):
             config: Molecule Config instance.
         """
         super().__init__(config)
-        self._sh_command = None
+        self._sh_command = []
 
         self.command = "ansible-galaxy"
 
@@ -68,13 +72,13 @@ class AnsibleGalaxyBase(base.Base):
         """
 
     @property
-    def default_options(self) -> dict[str, str | bool]:
+    def default_options(self) -> DependencyOptions:
         """Default options for this dependency.
 
         Returns:
             Default options for this dependency.
         """
-        d: dict[str, str | bool] = {
+        d: DependencyOptions = {
             "force": False,
         }
         if self._config.debug:
@@ -84,9 +88,9 @@ class AnsibleGalaxyBase(base.Base):
 
     def filter_options(
         self,
-        opts: dict[str, str | bool],
+        opts: DependencyOptions,
         keys: tuple[str, ...],
-    ) -> dict[str, str | bool]:
+    ) -> DependencyOptions:
         """Filter certain keys from a dictionary.
 
         Removes all the values of ``keys`` from the dictionary ``opts``, if
@@ -103,26 +107,26 @@ class AnsibleGalaxyBase(base.Base):
         c = copy.copy(opts)
         for key in keys:
             if key in c:
-                del c[key]
+                del c[key]  # type: ignore[misc]
         return c
 
     # NOTE(retr0h): Override the base classes' options() to handle
     # ``ansible-galaxy`` one-off.
     @property
-    def options(self) -> dict[str, str | bool]:
+    def options(self) -> DependencyOptions:
         """Computed options for this dependency.
 
         Returns:
             Merged and filtered options for this dependency.
         """
-        o = self._config.config["dependency"]["options"]
+        opts = self._config.config["dependency"]["options"]
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
         if self._config.debug:
-            o = util.filter_verbose_permutation(o)
+            opts = util.filter_verbose_permutation(opts)
 
-        o = util.merge_dicts(self.default_options, o)
-        return self.filter_options(o, self.FILTER_OPTS)
+        opts = util.merge_dicts(self.default_options, opts)
+        return self.filter_options(opts, self.FILTER_OPTS)
 
     @property
     def default_env(self) -> dict[str, str]:
@@ -132,7 +136,7 @@ class AnsibleGalaxyBase(base.Base):
             Default environment variables for this dependency.
         """
         env = dict(os.environ)
-        return util.merge_dicts(env, self._config.env)  # type: ignore[type-var]
+        return util.merge_dicts(env, self._config.env)
 
     def bake(self) -> None:
         """Bake an ``ansible-galaxy`` command so it's ready to execute and returns None."""
@@ -141,7 +145,7 @@ class AnsibleGalaxyBase(base.Base):
 
         self._sh_command = [
             self.command,
-            *self.COMMANDS,  # type: ignore[attr-defined]  # pylint: disable=no-member
+            *self.COMMANDS,
             *util.dict2args(options),
             *verbose_flag,
         ]
@@ -163,7 +167,7 @@ class AnsibleGalaxyBase(base.Base):
             LOG.warning(msg)
             return
 
-        if self._sh_command is None:
+        if not self._sh_command:
             self.bake()
 
         self._setup()
@@ -173,4 +177,4 @@ class AnsibleGalaxyBase(base.Base):
         """Prepare the system for using ``ansible-galaxy`` and returns None."""
 
     def _has_requirements_file(self) -> bool:
-        return os.path.isfile(self.requirements_file)  # noqa: PTH113
+        return Path(self.requirements_file).is_file()

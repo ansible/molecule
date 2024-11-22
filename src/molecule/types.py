@@ -9,9 +9,10 @@ if TYPE_CHECKING:
     from typing import Any
 
 
+# We have to use the alternate form here because dashes are invalid in python identifiers
 DependencyOptions = TypedDict(
     "DependencyOptions",
-    {"force": bool, "requirements-file": str, "role-file": str, "vvv": bool},
+    {"force": bool, "requirements-file": str, "role-file": str, "verbose": bool, "vvv": bool},
     total=False,
 )
 

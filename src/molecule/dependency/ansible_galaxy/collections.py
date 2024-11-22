@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import logging
-import os
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from molecule import util
@@ -35,9 +35,11 @@ class Collections(AnsibleGalaxyBase):
         specific = util.merge_dicts(
             general,
             {
-                "requirements-file": os.path.join(  # noqa: PTH118
-                    self._config.scenario.directory,
-                    "collections.yml",
+                "requirements-file": str(
+                    Path(
+                        self._config.scenario.directory,
+                        "collections.yml",
+                    ),
                 ),
             },
         )
