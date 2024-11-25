@@ -39,7 +39,7 @@ def _model_driver_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN20
 
 @pytest.mark.parametrize("config", ["_model_driver_section_data"], indirect=True)  # noqa: PT007
 def test_driver(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
-    assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
+    assert not schema_v3.validate(config)
 
 
 @pytest.fixture
@@ -77,7 +77,7 @@ def test_driver_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN
         driver_name = f"'{config['driver']['name']}'"
 
     error_msg = [f"{driver_name} {base_error_msg}"]
-    assert error_msg == schema_v3.validate(config)  # type: ignore[no-untyped-call]
+    assert error_msg == schema_v3.validate(config)
 
 
 @pytest.fixture
@@ -91,7 +91,7 @@ def _model_driver_provider_name_nullable_section_data():  # type: ignore[no-unty
     indirect=True,
 )
 def test_driver_provider_name_nullable(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
-    assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
+    assert not schema_v3.validate(config)
 
 
 @pytest.fixture
@@ -132,4 +132,4 @@ def _model_driver_allows_custom_section_data2():  # type: ignore[no-untyped-def]
     indirect=True,
 )
 def test_driver_allows_name(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
-    assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
+    assert not schema_v3.validate(config)

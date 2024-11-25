@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
 
 def test_base_config(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
-    assert not schema_v3.validate(config)  # type: ignore[no-untyped-call]
+    assert not schema_v3.validate(config)
 
 
 def test_molecule_schema(resources_folder_path: Path) -> None:
