@@ -161,11 +161,12 @@ class ScenarioData(TypedDict):
     test_sequence: list[str]
 
 
-class VerifierData(TypedDict):
+class VerifierData(TypedDict, total=False):
     """Molecule verifier configuration.
 
     Attributes:
         name: Name of the verifier.
+        directory: Verifier directory name.
         enabled: Is the verifier enabled.
         options: Options to apply to the verifier.
         env: Applicable environment variables.
@@ -173,6 +174,7 @@ class VerifierData(TypedDict):
     """
 
     name: str
+    directory: str
     enabled: bool
     options: dict[str, Any]
     env: dict[str, Any]
