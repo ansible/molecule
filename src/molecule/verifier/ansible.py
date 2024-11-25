@@ -23,8 +23,14 @@ from __future__ import annotations
 import logging
 import os
 
+from typing import TYPE_CHECKING
+
 from molecule import util
 from molecule.api import Verifier
+
+
+if TYPE_CHECKING:
+    from molecule.verifier.base import Schema
 
 
 log = logging.getLogger(__name__)
@@ -61,19 +67,39 @@ class Ansible(Verifier):
     """
 
     @property
-    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def name(self) -> str:
+        """Name of the verifier.
+
+        Returns:
+            The name of the verifier.
+        """
         return "ansible"
 
     @property
-    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def default_options(self) -> dict[str, str]:
+        """Get default CLI arguments provided to ``cmd``.
+
+        Returns:
+            The default verifier options.
+        """
         return {}
 
     @property
-    def default_env(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def default_env(self) -> dict[str, str]:
+        """Get default env variables provided to ``cmd``.
+
+        Returns:
+            The default verifier environment variables.
+        """
         env = util.merge_dicts(os.environ, self._config.env)
         return util.merge_dicts(env, self._config.provisioner.env)
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D102
+    def execute(self, action_args: list[str] | None = None) -> None:
+        """Execute ``cmd``.
+
+        Args:
+            action_args: list of arguments to be passed.
+        """
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
             log.warning(msg)
@@ -82,12 +108,18 @@ class Ansible(Verifier):
         msg = "Running Ansible Verifier"
         log.info(msg)
 
-        self._config.provisioner.verify(action_args)
+        if self._config.provisioner:
+            self._config.provisioner.verify(action_args)
 
-        msg = "Verifier completed successfully."
-        log.info(msg)
+            msg = "Verifier completed successfully."
+            log.info(msg)
 
-    def schema(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def schema(self) -> Schema:
+        """Return validation schema.
+
+        Returns:
+            Verifier schema.
+        """
         return {
             "verifier": {
                 "type": "dict",

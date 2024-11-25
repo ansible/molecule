@@ -23,13 +23,31 @@ from __future__ import annotations
 import abc
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict
 
 from molecule import util
 
 
 if TYPE_CHECKING:
     from molecule.config import Config
+
+
+class VerifierSchemaName(TypedDict):
+    type: str
+    allowed: list[str]
+
+
+class VerifierSchema(TypedDict):
+    name: VerifierSchemaName
+
+
+class VerifierDef(TypedDict):
+    type: str
+    schema: VerifierSchema
+
+
+class Schema(TypedDict):
+    verifier: VerifierDef
 
 
 class Verifier(abc.ABC):
@@ -79,7 +97,7 @@ class Verifier(abc.ABC):
         """
 
     @abc.abstractmethod
-    def schema(self) -> dict[str, str]:  # pragma: no cover
+    def schema(self) -> Schema:  # pragma: no cover
         """Return validation schema.
 
         Returns:
