@@ -33,20 +33,46 @@ if TYPE_CHECKING:
 
 
 class VerifierSchemaName(TypedDict):
+    """Verifier schema name definition.
+
+    Attributes:
+        type: schema type.
+        allowed: list of allowed verifier names.
+    """
+
     type: str
     allowed: list[str]
 
 
 class VerifierSchema(TypedDict):
+    """Verifier schema.
+
+    Attributes:
+        name: Schema name container.
+    """
+
     name: VerifierSchemaName
 
 
 class VerifierDef(TypedDict):
+    """Verifier schema container.
+
+    Attributes:
+        type: Schema type.
+        schema: Schema container.
+    """
+
     type: str
     schema: VerifierSchema
 
 
 class Schema(TypedDict):
+    """Verifier schema definition.
+
+    Attributes:
+        verifier: Verifier schema container.
+    """
+
     verifier: VerifierDef
 
 

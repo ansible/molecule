@@ -24,8 +24,16 @@ import glob
 import logging
 import os
 
+from pathlib import Path
+from typing import TYPE_CHECKING
+
 from molecule import util
 from molecule.api import Verifier
+
+
+if TYPE_CHECKING:
+    from molecule.config import Config
+    from molecule.verifier.base import Schema
 
 
 LOG = logging.getLogger(__name__)
@@ -89,7 +97,7 @@ class Testinfra(Verifier):
     .. _`Testinfra`: https://testinfra.readthedocs.io
     """
 
-    def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
+    def __init__(self, config: Config) -> None:
         """Set up the requirements to execute ``testinfra`` and returns None.
 
         Args:
@@ -100,11 +108,21 @@ class Testinfra(Verifier):
         self._tests = []  # type: ignore[var-annotated]
 
     @property
-    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def name(self) -> str:
+        """Name of the verifier.
+
+        Returns:
+            The name of the verifier.
+        """
         return "testinfra"
 
     @property
-    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def default_options(self) -> dict[str, str]:
+        """Get default CLI arguments provided to ``cmd``.
+
+        Returns:
+            The default verifier options.
+        """
         d = self._config.driver.testinfra_options
         d["p"] = "no:cacheprovider"
         if self._config.debug:
@@ -118,7 +136,12 @@ class Testinfra(Verifier):
     # NOTE(retr0h): Override the base classes' options() to handle
     # ``ansible-galaxy`` one-off.
     @property
-    def options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def options(self) -> dict[str, str]:
+        """The computed options for this verifier.
+
+        Returns:
+            The combined dictionary of default options and those specified in the config.
+        """
         o = self._config.config["verifier"]["options"]
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
@@ -128,14 +151,24 @@ class Testinfra(Verifier):
         return util.merge_dicts(self.default_options, o)
 
     @property
-    def default_env(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def default_env(self):  # noqa: ANN201
+        """Get default env variables provided to ``cmd``.
+
+        Returns:
+            The default verifier environment variables.
+        """
         env = util.merge_dicts(os.environ, self._config.env)
         env = util.merge_dicts(env, self._config.provisioner.env)
 
         return env  # noqa: RET504
 
     @property
-    def additional_files_or_dirs(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def additional_files_or_dirs(self) -> list[str]:
+        """Additional paths related to the verifier.
+
+        Returns:
+            List of files and directories to use with this verifier.
+        """
         files_list = []
         c = self._config.config
         for f in c["verifier"]["additional_files_or_dirs"]:
@@ -147,8 +180,8 @@ class Testinfra(Verifier):
 
         return files_list
 
-    def bake(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
-        """Bake a ``testinfra`` command so it's ready to execute and returns None."""
+    def bake(self) -> None:
+        """Bake a ``testinfra`` command so it's ready to execute."""
         options = self.options
         verbose_flag = util.verbose_flag(options)
         args = verbose_flag
@@ -160,14 +193,19 @@ class Testinfra(Verifier):
             *args,
         ]
 
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D102
+    def execute(self, action_args: list[str] | None = None) -> None:
+        """Execute ``cmd``.
+
+        Args:
+            action_args: list of arguments to be passed.
+        """
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
             LOG.warning(msg)
             return
 
         if self._config:
-            self._tests = self._get_tests(action_args)  # type: ignore[no-untyped-call]
+            self._tests = self._get_tests(action_args)
         else:
             self._tests = []
         if not len(self._tests) > 0:
@@ -175,7 +213,7 @@ class Testinfra(Verifier):
             LOG.warning(msg)
             return
 
-        self.bake()  # type: ignore[no-untyped-call]
+        self.bake()
 
         msg = f"Executing Testinfra tests found in {self.directory}/..."
         LOG.info(msg)
@@ -184,7 +222,7 @@ class Testinfra(Verifier):
             self._testinfra_command,  # type: ignore[arg-type]
             env=self.env,
             debug=self._config.debug,
-            cwd=self._config.scenario.directory,
+            cwd=Path(self._config.scenario.directory),
         )
         if result.returncode == 0:
             msg = "Verifier completed successfully."
@@ -192,11 +230,14 @@ class Testinfra(Verifier):
         else:
             util.sysexit(result.returncode)
 
-    def _get_tests(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
-        """Walk the verifier's directory for tests and returns a list.
+    def _get_tests(self, action_args: list[str] | None = None) -> list[str]:
+        """Walk the verifier's directory for tests.
+
+        Args:
+            action_args: List of paths to search.
 
         Returns:
-            list
+            List of test files.
         """
         if action_args:
             tests = []
@@ -221,7 +262,12 @@ class Testinfra(Verifier):
             + self.additional_files_or_dirs,
         )
 
-    def schema(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def schema(self) -> Schema:
+        """Return validation schema.
+
+        Returns:
+            Verifier schema.
+        """
         return {
             "verifier": {
                 "type": "dict",
