@@ -29,6 +29,8 @@ from molecule import util
 
 
 if TYPE_CHECKING:
+    from collections.abc import MutableMapping
+
     from molecule.config import Config
 
 
@@ -98,7 +100,7 @@ class Verifier(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def default_options(self) -> dict[str, str]:  # pragma: no cover
+    def default_options(self) -> MutableMapping[str, str | bool]:  # pragma: no cover
         """Get default CLI arguments provided to ``cmd``.
 
         Returns:
@@ -154,7 +156,7 @@ class Verifier(abc.ABC):
         )
 
     @property
-    def options(self) -> dict[str, str]:
+    def options(self) -> MutableMapping[str, str | bool]:
         """The computed options for this verifier.
 
         Returns:

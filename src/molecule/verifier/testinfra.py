@@ -32,6 +32,8 @@ from molecule.api import Verifier
 
 
 if TYPE_CHECKING:
+    from collections.abc import MutableMapping
+
     from molecule.config import Config
     from molecule.verifier.base import Schema
 
@@ -117,13 +119,13 @@ class Testinfra(Verifier):
         return "testinfra"
 
     @property
-    def default_options(self) -> dict[str, str]:
+    def default_options(self) -> MutableMapping[str, str | bool]:
         """Get default CLI arguments provided to ``cmd``.
 
         Returns:
             The default verifier options.
         """
-        d = self._config.driver.testinfra_options
+        d: MutableMapping[str, str | bool] = self._config.driver.testinfra_options
         d["p"] = "no:cacheprovider"
         if self._config.debug:
             d["debug"] = True
@@ -136,7 +138,7 @@ class Testinfra(Verifier):
     # NOTE(retr0h): Override the base classes' options() to handle
     # ``ansible-galaxy`` one-off.
     @property
-    def options(self) -> dict[str, str]:
+    def options(self) -> MutableMapping[str, str | bool]:
         """The computed options for this verifier.
 
         Returns:
@@ -151,16 +153,17 @@ class Testinfra(Verifier):
         return util.merge_dicts(self.default_options, o)
 
     @property
-    def default_env(self):  # noqa: ANN201
+    def default_env(self) -> dict[str, str]:
         """Get default env variables provided to ``cmd``.
 
         Returns:
             The default verifier environment variables.
         """
         env = util.merge_dicts(os.environ, self._config.env)
-        env = util.merge_dicts(env, self._config.provisioner.env)
+        if self._config.provisioner:
+            env = util.merge_dicts(env, self._config.provisioner.env)
 
-        return env  # noqa: RET504
+        return env
 
     @property
     def additional_files_or_dirs(self) -> list[str]:
@@ -219,7 +222,7 @@ class Testinfra(Verifier):
         LOG.info(msg)
 
         result = util.run_command(
-            self._testinfra_command,  # type: ignore[arg-type]
+            self._testinfra_command,
             env=self.env,
             debug=self._config.debug,
             cwd=Path(self._config.scenario.directory),

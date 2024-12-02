@@ -48,11 +48,9 @@ if TYPE_CHECKING:
     from typing import Any, AnyStr, NoReturn, TypeVar
     from warnings import WarningMessage
 
-    from ansible_compat.types import JSON
-
     from molecule.types import CommandArgs, ConfigData, PlatformData
 
-    NestedDict = MutableMapping[str, JSON]
+    NestedDict = MutableMapping[str, Any]
     _T = TypeVar("_T", bound=NestedDict)
 
 
@@ -557,7 +555,7 @@ def boolean(value: bool | AnyStr, *, strict: bool = True) -> bool:
     )
 
 
-def dict2args(data: dict[str, str | bool]) -> list[str]:
+def dict2args(data: MutableMapping[str, str | bool]) -> list[str]:
     """Convert a dictionary of options to command like arguments.
 
     Args:

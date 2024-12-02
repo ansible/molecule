@@ -30,6 +30,8 @@ from molecule.api import Verifier
 
 
 if TYPE_CHECKING:
+    from collections.abc import MutableMapping
+
     from molecule.verifier.base import Schema
 
 
@@ -76,7 +78,7 @@ class Ansible(Verifier):
         return "ansible"
 
     @property
-    def default_options(self) -> dict[str, str]:
+    def default_options(self) -> MutableMapping[str, str | bool]:
         """Get default CLI arguments provided to ``cmd``.
 
         Returns:
@@ -92,7 +94,9 @@ class Ansible(Verifier):
             The default verifier environment variables.
         """
         env = util.merge_dicts(os.environ, self._config.env)
-        return util.merge_dicts(env, self._config.provisioner.env)
+        if self._config.provisioner:
+            env = util.merge_dicts(env, self._config.provisioner.env)
+        return env
 
     def execute(self, action_args: list[str] | None = None) -> None:
         """Execute ``cmd``.
