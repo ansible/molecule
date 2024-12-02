@@ -12,7 +12,7 @@ from molecule.dependency.ansible_galaxy.base import AnsibleGalaxyBase
 
 
 if TYPE_CHECKING:
-    from molecule.types import DependencyOptions
+    from collections.abc import MutableMapping
 
 
 LOG = logging.getLogger(__name__)
@@ -25,7 +25,7 @@ class Roles(AnsibleGalaxyBase):
     COMMANDS = ("install",)
 
     @property
-    def default_options(self) -> DependencyOptions:
+    def default_options(self) -> MutableMapping[str, str | bool]:
         """Default options for this dependency.
 
         Returns:
@@ -52,4 +52,4 @@ class Roles(AnsibleGalaxyBase):
         Returns:
             Path to the requirements file for this dependency.
         """
-        return self.options["role-file"]
+        return self.options["role-file"]  # type: ignore[return-value]

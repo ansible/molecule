@@ -39,6 +39,7 @@ from molecule.provisioner import ansible_playbook, ansible_playbooks, base
 
 
 if TYPE_CHECKING:
+    from collections.abc import MutableMapping
     from typing import Any
 
     Vivify = collections.defaultdict[str, Any | "Vivify"]
@@ -577,11 +578,11 @@ class Ansible(base.Base):
         )
 
     @property
-    def options(self) -> dict[str, Any]:  # noqa: D102
+    def options(self) -> MutableMapping[str, str | bool]:  # noqa: D102
         if self._config.action in ["create", "destroy"]:
             return self.default_options
 
-        o = self._config.config["provisioner"]["options"]
+        o: MutableMapping[str, str | bool] = self._config.config["provisioner"]["options"]
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
         if self._config.debug:

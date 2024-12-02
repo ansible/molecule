@@ -32,8 +32,9 @@ from molecule import util
 
 
 if TYPE_CHECKING:
+    from collections.abc import MutableMapping
+
     from molecule.config import Config
-    from molecule.types import DependencyOptions
 
 
 LOG = logging.getLogger(__name__)
@@ -106,7 +107,7 @@ class Base(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def default_options(self) -> DependencyOptions:  # pragma: no cover
+    def default_options(self) -> MutableMapping[str, str | bool]:  # pragma: no cover
         """Get default CLI arguments provided to ``cmd``.
 
         Returns:
@@ -144,7 +145,7 @@ class Base(abc.ABC):
         return self._config.config["dependency"]["enabled"]
 
     @property
-    def options(self) -> DependencyOptions:
+    def options(self) -> MutableMapping[str, str | bool]:
         """Computed dependency options.
 
         Returns:

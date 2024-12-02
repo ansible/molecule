@@ -12,7 +12,7 @@ from molecule.dependency.ansible_galaxy.base import AnsibleGalaxyBase
 
 
 if TYPE_CHECKING:
-    from molecule.types import DependencyOptions
+    from collections.abc import MutableMapping
 
 
 LOG = logging.getLogger(__name__)
@@ -25,7 +25,7 @@ class Collections(AnsibleGalaxyBase):
     COMMANDS = ("collection", "install")
 
     @property
-    def default_options(self) -> DependencyOptions:
+    def default_options(self) -> MutableMapping[str, str | bool]:
         """Default options for this dependency.
 
         Returns:
@@ -53,4 +53,4 @@ class Collections(AnsibleGalaxyBase):
         Returns:
             Path to the requirements file for this dependency.
         """
-        return self.options["requirements-file"]
+        return self.options["requirements-file"]  # type: ignore[return-value]

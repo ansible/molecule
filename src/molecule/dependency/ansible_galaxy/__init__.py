@@ -11,8 +11,9 @@ from molecule.dependency.base import Base
 
 
 if TYPE_CHECKING:
+    from collections.abc import MutableMapping
+
     from molecule.config import Config
-    from molecule.types import DependencyOptions
 
 
 class AnsibleGalaxy(Base):
@@ -132,13 +133,13 @@ class AnsibleGalaxy(Base):
         return env
 
     @property
-    def default_options(self) -> DependencyOptions:
+    def default_options(self) -> MutableMapping[str, str | bool]:
         """Default options across all invokers.
 
         Returns:
             Merged dictionary of default options for all invokers.
         """
-        opts: DependencyOptions = {}
+        opts: MutableMapping[str, str | bool] = {}
         for invoker in self.invocations:
             opts = util.merge_dicts(opts, invoker.default_options)
         return opts

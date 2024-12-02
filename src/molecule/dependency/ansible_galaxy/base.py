@@ -33,8 +33,9 @@ from molecule.dependency import base
 
 
 if TYPE_CHECKING:
+    from collections.abc import MutableMapping
+
     from molecule.config import Config
-    from molecule.types import DependencyOptions
 
 
 LOG = logging.getLogger(__name__)
@@ -72,13 +73,13 @@ class AnsibleGalaxyBase(base.Base):
         """
 
     @property
-    def default_options(self) -> DependencyOptions:
+    def default_options(self) -> MutableMapping[str, str | bool]:
         """Default options for this dependency.
 
         Returns:
             Default options for this dependency.
         """
-        d: DependencyOptions = {
+        d: MutableMapping[str, str | bool] = {
             "force": False,
         }
         if self._config.debug:
@@ -88,9 +89,9 @@ class AnsibleGalaxyBase(base.Base):
 
     def filter_options(
         self,
-        opts: DependencyOptions,
+        opts: MutableMapping[str, str | bool],
         keys: tuple[str, ...],
-    ) -> DependencyOptions:
+    ) -> MutableMapping[str, str | bool]:
         """Filter certain keys from a dictionary.
 
         Removes all the values of ``keys`` from the dictionary ``opts``, if
@@ -107,19 +108,19 @@ class AnsibleGalaxyBase(base.Base):
         c = copy.copy(opts)
         for key in keys:
             if key in c:
-                del c[key]  # type: ignore[misc]
+                del c[key]
         return c
 
     # NOTE(retr0h): Override the base classes' options() to handle
     # ``ansible-galaxy`` one-off.
     @property
-    def options(self) -> DependencyOptions:
+    def options(self) -> MutableMapping[str, str | bool]:
         """Computed options for this dependency.
 
         Returns:
             Merged and filtered options for this dependency.
         """
-        opts = self._config.config["dependency"]["options"]
+        opts: MutableMapping[str, str | bool] = self._config.config["dependency"]["options"]
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
         if self._config.debug:

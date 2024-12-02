@@ -28,8 +28,9 @@ from molecule.dependency import base
 
 
 if TYPE_CHECKING:
+    from collections.abc import MutableMapping
+
     from molecule.config import Config
-    from molecule.types import DependencyOptions
 
 
 LOG = logging.getLogger(__name__)
@@ -94,7 +95,7 @@ class Shell(base.Base):
         return self._config.config["dependency"]["command"] or ""
 
     @property
-    def default_options(self) -> DependencyOptions:
+    def default_options(self) -> MutableMapping[str, str | bool]:
         """Get default options for shell dependencies (none).
 
         Returns:

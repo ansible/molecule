@@ -9,14 +9,6 @@ if TYPE_CHECKING:
     from typing import Any
 
 
-# We have to use the alternate form here because dashes are invalid in python identifiers
-DependencyOptions = TypedDict(
-    "DependencyOptions",
-    {"force": bool, "requirements-file": str, "role-file": str, "verbose": bool, "vvv": bool},
-    total=False,
-)
-
-
 class DependencyData(TypedDict, total=False):
     """Molecule dependency configuration.
 
@@ -31,7 +23,7 @@ class DependencyData(TypedDict, total=False):
     name: str
     command: str | None
     enabled: bool
-    options: DependencyOptions
+    options: dict[str, str | bool]
     env: dict[str, str]
 
 
@@ -136,11 +128,11 @@ class ProvisionerData(TypedDict, total=False):
     """
 
     name: str
-    config_options: dict[str, Any]
+    config_options: dict[str, str | bool]
     ansible_args: list[str]
-    connection_options: dict[str, Any]
-    options: dict[str, Any]
-    env: dict[str, Any]
+    connection_options: dict[str, str | bool]
+    options: dict[str, str | bool]
+    env: dict[str, str]
     inventory: InventoryData
     children: dict[str, Any]
     playbooks: PlaybookData
@@ -184,8 +176,8 @@ class VerifierData(TypedDict, total=False):
     name: str
     directory: str
     enabled: bool
-    options: dict[str, Any]
-    env: dict[str, Any]
+    options: dict[str, str | bool]
+    env: dict[str, str]
     additional_files_or_dirs: list[str]
 
 

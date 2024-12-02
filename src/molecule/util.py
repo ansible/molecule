@@ -43,7 +43,7 @@ from molecule.constants import MOLECULE_HEADER
 
 
 if TYPE_CHECKING:
-    from collections.abc import Generator, Iterable, MutableMapping
+    from collections.abc import Generator, Iterable, Mapping, MutableMapping
     from io import TextIOWrapper
     from typing import Any, AnyStr, NoReturn, TypeVar
     from warnings import WarningMessage
@@ -378,7 +378,9 @@ def verbose_flag(options: MutableMapping[str, str | bool]) -> list[str]:
     return flags
 
 
-def filter_verbose_permutation(options: dict[str, str | bool]) -> dict[str, str | bool]:
+def filter_verbose_permutation(
+    options: Mapping[str, str | bool],
+) -> MutableMapping[str, str | bool]:
     """Clean verbose information.
 
     Args:
