@@ -19,7 +19,12 @@ LOG = logging.getLogger(__name__)
 
 
 class Roles(AnsibleGalaxyBase):
-    """Role-specific Ansible Galaxy dependency handling."""
+    """Role-specific Ansible Galaxy dependency handling.
+
+    Attributes:
+        FILTER_OPTS: Keys to remove from the dictionary returned by options().
+        COMMANDS: Arguments to send to ansible-galaxy to install the appropriate type of content.
+    """
 
     FILTER_OPTS = ("requirements-file",)
     COMMANDS = ("install",)
