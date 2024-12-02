@@ -97,12 +97,7 @@ class Testinfra(Verifier):
             - ../path/to/directory/*
     ```
     .. _`Testinfra`: https://testinfra.readthedocs.io
-
-    Attributes:
-        _testinfra_command: List of strings composing the command to run.
     """
-
-    _testinfra_command: list[str]
 
     def __init__(self, config: Config) -> None:
         """Set up the requirements to execute ``testinfra`` and returns None.
@@ -111,6 +106,7 @@ class Testinfra(Verifier):
             config: An instance of a Molecule config.
         """
         super().__init__(config)
+        self._testinfra_command: list[str] = []
         self._tests = []  # type: ignore[var-annotated]
 
     @property
