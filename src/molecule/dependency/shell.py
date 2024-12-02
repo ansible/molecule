@@ -83,7 +83,7 @@ class Shell(base.Base):
             config: Molecule Config instance.
         """
         super().__init__(config)
-        self._sh_command: list[str] = []
+        self._sh_command = ""
 
     @property
     def command(self) -> str:
@@ -105,7 +105,7 @@ class Shell(base.Base):
 
     def bake(self) -> None:
         """Bake a ``shell`` command so it's ready to execute."""
-        self._sh_command = [self.command]
+        self._sh_command = self.command
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the dependency solver.

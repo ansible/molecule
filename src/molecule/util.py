@@ -154,7 +154,7 @@ def sysexit_with_message(
 
 
 def run_command(  # noqa: PLR0913
-    cmd: list[str],
+    cmd: str | list[str],
     env: dict[str, str] | None = None,
     cwd: Path | None = None,
     *,
