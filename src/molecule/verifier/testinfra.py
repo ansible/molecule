@@ -24,15 +24,15 @@ import glob
 import logging
 import os
 
+from collections.abc import MutableMapping
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from molecule import util
 from molecule.api import Verifier
 
 
 if TYPE_CHECKING:
-    from collections.abc import MutableMapping
 
     from molecule.config import Config
     from molecule.verifier.base import Schema
@@ -97,7 +97,12 @@ class Testinfra(Verifier):
             - ../path/to/directory/*
     ```
     .. _`Testinfra`: https://testinfra.readthedocs.io
+
+    Attributes:
+        _testinfra_command: List of strings composing the command to run.
     """
+
+    _testinfra_command: list[str]
 
     def __init__(self, config: Config) -> None:
         """Set up the requirements to execute ``testinfra`` and returns None.
@@ -106,7 +111,6 @@ class Testinfra(Verifier):
             config: An instance of a Molecule config.
         """
         super().__init__(config)
-        self._testinfra_command = None
         self._tests = []  # type: ignore[var-annotated]
 
     @property
@@ -125,7 +129,7 @@ class Testinfra(Verifier):
         Returns:
             The default verifier options.
         """
-        d: MutableMapping[str, str | bool] = self._config.driver.testinfra_options
+        d = cast(MutableMapping[str, str | bool], self._config.driver.testinfra_options)
         d["p"] = "no:cacheprovider"
         if self._config.debug:
             d["debug"] = True
@@ -159,7 +163,8 @@ class Testinfra(Verifier):
         Returns:
             The default verifier environment variables.
         """
-        env = util.merge_dicts(os.environ, self._config.env)
+        env = cast(dict[str, str], os.environ)
+        env = util.merge_dicts(env, self._config.env)
         if self._config.provisioner:
             env = util.merge_dicts(env, self._config.provisioner.env)
 
@@ -189,7 +194,7 @@ class Testinfra(Verifier):
         verbose_flag = util.verbose_flag(options)
         args = verbose_flag
 
-        self._testinfra_command = [  # type: ignore[assignment]
+        self._testinfra_command = [
             "pytest",
             *util.dict2args(options),
             *self._tests,

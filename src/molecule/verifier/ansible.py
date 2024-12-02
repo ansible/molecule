@@ -23,7 +23,7 @@ from __future__ import annotations
 import logging
 import os
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from molecule import util
 from molecule.api import Verifier
@@ -93,7 +93,8 @@ class Ansible(Verifier):
         Returns:
             The default verifier environment variables.
         """
-        env = util.merge_dicts(os.environ, self._config.env)
+        env = cast(dict[str, str], os.environ)
+        env = util.merge_dicts(env, self._config.env)
         if self._config.provisioner:
             env = util.merge_dicts(env, self._config.provisioner.env)
         return env
