@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from molecule import util
 from molecule.dependency.ansible_galaxy.base import AnsibleGalaxyBase
@@ -57,4 +57,4 @@ class Roles(AnsibleGalaxyBase):
         Returns:
             Path to the requirements file for this dependency.
         """
-        return self.options["role-file"]  # type: ignore[return-value]
+        return cast(str, self.options["role-file"])

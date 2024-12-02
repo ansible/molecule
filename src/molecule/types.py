@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal, TypedDict
+from typing import TYPE_CHECKING, TypedDict
 
 
 if TYPE_CHECKING:
-    from typing import Any
+    from collections.abc import MutableMapping
+    from typing import Any, Literal, TypeAlias
+
+    Options: TypeAlias = MutableMapping[str, str | bool]
 
 
 class DependencyData(TypedDict, total=False):
@@ -23,7 +26,7 @@ class DependencyData(TypedDict, total=False):
     name: str
     command: str | None
     enabled: bool
-    options: dict[str, str | bool]
+    options: Options
     env: dict[str, str]
 
 
@@ -128,10 +131,10 @@ class ProvisionerData(TypedDict, total=False):
     """
 
     name: str
-    config_options: dict[str, str | bool]
+    config_options: dict[str, Any]
     ansible_args: list[str]
-    connection_options: dict[str, str | bool]
-    options: dict[str, str | bool]
+    connection_options: dict[str, Any]
+    options: Options
     env: dict[str, str]
     inventory: InventoryData
     children: dict[str, Any]
@@ -176,7 +179,7 @@ class VerifierData(TypedDict, total=False):
     name: str
     directory: str
     enabled: bool
-    options: dict[str, str | bool]
+    options: Options
     env: dict[str, str]
     additional_files_or_dirs: list[str]
 

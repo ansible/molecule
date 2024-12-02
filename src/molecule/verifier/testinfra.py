@@ -148,7 +148,7 @@ class Testinfra(Verifier):
         Returns:
             The combined dictionary of default options and those specified in the config.
         """
-        o: MutableMapping[str, str | bool] = self._config.config["verifier"]["options"]
+        o = self._config.config["verifier"]["options"]
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
         if self._config.debug:

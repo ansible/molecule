@@ -120,7 +120,7 @@ class AnsibleGalaxyBase(base.Base):
         Returns:
             Merged and filtered options for this dependency.
         """
-        opts: MutableMapping[str, str | bool] = self._config.config["dependency"]["options"]
+        opts = self._config.config["dependency"]["options"]
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
         if self._config.debug:

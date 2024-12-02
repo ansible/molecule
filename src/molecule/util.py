@@ -43,12 +43,12 @@ from molecule.constants import MOLECULE_HEADER
 
 
 if TYPE_CHECKING:
-    from collections.abc import Generator, Iterable, Mapping, MutableMapping
+    from collections.abc import Generator, Iterable, MutableMapping
     from io import TextIOWrapper
     from typing import Any, AnyStr, NoReturn, TypeVar
     from warnings import WarningMessage
 
-    from molecule.types import CommandArgs, ConfigData, PlatformData
+    from molecule.types import CommandArgs, ConfigData, Options, PlatformData
 
     NestedDict = MutableMapping[str, Any]
     _T = TypeVar("_T", bound=NestedDict)
@@ -355,7 +355,7 @@ def instance_with_scenario_name(instance_name: str, scenario_name: str) -> str:
     return f"{instance_name}-{scenario_name}"
 
 
-def verbose_flag(options: MutableMapping[str, str | bool]) -> list[str]:
+def verbose_flag(options: Options) -> list[str]:
     """Return computed verbosity flag.
 
     Args:
@@ -378,9 +378,7 @@ def verbose_flag(options: MutableMapping[str, str | bool]) -> list[str]:
     return flags
 
 
-def filter_verbose_permutation(
-    options: Mapping[str, str | bool],
-) -> MutableMapping[str, str | bool]:
+def filter_verbose_permutation(options: Options) -> Options:
     """Clean verbose information.
 
     Args:
