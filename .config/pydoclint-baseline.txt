@@ -42,33 +42,6 @@ src/molecule/dependency/shell.py
     DOC107: Method `Shell.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Method `Shell.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [config: ].
 --------------------
-src/molecule/verifier/base.py
-    DOC601: Class `Verifier`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `Verifier`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [__metaclass__: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC106: Method `Verifier.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Verifier.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC101: Method `Verifier.__eq__`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `Verifier.__eq__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Verifier.__eq__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `Verifier.__eq__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [other: ].
-    DOC201: Method `Verifier.__eq__` does not have a return section in docstring
-    DOC101: Method `Verifier.__lt__`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `Verifier.__lt__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Verifier.__lt__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `Verifier.__lt__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [other: ].
-    DOC201: Method `Verifier.__lt__` does not have a return section in docstring
-    DOC201: Method `Verifier.__hash__` does not have a return section in docstring
-    DOC201: Method `Verifier.__str__` does not have a return section in docstring
-    DOC201: Method `Verifier.__repr__` does not have a return section in docstring
---------------------
-src/molecule/verifier/testinfra.py
-    DOC106: Method `Testinfra.__init__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Testinfra.__init__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC101: Method `Testinfra._get_tests`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `Testinfra._get_tests`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `Testinfra._get_tests`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `Testinfra._get_tests`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [action_args: ].
---------------------
 tests/conftest.py
     DOC101: Function `reset_pytest_vars`: Docstring contains fewer arguments than in function signature.
     DOC106: Function `reset_pytest_vars`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature

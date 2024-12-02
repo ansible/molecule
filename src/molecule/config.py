@@ -353,7 +353,7 @@ class Config:
         Returns:
             dict: The merged config.
         """
-        env = util.merge_dicts(os.environ, self.env)  # type: ignore[type-var]
+        env = util.merge_dicts(os.environ, self.env)
         env = set_env_from_file(env, self.env_file)
 
         return self._combine(env=env)

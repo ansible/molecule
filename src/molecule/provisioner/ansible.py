@@ -530,7 +530,7 @@ class Ansible(base.Base):
                 list(map(util.abs_path, os.environ["ANSIBLE_ROLES_PATH"].split(":"))),
             )
 
-        env = util.merge_dicts(  # type: ignore[type-var]
+        env = util.merge_dicts(
             dict(os.environ),
             {
                 "ANSIBLE_CONFIG": self.config_file,
@@ -542,7 +542,7 @@ class Ansible(base.Base):
                 ),
             },
         )
-        env = util.merge_dicts(env, self._config.env)  # type: ignore[type-var]
+        env = util.merge_dicts(env, self._config.env)
 
         return env  # noqa: RET504
 
