@@ -21,7 +21,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from molecule.command import list
+from molecule.command import list  # noqa: A004
 from molecule.status import Status
 
 
