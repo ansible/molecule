@@ -35,7 +35,7 @@ from molecule.command import (
     destroy,  # noqa: F401
     drivers,  # noqa: F401
     idempotence,  # noqa: F401
-    list,  # noqa: F401
+    list,  # noqa: A004, F401
     login,  # noqa: F401
     matrix,  # noqa: F401
     prepare,  # noqa: F401
