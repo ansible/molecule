@@ -579,7 +579,12 @@ class Ansible(base.Base):
         )
 
     @property
-    def options(self) -> Options:  # noqa: D102
+    def options(self) -> Options:
+        """Appropriate options for provisioner.
+
+        Returns:
+            Dictionary of provisioner options.
+        """
         if self._config.action in ["create", "destroy"]:
             return self.default_options
 
@@ -592,7 +597,12 @@ class Ansible(base.Base):
         return util.merge_dicts(self.default_options, opts)
 
     @property
-    def env(self) -> dict[str, str]:  # noqa: D102
+    def env(self) -> dict[str, str]:
+        """Full computed environment variables for provisioner.
+
+        Returns:
+            Complete set of collected environment variables.
+        """
         default_env = self.default_env
         env = self._config.config["provisioner"]["env"].copy()
         # ensure that all keys and values are strings
@@ -619,19 +629,39 @@ class Ansible(base.Base):
         return util.merge_dicts(default_env, env)
 
     @property
-    def hosts(self) -> dict[str, str]:  # noqa: D102
+    def hosts(self) -> dict[str, str]:
+        """Provisioner inventory hosts.
+
+        Returns:
+            Dictionary of host names.
+        """
         return self._config.config["provisioner"]["inventory"]["hosts"]
 
     @property
-    def host_vars(self) -> dict[str, str]:  # noqa: D102
+    def host_vars(self) -> dict[str, str]:
+        """Provisioner inventory host vars.
+
+        Returns:
+            Dictionary of host vars.
+        """
         return self._config.config["provisioner"]["inventory"]["host_vars"]
 
     @property
-    def group_vars(self) -> dict[str, str]:  # noqa: D102
+    def group_vars(self) -> dict[str, str]:
+        """Provisioner inventory group vars.
+
+        Returns:
+            Dictionary of group vars.
+        """
         return self._config.config["provisioner"]["inventory"]["group_vars"]
 
     @property
-    def links(self) -> dict[str, str]:  # noqa: D102
+    def links(self) -> dict[str, str]:
+        """Provisioner inventory links.
+
+        Returns:
+            Dictionary of links.
+        """
         return self._config.config["provisioner"]["inventory"]["links"]
 
     @property
@@ -688,15 +718,30 @@ class Ansible(base.Base):
         return self._default_to_regular(dd)
 
     @property
-    def inventory_directory(self) -> str:  # noqa: D102
+    def inventory_directory(self) -> str:
+        """Inventory directory path.
+
+        Returns:
+            Path to the directory containing inventory files.
+        """
         return self._config.scenario.inventory_directory
 
     @property
-    def inventory_file(self) -> str:  # noqa: D102
+    def inventory_file(self) -> str:
+        """Inventory file path.
+
+        Returns:
+            Path to ansible_inventory.yml
+        """
         return str(Path(self.inventory_directory, "ansible_inventory.yml"))
 
     @property
-    def config_file(self) -> str:  # noqa: D102
+    def config_file(self) -> str:
+        """Configuration file path.
+
+        Returns:
+            Path to ansible.cfg.
+        """
         return str(
             Path(
                 self._config.scenario.ephemeral_directory,
@@ -705,11 +750,21 @@ class Ansible(base.Base):
         )
 
     @cached_property
-    def playbooks(self) -> ansible_playbooks.AnsiblePlaybooks:  # noqa: D102
+    def playbooks(self) -> ansible_playbooks.AnsiblePlaybooks:
+        """Ansible playbooks provisioner instance.
+
+        Returns:
+            AnsiblePlaybooks instance based on this config.
+        """
         return ansible_playbooks.AnsiblePlaybooks(self._config)
 
     @property
-    def directory(self) -> str:  # noqa: D102
+    def directory(self) -> str:
+        """Ansible provisioner directory.
+
+        Returns:
+            Path to the ansible provisioner directory.
+        """
         return str(Path(__file__).parent.parent.parent / "molecule" / "provisioner" / "ansible")
 
     def cleanup(self) -> None:
