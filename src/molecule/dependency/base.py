@@ -26,14 +26,21 @@ import os
 import time
 
 from subprocess import CalledProcessError
+from typing import TYPE_CHECKING
 
 from molecule import util
+
+
+if TYPE_CHECKING:
+    from collections.abc import MutableMapping
+
+    from molecule.config import Config
 
 
 LOG = logging.getLogger(__name__)
 
 
-class Base:
+class Base(abc.ABC):
     """Dependency Base Class.
 
     Attributes:
@@ -42,27 +49,23 @@ class Base:
         BACKOFF: Additional number of seconds to sleep for each successive attempt.
     """
 
-    __metaclass__ = abc.ABCMeta
-
     RETRY = 3
     SLEEP = 3
     BACKOFF = 3
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001
+    def __init__(self, config: Config) -> None:
         """Initialize code for all :ref:`Dependency` classes.
 
         Args:
             config: An instance of a Molecule config.
         """
         self._config = config
-        self._sh_command: list[str] | None = None
+        self._sh_command: str | list[str] = []
 
-    def execute_with_retries(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
+    def execute_with_retries(self) -> None:
         """Run dependency downloads with retry and timed back-off."""
-        exception = None
-
         try:
-            util.run_command(self._sh_command, debug=self._config.debug, check=True)  # type: ignore[arg-type]
+            util.run_command(self._sh_command, debug=self._config.debug, check=True)
             msg = "Dependency completed successfully."
             LOG.info(msg)
             return  # noqa: TRY300
@@ -79,7 +82,7 @@ class Base:
             self.SLEEP += self.BACKOFF
 
             try:
-                util.run_command(self._sh_command, debug=self._config.debug, check=True)  # type: ignore[arg-type]
+                util.run_command(self._sh_command, debug=self._config.debug, check=True)
                 msg = "Dependency completed successfully."
                 LOG.info(msg)
                 return  # noqa: TRY300
@@ -87,35 +90,45 @@ class Base:
                 exception = _exception
 
         LOG.error(str(exception))
-        util.sysexit(exception.returncode)  # type: ignore[union-attr]
+        util.sysexit(exception.returncode)
 
     @abc.abstractmethod
-    def execute(self, action_args=None):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN201
-        """Execute ``cmd`` and returns None."""
+    def execute(
+        self,
+        action_args: list[str] | None = None,
+    ) -> None:  # pragma: no cover
+        """Execute ``cmd``.
+
+        Args:
+            action_args: Arguments for dependency resolvers. Unused.
+        """
         for name, version in self._config.driver.required_collections.items():
             self._config.runtime.require_collection(name, version)
 
     @property
     @abc.abstractmethod
-    def default_options(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201
-        """Get default CLI arguments provided to ``cmd`` as a dict.
+    def default_options(self) -> MutableMapping[str, str | bool]:  # pragma: no cover
+        """Get default CLI arguments provided to ``cmd``.
 
         Returns:
             dict
         """
 
     @property
-    def default_env(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN201
-        """Get default env variables provided to ``cmd`` as a dict.
+    def default_env(self) -> dict[str, str]:  # pragma: no cover
+        """Get default env variables provided to ``cmd``.
 
         Returns:
             dict
         """
-        env = util.merge_dicts(os.environ, self._config.env)
-        return env  # noqa: RET504
+        # I do not know why mypy has a problem here. We are merging two dict[str, str]s into one.
+        # dict[str, str] should fit the typevar of merge_dicts, and all types are the same, yet
+        # it still complains.
+        env = dict(os.environ)
+        return util.merge_dicts(env, self._config.env)
 
     @property
-    def name(self):  # type: ignore[no-untyped-def]  # noqa: ANN201
+    def name(self) -> str:
         """Name of the dependency and returns a string.
 
         :returns: str
@@ -123,18 +136,33 @@ class Base:
         return self._config.config["dependency"]["name"]
 
     @property
-    def enabled(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def enabled(self) -> bool:
+        """Is the dependency enabled.
+
+        Returns:
+            Whether the dependency is enabled.
+        """
         return self._config.config["dependency"]["enabled"]
 
     @property
-    def options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def options(self) -> MutableMapping[str, str | bool]:
+        """Computed dependency options.
+
+        Returns:
+            Merged dictionary of default options with config options.
+        """
         return util.merge_dicts(
             self.default_options,
             self._config.config["dependency"]["options"],
         )
 
     @property
-    def env(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def env(self) -> dict[str, str]:
+        """Computed environment variables.
+
+        Returns:
+            Merged dictionary of default env vars with config env vars.
+        """
         return util.merge_dicts(
             self.default_env,
             self._config.config["dependency"]["env"],

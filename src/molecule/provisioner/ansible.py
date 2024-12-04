@@ -41,6 +41,8 @@ from molecule.provisioner import ansible_playbook, ansible_playbooks, base
 if TYPE_CHECKING:
     from typing import Any
 
+    from molecule.types import Options
+
     Vivify = collections.defaultdict[str, Any | "Vivify"]
 
 
@@ -577,17 +579,17 @@ class Ansible(base.Base):
         )
 
     @property
-    def options(self) -> dict[str, Any]:  # noqa: D102
+    def options(self) -> Options:  # noqa: D102
         if self._config.action in ["create", "destroy"]:
             return self.default_options
 
-        o = self._config.config["provisioner"]["options"]
+        opts = self._config.config["provisioner"]["options"]
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
         if self._config.debug:
-            o = util.filter_verbose_permutation(o)
+            opts = util.filter_verbose_permutation(opts)
 
-        return util.merge_dicts(self.default_options, o)
+        return util.merge_dicts(self.default_options, opts)
 
     @property
     def env(self) -> dict[str, str]:  # noqa: D102

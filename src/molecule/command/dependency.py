@@ -46,7 +46,7 @@ class Dependency(base.Base):
             action_args: Arguments for this command. Unused.
         """
         if self._config.dependency:
-            self._config.dependency.execute()  # type: ignore[no-untyped-call]
+            self._config.dependency.execute()
 
 
 @base.click_command_ex()

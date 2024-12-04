@@ -3,30 +3,48 @@
 from __future__ import annotations
 
 import logging
-import os
+
+from pathlib import Path
+from typing import TYPE_CHECKING, cast
 
 from molecule import util
 from molecule.dependency.ansible_galaxy.base import AnsibleGalaxyBase
+
+
+if TYPE_CHECKING:
+    from collections.abc import MutableMapping
 
 
 LOG = logging.getLogger(__name__)
 
 
 class Collections(AnsibleGalaxyBase):
-    """Collection-specific Ansible Galaxy dependency handling."""
+    """Collection-specific Ansible Galaxy dependency handling.
 
-    FILTER_OPTS = ("role-file",)  # type: ignore  # noqa: PGH003
+    Attributes:
+        FILTER_OPTS: Keys to remove from the dictionary returned by options().
+        COMMANDS: Arguments to send to ansible-galaxy to install the appropriate type of content.
+    """
+
+    FILTER_OPTS = ("role-file",)
     COMMANDS = ("collection", "install")
 
     @property
-    def default_options(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
+    def default_options(self) -> MutableMapping[str, str | bool]:
+        """Default options for this dependency.
+
+        Returns:
+            Default options for this dependency.
+        """
         general = super().default_options
         specific = util.merge_dicts(
             general,
             {
-                "requirements-file": os.path.join(  # noqa: PTH118
-                    self._config.scenario.directory,
-                    "collections.yml",
+                "requirements-file": str(
+                    Path(
+                        self._config.scenario.directory,
+                        "collections.yml",
+                    ),
                 ),
             },
         )
@@ -34,9 +52,10 @@ class Collections(AnsibleGalaxyBase):
         return specific  # noqa: RET504
 
     @property
-    def default_env(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
-        return super().default_env
+    def requirements_file(self) -> str:
+        """Path to requirements file.
 
-    @property
-    def requirements_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN201, D102
-        return self.options["requirements-file"]
+        Returns:
+            Path to the requirements file for this dependency.
+        """
+        return cast(str, self.options["requirements-file"])

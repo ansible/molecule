@@ -42,6 +42,8 @@ if TYPE_CHECKING:
 
     from pytest_mock import MockerFixture
 
+    from molecule.types import Options
+
 
 def test_print_debug() -> None:  # noqa: D103
     expected = "DEBUG: test_title:\ntest_data\n"
@@ -284,7 +286,7 @@ def test_instance_with_scenario_name() -> None:  # noqa: D103
 
 
 def test_verbose_flag() -> None:  # noqa: D103
-    options = {"verbose": True, "v": True}
+    options: Options = {"verbose": True, "v": True}
 
     assert util.verbose_flag(options) == ["-v"]
     # pylint: disable=use-implicit-booleaness-not-comparison
@@ -292,7 +294,7 @@ def test_verbose_flag() -> None:  # noqa: D103
 
 
 def test_verbose_flag_extra_verbose() -> None:  # noqa: D103
-    options = {"verbose": True, "vvv": True}
+    options: Options = {"verbose": True, "vvv": True}
 
     assert util.verbose_flag(options) == ["-vvv"]
     # pylint: disable=use-implicit-booleaness-not-comparison
@@ -300,7 +302,7 @@ def test_verbose_flag_extra_verbose() -> None:  # noqa: D103
 
 
 def test_verbose_flag_preserves_verbose_option() -> None:  # noqa: D103
-    options = {"verbose": True}
+    options: Options = {"verbose": True}
 
     # pylint: disable=use-implicit-booleaness-not-comparison
     assert util.verbose_flag(options) == []
@@ -308,7 +310,7 @@ def test_verbose_flag_preserves_verbose_option() -> None:  # noqa: D103
 
 
 def test_filter_verbose_permutation() -> None:  # noqa: D103
-    options = {
+    options: Options = {
         "v": True,
         "vv": True,
         "vvv": True,

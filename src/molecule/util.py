@@ -48,7 +48,7 @@ if TYPE_CHECKING:
     from typing import Any, AnyStr, NoReturn, TypeVar
     from warnings import WarningMessage
 
-    from molecule.types import CommandArgs, ConfigData, PlatformData
+    from molecule.types import CommandArgs, ConfigData, Options, PlatformData
 
     NestedDict = MutableMapping[str, Any]
     _T = TypeVar("_T", bound=NestedDict)
@@ -154,7 +154,7 @@ def sysexit_with_message(
 
 
 def run_command(  # noqa: PLR0913
-    cmd: list[str],
+    cmd: str | list[str],
     env: dict[str, str] | None = None,
     cwd: Path | None = None,
     *,
@@ -355,7 +355,7 @@ def instance_with_scenario_name(instance_name: str, scenario_name: str) -> str:
     return f"{instance_name}-{scenario_name}"
 
 
-def verbose_flag(options: MutableMapping[str, Any]) -> list[str]:
+def verbose_flag(options: Options) -> list[str]:
     """Return computed verbosity flag.
 
     Args:
@@ -378,7 +378,7 @@ def verbose_flag(options: MutableMapping[str, Any]) -> list[str]:
     return flags
 
 
-def filter_verbose_permutation(options: dict[str, Any]) -> dict[str, Any]:
+def filter_verbose_permutation(options: Options) -> Options:
     """Clean verbose information.
 
     Args:
