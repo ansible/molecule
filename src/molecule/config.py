@@ -129,50 +129,95 @@ class Config:
         if self.molecule_file:
             self._validate()
 
-    def write(self) -> None:  # noqa: D102
+    def write(self) -> None:
+        """Write config file to filesystem."""
         util.write_file(self.config_file, util.safe_dump(self.config))
 
     @property
     def ansible_collections_path(
         self,
     ) -> str:
-        """Return collection path variable for current version of Ansible."""
+        """Return collection path variable for current version of Ansible.
+
+        Returns:
+            The correct ansible collection path to use.
+        """
         # https://github.com/ansible/ansible/pull/70007
         if self.runtime.version >= Version("2.10.0.dev0"):
             return "ANSIBLE_COLLECTIONS_PATH"
         return "ANSIBLE_COLLECTIONS_PATHS"
 
     @property
-    def config_file(self) -> str:  # noqa: D102
+    def config_file(self) -> str:
+        """Path to the config file.
+
+        Returns:
+            The path to the config file.
+        """
         path = Path(self.scenario.ephemeral_directory) / MOLECULE_FILE
         return str(path)
 
     @property
-    def is_parallel(self) -> bool:  # noqa: D102
+    def is_parallel(self) -> bool:
+        """Is molecule in parallel mode.
+
+        Returns:
+            Whether molecule is in parallel mode.
+        """
         return self.command_args.get("parallel", False)
 
     @property
-    def platform_name(self) -> str | None:  # noqa: D102
+    def platform_name(self) -> str | None:
+        """Configured platform.
+
+        Returns:
+            The name of the platform plugin specified.
+        """
         return self.command_args.get("platform_name", None)
 
     @property
-    def debug(self) -> bool:  # noqa: D102
+    def debug(self) -> bool:
+        """Is molecule in debug mode.
+
+        Returns:
+            Whether molecule is in debug mode.
+        """
         return self.args.get("debug", MOLECULE_DEBUG)
 
     @property
-    def env_file(self) -> str | None:  # noqa: D102
+    def env_file(self) -> str | None:
+        """Return path to env file.
+
+        Returns:
+            Path to configured env file.
+        """
         return util.abs_path(self.args.get("env_file"))
 
     @property
-    def subcommand(self) -> str:  # noqa: D102
+    def subcommand(self) -> str:
+        """Subcommand in use.
+
+        Returns:
+            The current subcommand being run.
+        """
         return self.command_args["subcommand"]
 
     @property
-    def action(self) -> str | None:  # noqa: D102
+    def action(self) -> str | None:
+        """Action value.
+
+        Returns:
+            The value of action.
+        """
         return self._action
 
     @action.setter
     def action(self, value: str) -> None:
+        """Action setter.
+
+        Args:
+            value: New value for action.
+        """
         self._action = value
 
     @property
@@ -187,11 +232,21 @@ class Config:
         return "molecule_parallel" if self.is_parallel else "molecule"
 
     @property
-    def molecule_directory(self) -> str:  # noqa: D102
+    def molecule_directory(self) -> str:
+        """Molecule directory for this project.
+
+        Returns:
+            The appropriate molecule directory for this project.
+        """
         return molecule_directory(self.project_directory)
 
     @cached_property
-    def dependency(self) -> Dependency | None:  # noqa: D102
+    def dependency(self) -> Dependency | None:
+        """Dependency manager in use.
+
+        Returns:
+            Instance of a molecule dependency plugin.
+        """
         dependency_name = self.config["dependency"]["name"]
         if dependency_name == "galaxy":
             return ansible_galaxy.AnsibleGalaxy(self)
@@ -220,7 +275,12 @@ class Config:
         return driver
 
     @property
-    def env(self) -> dict[str, str]:  # noqa: D102
+    def env(self) -> dict[str, str]:
+        """Environment variables.
+
+        Returns:
+            Total set of computed environment variables.
+        """
         return {
             "MOLECULE_DEBUG": str(self.debug),
             "MOLECULE_FILE": self.config_file,
@@ -240,7 +300,12 @@ class Config:
         }
 
     @cached_property
-    def platforms(self) -> platforms.Platforms:  # noqa: D102
+    def platforms(self) -> platforms.Platforms:
+        """Platforms for this run.
+
+        Returns:
+            A molecule Platforms instance.
+        """
         return platforms.Platforms(
             self,
             parallelize_platforms=self.is_parallel,
@@ -248,18 +313,33 @@ class Config:
         )
 
     @cached_property
-    def provisioner(self) -> ansible.Ansible | None:  # noqa: D102
+    def provisioner(self) -> ansible.Ansible | None:
+        """Provisioner for this run.
+
+        Returns:
+            An instance of the Ansible provisioner.
+        """
         provisioner_name = self.config["provisioner"]["name"]
         if provisioner_name == "ansible":
             return ansible.Ansible(self)
         return None
 
     @cached_property
-    def scenario(self) -> scenario.Scenario:  # noqa: D102
+    def scenario(self) -> scenario.Scenario:
+        """Scenario for this run.
+
+        Returns:
+            A molecule Scenario instance.
+        """
         return scenario.Scenario(self)
 
     @cached_property
-    def state(self) -> State:  # noqa: D102
+    def state(self) -> State:
+        """Molecule state object.
+
+        Returns:
+            A molecule State instance.
+        """
         myState = state.State(self)  # noqa: N806
         # look at state file for molecule.yml date modified and warn if they do not match
         if self.molecule_file and os.path.isfile(self.molecule_file):  # noqa: PTH113
