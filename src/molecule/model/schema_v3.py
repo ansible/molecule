@@ -57,16 +57,16 @@ def validate(c: ConfigData) -> list[str]:
 
     driver_schema_file = None
     if driver_name in api.drivers():
-        driver_schema_file = Path(api.drivers()[driver_name].schema_file())
+        driver_schema_file = api.drivers()[driver_name].schema_file()
 
     if driver_schema_file is None:
         msg = f"Driver {driver_name} does not provide a schema."
         LOG.warning(msg)
-    elif not driver_schema_file.exists():
+    elif not Path(driver_schema_file).exists():
         msg = f"Schema {driver_schema_file} for driver {driver_name} not found."
         LOG.warning(msg)
     else:
-        schema_files.append(str(driver_schema_file))
+        schema_files.append(driver_schema_file)
 
     for schema_file in schema_files:
         with Path(schema_file).open(encoding="utf-8") as f:

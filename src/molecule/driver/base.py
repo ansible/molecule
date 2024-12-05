@@ -344,13 +344,13 @@ class Driver(ABC):
             return str(p)
         return None
 
-    @abstractmethod
-    def schema_file(self) -> str:
+    def schema_file(self) -> str | None:  # pragma: no cover
         """Return schema file path.
 
         Returns:
             Path to schema file.
         """
+        return None
 
     def modules_dir(self) -> str | None:
         """Return path to ansible modules included with driver.

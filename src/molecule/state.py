@@ -120,39 +120,80 @@ class State:
         self._write_state_file()
 
     @property
-    def state_file(self) -> str:  # noqa: D102
+    def state_file(self) -> str:
+        """State file path.
+
+        Returns:
+            Path to the state file.
+        """
         return str(self._state_file)
 
     @property
-    def converged(self) -> bool:  # noqa: D102
+    def converged(self) -> bool:
+        """Is run converged.
+
+        Returns:
+            Whether the run has converged.
+        """
         return self._data["converged"]
 
     @property
-    def created(self) -> bool:  # noqa: D102
+    def created(self) -> bool:
+        """Has scenario been created.
+
+        Returns:
+            Whether scenario has been created.
+        """
         return self._data["created"]
 
     @property
-    def driver(self) -> str | None:  # noqa: D102
+    def driver(self) -> str | None:
+        """Driver for scenario.
+
+        Returns:
+            Name of the driver for the scenario.
+        """
         return self._data["driver"]
 
     @property
-    def prepared(self) -> bool:  # noqa: D102
+    def prepared(self) -> bool:
+        """Has scenario prepare run.
+
+        Returns:
+            Whether scenario prepare has run.
+        """
         return self._data["prepared"]
 
     @property
-    def run_uuid(self) -> str:  # noqa: D102
+    def run_uuid(self) -> str:
+        """Scenario run UUID.
+
+        Returns:
+            The UUID for this scenario run.
+        """
         return self._data["run_uuid"]
 
     @property
-    def is_parallel(self) -> bool:  # noqa: D102
+    def is_parallel(self) -> bool:
+        """Is molecule in parallel mode.
+
+        Returns:
+            Whether Molecule is in parallel mode.
+        """
         return self._data["is_parallel"]
 
     @property
-    def molecule_yml_date_modified(self) -> float | None:  # noqa: D102
+    def molecule_yml_date_modified(self) -> float | None:
+        """The modified date of molecule.yml.
+
+        Returns:
+            The timestamp of the last modification date of molecule.yml.
+        """
         return self._data["molecule_yml_date_modified"]
 
     @marshal
-    def reset(self) -> None:  # noqa: D102
+    def reset(self) -> None:
+        """Reset state data."""
         self._data = self._default_data()
 
     @marshal

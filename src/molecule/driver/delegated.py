@@ -21,8 +21,8 @@
 from __future__ import annotations
 
 import logging
-import os
 
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from molecule import util
@@ -320,4 +320,4 @@ class Delegated(Driver):
         Returns:
             Path to schema file.
         """
-        return os.path.join(os.path.dirname(data_module), "driver.json")  # noqa: PTH118, PTH120
+        return str(Path(data_module).parent / "driver.json")
