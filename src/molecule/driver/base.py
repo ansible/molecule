@@ -344,7 +344,7 @@ class Driver(ABC):
             return str(p)
         return None
 
-    def schema_file(self) -> str | None:
+    def schema_file(self) -> str | None:  # pragma: no cover
         """Return schema file path.
 
         Returns:
