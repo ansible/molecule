@@ -12,6 +12,32 @@ if TYPE_CHECKING:
     Options: TypeAlias = MutableMapping[str, str | bool]
 
 
+class CollectionData(TypedDict, total=False):
+    """Collection metadata sourced from galaxy.yml.
+
+    Attributes:
+        name: The name of the collection.
+        namespace: The collection namespace.
+        version: The collection's version.
+        readme: Path to the README file.
+        authors: List of authors of the collection.
+        description: Description of the collection.
+        repository: URL of the collection's online repository.
+        license_file: Path to the collection's LICENSE file.
+        tags: List of tags applied to the collection.
+    """
+
+    name: str
+    namespace: str
+    version: str
+    readme: str
+    authors: list[str]
+    description: str
+    repository: str
+    license_file: str
+    tags: list[str]
+
+
 class DependencyData(TypedDict, total=False):
     """Molecule dependency configuration.
 
