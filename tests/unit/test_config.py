@@ -19,8 +19,10 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import copy
 import os
 
+from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
 import pytest
@@ -84,14 +86,57 @@ def test_init_calls_validate(  # noqa: D103
     patched_config_validate.assert_called_once_with()
 
 
+def test_collection_directory_property(
+    config_instance: config.Config,
+    resources_folder_path: Path,
+) -> None:
+    """Test collection_directory property.
+
+    Args:
+        config_instance: Instance of Config.
+        resources_folder_path: Path to resources directory holding a valid collection.
+    """
+    # default path is not in a collection
+    assert config_instance.collection_directory is None
+
+    # Alter config_instance to start at path of a collection
+    config_instance = copy.copy(config_instance)
+    collection_path = resources_folder_path / "sample-collection"
+    config_instance.project_directory = str(collection_path)
+    assert config_instance.collection_directory == collection_path
+
+
 def test_project_directory_property(config_instance: config.Config) -> None:  # noqa: D103
-    assert os.getcwd() == config_instance.project_directory  # noqa: PTH109
+    assert str(Path.cwd()) == config_instance.project_directory
 
 
 def test_molecule_directory_property(config_instance: config.Config) -> None:  # noqa: D103
-    x = os.path.join(os.getcwd(), "molecule")  # noqa: PTH109, PTH118
+    x = str(Path.cwd() / "molecule")
 
     assert x == config_instance.molecule_directory
+
+
+def test_collection_property(
+    config_instance: config.Config,
+    resources_folder_path: Path,
+) -> None:
+    """Test collection property.
+
+    Args:
+        config_instance: Instance of Config.
+        resources_folder_path: Path to resources directory holding a valid collection.
+    """
+    modified_instance = copy.copy(config_instance)
+    # default path is not in a collection
+    assert config_instance.collection is None
+
+    # Alter config_instance to start at path of a collection
+    collection_path = resources_folder_path / "sample-collection"
+    modified_instance.project_directory = str(collection_path)
+
+    assert modified_instance.collection is not None
+    assert modified_instance.collection["name"] == "goodies"
+    assert modified_instance.collection["namespace"] == "acme"
 
 
 def test_dependency_property(config_instance: config.Config) -> None:  # noqa: D103
