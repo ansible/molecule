@@ -264,10 +264,8 @@ class Config:
             return None
 
         galaxy_file = self.collection_directory / "galaxy.yml"
-        if galaxy_file.exists():
-            galaxy_data = util.safe_load_file(galaxy_file)
-            return cast(CollectionData, galaxy_data)
-        return None
+        galaxy_data = util.safe_load_file(galaxy_file)
+        return cast(CollectionData, galaxy_data)
 
     @cached_property
     def dependency(self) -> Dependency | None:
