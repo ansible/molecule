@@ -26,7 +26,7 @@ import os
 import warnings
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 from uuid import uuid4
 
 from ansible_compat.ports import cache, cached_property
@@ -38,6 +38,7 @@ from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
+from molecule.types import CollectionData
 from molecule.util import boolean
 
 
@@ -232,6 +233,18 @@ class Config:
         return "molecule_parallel" if self.is_parallel else "molecule"
 
     @property
+    def collection_directory(self) -> Path | None:
+        """Location of collection containing the molecule files.
+
+        Returns:
+            Root of the collection containing the molecule files.
+        """
+        current_dir = Path(self.project_directory)
+        if (current_dir / "galaxy.yml").exists():
+            return current_dir
+        return None
+
+    @property
     def molecule_directory(self) -> str:
         """Molecule directory for this project.
 
@@ -239,6 +252,22 @@ class Config:
             The appropriate molecule directory for this project.
         """
         return molecule_directory(self.project_directory)
+
+    @cached_property
+    def collection(self) -> CollectionData | None:
+        """Collection metadata sourced from galaxy.yml.
+
+        Returns:
+            A dictionary of information about the collection molecule is running inside, if any.
+        """
+        if not self.collection_directory:
+            return None
+
+        galaxy_file = self.collection_directory / "galaxy.yml"
+        if galaxy_file.exists():
+            galaxy_data = util.safe_load_file(galaxy_file)
+            return cast(CollectionData, galaxy_data)
+        return None
 
     @cached_property
     def dependency(self) -> Dependency | None:
