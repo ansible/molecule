@@ -242,6 +242,11 @@ class Config:
         current_dir = Path(self.project_directory)
         if (current_dir / "galaxy.yml").exists():
             return current_dir
+        show_toplevel = util.run_command("git rev-parse --show-toplevel")
+        if show_toplevel.returncode == 0:
+            git_root = Path(show_toplevel.stdout.strip())
+            if (git_root / "galaxy.yml").exists():
+                return git_root
         return None
 
     @property
