@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import binascii
 import os
+import tempfile
 import warnings
 
 from pathlib import Path
@@ -338,6 +339,17 @@ def test_abs_path_with_path() -> None:
 def test_abs_path_with_empty_path() -> None:
     """Test the `abs_path` function with an empty path."""
     assert util.abs_path("") == ""
+
+
+def test_abs_path_with_symlink() -> None:
+    """Test the `abs_path` function not resolving symlinks."""
+    with tempfile.NamedTemporaryFile() as tmp_file:
+        tmpfile_path = Path(tmp_file.name)
+        symlink_path = Path(tmp_file.name + "_sym")
+        symlink_path.symlink_to(tmpfile_path)
+        abs_path_result = util.abs_path(symlink_path)
+        symlink_path.unlink()
+    assert abs_path_result == symlink_path
 
 
 @pytest.mark.parametrize(

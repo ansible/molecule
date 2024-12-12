@@ -402,7 +402,7 @@ def abs_path(path: str | Path | None) -> str | Path:
     """Return absolute path.
 
     Args:
-        path: File path to resolve absolute path from.
+        path: File path to create absolute path from.
 
     Returns:
         Absolute path of path.
@@ -411,9 +411,9 @@ def abs_path(path: str | Path | None) -> str | Path:
         return ""
 
     output_type = type(path)
-    if isinstance(path, str):
-        path = Path(path)
-    path = path.resolve()
+    if isinstance(path, Path):
+        path = str(path)
+    path = os.path.abspath(path)  # noqa: PTH100
 
     return output_type(path)
 
