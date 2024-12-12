@@ -413,7 +413,7 @@ def abs_path(path: str | Path | None) -> str | Path:
     output_type = type(path)
     if isinstance(path, Path):
         path = str(path)
-    path = os.path.abspath(path)
+    path = os.path.abspath(path)  # noqa: PTH100
 
     return output_type(path)
 
