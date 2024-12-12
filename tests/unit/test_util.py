@@ -345,7 +345,7 @@ def test_abs_path_with_symlink() -> None:
     """Test the `abs_path` function not resolving symlinks."""
     with tempfile.NamedTemporaryFile() as tmp_file:
         tmpfile_path = Path(tmp_file.name)
-        symlink_path = Path(tmp_file.name + '_sym')
+        symlink_path = Path(tmp_file.name + "_sym")
         symlink_path.symlink_to(tmpfile_path)
         abs_path_result = util.abs_path(symlink_path)
         symlink_path.unlink()
