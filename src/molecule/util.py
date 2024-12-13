@@ -597,3 +597,24 @@ def print_as_yaml(data: object) -> None:
     # https://github.com/Textualize/rich/discussions/990#discussioncomment-342217
     result = Syntax(code=safe_dump(data), lexer="yaml", background_color="default")
     console.print(result)
+
+
+def oxford_comma(listed: Iterable[bool | str | Path], condition: str = "and") -> str:
+    """Format a list into a sentence.
+
+    Args:
+        listed: List of string entries to modify
+        condition: String to splice into string, usually 'and'
+
+    Returns:
+        Modified string
+    """
+    match [f"'{entry!s}'" for entry in listed]:
+        case [one]:
+            return one
+        case [one, two]:
+            return f"{one} {condition} {two}"
+        case [*front, back]:
+            return f"{', '.join(s for s in front)}, {condition} {back}"
+        case _:
+            return ""

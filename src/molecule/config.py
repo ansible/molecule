@@ -48,7 +48,7 @@ if TYPE_CHECKING:
     from molecule.dependency.base import Base as Dependency
     from molecule.driver.base import Driver
     from molecule.state import State
-    from molecule.types import CommandArgs, ConfigData, MoleculeArgs
+    from molecule.types import CollectionData, CommandArgs, ConfigData, MoleculeArgs
     from molecule.verifier.base import Verifier
 
 
@@ -232,6 +232,28 @@ class Config:
         return "molecule_parallel" if self.is_parallel else "molecule"
 
     @property
+    def collection_directory(self) -> Path | None:
+        """Location of collection containing the molecule files.
+
+        Returns:
+            Root of the collection containing the molecule files.
+        """
+        test_paths = [Path.cwd(), Path(self.project_directory)]
+
+        for path in test_paths:
+            if (path / "galaxy.yml").exists():
+                return path
+
+        # Last resort, try to find git root
+        show_toplevel = util.run_command("git rev-parse --show-toplevel")
+        if show_toplevel.returncode == 0:
+            path = Path(show_toplevel.stdout.strip())
+            if (path / "galaxy.yml").exists():
+                return path
+
+        return None
+
+    @property
     def molecule_directory(self) -> str:
         """Molecule directory for this project.
 
@@ -239,6 +261,31 @@ class Config:
             The appropriate molecule directory for this project.
         """
         return molecule_directory(self.project_directory)
+
+    @cached_property
+    def collection(self) -> CollectionData | None:
+        """Collection metadata sourced from galaxy.yml.
+
+        Returns:
+            A dictionary of information about the collection molecule is running inside, if any.
+        """
+        collection_directory = self.collection_directory
+        if not collection_directory:
+            return None
+
+        galaxy_file = collection_directory / "galaxy.yml"
+        galaxy_data: CollectionData = util.safe_load_file(galaxy_file)
+
+        important_keys = {"name", "namespace"}
+        if missing_keys := important_keys.difference(galaxy_data.keys()):
+            LOG.warning(
+                "The detected galaxy.yml file (%s) is invalid, missing mandatory field %s",
+                galaxy_file,
+                util.oxford_comma(missing_keys),
+            )
+            return None  # pragma: no cover
+
+        return galaxy_data
 
     @cached_property
     def dependency(self) -> Dependency | None:
