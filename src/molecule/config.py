@@ -240,14 +240,18 @@ class Config:
             Root of the collection containing the molecule files.
         """
         test_paths = [Path.cwd(), Path(self.project_directory)]
-        # Try to find git root
-        show_toplevel = util.run_command("git rev-parse --show-toplevel")
-        if show_toplevel.returncode == 0:
-            test_paths.append(Path(show_toplevel.stdout.strip()))
 
         for path in test_paths:
             if (path / "galaxy.yml").exists():
                 return path
+
+        # Last resort, try to find git root
+        show_toplevel = util.run_command("git rev-parse --show-toplevel")
+        if show_toplevel.returncode == 0:
+            path = Path(show_toplevel.stdout.strip())
+            if (path / "galaxy.yml").exists():
+                return path
+
         return None
 
     @property
