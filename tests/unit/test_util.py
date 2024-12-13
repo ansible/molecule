@@ -354,7 +354,7 @@ def test_abs_path_with_symlink() -> None:
 
 @pytest.mark.parametrize(
     ("a", "b", "x"),
-    [  # noqa: PT007
+    (
         # Base of recursion scenarios
         ({"key": 1}, {"key": 2}, {"key": 2}),
         ({"key": {}}, {"key": 2}, {"key": 2}),
@@ -368,7 +368,27 @@ def test_abs_path_with_symlink() -> None:
             {"a": 1, "b": [{"c": 3}], "d": {"e": "bbb"}},
             {"a": 1, "b": [{"c": 3}], "d": {"e": "bbb", "f": 3}},
         ),
-    ],
+    ),
 )
 def test_merge_dicts(a: MutableMapping, b: MutableMapping, x: MutableMapping) -> None:  # type: ignore[type-arg]  # noqa: D103
     assert x == util.merge_dicts(a, b)
+
+
+@pytest.mark.parametrize(
+    ("sequence", "output"),
+    (
+        ([], ""),
+        (["item1"], "'item1'"),
+        (["item1", False], "'item1' and 'False'"),
+        (["item1", False, Path()], "'item1', 'False', and '.'"),
+    ),
+    ids=("empty", "one", "two", "three"),
+)
+def test_oxford_comma(sequence: list[str], output: str) -> None:
+    """Test the oxford_comma function.
+
+    Args:
+        sequence: sequence of items.
+        output: expected output string.
+    """
+    assert util.oxford_comma(sequence) == output

@@ -281,7 +281,7 @@ class Config:
             LOG.warning(
                 "The detected galaxy.yml file (%s) is incomplete, missing %s",
                 galaxy_file,
-                missing_keys,
+                util.oxford_comma(missing_keys),
             )
             return None
 
