@@ -610,8 +610,6 @@ def oxford_comma(listed: Iterable[bool | str | Path], condition: str = "and") ->
         Modified string
     """
     match [f"'{entry!s}'" for entry in listed]:
-        case []:
-            return ""
         case [one]:
             return one
         case [one, two]:
@@ -619,5 +617,4 @@ def oxford_comma(listed: Iterable[bool | str | Path], condition: str = "and") ->
         case [*front, back]:
             return f"{', '.join(s for s in front)}, {condition} {back}"
         case _:
-            # This should be unreachable, but is included for completeness.
             return ""
