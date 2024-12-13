@@ -139,6 +139,30 @@ def test_collection_property(
     assert modified_instance.collection["namespace"] == "acme"
 
 
+def test_collection_property_broken_collection(
+    caplog: pytest.LogCaptureFixture,
+    config_instance: config.Config,
+    resources_folder_path: Path,
+) -> None:
+    """Test collection property with a malformed galaxy.yml.
+
+    Args:
+        caplog: pytest log capture fixture.
+        config_instance: Instance of Config.
+        resources_folder_path: Path to resources directory holding a valid collection.
+    """
+    modified_instance = copy.copy(config_instance)
+
+    # Alter config_instance to start at path of a collection
+    collection_path = resources_folder_path / "broken-collection"
+    modified_instance.project_directory = str(collection_path)
+
+    assert modified_instance.collection is None
+
+    msg = "missing mandatory field 'namespace'"
+    assert msg in caplog.text
+
+
 def test_dependency_property(config_instance: config.Config) -> None:  # noqa: D103
     assert isinstance(config_instance.dependency, ansible_galaxy.AnsibleGalaxy)
 

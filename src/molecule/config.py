@@ -279,11 +279,11 @@ class Config:
         important_keys = {"name", "namespace"}
         if missing_keys := important_keys.difference(galaxy_data.keys()):
             LOG.warning(
-                "The detected galaxy.yml file (%s) is incomplete, missing %s",
+                "The detected galaxy.yml file (%s) is invalid, missing mandatory field %s",
                 galaxy_file,
                 util.oxford_comma(missing_keys),
             )
-            return None
+            return None  # pragma: no cover
 
         return galaxy_data
 
