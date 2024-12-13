@@ -26,7 +26,7 @@ import os
 import warnings
 
 from pathlib import Path
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from ansible_compat.ports import cache, cached_property
@@ -38,7 +38,6 @@ from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
-from molecule.types import CollectionData
 from molecule.util import boolean
 
 
@@ -49,7 +48,7 @@ if TYPE_CHECKING:
     from molecule.dependency.base import Base as Dependency
     from molecule.driver.base import Driver
     from molecule.state import State
-    from molecule.types import CommandArgs, ConfigData, MoleculeArgs
+    from molecule.types import CollectionData, CommandArgs, ConfigData, MoleculeArgs
     from molecule.verifier.base import Verifier
 
 
@@ -270,12 +269,23 @@ class Config:
         Returns:
             A dictionary of information about the collection molecule is running inside, if any.
         """
-        if not self.collection_directory:
+        collection_directory = self.collection_directory
+        if not collection_directory:
             return None
 
-        galaxy_file = self.collection_directory / "galaxy.yml"
-        galaxy_data = util.safe_load_file(galaxy_file)
-        return cast(CollectionData, galaxy_data)
+        galaxy_file = collection_directory / "galaxy.yml"
+        galaxy_data: CollectionData = util.safe_load_file(galaxy_file)
+
+        important_keys = {"name", "namespace"}
+        if missing_keys := important_keys.difference(galaxy_data.keys()):
+            LOG.warning(
+                "The detected galaxy.yml file (%s) is incomplete, missing %s",
+                galaxy_file,
+                missing_keys,
+            )
+            return None
+
+        return galaxy_data
 
     @cached_property
     def dependency(self) -> Dependency | None:
