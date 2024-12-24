@@ -19,9 +19,11 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+import unittest
 
-from click.testing import CliRunner
+from io import StringIO
+from typing import TYPE_CHECKING, Any
+from unittest.mock import patch
 
 from molecule.command import converge
 from molecule.shell import main
@@ -58,17 +60,30 @@ def test_converge_execute(  # noqa: D103
     assert config_instance.state.converged
 
 
-def test_ansible_args_passed_to_scenarios_get_configs(mocker: MockerFixture) -> None:  # noqa: D103
-    # Scenarios patch is needed to safely invoke CliRunner
-    # in the test environment and block scenario execution
-    mocker.patch("molecule.scenarios.Scenarios")
-    patched_get_configs = mocker.patch("molecule.command.base.get_configs")
+class TestConverge(unittest.TestCase):
+    @patch("sys.stdout", new_callable=StringIO)
+    @patch("sys.stderr", new_callable=StringIO)
+    @patch("molecule.scenarios.Scenarios")
+    @patch("molecule.command.base.get_configs")
+    def test_ansible_args_passed_to_scenarios_get_configs(
+        self,
+        patched_get_configs,
+        mock_scenarios,
+        mock_stdout,
+        mock_stderr,
+    ):
+        args = ["converge", "--", "-e", "testvar=testvalue"]
+        with patch("sys.argv", ["main"] + args):
+            try:
+                main()
+            except SystemExit as e:
+                self.assertEqual(e.code, 0)
 
-    runner = CliRunner()
-    args = ("converge", "--", "-e", "testvar=testvalue")
-    ansible_args = args[2:]
-    runner.invoke(main, args, obj={})
+        ansible_args = args[2:]
+        # call index [0][2] is the 3rd positional argument to get_configs,
+        # which should be the tuple of parsed ansible_args from the CLI
+        self.assertEqual(patched_get_configs.call_args[0][2], tuple(ansible_args))
 
-    # call index [0][2] is the 3rd positional argument to get_configs,
-    # which should be the tuple of parsed ansible_args from the CLI
-    assert patched_get_configs.call_args[0][2] == ansible_args
+
+if __name__ == "__main__":
+    unittest.main()

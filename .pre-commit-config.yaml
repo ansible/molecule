@@ -87,8 +87,6 @@ repos:
           - --output-format=colorized
         additional_dependencies:
           - ansible-compat>=24.6.1
-          - click
-          - click-help-colors
           - enrich>=1.2.7
           - filelock
           - jsonschema
@@ -103,8 +101,6 @@ repos:
       - id: mypy
         additional_dependencies:
           - ansible-compat>=24.6.1
-          - click
-          - click-help-colors
           - enrich
           - pytest
           - pytest-mock

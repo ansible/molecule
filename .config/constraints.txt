@@ -24,8 +24,6 @@ cfgv==3.4.0
 chardet==5.2.0
 charset-normalizer==3.4.0
 check-jsonschema==0.30.0
-click==8.1.8
-click-help-colors==0.9.4
 colorama==0.4.6
 coverage==7.6.9
 cryptography==44.0.0

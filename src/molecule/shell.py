@@ -20,19 +20,18 @@
 """Molecule Shell Module."""
 from __future__ import annotations
 
+import argparse
 import atexit
 import os
 import sys
 
-import click
 import packaging
 
 import molecule
 
-from molecule import command, logger
+from molecule import logger
 from molecule.api import drivers
 from molecule.app import app
-from molecule.command.base import click_group_ex
 from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY
 from molecule.console import console
 from molecule.util import do_report, lookup_config_file
@@ -55,21 +54,8 @@ LOCAL_CONFIG = lookup_config_file(LOCAL_CONFIG_SEARCH)
 ENV_FILE = ".env.yml"
 
 
-def print_version(
-    ctx: click.Context,
-    param: click.Option,  # noqa: ARG001
-    value: bool,  # noqa: FBT001
-) -> None:
-    """Print version information.
-
-    Args:
-        ctx: Click context object.
-        param: Reference to the --version option.
-        value: Value of --version.
-    """
-    if not value or ctx.resilient_parsing:
-        return
-
+def print_version() -> None:
+    """Print version information."""
     v = packaging.version.Version(molecule.__version__)
     color = "bright_yellow" if v.is_prerelease else "green"
     msg = (
@@ -90,103 +76,70 @@ def print_version(
         msg += "[/]"
     console.print(msg, highlight=False)
 
-    ctx.exit()
+    sys.exit()
 
 
-@click_group_ex()
-@click.option(
-    "--debug/--no-debug",
-    default=MOLECULE_DEBUG,
-    help="Enable or disable debug mode. Default is disabled.",
-)
-@click.option(
-    "-v",
-    "--verbose",
-    count=True,
-    default=MOLECULE_VERBOSITY,
-    help="Increase Ansible verbosity level. Default is 0.",
-)
-@click.option(
-    "--base-config",
-    "-c",
-    multiple=True,
-    default=[LOCAL_CONFIG] if LOCAL_CONFIG else [],
-    help=(
-        "Path to a base config (can be specified multiple times)."
-        " If provided, Molecule will first load and deep merge the"
-        " configurations in the specified order,"
-        " and deep merge each scenario's "
-        "molecule.yml on top. By default Molecule is looking for "
-        f"'{LOCAL_CONFIG_SEARCH}' "
-        "in current VCS repository and if not found it will look "
-        f"in user home. ({LOCAL_CONFIG})."
-    ),
-)
-@click.option(
-    "--env-file",
-    "-e",
-    default=ENV_FILE,
-    help=("The file to read variables from when rendering molecule.yml. (.env.yml)"),
-)
-@click.option(
-    "--version",
-    is_flag=True,
-    callback=print_version,
-    expose_value=False,
-    is_eager=True,
-)
-@click.pass_context
-def main(
-    ctx: click.Context,
-    debug: bool,  # noqa: FBT001
-    verbose: int,
-    base_config: list[str],
-    env_file: str,
-) -> None:  # pragma: no cover
-    """Molecule aids in the development and testing of Ansible roles.
+def main() -> None:
+    """Molecule aids in the development and testing of Ansible roles."""
+    parser = argparse.ArgumentParser(
+        description="Molecule aids in the development and testing of Ansible roles.",
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        default=MOLECULE_DEBUG,
+        help="Enable or disable debug mode. Default is disabled.",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=MOLECULE_VERBOSITY,
+        help="Increase Ansible verbosity level. Default is 0.",
+    )
+    parser.add_argument(
+        "-c",
+        "--base-config",
+        action="append",
+        default=[LOCAL_CONFIG] if LOCAL_CONFIG else [],
+        help=(
+            "Path to a base config (can be specified multiple times)."
+            " If provided, Molecule will first load and deep merge the"
+            " configurations in the specified order,"
+            " and deep merge each scenario's "
+            "molecule.yml on top. By default Molecule is looking for "
+            f"'{LOCAL_CONFIG_SEARCH}' "
+            "in current VCS repository and if not found it will look "
+            f"in user home. ({LOCAL_CONFIG})."
+        ),
+    )
+    parser.add_argument(
+        "-e",
+        "--env-file",
+        default=ENV_FILE,
+        help="The file to read variables from when rendering molecule.yml. (.env.yml)",
+    )
+    parser.add_argument("--version", action="store_true", help="Print version information and exit")
 
-    To enable autocomplete for a supported shell execute command below after
-    replacing SHELL with either bash, zsh, or fish:
+    args = parser.parse_args()
 
-        eval "$(_MOLECULE_COMPLETE=SHELL_source molecule)"
+    if args.version:
+        print_version()
 
-    Args:
-        ctx: Click context object.
-        debug: Debug option value.
-        verbose: Verbose option value.
-        base_config: Base config option value.
-        env_file: Environment variable file option value.
-    """
-    ctx.obj = {}
-    ctx.obj["args"] = {}
-    ctx.obj["args"]["debug"] = debug
-    ctx.obj["args"]["verbose"] = verbose
-    ctx.obj["args"]["base_config"] = base_config
-    ctx.obj["args"]["env_file"] = env_file
+    ctx_obj = {}
+    ctx_obj["args"] = {}
+    ctx_obj["args"]["debug"] = args.debug
+    ctx_obj["args"]["verbose"] = args.verbose
+    ctx_obj["args"]["base_config"] = args.base_config
+    ctx_obj["args"]["env_file"] = args.env_file
 
-    logger.set_log_level(verbose, debug)
-    if verbose:
-        os.environ["ANSIBLE_VERBOSITY"] = str(verbose)
+    logger.set_log_level(args.verbose, args.debug)
+    if args.verbose:
+        os.environ["ANSIBLE_VERBOSITY"] = str(args.verbose)
 
     if "MOLECULE_REPORT" in os.environ:
         atexit.register(do_report)
 
 
-main.add_command(command.cleanup.cleanup)
-main.add_command(command.check.check)
-main.add_command(command.converge.converge)
-main.add_command(command.create.create)
-main.add_command(command.dependency.dependency)
-main.add_command(command.destroy.destroy)
-main.add_command(command.drivers.drivers)
-main.add_command(command.idempotence.idempotence)
-main.add_command(command.init.init)
-main.add_command(command.list.list_)
-main.add_command(command.login.login)
-main.add_command(command.matrix.matrix)
-main.add_command(command.prepare.prepare)
-main.add_command(command.reset.reset)
-main.add_command(command.side_effect.side_effect)
-main.add_command(command.syntax.syntax)
-main.add_command(command.test.test)
-main.add_command(command.verify.verify)
+if __name__ == "__main__":
+    main()

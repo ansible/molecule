@@ -20,18 +20,17 @@
 """Matrix Command Module."""
 from __future__ import annotations
 
+import argparse
 import logging
 
 from typing import TYPE_CHECKING
-
-import click
 
 from molecule import scenarios
 from molecule.command import base
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs, MoleculeArgs
+    from molecule.types import CommandArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -73,26 +72,35 @@ class Matrix(base.Base):
     """
 
 
-@base.click_command_ex()
-@click.pass_context
-@click.option("--scenario-name", "-s", help="Name of the scenario to target.")
-# NOTE(retr0h): Cannot introspect base.Base for `click.Choice`, since
-# subclasses have not all loaded at this point.
-@click.argument("subcommand", nargs=1, type=click.UNPROCESSED)
-def matrix(
-    ctx: click.Context,
-    scenario_name: str,
-    subcommand: str,
-) -> None:  # pragma: no cover
+def matrix() -> None:  # pragma: no cover
     """List matrix of steps used to test instances.
 
     Args:
-        ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
         subcommand: Subcommand to target.
     """
-    args: MoleculeArgs = ctx.obj.get("args")
+    parser = argparse.ArgumentParser(description="List matrix of steps used to test instances.")
+    parser.add_argument(
+        "--scenario-name",
+        "-s",
+        help="Name of the scenario to target.",
+    )
+    parser.add_argument(
+        "subcommand",
+        nargs=1,
+        help="Subcommand to target.",
+    )
+
+    args = parser.parse_args()
+    scenario_name = args.scenario_name
+    subcommand = args.subcommand
+
+    args_dict = {"args": vars(args)}
     command_args: CommandArgs = {"subcommand": subcommand}
 
-    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
+    s = scenarios.Scenarios(base.get_configs(args_dict, command_args), scenario_name)
     s.print_matrix()
+
+
+if __name__ == "__main__":
+    matrix()

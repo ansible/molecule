@@ -25,7 +25,7 @@ import re
 
 from typing import TYPE_CHECKING
 
-import click
+import argparse
 
 from molecule import util
 from molecule.command import base
@@ -109,38 +109,53 @@ class Idempotence(base.Base):
             if line.startswith("TASK"):
                 task_line = line
             elif line.startswith("changed"):
-                host_name = re.search(r"\[(.*)\]", line).groups()[0]  # type: ignore[union-attr]
-                task_name = re.search(r"\[(.*)\]", task_line).groups()[0]  # type: ignore[union-attr]
+                host_name = re.search(r"
+
+\[(.*)\]
+
+", line).groups()[0]  # type: ignore[union-attr]
+                task_name = re.search(r"
+
+\[(.*)\]
+
+", task_line).groups()[0]  # type: ignore[union-attr]
                 res.append(f"* [{host_name}] => {task_name}")
 
         return res
 
 
-@base.click_command_ex()
-@click.pass_context
-@click.option(
-    "--scenario-name",
-    "-s",
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
-)
-@click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
-def idempotence(
-    ctx: click.Context,
-    scenario_name: str,
-    ansible_args: tuple[str, ...],
-) -> None:  # pragma: no cover
+def idempotence() -> None:  # pragma: no cover
     """Use the provisioner to configure the instances.
 
     After parse the output to determine idempotence.
 
     Args:
-        ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
         ansible_args: Arguments to forward to Ansible.
     """
-    args: MoleculeArgs = ctx.obj.get("args")
+    parser = argparse.ArgumentParser(description="Use the provisioner to configure the instances and determine idempotence.")
+    parser.add_argument(
+        "--scenario-name",
+        "-s",
+        default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
+        help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
+    )
+    parser.add_argument(
+        "ansible_args",
+        nargs=argparse.REMAINDER,
+        help="Arguments to forward to Ansible.",
+    )
+
+    args = parser.parse_args()
+    scenario_name = args.scenario_name
+    ansible_args = args.ansible_args
+
+    args_dict: MoleculeArgs = {"args": vars(args)}
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand}
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)
+    base.execute_cmdline_scenarios(scenario_name, args_dict, command_args, ansible_args)
+
+
+if __name__ == "__main__":
+    idempotence()

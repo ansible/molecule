@@ -20,11 +20,10 @@
 """Verify Command Module."""
 from __future__ import annotations
 
+import argparse
 import logging
 
 from typing import TYPE_CHECKING
-
-import click
 
 from molecule.command import base
 
@@ -48,26 +47,29 @@ class Verify(base.Base):
         self._config.verifier.execute(action_args)
 
 
-@base.click_command_ex()
-@click.pass_context
-@click.option(
-    "--scenario-name",
-    "-s",
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
-)
-def verify(
-    ctx: click.Context,
-    scenario_name: str = "default",
-) -> None:  # pragma: no cover
+def verify() -> None:  # pragma: no cover
     """Run automated tests against instances.
 
     Args:
-        ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
     """
-    args: MoleculeArgs = ctx.obj.get("args")
+    parser = argparse.ArgumentParser(description="Run automated tests against instances.")
+    parser.add_argument(
+        "--scenario-name",
+        "-s",
+        default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
+        help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
+    )
+
+    args = parser.parse_args()
+    scenario_name = args.scenario_name
+
+    args_dict: MoleculeArgs = {"args": vars(args)}
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand}
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    base.execute_cmdline_scenarios(scenario_name, args_dict, command_args)
+
+
+if __name__ == "__main__":
+    verify()

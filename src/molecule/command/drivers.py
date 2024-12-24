@@ -20,37 +20,34 @@
 """Create Command Module."""
 from __future__ import annotations
 
+import argparse
 import logging
 
-import click
-
 from molecule import api
-from molecule.command import base
 from molecule.console import console
 
 
 LOG = logging.getLogger(__name__)
 
 
-@base.click_command_ex()
-@click.pass_context
-@click.option(
-    "--format",
-    "-f",
-    type=click.Choice(["simple", "plain"]),
-    default="simple",
-    help="Change output format. (simple)",
-)
-def drivers(
-    ctx: click.Context,  # noqa: ARG001
-    format: str,  # noqa: A002
-) -> None:  # pragma: no cover
+def drivers() -> None:  # pragma: no cover
     """List drivers.
 
     Args:
-        ctx: Click context object holding commandline arguments.
         format: Output format to use.
     """
+    parser = argparse.ArgumentParser(description="List drivers.")
+    parser.add_argument(
+        "--format",
+        "-f",
+        choices=["simple", "plain"],
+        default="simple",
+        help="Change output format. (simple)",
+    )
+
+    args = parser.parse_args()
+    format = args.format
+
     drivers = []  # pylint: disable=redefined-outer-name
     for driver in api.drivers().values():
         description = str(driver)
@@ -58,3 +55,7 @@ def drivers(
             description = f"{driver!s:16s}[logging.level.notset] {driver.title} Version {driver.version} from {driver.module} python module.)[/logging.level.notset]"  # noqa: E501
         drivers.append([driver, description])
         console.print(description)
+
+
+if __name__ == "__main__":
+    drivers()

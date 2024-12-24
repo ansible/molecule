@@ -20,6 +20,7 @@
 """Base class used by init scenario command."""
 from __future__ import annotations
 
+import argparse
 import json
 import logging
 import os
@@ -27,8 +28,6 @@ import sys
 
 from pathlib import Path
 from typing import TYPE_CHECKING
-
-import click
 
 from molecule import api, config, util
 from molecule.command import base as command_base
@@ -130,7 +129,7 @@ class Scenario(base.Base):
 
 
 def _role_exists(
-    ctx: click.Context,  # noqa: ARG001
+    ctx: argparse.Namespace,  # noqa: ARG001
     param: str | None,  # noqa: ARG001
     value: str,
 ) -> str:  # pragma: no cover
@@ -146,50 +145,50 @@ def _role_exists(
     return value
 
 
-@command_base.click_command_ex()
-@click.pass_context
-@click.option(
-    "--dependency-name",
-    type=click.Choice(["galaxy"]),
-    default="galaxy",
-    help="Name of dependency to initialize. (galaxy)",
-)
-@click.option(
-    "--driver-name",
-    "-d",
-    type=click.Choice([str(s) for s in api.drivers()]),
-    default=DEFAULT_DRIVER,
-    help=f"Name of driver to initialize. ({DEFAULT_DRIVER})",
-)
-@click.option(
-    "--provisioner-name",
-    type=click.Choice(["ansible"]),
-    default="ansible",
-    help="Name of provisioner to initialize. (ansible)",
-)
-@click.argument(
-    "scenario-name",
-    default=command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    required=False,
-)
-def scenario(
-    ctx: click.Context,  # noqa: ARG001
-    dependency_name: str,
-    driver_name: str,
-    provisioner_name: str,
-    scenario_name: str,
-) -> None:  # pragma: no cover
+def scenario() -> None:  # pragma: no cover
     """Initialize a new scenario for use with Molecule.
 
     If name is not specified the 'default' value will be used.
 
     Args:
-        ctx: Click context object holding commandline arguments.
         dependency_name: Name of dependency to initialize.
         driver_name: Name of driver to use.
         provisioner_name: Name of provisioner to use.
         scenario_name: Name of scenario to initialize.
     """
+    parser = argparse.ArgumentParser(description="Initialize a new scenario for use with Molecule.")
+    parser.add_argument(
+        "--dependency-name",
+        choices=["galaxy"],
+        default="galaxy",
+        help="Name of dependency to initialize. (galaxy)",
+    )
+    parser.add_argument(
+        "--driver-name",
+        "-d",
+        choices=[str(s) for s in api.drivers()],
+        default=DEFAULT_DRIVER,
+        help=f"Name of driver to initialize. ({DEFAULT_DRIVER})",
+    )
+    parser.add_argument(
+        "--provisioner-name",
+        choices=["ansible"],
+        default="ansible",
+        help="Name of provisioner to initialize. (ansible)",
+    )
+    parser.add_argument(
+        "scenario-name",
+        default=command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
+        nargs="?",
+        help="Name of scenario to initialize.",
+    )
+
+    args = parser.parse_args()
+    dependency_name = args.dependency_name
+    driver_name = args.driver_name
+    provisioner_name = args.provisioner_name
+    scenario_name = args.scenario_name
+
     command_args: CommandArgs = {
         "dependency_name": dependency_name,
         "driver_name": driver_name,
@@ -200,3 +199,7 @@ def scenario(
 
     s = Scenario(command_args)
     s.execute()
+
+
+if __name__ == "__main__":
+    scenario()

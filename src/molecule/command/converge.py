@@ -20,11 +20,10 @@
 """Converge Command Module."""
 from __future__ import annotations
 
+import argparse
 import logging
 
 from typing import TYPE_CHECKING
-
-import click
 
 from molecule.command import base
 
@@ -50,29 +49,38 @@ class Converge(base.Base):
         self._config.state.change_state("converged", value=True)
 
 
-@base.click_command_ex()
-@click.pass_context
-@click.option(
-    "--scenario-name",
-    "-s",
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
-)
-@click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
-def converge(
-    ctx: click.Context,
-    scenario_name: str,
-    ansible_args: tuple[str],
-) -> None:  # pragma: no cover
+def converge() -> None:  # pragma: no cover
     """Use the provisioner to configure instances (dependency, create, prepare converge).
 
     Args:
-        ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
         ansible_args: Arguments to forward to Ansible.
     """
-    args: MoleculeArgs = ctx.obj.get("args")
+    parser = argparse.ArgumentParser(
+        description="Use the provisioner to configure instances (dependency, create, prepare converge)."
+    )
+    parser.add_argument(
+        "--scenario-name",
+        "-s",
+        default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
+        help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
+    )
+    parser.add_argument(
+        "ansible_args",
+        nargs=argparse.REMAINDER,
+        help="Arguments to forward to Ansible.",
+    )
+
+    args = parser.parse_args()
+    scenario_name = args.scenario_name
+    ansible_args = args.ansible_args
+
+    args_dict: MoleculeArgs = {"args": vars(args)}
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand}
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)
+    base.execute_cmdline_scenarios(scenario_name, args_dict, command_args, ansible_args)
+
+
+if __name__ == "__main__":
+    converge()

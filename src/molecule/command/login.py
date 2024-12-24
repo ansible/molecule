@@ -20,14 +20,13 @@
 """Login Command Module."""
 from __future__ import annotations
 
+import argparse
 import logging
 import os
 import shlex
 import subprocess
 
 from typing import TYPE_CHECKING
-
-import click
 
 from molecule import scenarios, util
 from molecule.command import base
@@ -121,31 +120,38 @@ class Login(base.Base):
         subprocess.run(cmd, check=False)
 
 
-@base.click_command_ex()
-@click.pass_context
-@click.option("--host", "-h", help="Host to access.")
-@click.option(
-    "--scenario-name",
-    "-s",
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
-)
-def login(
-    ctx: click.Context,
-    host: str,
-    scenario_name: str,
-) -> None:  # pragma: no cover
+def login() -> None:  # pragma: no cover
     """Log in to one instance.
 
     Args:
-        ctx: Click context object holding commandline arguments.
         host: Host to access.
         scenario_name: Name of the scenario to target.
     """
-    args = ctx.obj.get("args")
+    parser = argparse.ArgumentParser(description="Log in to one instance.")
+    parser.add_argument(
+        "--host",
+        "-h",
+        help="Host to access.",
+    )
+    parser.add_argument(
+        "--scenario-name",
+        "-s",
+        default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
+        help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
+    )
+
+    args = parser.parse_args()
+    host = args.host
+    scenario_name = args.scenario_name
+
+    args_dict = {"args": vars(args)}
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand, "host": host}
 
-    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
+    s = scenarios.Scenarios(base.get_configs(args_dict, command_args), scenario_name)
     for scenario in s.all:
         base.execute_subcommand(scenario.config, subcommand)
+
+
+if __name__ == "__main__":
+    login()

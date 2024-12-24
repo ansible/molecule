@@ -20,11 +20,10 @@
 """Prepare Command Module."""
 from __future__ import annotations
 
+import argparse
 import logging
 
 from typing import TYPE_CHECKING
-
-import click
 
 from molecule.api import drivers
 from molecule.command import base
@@ -112,41 +111,42 @@ class Prepare(base.Base):
             self._config.state.change_state("prepared", value=True)
 
 
-@base.click_command_ex()
-@click.pass_context
-@click.option(
-    "--scenario-name",
-    "-s",
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
-)
-@click.option(
-    "--driver-name",
-    "-d",
-    type=click.Choice([str(s) for s in drivers()]),
-    help=f"Name of driver to use. ({DEFAULT_DRIVER})",
-)
-@click.option(
-    "--force/--no-force",
-    "-f",
-    default=False,
-    help="Enable or disable force mode. Default is disabled.",
-)
-def prepare(
-    ctx: click.Context,
-    scenario_name: str,
-    driver_name: str,
-    force: bool,  # noqa: FBT001
-) -> None:  # pragma: no cover
+def prepare() -> None:  # pragma: no cover
     """Use the provisioner to prepare the instances into a particular starting state.
 
     Args:
-        ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
         driver_name: Name of the Molecule driver to use.
         force: Whether to use force mode.
     """
-    args: MoleculeArgs = ctx.obj.get("args")
+    parser = argparse.ArgumentParser(
+        description="Use the provisioner to prepare the instances into a particular starting state.",
+    )
+    parser.add_argument(
+        "--scenario-name",
+        "-s",
+        default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
+        help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
+    )
+    parser.add_argument(
+        "--driver-name",
+        "-d",
+        choices=[str(s) for s in drivers()],
+        help=f"Name of driver to use. ({DEFAULT_DRIVER})",
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        default=False,
+        help="Enable or disable force mode. Default is disabled.",
+    )
+
+    args = parser.parse_args()
+    scenario_name = args.scenario_name
+    driver_name = args.driver_name
+    force = args.force
+
+    args_dict: MoleculeArgs = {"args": vars(args)}
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
         "subcommand": subcommand,
@@ -154,4 +154,8 @@ def prepare(
         "force": force,
     }
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    base.execute_cmdline_scenarios(scenario_name, args_dict, command_args)
+
+
+if __name__ == "__main__":
+    prepare()

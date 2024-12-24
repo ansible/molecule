@@ -20,12 +20,11 @@
 """Check Command Module."""
 from __future__ import annotations
 
+import argparse
 import logging
 import os
 
 from typing import TYPE_CHECKING
-
-import click
 
 from molecule import util
 from molecule.command import base
@@ -52,37 +51,42 @@ class Check(base.Base):
             self._config.provisioner.check()
 
 
-@base.click_command_ex()
-@click.pass_context
-@click.option(
-    "--scenario-name",
-    "-s",
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
-)
-@click.option(
-    "--parallel/--no-parallel",
-    default=MOLECULE_PARALLEL,
-    help="Enable or disable parallel mode. Default is disabled.",
-)
-def check(  # pragma: no cover
-    ctx: click.Context,
-    scenario_name: str,
-    *,
-    parallel: bool,
-) -> None:
+def check() -> None:  # pragma: no cover
     """Use the provisioner to perform a Dry-Run (destroy, dependency, create, prepare, converge).
 
     Args:
-        ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
         parallel: Whether the scenario(s) should be run in parallel.
     """
-    args: MoleculeArgs = ctx.obj.get("args")
+    parser = argparse.ArgumentParser(
+        description="Use the provisioner to perform a Dry-Run (destroy, dependency, create, prepare, converge).",
+    )
+    parser.add_argument(
+        "--scenario-name",
+        "-s",
+        default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
+        help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
+    )
+    parser.add_argument(
+        "--parallel",
+        action="store_true",
+        default=MOLECULE_PARALLEL,
+        help="Enable or disable parallel mode. Default is disabled.",
+    )
+
+    args = parser.parse_args()
+    scenario_name = args.scenario_name
+    parallel = args.parallel
+
+    args_dict: MoleculeArgs = {"args": vars(args)}
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"parallel": parallel, "subcommand": subcommand}
 
     if parallel:
         util.validate_parallel_cmd_args(command_args)
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    base.execute_cmdline_scenarios(scenario_name, args_dict, command_args)
+
+
+if __name__ == "__main__":
+    check()

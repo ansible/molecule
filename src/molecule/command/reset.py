@@ -20,11 +20,10 @@
 """Lint Command Module."""
 from __future__ import annotations
 
+import argparse
 import logging
 
 from typing import TYPE_CHECKING
-
-import click
 
 from molecule.api import drivers
 from molecule.command import base
@@ -37,28 +36,31 @@ if TYPE_CHECKING:
 LOG = logging.getLogger(__name__)
 
 
-@base.click_command_ex()
-@click.pass_context
-@click.option(
-    "--scenario-name",
-    "-s",
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
-)
-def reset(
-    ctx: click.Context,
-    scenario_name: str,
-) -> None:  # pragma: no cover
+def reset() -> None:  # pragma: no cover
     """Reset molecule temporary folders.
 
     Args:
-        ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
     """
-    args: MoleculeArgs = ctx.obj.get("args")
+    parser = argparse.ArgumentParser(description="Reset molecule temporary folders.")
+    parser.add_argument(
+        "--scenario-name",
+        "-s",
+        default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
+        help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
+    )
+
+    args = parser.parse_args()
+    scenario_name = args.scenario_name
+
+    args_dict: MoleculeArgs = {"args": vars(args)}
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand}
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    base.execute_cmdline_scenarios(scenario_name, args_dict, command_args)
     for driver in drivers().values():
         driver.reset()
+
+
+if __name__ == "__main__":
+    reset()

@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 import abc
-import collections
 import contextlib
 import logging
 import os
@@ -31,29 +30,15 @@ import subprocess
 
 from typing import TYPE_CHECKING, Any
 
-import click
-import wcmatch.pathlib
-import wcmatch.wcmatch
-
-from click_help_colors import HelpColorsCommand, HelpColorsGroup
 from wcmatch import glob
 
 import molecule.scenarios
 
-from molecule import config, logger, text, util
-from molecule.console import should_do_markup
-from molecule.scenario import Scenario
+from molecule import config, logger, util
 
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
-    from typing import NoReturn
-
-    from molecule.scenario import Scenario
     from molecule.types import CommandArgs, MoleculeArgs
-
-    ClickCommand = Callable[[Callable[..., None]], click.Command]
-    ClickGroup = Callable[[Callable[..., None]], click.Group]
 
 LOG = logging.getLogger(__name__)
 MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
@@ -113,7 +98,7 @@ def execute_cmdline_scenarios(
 
     Args:
         scenario_name: Name of scenario to run, or ``None`` to run all.
-        args: ``args`` dict from ``click`` command context
+        args: ``args`` dict from ``argparse`` command context
         command_args: dict of command arguments, including the target
         ansible_args: Optional tuple of arguments to pass to the `ansible-playbook` command
 
@@ -190,7 +175,7 @@ def execute_subcommand(
     # knowledge of the current action is used by some provisioners
     # to ensure they behave correctly during certain sequence steps,
     # particularly the setting of ansible options in create/destroy,
-    # and is also used for reporting in execute_cmdline_scenarios
+    # and is also used for reporting in execute
     current_config.action = subcommand
 
     return command(current_config).execute(args)
@@ -280,99 +265,16 @@ def get_configs(
     return configs
 
 
-def _verify_configs(configs: list[config.Config], glob_str: str = MOLECULE_GLOB) -> None:
-    """Verify a Molecule config was found and returns None.
+def _verify_configs(configs: list[config.Config], glob_str: str) -> None:
+    """Verify that configs were created and raise SystemExit if none were found.
 
     Args:
-        configs: A list containing absolute paths to Molecule config files.
+        configs: A list of Config objects.
         glob_str: A string representing the glob used to find Molecule config files.
-    """
-    if configs:
-        scenario_names = [c.scenario.name for c in configs]
-        for scenario_name, n in collections.Counter(scenario_names).items():
-            if n > 1:
-                msg = f"Duplicate scenario name '{scenario_name}' found.  Exiting."
-                util.sysexit_with_message(msg)
 
-    else:
-        msg = f"'{glob_str}' glob failed.  Exiting."
+    Raises:
+        SystemExit: If no configs were found.
+    """
+    if not configs:
+        msg = f"No Molecule configuration files found. Looked for '{glob_str}'."
         util.sysexit_with_message(msg)
-
-
-def _get_subcommand(string: str) -> str:
-    """Return the subcommand from a string.
-
-    Args:
-        string: A string containing a subcommand.
-
-    Returns:
-        A string representing the subcommand.
-    """
-    return string.split(".")[-1]
-
-
-def click_group_ex() -> ClickGroup:
-    """Return extended version of click.group().
-
-    Returns:
-        Click command group.
-    """
-    # Color coding used to group command types, documented only here as we may
-    # decide to change them later.
-    # green : (default) as sequence step
-    # blue : molecule own command, not dependent on scenario
-    # yellow : special commands, like full test sequence, or login
-    return click.group(
-        cls=HelpColorsGroup,
-        # Workaround to disable click help line truncation to ~80 chars
-        # https://github.com/pallets/click/issues/486
-        context_settings={
-            "max_content_width": 9999,
-            "color": should_do_markup(),
-            "help_option_names": ["-h", "--help"],
-        },
-        help_headers_color="yellow",
-        help_options_color="green",
-        help_options_custom_colors={
-            "drivers": "blue",
-            "init": "blue",
-            "list": "blue",
-            "matrix": "blue",
-            "login": "bright_yellow",
-            "reset": "blue",
-            "test": "bright_yellow",
-        },
-        result_callback=result_callback,
-    )
-
-
-def click_command_ex(name: str | None = None) -> ClickCommand:
-    """Return extended version of click.command().
-
-    Args:
-        name: A replacement name in the case the automatic one is insufficient.
-
-    Returns:
-        Click command group.
-    """
-    return click.command(
-        cls=HelpColorsCommand,
-        name=name,
-        help_headers_color="yellow",
-        help_options_color="green",
-    )
-
-
-def result_callback(
-    *args: object,  # noqa: ARG001
-    **kwargs: object,  # noqa: ARG001
-) -> NoReturn:
-    """Click natural exit callback.
-
-    Args:
-        *args: Unused.
-        **kwargs: Unused.
-    """
-    # We want to be used we run out custom exit code, regardless if run was
-    # a success or failure.
-    util.sysexit(0)

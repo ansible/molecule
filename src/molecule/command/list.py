@@ -20,11 +20,10 @@
 """List Command Module."""
 from __future__ import annotations
 
+import argparse
 import logging
 
-from typing import TYPE_CHECKING, Literal
-
-import click
+from typing import TYPE_CHECKING
 
 from rich import box
 from rich.syntax import Syntax
@@ -62,35 +61,38 @@ class List(base.Base):
         return self._config.driver.status()
 
 
-@base.click_command_ex(name="list")
-@click.pass_context
-@click.option("--scenario-name", "-s", help="Name of the scenario to target.")
-@click.option(
-    "--format",
-    "-f",
-    type=click.Choice(["simple", "plain", "yaml"]),
-    default="simple",
-    help="Change output format. (simple)",
-)
-def list_(
-    ctx: click.Context,
-    scenario_name: str,
-    format: Literal["simple", "plain", "yaml"],  # noqa: A002
-) -> None:  # pragma: no cover
+def list_() -> None:  # pragma: no cover
     """List status of instances.
 
     Args:
-        ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
         format: Output format type.
     """
-    args: MoleculeArgs = ctx.obj.get("args")
+    parser = argparse.ArgumentParser(description="List status of instances.")
+    parser.add_argument(
+        "--scenario-name",
+        "-s",
+        help="Name of the scenario to target.",
+    )
+    parser.add_argument(
+        "--format",
+        "-f",
+        choices=["simple", "plain", "yaml"],
+        default="simple",
+        help="Change output format. (simple)",
+    )
+
+    args = parser.parse_args()
+    scenario_name = args.scenario_name
+    format = args.format
+
+    args_dict: MoleculeArgs = {"args": vars(args)}
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand, "format": format}
 
     statuses = []
     s = scenarios.Scenarios(
-        base.get_configs(args, command_args, glob_str=MOLECULE_GLOB),
+        base.get_configs(args_dict, command_args, glob_str=MOLECULE_GLOB),
         scenario_name,
     )
     for scenario in s:
@@ -148,3 +150,7 @@ def _print_yaml_data(
 
     syntax = Syntax(util.safe_dump(l), "yaml")
     console.print(syntax)
+
+
+if __name__ == "__main__":
+    list_()
