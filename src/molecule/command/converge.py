@@ -57,7 +57,7 @@ def converge() -> None:  # pragma: no cover
         ansible_args: Arguments to forward to Ansible.
     """
     parser = argparse.ArgumentParser(
-        description="Use the provisioner to configure instances (dependency, create, prepare converge)."
+        description="Use the provisioner to configure instances (dependency, create, prepare converge).",
     )
     parser.add_argument(
         "--scenario-name",

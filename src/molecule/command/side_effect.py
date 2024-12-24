@@ -63,7 +63,7 @@ def side_effect() -> None:  # pragma: no cover
         scenario_name: Name of the scenario to target.
     """
     parser = argparse.ArgumentParser(
-        description="Use the provisioner to perform side-effects to the instances."
+        description="Use the provisioner to perform side-effects to the instances.",
     )
     parser.add_argument(
         "--scenario-name",

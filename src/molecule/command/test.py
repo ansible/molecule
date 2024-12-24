@@ -65,7 +65,7 @@ def test() -> None:  # pragma: no cover
         platform_name: Name of the platform to use.
     """  # noqa: E501
     parser = argparse.ArgumentParser(
-        description="Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy)."
+        description="Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy).",
     )
     parser.add_argument(
         "--scenario-name",
