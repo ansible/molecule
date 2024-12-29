@@ -8,7 +8,7 @@ ansi2html==1.9.2
 ansible-compat==24.10.0
 ansible-core==2.18.1
 ansible-lint==24.12.2
-astroid==3.3.7
+astroid==3.3.8
 attrs==24.3.0
 babel==2.16.0
 beautifulsoup4==4.12.3
@@ -22,12 +22,12 @@ certifi==2024.12.14
 cffi==1.17.1
 cfgv==3.4.0
 chardet==5.2.0
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
 check-jsonschema==0.30.0
 click==8.1.8
 click-help-colors==0.9.4
 colorama==0.4.6
-coverage==7.6.9
+coverage==7.6.10
 cryptography==44.0.0
 csscompressor==0.9.5
 cssselect2==0.7.0
@@ -41,7 +41,7 @@ exceptiongroup==1.2.2
 execnet==2.1.1
 filelock==3.16.1
 ghp-import==2.1.0
-griffe==1.5.1
+griffe==1.5.4
 htmlmin2==0.1.13
 identify==2.6.3
 idna==3.10
@@ -73,7 +73,7 @@ mkdocs-material-extensions==1.3.1
 mkdocs-minify-plugin==0.8.0
 mkdocs-monorepo-plugin==1.1.0
 mkdocstrings==0.27.0
-mkdocstrings-python==1.12.2
+mkdocstrings-python==1.13.0
 mypy==1.14.0
 mypy-extensions==1.0.0
 nodeenv==1.9.1
@@ -89,10 +89,10 @@ pluggy==1.5.0
 pre-commit==4.0.1
 ptyprocess==0.7.0
 pycparser==2.22
-pydoclint==0.5.13
+pydoclint==0.5.14
 pygments==2.18.0
-pylint==3.3.2
-pymdown-extensions==10.12
+pylint==3.3.3
+pymdown-extensions==10.13
 pyproject-api==1.8.0
 pyproject-hooks==1.2.0
 pytest==8.3.4
@@ -128,7 +128,7 @@ types-jsonschema==4.23.0.20241208
 types-pexpect==4.9.0.20241208
 types-pyyaml==6.0.12.20241221
 typing-extensions==4.12.2
-urllib3==2.2.3
+urllib3==2.3.0
 virtualenv==20.28.0
 watchdog==6.0.0
 wcmatch==10.0
