@@ -34,7 +34,7 @@ repos:
           )$
 
   - repo: https://github.com/pycontribs/mirrors-prettier
-    rev: v3.3.3
+    rev: v3.4.2
     hooks:
       - id: prettier
         always_run: true
@@ -59,20 +59,20 @@ repos:
       - id: tox-ini-fmt
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.1
+    rev: v0.8.6
     hooks:
       - id: ruff
         args:
           - --exit-non-zero-on-fix
 
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v8.16.0
+    rev: v8.17.0
     hooks:
       - id: cspell
         name: Spell check with cspell
 
   - repo: https://github.com/jsh9/pydoclint
-    rev: "0.5.9"
+    rev: "0.5.14"
     hooks:
       - id: pydoclint
         # This allows automatic reduction of the baseline file when needed.
@@ -80,7 +80,7 @@ repos:
         pass_filenames: false
 
   - repo: https://github.com/pycqa/pylint.git
-    rev: v3.3.2
+    rev: v3.3.3
     hooks:
       - id: pylint
         args:
@@ -98,7 +98,7 @@ repos:
           - wcmatch
 
   - repo: https://github.com/pre-commit/mirrors-mypy.git
-    rev: v1.13.0
+    rev: v1.14.1
     hooks:
       - id: mypy
         additional_dependencies:
@@ -134,7 +134,7 @@ repos:
           --output-file=.config/constraints.txt pyproject.toml
         files: ^.config\/.*requirements.*$
   - repo: https://github.com/ansible/ansible-lint
-    rev: v24.10.0
+    rev: v24.12.2
     hooks:
       - id: ansible-lint
         stages: [manual]
