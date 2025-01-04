@@ -133,7 +133,6 @@ class Scenario:
                 project_directory,
                 self.name,
             )
-
             path = ephemeral_directory(project_scenario_directory)
 
         if isinstance(path, str):

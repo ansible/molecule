@@ -33,7 +33,7 @@ from ansible_compat.ports import cache, cached_property
 from packaging.version import Version
 
 from molecule import api, interpolation, platforms, scenario, state, util
-from molecule.app import app
+from molecule.app import get_app
 from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
@@ -74,7 +74,7 @@ def ansible_version() -> Version:
         "molecule.config.ansible_version is deprecated, will be removed in the future.",
         category=DeprecationWarning,
     )
-    return app.runtime.version
+    return get_app(Path()).runtime.version
 
 
 class Config:
@@ -121,7 +121,7 @@ class Config:
             "MOLECULE_PROJECT_DIRECTORY",
             os.getcwd(),  # noqa: PTH109
         )
-        self.runtime = app.runtime
+        self.runtime = get_app(Path(self.project_directory)).runtime
         self.scenario_path = Path(molecule_file).parent
 
         # Former after_init() contents
@@ -313,7 +313,7 @@ class Config:
 
         api_drivers = api.drivers(config=self)
         if driver_name not in api_drivers:
-            msg = f"Failed to find driver {driver_name}. Please ensure that the driver is correctly installed."  # noqa: E501
+            msg = f"Failed to find driver {driver_name}. Please ensure that the driver is correctly installed."
             util.sysexit_with_message(msg)
 
         driver = api_drivers[driver_name]
@@ -395,8 +395,8 @@ class Config:
                 myState.change_state("molecule_yml_date_modified", modTime)
             elif myState.molecule_yml_date_modified != modTime:
                 LOG.warning(
-                    "The scenario config file ('%s') has been modified since the scenario was created. "  # noqa: E501
-                    "If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or "  # noqa: E501
+                    "The scenario config file ('%s') has been modified since the scenario was created. "
+                    "If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or "
                     "'molecule reset' to clear current configuration.",
                     self.molecule_file,
                 )
@@ -454,7 +454,7 @@ class Config:
             msg = (
                 f"Driver '{driver_name}' is currently in use but the scenario config "
                 f"has changed and now defines '{driver_from_scenario}'. "
-                "To change drivers, run 'molecule destroy' for converged scenarios or 'molecule reset' otherwise."  # noqa: E501
+                "To change drivers, run 'molecule destroy' for converged scenarios or 'molecule reset' otherwise."
             )
             LOG.warning(msg)
 

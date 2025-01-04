@@ -69,7 +69,7 @@ def _model_driver_errors_section_data_no_prefix():  # type: ignore[no-untyped-de
     indirect=True,
 )
 def test_driver_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
-    base_error_msg = "is not one of ['azure', 'ec2', 'delegated', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd', 'molecule-*', 'molecule_*', 'custom-*', 'custom_*']"  # noqa: E501
+    base_error_msg = "is not one of ['azure', 'ec2', 'delegated', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd', 'molecule-*', 'molecule_*', 'custom-*', 'custom_*']"
 
     driver_name = str(config["driver"]["name"])
     if isinstance(config["driver"]["name"], str):

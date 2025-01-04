@@ -13,8 +13,9 @@ pydoclint
 pylint
 pytest
 pytest-mock >= 3.10.0
-pytest-plus >= 0.4.0
+pytest-plus >= 0.7.0
 pytest-xdist
+pytest-instafail
 requests != 2.32.0 # https://github.com/docker/docker-py/issues/3256
 ruff
 toml-sort
