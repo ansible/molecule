@@ -6,7 +6,7 @@
 #
 ansi2html==1.9.2
 ansible-compat==24.10.0
-ansible-core==2.17.7
+ansible-core==2.18.1
 ansible-lint==24.12.2
 astroid==3.3.8
 attrs==24.3.0
@@ -111,10 +111,10 @@ referencing==0.35.1
 regex==2024.11.6
 regress==2024.11.1
 requests==2.32.3
-resolvelib==1.0.1
+resolvelib==1.1.0
 rich==13.9.4
 rpds-py==0.22.3
-ruamel-yaml==0.18.6
+ruamel-yaml==0.18.8
 ruamel-yaml-clib==0.2.12
 ruff==0.8.6
 six==1.17.0
