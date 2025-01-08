@@ -827,7 +827,8 @@ class Ansible(base.Base):
             playbooks = [
                 self._get_ansible_playbook(self.abs_path(playbook)) for playbook in action_args
             ]
-        playbooks = [self._get_ansible_playbook(self.playbooks.side_effect)]
+        else:
+            playbooks = [self._get_ansible_playbook(self.playbooks.side_effect)]
         for pb in playbooks:
             pb.execute()
 
