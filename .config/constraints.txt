@@ -23,7 +23,7 @@ cffi==1.17.1
 cfgv==3.4.0
 chardet==5.2.0
 charset-normalizer==3.4.1
-check-jsonschema==0.30.0
+check-jsonschema==0.31.0
 click==8.1.8
 click-help-colors==0.9.4
 colorama==0.4.6
@@ -36,7 +36,7 @@ dill==0.3.9
 distlib==0.3.9
 dnspython==2.7.0
 docker==7.1.0
-docstring-parser-fork==0.0.9
+docstring-parser-fork==0.0.10
 enrich==1.2.7
 exceptiongroup==1.2.2
 execnet==2.1.1
@@ -91,10 +91,10 @@ pluggy==1.5.0
 pre-commit==4.0.1
 ptyprocess==0.7.0
 pycparser==2.22
-pydoclint==0.5.14
-pygments==2.18.0
+pydoclint==0.5.16
+pygments==2.19.1
 pylint==3.3.3
-pymdown-extensions==10.13
+pymdown-extensions==10.14
 pyproject-api==1.8.0
 pyproject-hooks==1.2.0
 pytest==8.3.4
@@ -114,9 +114,9 @@ requests==2.32.3
 resolvelib==1.1.0
 rich==13.9.4
 rpds-py==0.22.3
-ruamel-yaml==0.18.8
+ruamel-yaml==0.18.10
 ruamel-yaml-clib==0.2.12
-ruff==0.8.6
+ruff==0.9.1
 six==1.17.0
 soupsieve==2.6
 subprocess-tee==0.4.2
