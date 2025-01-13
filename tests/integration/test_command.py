@@ -19,7 +19,10 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, TypedDict
+import sys
+
+from pathlib import Path
+from typing import TypedDict
 
 import pytest
 
@@ -28,10 +31,6 @@ from pytest import FixtureRequest  # noqa: PT013
 from molecule.command import base
 from molecule.util import run_command
 from tests.conftest import mac_on_gh  # pylint:disable=C0411
-
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 @pytest.fixture(name="scenario_to_test")
@@ -323,6 +322,10 @@ def test_podman(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None
 
 
 @mac_on_gh
+@pytest.mark.skipif(
+    sys.platform == "darwin",
+    reason="Bug https://github.com/ansible-collections/community.docker/issues/660",
+)
 def test_docker(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None:
     """Execute Docker scenario.
 
@@ -331,6 +334,13 @@ def test_docker(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None
         test_fixture_dir: Path to the test fixture directory.
     """
     monkeypatch.chdir(test_fixture_dir)
+    # This trick should force Docker to use its own backend on macOS even with Podman's Docker Extensions enabled,
+    # but community.docker collection is not yet able to read it due:
+    # https://github.com/ansible-collections/community.docker/issues/660
+    docker_socket = Path("~/Library/Containers/com.docker.docker/Data/docker-cli.sock").expanduser()
+    if docker_socket.exists():
+        monkeypatch.setenv("DOCKER_SOCKET", docker_socket.as_posix())
+
     command = ["molecule", "test", "--scenario-name", "docker"]
     assert run_command(command).returncode == 0
 
