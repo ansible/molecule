@@ -21,6 +21,7 @@
 from __future__ import annotations
 
 import os
+import subprocess
 
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -55,8 +56,8 @@ class ExtendedBase(base.Base):
 
 @pytest.fixture(name="base_class")
 def fixture_base_class(
-    patched_config_validate: pytest.FixtureRequest,  # noqa: ARG001
-    config_instance: config.Config,  # noqa: ARG001
+    patched_config_validate: pytest.FixtureRequest,
+    config_instance: config.Config,
 ) -> type[ExtendedBase]:
     """Return a mocked instance of ExtendedBase.
 
@@ -492,9 +493,15 @@ def test_command_completion(shell: str) -> None:
     bash_version = "0.0"
 
     if "bash" in shell:
-        bash_version = util.run_command(["bash", "--version"]).stdout.split()[3][0:3]
+        bash_version = subprocess.run(
+            ["bash", "--version"],
+            text=True,
+            encoding="utf-8",
+            capture_output=True,
+            check=False,
+        ).stdout.split()[3][0:3]
 
-    result = util.run_command(["molecule"], env=env)
+    result = subprocess.run(["molecule"], env=env, text=True, capture_output=True, check=False)
 
     if "bash" in shell and (float(bash_version) < 4.4):  # noqa: PLR2004
         string = "Shell completion is not supported for Bash versions older than 4.4"

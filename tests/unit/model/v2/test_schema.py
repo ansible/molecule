@@ -19,17 +19,13 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from pathlib import Path
 
+from molecule.app import get_app
 from molecule.model import schema_v3
-from molecule.util import run_command
 
 
-if TYPE_CHECKING:
-    from pathlib import Path
-
-
-def test_base_config(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_base_config(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     assert not schema_v3.validate(config)
 
 
@@ -39,6 +35,7 @@ def test_molecule_schema(resources_folder_path: Path) -> None:
     Args:
         resources_folder_path: Path to the resources folder.
     """
+    app = get_app(Path())
     cmd = [
         "check-jsonschema",
         "-v",
@@ -46,7 +43,7 @@ def test_molecule_schema(resources_folder_path: Path) -> None:
         "src/molecule/data/molecule.json",
         f"{resources_folder_path}/schema_instance_files/valid/molecule.yml",
     ]
-    assert run_command(cmd).returncode == 0
+    assert app.run_command(cmd).returncode == 0
 
     cmd = [
         "check-jsonschema",
@@ -55,4 +52,4 @@ def test_molecule_schema(resources_folder_path: Path) -> None:
         "src/molecule/data/driver.json",
         f"{resources_folder_path}/schema_instance_files/invalid/molecule_delegated.yml",
     ]
-    assert run_command(cmd).returncode != 0
+    assert app.run_command(cmd).returncode != 0

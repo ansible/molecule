@@ -86,7 +86,7 @@ def test_all_filters_on_scenario_name_property(  # noqa: D103
 
 
 def test_print_matrix(  # noqa: D103
-    capsys: pytest.CaptureFixture[str],  # noqa: ARG001
+    capsys: pytest.CaptureFixture[str],
     _instance: scenarios.Scenarios,  # noqa: PT019
 ) -> None:
     with console.capture() as capture:

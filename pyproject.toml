@@ -369,7 +369,9 @@ external = [
 ignore = [
   "COM812", # conflicts with ISC001 on format
   "E501", # line-too-long / rely on black
-  "ISC001" # conflicts with COM812 on format
+  "ISC001", # conflicts with COM812 on format
+  "S603", # subprocess
+  "S607" # subprocess
 ]
 select = ["ALL"]
 
@@ -384,7 +386,7 @@ required-imports = ["from __future__ import annotations"]
 
 [tool.ruff.lint.per-file-ignores]
 "_version.py" = ["SIM108"]
-"tests/**" = ["SLF001", "S101", "S602", "T201"]
+"tests/**" = ["SLF001", "S101", "S602", "T201", "D417", "ARG001", "ANN001"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

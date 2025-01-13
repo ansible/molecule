@@ -43,18 +43,18 @@ def _patched_is_idempotent(mocker: MockerFixture) -> Mock:
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture
-def _instance(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202, ARG001
+def _instance(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202
     config_instance.state.change_state("converged", True)  # noqa: FBT003
 
     return idempotence.Idempotence(config_instance)
 
 
 def test_idempotence_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    mocker: MockerFixture,  # noqa: ARG001
+    mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
-    patched_ansible_converge,  # noqa: ANN001
+    patched_ansible_converge,
     _patched_is_idempotent: Mock,  # noqa: PT019
-    _instance,  # noqa: ANN001, PT019
+    _instance,  # noqa: PT019
 ):
     _instance.execute()
 
@@ -71,8 +71,8 @@ def test_idempotence_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D
 
 def test_execute_raises_when_not_converged(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     caplog: pytest.LogCaptureFixture,
-    patched_ansible_converge,  # noqa: ANN001, ARG001
-    _instance,  # noqa: ANN001, PT019
+    patched_ansible_converge,
+    _instance,  # noqa: PT019
 ):
     _instance._config.state.change_state("converged", False)  # noqa: FBT003
     with pytest.raises(SystemExit) as e:
@@ -85,11 +85,11 @@ def test_execute_raises_when_not_converged(  # type: ignore[no-untyped-def]  # n
 
 
 def test_execute_raises_when_fails_idempotence(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    mocker: MockerFixture,  # noqa: ARG001
+    mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
-    patched_ansible_converge,  # noqa: ANN001, ARG001
+    patched_ansible_converge,
     _patched_is_idempotent: Mock,  # noqa: PT019
-    _instance,  # noqa: ANN001, PT019
+    _instance,  # noqa: PT019
 ):
     _patched_is_idempotent.return_value = False
     with pytest.raises(SystemExit) as e:
@@ -101,7 +101,7 @@ def test_execute_raises_when_fails_idempotence(  # type: ignore[no-untyped-def] 
     assert msg in caplog.text
 
 
-def test_is_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_is_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
     output = """
 PLAY RECAP ***********************************************************
 check-command-01: ok=3    changed=0    unreachable=0    failed=0
@@ -110,7 +110,7 @@ check-command-01: ok=3    changed=0    unreachable=0    failed=0
     assert _instance._is_idempotent(output)
 
 
-def test_is_idempotent_not_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_is_idempotent_not_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
     output = """
 PLAY RECAP ***********************************************************
 check-command-01: ok=2    changed=1    unreachable=0    failed=0
@@ -120,7 +120,7 @@ check-command-02: ok=2    changed=1    unreachable=0    failed=0
     assert not _instance._is_idempotent(output)
 
 
-def test_non_idempotent_tasks_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_non_idempotent_tasks_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
     output = """
 PLAY [all] ***********************************************************
 
@@ -138,7 +138,7 @@ check-command-01: ok=3    changed=0    unreachable=0    failed=0
     assert result == []
 
 
-def test_non_idempotent_tasks_not_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, PT019, D103
+def test_non_idempotent_tasks_not_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
     output = """
 PLAY [all] ***********************************************************
 

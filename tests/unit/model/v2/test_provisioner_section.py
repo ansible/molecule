@@ -58,7 +58,7 @@ def _model_provisioner_section_data():  # type: ignore[no-untyped-def]  # noqa: 
     ["_model_provisioner_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_provisioner(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_provisioner(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     assert not schema_v3.validate(config)
 
 
@@ -76,7 +76,7 @@ def _model_provisioner_errors_section_data():  # type: ignore[no-untyped-def]  #
     ["_model_provisioner_errors_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_provisioner_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_provisioner_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     x = ["0 is not one of ['ansible']"]
 
     assert x == schema_v3.validate(config)
@@ -92,5 +92,5 @@ def _model_provisioner_allows_ansible_section_data():  # type: ignore[no-untyped
     [("_model_provisioner_allows_ansible_section_data")],  # noqa: PT007
     indirect=True,
 )
-def test_provisioner_allows_name(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_provisioner_allows_name(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     assert not schema_v3.validate(config)

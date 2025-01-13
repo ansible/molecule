@@ -65,7 +65,7 @@ class Base(abc.ABC):
     def execute_with_retries(self) -> None:
         """Run dependency downloads with retry and timed back-off."""
         try:
-            util.run_command(self._sh_command, debug=self._config.debug, check=True)
+            self._config.app.run_command(self._sh_command, debug=self._config.debug, check=True)
             msg = "Dependency completed successfully."
             LOG.info(msg)
             return  # noqa: TRY300
@@ -82,7 +82,7 @@ class Base(abc.ABC):
             self.SLEEP += self.BACKOFF
 
             try:
-                util.run_command(self._sh_command, debug=self._config.debug, check=True)
+                self._config.app.run_command(self._sh_command, debug=self._config.debug, check=True)
                 msg = "Dependency completed successfully."
                 LOG.info(msg)
                 return  # noqa: TRY300

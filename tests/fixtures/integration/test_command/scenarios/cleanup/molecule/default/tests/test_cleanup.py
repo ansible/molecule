@@ -12,7 +12,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 ).get_hosts("all")
 
 
-def test_hosts_file(host):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
+def test_hosts_file(host):  # type: ignore[no-untyped-def]  # noqa: ANN201
     """Validate host file."""
     f = host.file("/etc/hosts")
 

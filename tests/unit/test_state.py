@@ -113,7 +113,7 @@ def test_change_state_raises(_instance: state.State) -> None:  # noqa: PT019, D1
 
 def test_get_data_loads_existing_state_file(  # noqa: D103
     _instance: state.State,  # noqa: PT019
-    molecule_data: dict[str, Any],  # noqa: ARG001
+    molecule_data: dict[str, Any],
     config_instance: config.Config,
 ) -> None:
     data = {"converged": False, "created": True, "driver": None, "prepared": None}

@@ -22,24 +22,27 @@ from __future__ import annotations
 import sys
 
 from pathlib import Path
-from typing import TypedDict
+from typing import TYPE_CHECKING, TypedDict
 
 import pytest
 
 from pytest import FixtureRequest  # noqa: PT013
 
 from molecule.command import base
-from molecule.util import run_command
 from tests.conftest import mac_on_gh  # pylint:disable=C0411
 
 
+if TYPE_CHECKING:
+    from molecule.app import App
+
+
 @pytest.fixture(name="scenario_to_test")
-def fixture_scenario_to_test(request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def fixture_scenario_to_test(request):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     return request.param
 
 
 @pytest.fixture(name="scenario_name")
-def fixture_scenario_name(request):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def fixture_scenario_name(request):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     try:
         return request.param
     except AttributeError:
@@ -94,6 +97,7 @@ def test_command(
     test_ephemeral_dir_env: dict[str, str],
     scenario_name: str,
     command: str,
+    app: App,
 ) -> None:
     """Test a scenario using command.
 
@@ -103,8 +107,8 @@ def test_command(
         command: The command to run.
     """
     cmd = ["molecule", command, "--scenario-name", scenario_name]
-    result = run_command(cmd=cmd, env=test_ephemeral_dir_env)
-    assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+    result = app.run_command(cmd=cmd, env=test_ephemeral_dir_env)
+    assert app.run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
     if command == "syntax":
         assert "converge.yml" in result.stdout
     else:
@@ -114,7 +118,11 @@ def test_command(
 @pytest.mark.extensive
 @pytest.mark.parametrize(**PARAMS_DEFAULT)
 @pytest.mark.usefixtures("with_scenario")
-def test_command_idempotence(test_ephemeral_dir_env: dict[str, str], scenario_name: str) -> None:
+def test_command_idempotence(
+    test_ephemeral_dir_env: dict[str, str],
+    scenario_name: str,
+    app: App,
+) -> None:
     """Test idempotence of a scenario.
 
     Args:
@@ -122,13 +130,13 @@ def test_command_idempotence(test_ephemeral_dir_env: dict[str, str], scenario_na
         scenario_name: The scenario name.
     """
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
-    assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+    assert app.run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
 
     cmd = ["molecule", "converge", "--scenario-name", scenario_name]
-    assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+    assert app.run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
 
     cmd = ["molecule", "idempotence", "--scenario-name", scenario_name]
-    assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+    assert app.run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
 
 
 @pytest.mark.parametrize(
@@ -136,7 +144,11 @@ def test_command_idempotence(test_ephemeral_dir_env: dict[str, str], scenario_na
     (("dependency", "shell"), ("dependency", "ansible-galaxy")),
 )
 @pytest.mark.usefixtures("with_scenario")
-def test_command_dependency(test_ephemeral_dir_env: dict[str, str], scenario_name: str) -> None:
+def test_command_dependency(
+    test_ephemeral_dir_env: dict[str, str],
+    scenario_name: str,
+    app: App,
+) -> None:
     """Test scenario dependency.
 
     Args:
@@ -144,17 +156,18 @@ def test_command_dependency(test_ephemeral_dir_env: dict[str, str], scenario_nam
         scenario_name: The scenario name.
     """
     cmd = ["molecule", "dependency", "--scenario-name", scenario_name]
-    assert run_command(cmd, env=test_ephemeral_dir_env).returncode == 0
+    assert app.run_command(cmd, env=test_ephemeral_dir_env).returncode == 0
 
     # Validate that dependency worked by running converge, which make use it
     cmd = ["molecule", "converge", "--scenario-name", scenario_name]
-    assert run_command(cmd, env=test_ephemeral_dir_env).returncode == 0
+    assert app.run_command(cmd, env=test_ephemeral_dir_env).returncode == 0
 
 
 def test_command_init_scenario(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
     test_ephemeral_dir_env: dict[str, str],
+    app: App,
 ) -> None:
     """Test scenario initialization.
 
@@ -170,20 +183,21 @@ def test_command_init_scenario(
     scenario_name = "test-scenario"
 
     cmd = ["molecule", "init", "scenario", scenario_name]
-    assert run_command(cmd).returncode == 0
+    assert app.run_command(cmd).returncode == 0
     assert (tmp_path / "molecule" / scenario_name).is_dir()
 
     cmd = ["molecule", "test", "--scenario-name", "test-scenario", "--all"]
-    assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+    assert app.run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
 
     cmd = ["molecule", "destroy", "--scenario-name", "test-scenario"]
-    assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+    assert app.run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
 
 
 def test_command_list_with_format_plain(
     monkeypatch: pytest.MonkeyPatch,
     test_fixture_dir: Path,
     test_ephemeral_dir_env: dict[str, str],
+    app: App,
 ) -> None:
     """Test list command with plain format.
 
@@ -194,7 +208,7 @@ def test_command_list_with_format_plain(
     """
     monkeypatch.chdir(test_fixture_dir / "scenarios" / "driver" / "delegated")
     cmd = ["molecule", "list", "--format", "plain"]
-    result = run_command(cmd=cmd, env=test_ephemeral_dir_env)
+    result = app.run_command(cmd=cmd, env=test_ephemeral_dir_env)
     assert result.returncode == 0
     assert result.stdout == "instance        default ansible default false   false\n"
 
@@ -208,6 +222,7 @@ def test_with_missing_platform_name(
     scenario_name: str,
     platform: str,
     missing: bool,  # noqa: FBT001
+    app: App,
 ) -> None:
     """Test a scenario using command with missing platform name.
 
@@ -218,7 +233,7 @@ def test_with_missing_platform_name(
         missing: If platform name is missing.
     """
     cmd = ["molecule", "test", "-s", scenario_name, "-p", platform]
-    result = run_command(cmd=cmd, env=test_ephemeral_dir_env)
+    result = app.run_command(cmd=cmd, env=test_ephemeral_dir_env)
     assert bool(result.returncode) == missing
     if missing:
         assert "Instances missing" in result.stderr
@@ -230,6 +245,7 @@ def test_role_name_check_one(
     monkeypatch: pytest.MonkeyPatch,
     test_fixture_dir: Path,
     test_ephemeral_dir_env: dict[str, str],
+    app: App,
 ) -> None:
     """Test role name check only warns when equal to 1.
 
@@ -241,12 +257,12 @@ def test_role_name_check_one(
     scenario_dir = "delegated_invalid_role_name_with_role_name_check_equals_to_1"
     monkeypatch.chdir(test_fixture_dir / "scenarios" / "driver" / scenario_dir)
     cmd = ["molecule", "dependency"]
-    result = run_command(cmd=cmd, env=test_ephemeral_dir_env)
+    result = app.run_command(cmd=cmd, env=test_ephemeral_dir_env)
     assert result.returncode == 0
     string = "molecule.delegated-test does not follow current galaxy requirements"
     assert string in result.stderr
     cmd = ["molecule", "destroy"]
-    result = run_command(cmd=cmd, env=test_ephemeral_dir_env)
+    result = app.run_command(cmd=cmd, env=test_ephemeral_dir_env)
     assert result.returncode == 0
 
 
@@ -254,6 +270,7 @@ def test_sample_collection(
     monkeypatch: pytest.MonkeyPatch,
     resources_folder_path: Path,
     test_ephemeral_dir_env: dict[str, str],
+    app: App,
 ) -> None:
     """Test the sample collection.
 
@@ -264,7 +281,7 @@ def test_sample_collection(
     """
     monkeypatch.chdir(resources_folder_path / "sample-collection")
     cmd = ["molecule", "test"]
-    assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+    assert app.run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
 
 
 @pytest.mark.usefixtures("test_cache_path")
@@ -309,7 +326,7 @@ def test_with_and_without_gitignore(
 
 
 @mac_on_gh
-def test_podman(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None:
+def test_podman(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path, app: App) -> None:
     """Execute Podman scenario.
 
     Args:
@@ -318,7 +335,7 @@ def test_podman(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None
     """
     monkeypatch.chdir(test_fixture_dir)
     command = ["molecule", "test", "--scenario-name", "podman"]
-    assert run_command(command).returncode == 0
+    assert app.run_command(command).returncode == 0
 
 
 @mac_on_gh
@@ -326,7 +343,7 @@ def test_podman(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None
     sys.platform == "darwin",
     reason="Bug https://github.com/ansible-collections/community.docker/issues/660",
 )
-def test_docker(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None:
+def test_docker(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path, app: App) -> None:
     """Execute Docker scenario.
 
     Args:
@@ -342,10 +359,10 @@ def test_docker(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None
         monkeypatch.setenv("DOCKER_SOCKET", docker_socket.as_posix())
 
     command = ["molecule", "test", "--scenario-name", "docker"]
-    assert run_command(command).returncode == 0
+    assert app.run_command(command).returncode == 0
 
 
-def test_smoke(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None:
+def test_smoke(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path, app: App) -> None:
     """Execute smoke-test scenario that should spot potentially breaking changes.
 
     Args:
@@ -354,5 +371,5 @@ def test_smoke(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None:
     """
     monkeypatch.chdir(test_fixture_dir)
     command = ["molecule", "test", "--scenario-name", "smoke"]
-    result = run_command(command)
+    result = app.run_command(command)
     assert result.returncode == 0, result

@@ -49,9 +49,9 @@ def _patched_destroy_setup(mocker: MockerFixture) -> MagicMock:
 # throughout patched.assert_called unit tests.
 @pytest.mark.skip(reason="destroy not running for delegated")
 def test_destroy_execute(  # noqa: D103
-    mocker: MockerFixture,  # noqa: ARG001
+    mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
-    patched_config_validate: Mock,  # noqa: ARG001
+    patched_config_validate: Mock,
     _patched_ansible_destroy: Mock,  # noqa: PT019
     config_instance: config.Config,
 ) -> None:

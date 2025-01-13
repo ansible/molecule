@@ -39,7 +39,7 @@ def _model_verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN
 
 
 @pytest.mark.parametrize("config", ["_model_verifier_section_data"], indirect=True)  # noqa: PT007
-def test_verifier(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_verifier(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     assert not schema_v3.validate(config)
 
 
@@ -57,7 +57,7 @@ def _model_verifier_errors_section_data():  # type: ignore[no-untyped-def]  # no
     ["_model_verifier_errors_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_verifier_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_verifier_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     x = ["0 is not one of ['ansible', 'goss', 'inspec', 'testinfra']"]
 
     assert x == schema_v3.validate(config)
@@ -81,5 +81,5 @@ def _model_verifier_allows_ansible_section_data():  # type: ignore[no-untyped-de
     ],
     indirect=True,
 )
-def test_verifier_allows_name(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_verifier_allows_name(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     assert not schema_v3.validate(config)

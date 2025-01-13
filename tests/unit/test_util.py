@@ -43,6 +43,7 @@ if TYPE_CHECKING:
 
     from pytest_mock import MockerFixture
 
+    from molecule.app import App
     from molecule.types import Options
 
 
@@ -55,7 +56,7 @@ def test_print_debug() -> None:  # noqa: D103
     assert result == expected
 
 
-def test_print_environment_vars(capsys: pytest.CaptureFixture[str]) -> None:  # noqa: ARG001, D103
+def test_print_environment_vars(capsys: pytest.CaptureFixture[str]) -> None:  # noqa: D103
     env = {
         "ANSIBLE_FOO": "foo",
         "ANSIBLE_BAR": "bar",
@@ -130,9 +131,9 @@ def test_sysexit_with_message_and_custom_code(  # noqa: D103
     assert "foo" in caplog.text
 
 
-def test_run_command() -> None:  # noqa: D103
+def test_run_command(app: App) -> None:  # noqa: D103
     cmd = ["ls"]
-    x = util.run_command(cmd)
+    x = app.run_command(cmd)
 
     assert x.returncode == 0
 
@@ -140,9 +141,10 @@ def test_run_command() -> None:  # noqa: D103
 def test_run_command_with_debug(  # noqa: D103
     mocker: MockerFixture,
     patched_print_debug: Mock,
+    app: App,
 ) -> None:
     env = {"ANSIBLE_FOO": "foo", "MOLECULE_BAR": "bar"}
-    util.run_command(["ls"], debug=True, env=env)
+    app.run_command(["ls"], debug=True, env=env)
     x = [
         mocker.call("ANSIBLE ENVIRONMENT", "ANSIBLE_FOO: foo\n"),
         mocker.call("MOLECULE ENVIRONMENT", "MOLECULE_BAR: bar\n"),
@@ -152,27 +154,28 @@ def test_run_command_with_debug(  # noqa: D103
     assert x == patched_print_debug.mock_calls
 
 
-def test_run_command_baked_cmd_env() -> None:  # noqa: D103
+def test_run_command_baked_cmd_env(app: App) -> None:  # noqa: D103
     cmd = ["printenv", "myvar"]
-    result = util.run_command(cmd, env={"myvar": "value2"})
+    result = app.run_command(cmd, env={"myvar": "value2"})
     assert result.returncode == 0
 
     cmd = ["printenv", "myvar2"]
-    result = util.run_command(cmd, env={"myvar2": "value2"})
+    result = app.run_command(cmd, env={"myvar2": "value2"})
     assert result.returncode == 0
 
     # negative test
     cmd = ["printenv", "myvar"]
-    result = util.run_command(cmd)
+    result = app.run_command(cmd)
     assert result.returncode == 1
 
 
 def test_run_command_with_debug_handles_no_env(  # noqa: D103
-    mocker: MockerFixture,  # noqa: ARG001
+    mocker: MockerFixture,
     patched_print_debug: Mock,
+    app: App,
 ) -> None:
     cmd = ["ls"]
-    util.run_command(cmd, debug=True)
+    app.run_command(cmd, debug=True)
     # when env is empty we expect not to print anything
     empty_list: list[Any] = []
 

@@ -26,6 +26,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from molecule.command.init import scenario
+from molecule.config import Config
 
 
 if TYPE_CHECKING:
@@ -52,7 +53,7 @@ def fixture_instance(command_args: scenario.CommandArgs) -> scenario.Scenario:
     Args:
         command_args: A dictionary of command arguments.
     """
-    return scenario.Scenario(command_args)
+    return scenario.Scenario(Config(""), command_args)
 
 
 def test_scenario_execute(

@@ -41,7 +41,7 @@ def _model_dependency_section_data():  # type: ignore[no-untyped-def]  # noqa: A
     ["_model_dependency_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_dependency(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_dependency(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     assert not schema_v3.validate(config)
 
 
@@ -55,7 +55,7 @@ def _model_dependency_errors_section_data():  # type: ignore[no-untyped-def]  # 
     ["_model_dependency_errors_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_dependency_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_dependency_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     x = ["0 is not one of ['galaxy', 'shell']"]
 
     assert x == schema_v3.validate(config)
@@ -79,7 +79,7 @@ def _model_dependency_allows_shell_section_data():  # type: ignore[no-untyped-de
     ],
     indirect=True,
 )
-def test_dependency_allows_shell_name(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_dependency_allows_shell_name(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     assert not schema_v3.validate(config)
 
 
@@ -93,7 +93,7 @@ def _model_dependency_shell_errors_section_data():  # type: ignore[no-untyped-de
     ["_model_dependency_shell_errors_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_dependency_shell_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_dependency_shell_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     x = ["None is not of type 'string'"]
 
     assert x == schema_v3.validate(config)

@@ -1,4 +1,6 @@
 tests/conftest.py
+    DOC101: Function `app`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `app`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [name: str].
     DOC101: Function `reset_pytest_vars`: Docstring contains fewer arguments than in function signature.
     DOC106: Function `reset_pytest_vars`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
     DOC107: Function `reset_pytest_vars`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
@@ -60,6 +62,28 @@ tests/integration/conftest.py
 tests/integration/test_command.py
     DOC601: Class `ParamDefault`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
     DOC603: Class `ParamDefault`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [argnames: tuple[str, str], argvalues: tuple[tuple[str, str]], ids: str, indirect: tuple[str, str]]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+    DOC101: Function `test_command`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `test_command`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
+    DOC101: Function `test_command_idempotence`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `test_command_idempotence`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
+    DOC101: Function `test_command_dependency`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `test_command_dependency`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
+    DOC101: Function `test_command_init_scenario`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `test_command_init_scenario`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
+    DOC101: Function `test_command_list_with_format_plain`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `test_command_list_with_format_plain`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
+    DOC101: Function `test_with_missing_platform_name`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `test_with_missing_platform_name`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
+    DOC101: Function `test_role_name_check_one`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `test_role_name_check_one`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
+    DOC101: Function `test_sample_collection`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `test_sample_collection`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
+    DOC101: Function `test_podman`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `test_podman`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
+    DOC101: Function `test_docker`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `test_docker`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
+    DOC101: Function `test_smoke`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `test_smoke`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
 --------------------
 tests/unit/command/init/test_scenario.py
     DOC201: Function `fixture_command_args` does not have a return section in docstring

@@ -43,10 +43,10 @@ def _patched_ansible_syntax(mocker: MockerFixture) -> MagicMock:
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 def test_syntax_execute(  # noqa: D103
-    mocker: MockerFixture,  # noqa: ARG001
+    mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
     _patched_ansible_syntax: Mock,  # noqa: PT019
-    patched_config_validate: Mock,  # noqa: ARG001
+    patched_config_validate: Mock,
     config_instance: config.Config,
 ) -> None:
     s = syntax.Syntax(config_instance)
