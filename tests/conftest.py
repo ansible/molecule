@@ -134,7 +134,9 @@ def test_fixture_dir(request: pytest.FixtureRequest) -> Path:
     :param request: The pytest request object
     :returns: The fixture directory
     """
-    return FIXTURES_DIR / request.path.relative_to(Path(__file__).parent).with_suffix("")
+    return FIXTURES_DIR / request.path.relative_to(Path(__file__).parent).with_suffix(
+        "",
+    )
 
 
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
@@ -198,7 +200,7 @@ def fixture_test_cache_path(
         / request.node.name,
     )
     if test_dir.exists():
-        shutil.rmtree(test_dir)
+        shutil.rmtree(test_dir, ignore_errors=True)
 
     test_dir.mkdir(parents=True, exist_ok=True)
 

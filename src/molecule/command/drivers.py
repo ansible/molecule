@@ -55,6 +55,6 @@ def drivers(
     for driver in api.drivers().values():
         description = str(driver)
         if format == "plain":
-            description = f"{driver!s:16s}[logging.level.notset] {driver.title} Version {driver.version} from {driver.module} python module.)[/logging.level.notset]"  # noqa: E501
+            description = f"{driver!s:16s}[logging.level.notset] {driver.title} Version {driver.version} from {driver.module} python module.)[/logging.level.notset]"
         drivers.append([driver, description])
         console.print(description)

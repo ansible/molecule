@@ -137,7 +137,7 @@ class AnsiblePlaybook:
             from rich.markup import escape
 
             util.sysexit_with_message(
-                f"Ansible return code was {result.returncode}, command was: [dim]{escape(shlex.join(result.args))}[/dim]",  # noqa: E501
+                f"Ansible return code was {result.returncode}, command was: [dim]{escape(shlex.join(result.args))}[/dim]",
                 result.returncode,
                 warns=warns,
             )

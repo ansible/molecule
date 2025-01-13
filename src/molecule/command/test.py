@@ -114,7 +114,7 @@ def test(  # noqa: PLR0913
         parallel: Whether the scenario(s) should be run in parallel mode.
         ansible_args: Arguments to forward to Ansible.
         platform_name: Name of the platform to use.
-    """  # noqa: E501
+    """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {

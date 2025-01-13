@@ -24,6 +24,8 @@ import atexit
 import os
 import sys
 
+from pathlib import Path
+
 import click
 import packaging
 
@@ -31,7 +33,7 @@ import molecule
 
 from molecule import command, logger
 from molecule.api import drivers
-from molecule.app import app
+from molecule.app import get_app
 from molecule.command.base import click_group_ex
 from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY
 from molecule.console import console
@@ -77,7 +79,7 @@ def print_version(
         f"using python [repr.number]{sys.version_info[0]}.{sys.version_info[1]}[/] \n"
     )
 
-    msg += f"    [repr.attrib_name]ansible[/][dim]:[/][repr.number]{app.runtime.version}[/]"
+    msg += f"    [repr.attrib_name]ansible[/][dim]:[/][repr.number]{get_app(Path()).runtime.version}[/]"
     for driver in drivers().values():
         msg += (
             f"\n    [repr.attrib_name]{driver!s}[/][dim]:[/][repr.number]{driver.version}[/][dim] "

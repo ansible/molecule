@@ -37,7 +37,7 @@ import yaml
 from ansible_compat.ports import cache
 from rich.syntax import Syntax
 
-from molecule.app import app
+from molecule.app import get_app
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
 
@@ -183,7 +183,7 @@ def run_command(  # noqa: PLR0913
     if debug:
         print_environment_vars(env)
 
-    result = app.runtime.run(
+    result = get_app(Path()).runtime.run(
         args=cmd,
         env=env,
         cwd=cwd,
@@ -551,7 +551,7 @@ def boolean(value: bool | AnyStr, *, strict: bool = True) -> bool:
         return False
 
     raise TypeError(  # noqa: TRY003
-        f"The value '{value!s}' is not a valid boolean.  Valid booleans include: {', '.join(repr(i) for i in BOOLEANS)!s}",  # noqa: EM102, E501
+        f"The value '{value!s}' is not a valid boolean.  Valid booleans include: {', '.join(repr(i) for i in BOOLEANS)!s}",  # noqa: EM102
     )
 
 
