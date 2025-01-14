@@ -44,10 +44,10 @@ def _patched_ansible_prepare(mocker: MockerFixture) -> MagicMock:
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 def test_prepare_execute(  # noqa: D103
-    mocker: MockerFixture,  # noqa: ARG001
+    mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
     _patched_ansible_prepare: Mock,  # noqa: PT019
-    patched_config_validate: Mock,  # noqa: ARG001
+    patched_config_validate: Mock,
     config_instance: config.Config,
 ) -> None:
     pb = os.path.join(config_instance.scenario.directory, "prepare.yml")  # noqa: PTH118
@@ -94,8 +94,8 @@ def test_prepare_execute_skips_when_playbook_not_configured(  # noqa: D103
 
 
 def test_execute_when_instances_already_prepared_but_force_provided(  # noqa: D103
-    mocker: MockerFixture,  # noqa: ARG001
-    caplog: pytest.LogCaptureFixture,  # noqa: ARG001
+    mocker: MockerFixture,
+    caplog: pytest.LogCaptureFixture,
     _patched_ansible_prepare: Mock,  # noqa: PT019
     config_instance: config.Config,
 ) -> None:

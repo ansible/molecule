@@ -121,7 +121,8 @@ class Config:
             "MOLECULE_PROJECT_DIRECTORY",
             os.getcwd(),  # noqa: PTH109
         )
-        self.runtime = get_app(Path(self.project_directory)).runtime
+        self.app = get_app(Path(self.project_directory))
+        self.runtime = self.app.runtime
         self.scenario_path = Path(molecule_file).parent
 
         # Former after_init() contents
@@ -245,7 +246,7 @@ class Config:
                 return path
 
         # Last resort, try to find git root
-        show_toplevel = util.run_command("git rev-parse --show-toplevel")
+        show_toplevel = self.app.run_command("git rev-parse --show-toplevel")
         if show_toplevel.returncode == 0:
             path = Path(show_toplevel.stdout.strip())
             if (path / "galaxy.yml").exists():

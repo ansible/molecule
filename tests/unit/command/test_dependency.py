@@ -38,10 +38,10 @@ if TYPE_CHECKING:
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 def test_dependency_execute(  # noqa: D103
-    mocker: MockerFixture,  # noqa: ARG001
+    mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
     patched_ansible_galaxy: Mock,
-    patched_config_validate: Mock,  # noqa: ARG001
+    patched_config_validate: Mock,
     config_instance: config.Config,
 ) -> None:
     d = dependency.Dependency(config_instance)

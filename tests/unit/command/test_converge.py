@@ -41,10 +41,10 @@ if TYPE_CHECKING:
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 def test_converge_execute(  # noqa: D103
-    mocker: MockerFixture,  # noqa: ARG001
+    mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
     patched_ansible_converge: Mock,
-    patched_config_validate: Any,  # noqa: ANN401, ARG001
+    patched_config_validate: Any,  # noqa: ANN401
     config_instance: config.Config,
 ) -> None:
     c = converge.Converge(config_instance)

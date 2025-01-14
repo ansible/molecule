@@ -28,6 +28,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from molecule.app import App, get_app
+
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -48,7 +50,7 @@ mac_on_gh = pytest.mark.skipif(
 )
 
 
-def is_subset(subset, superset):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def is_subset(subset, superset):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     # Checks if first dict is a subset of the second one
     if isinstance(subset, dict):
         return all(
@@ -64,6 +66,16 @@ def is_subset(subset, superset):  # type: ignore[no-untyped-def]  # noqa: ANN001
 
     # assume that subset is a plain value if none of the above match
     return subset == superset
+
+
+@pytest.fixture(scope="session")
+def app(name: str = "app") -> App:
+    """Run the container.
+
+    Returns:
+        callable: The container executor.
+    """
+    return get_app(Path())
 
 
 @pytest.fixture(autouse=True)
@@ -91,7 +103,7 @@ def resources_folder_path() -> Path:
     return FIXTURES_DIR / "resources"
 
 
-def pytest_collection_modifyitems(items, config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def pytest_collection_modifyitems(items, config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     marker = config.getoption("-m")
     is_sharded = False
     shard_id = 0
@@ -120,7 +132,7 @@ def pytest_collection_modifyitems(items, config):  # type: ignore[no-untyped-def
 
 
 @pytest.fixture(autouse=True)
-def reset_pytest_vars(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
+def reset_pytest_vars(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN201
     """Make PYTEST_* env vars inaccessible to subprocesses."""
     for var_name in tuple(os.environ):
         if var_name.startswith("PYTEST_"):
@@ -142,7 +154,7 @@ def test_fixture_dir(request: pytest.FixtureRequest) -> Path:
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
 def pytest_runtest_makereport(  # type: ignore[misc]
     item: Item,
-    call: CallInfo[None],  # noqa: ARG001
+    call: CallInfo[None],
 ) -> pytest.TestReport:
     """Create a phase report for each test phase.
 

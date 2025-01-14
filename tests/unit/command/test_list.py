@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 
 
 def test_list_execute(  # noqa: D103
-    capsys: pytest.CaptureFixture[str],  # noqa: ARG001
+    capsys: pytest.CaptureFixture[str],
     config_instance: config.Config,
 ) -> None:
     l = list.List(config_instance)  # noqa: E741

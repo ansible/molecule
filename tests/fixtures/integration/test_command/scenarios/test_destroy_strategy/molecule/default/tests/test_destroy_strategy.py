@@ -12,12 +12,12 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 ).get_hosts("all")
 
 
-def test_hostname(host):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
+def test_hostname(host):  # type: ignore[no-untyped-def]  # noqa: ANN201
     """Validate hostname."""
     assert host.check_output("hostname -s") == "instance"
 
 
-def test_etc_molecule_directory(host):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
+def test_etc_molecule_directory(host):  # type: ignore[no-untyped-def]  # noqa: ANN201
     """Validate molecule directory."""
     f = host.file("/etc/molecule")
 
@@ -27,7 +27,7 @@ def test_etc_molecule_directory(host):  # type: ignore[no-untyped-def]  # noqa: 
     assert f.mode == 0o755  # noqa: PLR2004
 
 
-def test_etc_molecule_ansible_hostname_file(host):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
+def test_etc_molecule_ansible_hostname_file(host):  # type: ignore[no-untyped-def]  # noqa: ANN201
     """Validate molecule instance file."""
     f = host.file("/etc/molecule/instance")
 

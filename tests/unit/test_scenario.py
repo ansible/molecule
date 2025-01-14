@@ -39,7 +39,7 @@ if TYPE_CHECKING:
 # throughout patched.assert_called unit tests.
 @pytest.fixture
 def _instance(
-    patched_config_validate: Mock,  # noqa: ARG001
+    patched_config_validate: Mock,
     config_instance: config.Config,
 ) -> scenario.Scenario:
     return scenario.Scenario(config_instance)

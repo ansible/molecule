@@ -28,7 +28,6 @@ import re
 import sys
 
 from pathlib import Path
-from subprocess import CalledProcessError, CompletedProcess
 from typing import TYPE_CHECKING, overload
 
 import jinja2
@@ -37,7 +36,6 @@ import yaml
 from ansible_compat.ports import cache
 from rich.syntax import Syntax
 
-from molecule.app import get_app
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
 
@@ -151,53 +149,6 @@ def sysexit_with_message(
     for warn in warns:
         LOG.warning(warn.__dict__["message"].args[0])
     sysexit(code)
-
-
-def run_command(  # noqa: PLR0913
-    cmd: str | list[str],
-    env: dict[str, str] | None = None,
-    cwd: Path | None = None,
-    *,
-    debug: bool = False,
-    echo: bool = False,  # noqa: ARG001
-    quiet: bool = False,  # noqa: ARG001
-    check: bool = False,
-) -> CompletedProcess[str]:
-    """Execute the given command and returns None.
-
-    Args:
-        cmd: A list of strings containing the command to run.
-        env: A dict containing the shell's environment.
-        cwd: An optional Path to the working directory.
-        debug: An optional bool to toggle debug output.
-        echo: An optional bool to toggle command echo.
-        quiet: An optional bool to toggle command output.
-        check: An optional bool to toggle command error checking.
-
-    Returns:
-        A completed process object.
-
-    Raises:
-        CalledProcessError: If return code is nonzero and check is True.
-    """
-    if debug:
-        print_environment_vars(env)
-
-    result = get_app(Path()).runtime.run(
-        args=cmd,
-        env=env,
-        cwd=cwd,
-        tee=True,
-        set_acp=False,
-    )
-    if result.returncode != 0 and check:
-        raise CalledProcessError(
-            returncode=result.returncode,
-            cmd=result.args,
-            output=result.stdout,
-            stderr=result.stderr,
-        )
-    return result
 
 
 def os_walk(

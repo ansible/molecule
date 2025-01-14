@@ -59,10 +59,10 @@ def _patched_ansible_cleanup(mocker: MockerFixture) -> MagicMock:
     indirect=True,
 )
 def test_cleanup_execute(  # noqa: D103
-    mocker: MockerFixture,  # noqa: ARG001
+    mocker: MockerFixture,
     _patched_ansible_cleanup: Mock,  # noqa: PT019
     caplog: pytest.LogCaptureFixture,
-    patched_config_validate: Mock,  # noqa: ARG001
+    patched_config_validate: Mock,
     config_instance: config.Config,
 ) -> None:
     pb = os.path.join(config_instance.scenario.directory, "cleanup.yml")  # noqa: PTH118

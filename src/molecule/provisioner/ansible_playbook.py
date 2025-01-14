@@ -126,7 +126,7 @@ class AnsiblePlaybook:
             warnings.filterwarnings("default", category=MoleculeRuntimeWarning)
             self._config.driver.sanity_checks()
             cwd = self._config.scenario_path
-            result = util.run_command(
+            result = self._config.app.run_command(
                 cmd=self._ansible_command,
                 env=self._env,
                 debug=self._config.debug,

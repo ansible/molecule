@@ -25,7 +25,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from molecule import logger
-from molecule.util import run_command
+from molecule.app import get_app
 
 
 if TYPE_CHECKING:
@@ -69,4 +69,7 @@ def _with_scenario(  # noqa: PLR0913
         msg = f"CLEANUP: Destroying instances for {scenario_name}"
         LOG.info(msg)
         cmd = ["molecule", "destroy", "--scenario-name", scenario_name]
-        assert run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+        assert (
+            get_app(scenario_directory).run_command(cmd=cmd, env=test_ephemeral_dir_env).returncode
+            == 0
+        )

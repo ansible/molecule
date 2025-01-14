@@ -44,10 +44,10 @@ def _patched_create_setup(mocker: MockerFixture) -> MagicMock:
 # throughout patched.assert_called unit tests.
 @pytest.mark.skip(reason="create not running for delegated")
 def test_create_execute(  # noqa: D103
-    mocker: MockerFixture,  # noqa: ARG001
+    mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
     command_patched_ansible_create: Mock,
-    patched_config_validate: Mock,  # noqa: ARG001
+    patched_config_validate: Mock,
     config_instance: config.Config,
 ) -> None:
     c = create.Create(config_instance)

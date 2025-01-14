@@ -29,5 +29,5 @@ from molecule.model import schema_v3
     ["_model_platforms_delegated_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_platforms_delegated(config):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def test_platforms_delegated(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     assert not schema_v3.validate(config)

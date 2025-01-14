@@ -64,10 +64,10 @@ def _patched_ansible_side_effect(mocker: MockerFixture) -> MagicMock:
     indirect=True,
 )
 def test_side_effect_execute(  # noqa: D103
-    mocker: MockerFixture,  # noqa: ARG001
+    mocker: MockerFixture,
     _patched_ansible_side_effect: Mock,  # noqa: PT019
     caplog: pytest.LogCaptureFixture,
-    patched_config_validate: Mock,  # noqa: ARG001
+    patched_config_validate: Mock,
     config_instance: config.Config,
 ) -> None:
     pb = os.path.join(config_instance.scenario.directory, "side_effect.yml")  # noqa: PTH118

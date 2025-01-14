@@ -222,7 +222,7 @@ class Testinfra(Verifier):
         msg = f"Executing Testinfra tests found in {self.directory}/..."
         LOG.info(msg)
 
-        result = util.run_command(
+        result = self._config.app.run_command(
             self._testinfra_command,
             env=self.env,
             debug=self._config.debug,

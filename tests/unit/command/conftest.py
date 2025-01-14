@@ -23,7 +23,7 @@ import pytest
 
 
 @pytest.fixture
-def command_patched_ansible_create(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201, D103
+def command_patched_ansible_create(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     return mocker.patch("molecule.provisioner.ansible.Ansible.create")
 
 

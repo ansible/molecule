@@ -81,7 +81,7 @@ def test_action_setter(config_instance: config.Config) -> None:  # noqa: D103
 
 def test_init_calls_validate(  # noqa: D103
     patched_config_validate: Mock,
-    config_instance: config.Config,  # noqa: ARG001
+    config_instance: config.Config,
 ) -> None:
     patched_config_validate.assert_called_once_with()
 
@@ -440,7 +440,7 @@ def test_set_env_from_file(config_instance: config.Config) -> None:  # noqa: D10
 
 
 def test_set_env_from_file_returns_original_env_when_env_file_not_found(  # noqa: D103
-    config_instance: config.Config,  # noqa: ARG001
+    config_instance: config.Config,
 ) -> None:
     env = config.set_env_from_file({}, "file-not-found")
 

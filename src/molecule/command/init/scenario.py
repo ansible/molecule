@@ -30,10 +30,10 @@ from typing import TYPE_CHECKING
 
 import click
 
-from molecule import api, config, util
+from molecule import api, util
 from molecule.command import base as command_base
 from molecule.command.init import base
-from molecule.config import DEFAULT_DRIVER, MOLECULE_EMBEDDED_DATA_DIR
+from molecule.config import DEFAULT_DRIVER, MOLECULE_EMBEDDED_DATA_DIR, Config, molecule_directory
 
 
 if TYPE_CHECKING:
@@ -83,12 +83,14 @@ class Scenario(base.Base):
         Initialize a new scenario using a embedded template.
     """
 
-    def __init__(self, command_args: CommandArgs) -> None:
+    def __init__(self, config: Config, command_args: CommandArgs) -> None:
         """Construct Scenario.
 
         Args:
+            config: An instance of a Molecule config.
             command_args: Arguments to pass to init-scenario playbook.
         """
+        self._config = config
         self._command_args = command_args
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
@@ -101,8 +103,8 @@ class Scenario(base.Base):
 
         msg = f"Initializing new scenario {scenario_name}..."
         LOG.info(msg)
-        molecule_directory = Path(config.molecule_directory(Path.cwd()))
-        scenario_directory = molecule_directory / scenario_name
+        molecule_path = Path(molecule_directory(Path.cwd()))
+        scenario_directory = molecule_path / scenario_name
 
         if scenario_directory.is_dir():
             msg = f"The directory molecule/{scenario_name} exists. Cannot create new scenario."
@@ -123,7 +125,7 @@ class Scenario(base.Base):
         # it to use colors.
         env["ANSIBLE_FORCE_COLOR"] = "1"
         env["ANSIBLE_PYTHON_INTERPRETER"] = sys.executable
-        util.run_command(cmd, env=env, check=True)
+        self._config.app.run_command(cmd, env=env, check=True)
 
         msg = f"Initialized scenario in {scenario_directory} successfully."
         LOG.info(msg)
@@ -198,5 +200,9 @@ def scenario(
         "subcommand": __name__,
     }
 
-    s = Scenario(command_args)
+    config = Config(
+        "",
+        args={},
+    )
+    s = Scenario(config, command_args)
     s.execute()
