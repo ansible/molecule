@@ -6,9 +6,9 @@ mkdocs:
   configuration: mkdocs.yml
 
 build:
-  os: ubuntu-22.04
+  os: ubuntu-24.04
   tools:
-    python: "3.11"
+    python: "3.12"
   commands:
     - pip install --user tox
     - python3 -m tox -e docs -- --strict --site-dir=_readthedocs/html/
