@@ -28,7 +28,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from molecule import config, util
-from molecule.scenario import Scenario, ephemeral_directory
+from molecule.scenario import Scenario
 
 
 if TYPE_CHECKING:
@@ -235,12 +235,8 @@ def test_setup_creates_ephemeral_and_inventory_directories(  # noqa: D103
 
     assert Path(ephemeral_dir).is_dir()
     assert Path(inventory_dir).is_dir()
-
-
-def test_ephemeral_directory() -> None:  # noqa: D103
     # assure we can write to ephemeral directory
-    path = Path("foo/bar")
-    assert os.access(ephemeral_directory(path), os.W_OK)
+    assert os.access(ephemeral_dir, os.W_OK)
 
 
 def test_ephemeral_directory_overridden_via_env_var(
@@ -255,22 +251,9 @@ def test_ephemeral_directory_overridden_via_env_var(
     """
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", "foo/bar")
+    scenario = Scenario(config.Config(""))
 
-    path = Path("foo/bar")
-    assert os.access(ephemeral_directory(path), os.W_OK)
-
-
-def test_ephemeral_directory_overridden_via_env_var_uses_absolute_path(
-    monkeypatch: pytest.MonkeyPatch,
-    tmp_path: Path,
-) -> None:
-    """Confirm MOLECULE_EPHEMERAL_DIRECTORY uses absolute path.
-
-    Args:
-        monkeypatch: Pytest monkeypatch fixture.
-        tmp_path: Pytest tmp_path fixture.
-    """
-    monkeypatch.chdir(tmp_path)
-    monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", "foo/bar")
-
-    assert Path(ephemeral_directory()).is_absolute()
+    assert os.access(scenario.ephemeral_directory, os.W_OK)
+    # Confirm MOLECULE_EPHEMERAL_DIRECTORY uses absolute path.
+    assert Path(scenario.ephemeral_directory).is_absolute()
+    assert scenario.ephemeral_directory.endswith("foo/bar")

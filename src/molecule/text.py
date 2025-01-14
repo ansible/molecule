@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import base64
+import hashlib
 import re
 
 from typing import TYPE_CHECKING
 
 
 if TYPE_CHECKING:
+    from pathlib import Path
     from typing import AnyStr
 
 
@@ -108,3 +111,22 @@ def _to_unicode(data: AnyStr) -> str:
     if isinstance(data, bytes):
         return data.decode("utf-8")
     return data
+
+
+def checksum(data: str | Path, length: int = 5) -> str:
+    """Returns a checksum for the given data.
+
+    Args:
+        data: The data to checksum.
+        length: The length of the checksum.
+
+    Returns:
+        A checksum string.
+    """
+    data = str(data)
+    # Hash the input string using SHA-256
+    hash_object = hashlib.sha256(data.encode("utf-8"))
+    # Convert the hash to a base64-encoded string
+    base64_hash = base64.urlsafe_b64encode(hash_object.digest()).decode("utf-8")
+    # Truncate the result to the desired length
+    return base64_hash[:length]

@@ -26,12 +26,14 @@ import logging
 import os
 import shutil
 
+from functools import cached_property
 from pathlib import Path
 from time import sleep
 from typing import TYPE_CHECKING
 
 from molecule import scenarios, util
 from molecule.constants import RC_TIMEOUT
+from molecule.text import checksum
 
 
 if TYPE_CHECKING:
@@ -119,7 +121,7 @@ class Scenario:
             path = Path(self.config.molecule_file).parent
         return str(path)
 
-    @property
+    @cached_property
     def ephemeral_directory(self) -> str:
         """Acquire the ephemeral directory.
 
@@ -129,22 +131,17 @@ class Scenario:
         Raises:
             SystemExit: If lock cannot be acquired before timeout.
         """
-        path: str | Path | None = os.getenv("MOLECULE_EPHEMERAL_DIRECTORY", None)
-        if not path:
+        path: Path
+        if "MOLECULE_EPHEMERAL_DIRECTORY" not in os.environ:
             project_directory = Path(self.config.project_directory).name
 
             if self.config.is_parallel:
                 project_directory = f"{project_directory}-{self.config._run_uuid}"  # noqa: SLF001
 
-            project_scenario_directory = Path(
-                self.config.cache_directory,
-                project_directory,
-                self.name,
-            )
-            path = ephemeral_directory(project_scenario_directory)
-
-        if isinstance(path, str):
-            path = Path(path)
+            project_scenario_directory = f"molecule.{checksum(project_directory, 4)}.{self.name}"
+            path = self.config.runtime.cache_dir / "tmp" / project_scenario_directory
+        else:
+            path = Path(os.getenv("MOLECULE_EPHEMERAL_DIRECTORY", ""))
 
         if os.environ.get("MOLECULE_PARALLEL", False) and not self._lock:
             lock_file = path / ".lock"
@@ -165,7 +162,7 @@ class Scenario:
                     LOG.warning("Timedout trying to acquire lock on %s", path)
                     raise SystemExit(RC_TIMEOUT)
 
-        return str(path)
+        return path.absolute().as_posix()
 
     @property
     def inventory_directory(self) -> str:
@@ -314,36 +311,3 @@ class Scenario:
         inventory = Path(self.inventory_directory)
         if not inventory.is_dir():
             inventory.mkdir(exist_ok=True, parents=True)
-
-
-def ephemeral_directory(path: Path | None = None) -> Path:
-    """Return temporary directory to be used by molecule.
-
-    Molecule users should not make any assumptions about its location,
-    permissions or its content as this may change in future release.
-
-    Args:
-        path: Ephemeral directory name.
-
-    Returns:
-        The full ephemeral directory path.
-
-    Raises:
-        RuntimeError: If ephemeral directory location cannot be determined
-    """
-    d: str | Path | None = os.getenv("MOLECULE_EPHEMERAL_DIRECTORY")
-    if not d:
-        d = os.getenv("XDG_CACHE_HOME", Path("~/.cache").expanduser())
-    if not d:
-        msg = "Unable to determine ephemeral directory to use."
-        raise RuntimeError(msg)
-
-    if isinstance(d, str):
-        d = Path(d)
-    d = d.resolve() / (path if path else "molecule")
-
-    if not d.is_dir():
-        os.umask(0o077)
-        d.mkdir(mode=0o700, parents=True, exist_ok=True)
-
-    return d
