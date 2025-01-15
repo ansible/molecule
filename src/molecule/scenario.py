@@ -54,6 +54,14 @@ class Scenario:
         self.config = config
         self._setup()
 
+    def __repr__(self) -> str:
+        """Return a representation of the instance.
+
+        Returns:
+            A string.
+        """
+        return f"<Scenario {self.name} from {self.config.project_directory}>"
+
     def _remove_scenario_state_directory(self) -> None:
         """Remove scenario cached disk stored state."""
         directory = str(Path(self.ephemeral_directory).parent)

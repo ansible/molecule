@@ -11,7 +11,7 @@ build:
     python: "3.12"
   commands:
     - pip install --user tox
-    - python3 -m tox -e docs -- --strict --site-dir=_readthedocs/html/
+    - python3 -m tox -e docs
 python:
   install:
     - method: pip

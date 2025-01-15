@@ -175,3 +175,6 @@ node_modules/
 # There is a test for this, otherwise unknown
 # tests/b_functional/test_command.py test_w_gitignore
 tests/fixtures/resources/.extensions/
+
+# docs output
+_readthedocs/
