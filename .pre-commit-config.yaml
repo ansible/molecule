@@ -62,7 +62,7 @@ repos:
       - id: tox-ini-fmt
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.6
+    rev: v0.9.1
     hooks:
       - id: ruff
         args:
@@ -75,7 +75,7 @@ repos:
         name: Spell check with cspell
 
   - repo: https://github.com/jsh9/pydoclint
-    rev: "0.5.14"
+    rev: "0.6.0"
     hooks:
       - id: pydoclint
         # This allows automatic reduction of the baseline file when needed.

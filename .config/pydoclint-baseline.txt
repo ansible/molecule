@@ -55,10 +55,6 @@ tests/fixtures/integration/test_command/scenarios/verifier/molecule/testinfra-pr
     DOC107: Function `test_ansible_hostname`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Function `test_ansible_hostname`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [host: ].
 --------------------
-tests/integration/conftest.py
-    DOC201: Function `_with_scenario` does not have a return section in docstring
-    DOC405: Function `_with_scenario` has both "return" and "yield" statements. Please use Generator[YieldType, SendType, ReturnType] as the return type annotation, and put your yield type in YieldType and return type in ReturnType. More details in https://jsh9.github.io/pydoclint/notes_generator_vs_iterator.html
---------------------
 tests/integration/test_command.py
     DOC601: Class `ParamDefault`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
     DOC603: Class `ParamDefault`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [argnames: tuple[str, str], argvalues: tuple[tuple[str, str]], ids: str, indirect: tuple[str, str]]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
