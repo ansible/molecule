@@ -19,10 +19,14 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
-from pathlib import Path
+import typing
 
-from molecule.app import get_app
 from molecule.model import schema_v3
+from tests.conftest import run
+
+
+if typing.TYPE_CHECKING:
+    from pathlib import Path
 
 
 def test_base_config(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
@@ -35,7 +39,6 @@ def test_molecule_schema(resources_folder_path: Path) -> None:
     Args:
         resources_folder_path: Path to the resources folder.
     """
-    app = get_app(Path())
     cmd = [
         "uv",
         "tool",
@@ -46,7 +49,7 @@ def test_molecule_schema(resources_folder_path: Path) -> None:
         "src/molecule/data/molecule.json",
         f"{resources_folder_path}/schema_instance_files/valid/molecule.yml",
     ]
-    assert app.run_command(cmd).returncode == 0
+    assert run(cmd).returncode == 0
 
     cmd = [
         "uv",
@@ -58,4 +61,4 @@ def test_molecule_schema(resources_folder_path: Path) -> None:
         "src/molecule/data/driver.json",
         f"{resources_folder_path}/schema_instance_files/invalid/molecule_delegated.yml",
     ]
-    assert app.run_command(cmd).returncode != 0
+    assert run(cmd).returncode != 0

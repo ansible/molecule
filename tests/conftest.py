@@ -22,9 +22,10 @@ from __future__ import annotations
 import os
 import platform
 import shutil
+import subprocess
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import pytest
 
@@ -274,3 +275,16 @@ def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:
     test_cache_dir = Path(git_root() / ".cache" / ".molecule" / "tests")
     if test_cache_dir.exists():
         shutil.rmtree(test_cache_dir)
+
+
+def run(cmd: list[str], env: dict[str, str] | None = None) -> subprocess.CompletedProcess[Any]:
+    """Run a command.
+
+    Args:
+        cmd: The command to run.
+        env: The environment.
+
+    Returns:
+        The result.
+    """
+    return subprocess.run(cmd, capture_output=True, text=True, check=False, env=env)
