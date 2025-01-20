@@ -62,14 +62,14 @@ repos:
       - id: tox-ini-fmt
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.1
+    rev: v0.9.2
     hooks:
       - id: ruff
         args:
           - --exit-non-zero-on-fix
 
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v8.17.0
+    rev: v8.17.1
     hooks:
       - id: cspell
         name: Spell check with cspell
@@ -134,17 +134,18 @@ repos:
         stages:
           - manual
         additional_dependencies:
-          - uv>=0.4.3
+          - uv>=0.5.21
       - id: pip-compile
         name: Check constraints files and requirements
-        files: ^(pyproject\.toml|requirements\.txt)$
+        always_run: true
+        files: ^(pyproject\.toml|\.config/.*)$
         language: python
-        entry: python3 -m uv pip compile -q --all-extras --output-file=.config/constraints.txt pyproject.toml
+        entry: python3 -m uv pip compile --refresh --all-extras --output-file=.config/constraints.txt pyproject.toml
         pass_filenames: false
         additional_dependencies:
-          - uv>=0.4.3
+          - uv>=0.5.21
   - repo: https://github.com/ansible/ansible-lint
-    rev: v24.12.2
+    rev: v25.1.0
     hooks:
       - id: ansible-lint
         stages: [manual]
