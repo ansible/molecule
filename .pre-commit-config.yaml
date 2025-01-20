@@ -4,6 +4,9 @@ ci:
   autoupdate_commit_msg: "chore: pre-commit autoupdate"
   autoupdate_schedule: monthly
   autofix_commit_msg: "chore: auto fixes from pre-commit.com hooks"
+  skip:
+    # https://github.com/pre-commit-ci/issues/issues/55
+    - pip-compile
 default_language_version:
   python: python3.10 # minimal we support officially for consistent results
 
@@ -118,21 +121,28 @@ repos:
         # Override default pre-commit '--ignore-missing-imports'
         args: [--strict]
 
-  - repo: https://github.com/jazzband/pip-tools
-    rev: 7.4.1
+  # Keep last due to being considerably slower than the others:
+  - repo: local
     hooks:
+      - id: pip-compile-upgrade
+        # To run it execute: `pre-commit run pip-compile-upgrade --hook-stage manual`
+        name: Upgrade constraints files and requirements
+        files: ^(pyproject\.toml|requirements\.txt)$
+        language: python
+        entry: python3 -m uv pip compile -q --all-extras --output-file=.config/constraints.txt pyproject.toml --upgrade
+        pass_filenames: false
+        stages:
+          - manual
+        additional_dependencies:
+          - uv>=0.4.3
       - id: pip-compile
-        name: deps
-        alias: deps
-        stages: [manual]
-        entry: >-
-          pip-compile .config/requirements.in
-          --upgrade
-          --all-extras
-          --no-annotate
-          --strip-extras
-          --output-file=.config/constraints.txt pyproject.toml
-        files: ^.config\/.*requirements.*$
+        name: Check constraints files and requirements
+        files: ^(pyproject\.toml|requirements\.txt)$
+        language: python
+        entry: python3 -m uv pip compile -q --all-extras --output-file=.config/constraints.txt pyproject.toml
+        pass_filenames: false
+        additional_dependencies:
+          - uv>=0.4.3
   - repo: https://github.com/ansible/ansible-lint
     rev: v24.12.2
     hooks:

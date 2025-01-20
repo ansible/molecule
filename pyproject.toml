@@ -409,9 +409,21 @@ git_describe_command = [
   "v*.*"
 ]
 local_scheme = "no-local-version"
+tag_regex = "^(?P<prefix>v)?(?P<version>\\d+[^\\+]*)(?P<suffix>.*)?$"
 write_to = "src/molecule/_version.py"
 
 [tool.tomlsort]
 in_place = true
 sort_inline_tables = true
 sort_table_keys = true
+
+[tool.uv.pip]
+annotation-style = "line"
+custom-compile-command = "tox run -e deps"
+no-emit-package = [
+  "ansible-core",
+  "pip",
+  "resolvelib",
+  "typing_extensions",
+  "uv"
+]
