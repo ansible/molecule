@@ -37,6 +37,9 @@ def test_molecule_schema(resources_folder_path: Path) -> None:
     """
     app = get_app(Path())
     cmd = [
+        "uv",
+        "tool",
+        "run",
         "check-jsonschema",
         "-v",
         "--schemafile",
@@ -46,6 +49,9 @@ def test_molecule_schema(resources_folder_path: Path) -> None:
     assert app.run_command(cmd).returncode == 0
 
     cmd = [
+        "uv",
+        "tool",
+        "run",
         "check-jsonschema",
         "-v",
         "--schemafile",
