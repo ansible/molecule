@@ -24,6 +24,7 @@ from __future__ import annotations
 import abc
 import collections
 import contextlib
+import importlib
 import logging
 import os
 import shutil
@@ -184,7 +185,7 @@ def execute_subcommand(
         The result of the subcommand.
     """
     (subcommand, *args) = subcommand_and_args.split(" ")
-    command_module = getattr(molecule.command, subcommand)
+    command_module = importlib.import_module(f"molecule.command.{subcommand}")
     command = getattr(command_module, text.camelize(subcommand))
 
     # knowledge of the current action is used by some provisioners
