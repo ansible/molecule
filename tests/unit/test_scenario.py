@@ -27,7 +27,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from molecule import config, scenario, util
+from molecule import config, util
+from molecule.scenario import Scenario, ephemeral_directory
 
 
 if TYPE_CHECKING:
@@ -41,11 +42,11 @@ if TYPE_CHECKING:
 def _instance(
     patched_config_validate: Mock,
     config_instance: config.Config,
-) -> scenario.Scenario:
-    return scenario.Scenario(config_instance)
+) -> Scenario:
+    return Scenario(config_instance)
 
 
-def test_prune(_instance: scenario.Scenario) -> None:  # noqa: PT019, D103
+def test_prune(_instance: Scenario) -> None:  # noqa: PT019, D103
     e_dir = Path(_instance.ephemeral_directory)
     # prune data also includes files in the scenario inventory dir,
     # which is "<e_dir>/inventory" by default.
@@ -86,40 +87,41 @@ def test_prune(_instance: scenario.Scenario) -> None:  # noqa: PT019, D103
         assert not (e_dir / pruned_dir).is_dir()
 
 
-def test_config_member(_instance: scenario.Scenario) -> None:  # noqa: PT019, D103
+def test_config_member(_instance: Scenario) -> None:  # noqa: PT019, D103
     assert isinstance(_instance.config, config.Config)
 
 
 def test_scenario_init_calls_setup(  # noqa: D103
     patched_scenario_setup: Mock,
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     patched_scenario_setup.assert_called_once_with()
 
 
 def test_scenario_name_property(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     assert _instance.name == "default"
 
 
 def test_ephemeral_directory_property(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     assert os.access(_instance.ephemeral_directory, os.W_OK)
+    # assert that scenario path is included in in repr (useful for debugging)
+    assert _instance.ephemeral_directory in repr(_instance)
 
 
 def test_scenario_inventory_directory_property(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
-    ephemeral_directory = Path(_instance.config.scenario.ephemeral_directory)
-    e_dir = ephemeral_directory / "inventory"
+    e_dir = Path(_instance.config.scenario.ephemeral_directory) / "inventory"
 
     assert str(e_dir) == _instance.inventory_directory
 
 
 def test_check_sequence_property(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     sequence = [
         "dependency",
@@ -137,7 +139,7 @@ def test_check_sequence_property(  # noqa: D103
 
 
 def test_converge_sequence_property(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     sequence = ["dependency", "create", "prepare", "converge"]
 
@@ -145,7 +147,7 @@ def test_converge_sequence_property(  # noqa: D103
 
 
 def test_create_sequence_property(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     sequence = ["dependency", "create", "prepare"]
 
@@ -153,43 +155,43 @@ def test_create_sequence_property(  # noqa: D103
 
 
 def test_dependency_sequence_property(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     assert _instance.dependency_sequence == ["dependency"]
 
 
 def test_destroy_sequence_property(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     assert _instance.destroy_sequence == ["dependency", "cleanup", "destroy"]
 
 
 def test_idempotence_sequence_property(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     assert _instance.idempotence_sequence == ["idempotence"]
 
 
 def test_prepare_sequence_property(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     assert _instance.prepare_sequence == ["prepare"]
 
 
 def test_side_effect_sequence_property(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     assert _instance.side_effect_sequence == ["side_effect"]
 
 
 def test_syntax_sequence_property(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     assert _instance.syntax_sequence == ["syntax"]
 
 
 def test_test_sequence_property(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     sequence = [
         "dependency",
@@ -210,13 +212,13 @@ def test_test_sequence_property(  # noqa: D103
 
 
 def test_verify_sequence_property(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     assert _instance.verify_sequence == ["verify"]
 
 
 def test_sequence_property_with_invalid_subcommand(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     _instance.config.command_args = {"subcommand": "invalid"}
 
@@ -224,7 +226,7 @@ def test_sequence_property_with_invalid_subcommand(  # noqa: D103
 
 
 def test_setup_creates_ephemeral_and_inventory_directories(  # noqa: D103
-    _instance: scenario.Scenario,  # noqa: PT019
+    _instance: Scenario,  # noqa: PT019
 ) -> None:
     ephemeral_dir = _instance.config.scenario.ephemeral_directory
     inventory_dir = _instance.config.scenario.inventory_directory
@@ -238,7 +240,7 @@ def test_setup_creates_ephemeral_and_inventory_directories(  # noqa: D103
 def test_ephemeral_directory() -> None:  # noqa: D103
     # assure we can write to ephemeral directory
     path = Path("foo/bar")
-    assert os.access(scenario.ephemeral_directory(path), os.W_OK)
+    assert os.access(ephemeral_directory(path), os.W_OK)
 
 
 def test_ephemeral_directory_overridden_via_env_var(
@@ -255,7 +257,7 @@ def test_ephemeral_directory_overridden_via_env_var(
     monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", "foo/bar")
 
     path = Path("foo/bar")
-    assert os.access(scenario.ephemeral_directory(path), os.W_OK)
+    assert os.access(ephemeral_directory(path), os.W_OK)
 
 
 def test_ephemeral_directory_overridden_via_env_var_uses_absolute_path(
@@ -271,4 +273,4 @@ def test_ephemeral_directory_overridden_via_env_var_uses_absolute_path(
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", "foo/bar")
 
-    assert Path(scenario.ephemeral_directory()).is_absolute()
+    assert Path(ephemeral_directory()).is_absolute()
