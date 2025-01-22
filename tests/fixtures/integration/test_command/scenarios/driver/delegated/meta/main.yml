@@ -7,4 +7,4 @@ galaxy_info:
   namespace: molecule
   role_name: delegated_test
   license: GPL
-  min_ansible_version: "2.9"
+  min_ansible_version: "2.15"

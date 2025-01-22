@@ -6,12 +6,10 @@ Molecule.
 
 ## Requirements
 
-- ansible-core >= 2.12
+A recent version of `ansible-core` that is still under support.
 
 Depending on the driver chosen, you may need to install additional OS
 packages.
-
-- Python >= 3.10
 
 === "CentOS"
 

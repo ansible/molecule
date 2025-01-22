@@ -537,7 +537,7 @@ class Ansible(base.Base):
             {
                 "ANSIBLE_CONFIG": self.config_file,
                 "ANSIBLE_ROLES_PATH": ":".join(roles_path_list),
-                self._config.ansible_collections_path: ":".join(collections_path_list),
+                "ANSIBLE_COLLECTIONS_PATH": ":".join(collections_path_list),
                 "ANSIBLE_LIBRARY": ":".join(self._get_modules_directories()),
                 "ANSIBLE_FILTER_PLUGINS": ":".join(
                     self._get_filter_plugins_directories(),
