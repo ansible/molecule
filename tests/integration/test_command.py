@@ -19,9 +19,12 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import os
+import shutil
 import subprocess
-import sys
+import warnings
 
+from functools import cache
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypedDict
 
@@ -48,6 +51,62 @@ def run(cmd: list[str], env: dict[str, str] | None = None) -> subprocess.Complet
         The result.
     """
     return subprocess.run(cmd, capture_output=True, text=True, check=False, env=env)
+
+
+@cache
+def has_pure_docker() -> bool:
+    """Check if pure working Docker is available.
+
+    Returns:
+        True if Docker is installed, working and not using podman backend.
+    """
+    # https://github.com/podman-desktop/podman-desktop/issues/10745
+    failure = ""
+    default_docker_socket = Path("/var/run/docker.sock")
+    if not shutil.which("docker"):
+        failure = "Docker is not installed."
+    elif default_docker_socket.exists():
+        # detect if docker is NOT using podman's backend (libpod)
+        result = run(
+            ["curl", "--silent", "--unix-socket", "/var/run/docker.sock", "http:/v1/_ping"],
+        )
+        if result.returncode != 0:
+            failure = "Docker does not seem to respond to default socket."
+        else:
+            result = run(
+                [
+                    "curl",
+                    "--silent",
+                    "--unix-socket",
+                    "/var/run/docker.sock",
+                    "http:/v1/libpod/_ping",
+                ],
+            )
+            if result.stdout == "OK":
+                if shutil.which("podman-mac-helper"):
+                    failure = "Docker is using podman's backend, run `sudo podman-mac-helper uninstall` to disable it."
+                else:
+                    failure = "Docker is using podman's backend, so we will skip running docker tests as they are high likely to fail. See https://github.com/ansible-collections/community.docker/issues/660 https://github.com/containers/podman/issues/16548"
+            elif result.stdout != "Not Found":
+                failure = "Unexpected response from Docker's default socket."
+    else:
+        result = run(["docker", "context", "inspect", "--format", "{{.Endpoints.docker.Host}}"])
+        if result.returncode != 0:
+            failure = "Docker was not able to report its currently active socket for current context: {result}"
+        else:
+            docker_current_socket = result.stdout.rstrip()
+            warnings.warn(
+                f"Docker found but not using default socket from {default_docker_socket}, we will define DOCKER_HOST={docker_current_socket} during testing. See https://github.com/ansible-collections/community.docker/issues/660#issuecomment-2607286542",
+                stacklevel=2,
+            )
+            os.environ["DOCKER_HOST"] = result.stdout.rstrip()
+    if failure:
+        warnings.warn(  # noqa: B028
+            failure,
+            category=RuntimeWarning,
+        )
+        return False
+    return True
 
 
 @pytest.fixture(name="scenario_to_test")
@@ -351,7 +410,7 @@ def test_podman(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path, app: Ap
 
 @mac_on_gh
 @pytest.mark.skipif(
-    sys.platform == "darwin",
+    not has_pure_docker(),
     reason="Bug https://github.com/ansible-collections/community.docker/issues/660",
 )
 def test_docker(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path, app: App) -> None:
