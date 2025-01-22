@@ -16,9 +16,7 @@ testing scenarios.
 Molecule encourages an approach that results in consistently developed
 roles that are well-written, easily understood and maintained.
 
-Molecule supports only the latest two major versions of Ansible (N/N-1),
-meaning that if the latest version is 2.9.x, we will also test our code
-with 2.8.x.
+Molecule supports only the latest two major versions of Ansible (N/N-1).
 
 Once installed, the command line can be called using any of the methods
 below:

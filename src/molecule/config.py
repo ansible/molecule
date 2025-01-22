@@ -30,7 +30,6 @@ from typing import TYPE_CHECKING
 from uuid import uuid4
 
 from ansible_compat.ports import cache, cached_property
-from packaging.version import Version
 
 from molecule import api, interpolation, platforms, scenario, state, util
 from molecule.app import get_app
@@ -44,6 +43,8 @@ from molecule.util import boolean
 if TYPE_CHECKING:
     from collections.abc import MutableMapping
     from typing import Literal
+
+    from packaging.version import Version
 
     from molecule.dependency.base import Base as Dependency
     from molecule.driver.base import Driver
@@ -133,20 +134,6 @@ class Config:
     def write(self) -> None:
         """Write config file to filesystem."""
         util.write_file(self.config_file, util.safe_dump(self.config))
-
-    @property
-    def ansible_collections_path(
-        self,
-    ) -> str:
-        """Return collection path variable for current version of Ansible.
-
-        Returns:
-            The correct ansible collection path to use.
-        """
-        # https://github.com/ansible/ansible/pull/70007
-        if self.runtime.version >= Version("2.10.0.dev0"):
-            return "ANSIBLE_COLLECTIONS_PATH"
-        return "ANSIBLE_COLLECTIONS_PATHS"
 
     @property
     def config_file(self) -> str:
