@@ -106,7 +106,7 @@ regex==2024.11.6          # via mkdocs-material
 requests==2.32.3          # via docker, linkchecker, mkdocs-htmlproofer-plugin, mkdocs-material, molecule (pyproject.toml)
 rich==13.9.4              # via enrich, molecule (pyproject.toml)
 rpds-py==0.22.3           # via jsonschema, referencing
-ruamel-yaml==0.18.10       # via ansible-lint
+ruamel-yaml==0.18.10      # via ansible-lint
 ruamel-yaml-clib==0.2.12  # via ruamel-yaml
 ruff==0.9.3               # via molecule (pyproject.toml)
 setuptools==75.8.0        # via pip-tools
