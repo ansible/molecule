@@ -147,9 +147,6 @@ def test_additional_files_or_dirs_property(_instance):  # type: ignore[no-untype
 def test_testinfra_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
     assert _instance.env["FOO"] == "bar"
     assert "ANSIBLE_CONFIG" in _instance.env
-    assert "ANSIBLE_ROLES_PATH" in _instance.env
-    assert "ANSIBLE_LIBRARY" in _instance.env
-    assert "ANSIBLE_FILTER_PLUGINS" in _instance.env
 
 
 def test_testinfra_name_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103

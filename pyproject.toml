@@ -93,7 +93,7 @@ arg-type-hints-in-docstring = false
 baseline = ".config/pydoclint-baseline.txt"
 check-return-types = false
 check-yield-types = false
-exclude = '\.cache|\.git|\.tox|build|out|venv'
+exclude = '\.ansible|\.cache|\.git|\.tox|build|out|venv'
 quiet = true # no need to print out the files being checked
 should-document-private-class-attributes = true
 show-filenames-in-every-violation-message = true
@@ -344,13 +344,13 @@ fail-on = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "-ra --showlocals --durations=10"
+addopts = "-ra --showlocals --durations=10 --instafail"
 cache_dir = "./.cache/.pytest"
 markers = [
   "serial: Run this test serially via filelock.",
   "extensive: marks tests that we want to skip by default, as they are indirectly covered by other tests"
 ]
-norecursedirs = ["scenarios"]
+norecursedirs = ["scenarios", ".ansible"]
 testpaths = "tests"
 verbosity_assertions = 2
 
