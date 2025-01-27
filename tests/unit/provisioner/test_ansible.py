@@ -32,7 +32,6 @@ from tests.unit.conftest import os_split  # pylint:disable=C0411
 
 
 if TYPE_CHECKING:
-    from pathlib import Path
     from unittest.mock import MagicMock, Mock
 
     from pytest_mock import MockerFixture
@@ -71,9 +70,6 @@ def _provisioner_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
             "options": {"foo": "bar", "become": True, "v": True},
             "env": {
                 "FOO": "bar",
-                "ANSIBLE_ROLES_PATH": "foo/bar",
-                "ANSIBLE_LIBRARY": "foo/bar",
-                "ANSIBLE_FILTER_PLUGINS": "foo/bar",
             },
             "inventory": {
                 "hosts": {
@@ -147,9 +143,6 @@ def test_ansible_default_env_property(instance):  # type: ignore[no-untyped-def]
     assert "MOLECULE_SCENARIO_DIRECTORY" in instance.default_env
     assert "MOLECULE_INSTANCE_CONFIG" in instance.default_env
     assert "ANSIBLE_CONFIG" in instance.env
-    assert "ANSIBLE_ROLES_PATH" in instance.env
-    assert "ANSIBLE_LIBRARY" in instance.env
-    assert "ANSIBLE_FILTER_PLUGINS" in instance.env
 
 
 def test_provisioner_name_property(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
@@ -222,48 +215,6 @@ def test_provisioner_env_property(instance):  # type: ignore[no-untyped-def]  # 
 
     assert x == instance.env["ANSIBLE_CONFIG"]
     assert instance.env["FOO"] == "bar"
-
-
-@pytest.mark.parametrize(
-    "config_instance",
-    ["_provisioner_section_data"],  # noqa: PT007
-    indirect=True,
-)
-def test_env_appends_env_property(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    x = instance._get_modules_directories()
-    x.append(
-        util.abs_path(
-            os.path.join(instance._config.scenario.directory, "foo", "bar"),  # noqa: PTH118
-        ),
-    )
-    assert x == instance.env["ANSIBLE_LIBRARY"].split(":")
-
-    x = [
-        instance._get_filter_plugin_directory(),
-        util.abs_path(
-            os.path.join(  # noqa: PTH118
-                instance._config.scenario.ephemeral_directory,
-                "plugins",
-                "filter",
-            ),
-        ),
-        util.abs_path(
-            os.path.join(instance._config.project_directory, "plugins", "filter"),  # noqa: PTH118
-        ),
-        util.abs_path(
-            os.path.join(  # noqa: PTH118
-                os.path.expanduser("~"),  # noqa: PTH111
-                ".ansible",
-                "plugins",
-                "filter",
-            ),
-        ),
-        "/usr/share/ansible/plugins/filter",
-        util.abs_path(
-            os.path.join(instance._config.scenario.directory, "foo", "bar"),  # noqa: PTH118
-        ),
-    ]
-    assert x == instance.env["ANSIBLE_FILTER_PLUGINS"].split(":")
 
 
 @pytest.mark.parametrize(
@@ -790,103 +741,6 @@ def test_get_plugin_directory(instance):  # type: ignore[no-untyped-def]  # noqa
     parts = os_split(result)
 
     assert parts[-4:] == ("molecule", "provisioner", "ansible", "plugins")
-
-
-def test_get_modules_directories_default(
-    instance: ansible.Ansible,
-    monkeypatch: pytest.MonkeyPatch,
-    test_cache_path: Path,
-) -> None:
-    """Test the default module directories.
-
-    Args:
-        instance: The instance of the config.
-        monkeypatch: The monkeypatch fixture.
-        test_cache_path: The path to the cache directory for the test.
-    """
-    monkeypatch.delenv("ANSIBLE_LIBRARY", raising=False)
-
-    paths = instance._get_modules_directories()
-    number_paths = 5
-    assert len(paths) == number_paths
-    assert paths[0].endswith("molecule/provisioner/ansible/plugins/modules")
-    assert paths[1] == f"{test_cache_path}/library"
-    assert paths[2] == f"{test_cache_path}/library"
-    assert paths[3].endswith(".ansible/plugins/modules")
-    assert paths[4] == "/usr/share/ansible/plugins/modules"
-
-
-def test_get_modules_directories_single_ansible_library(instance: ansible.Ansible, monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    monkeypatch.setenv("ANSIBLE_LIBRARY", "/abs/path/lib")
-
-    paths = instance._get_modules_directories()
-
-    assert len(paths) == 6  # noqa: PLR2004
-    assert paths[0] == "/abs/path/lib"
-
-
-def test_get_modules_directories_multi_ansible_library(instance: ansible.Ansible, monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    monkeypatch.setenv("ANSIBLE_LIBRARY", "relpath/lib:/abs/path/lib")
-
-    paths = instance._get_modules_directories()
-
-    assert len(paths) == 7  # noqa: PLR2004
-    assert paths[0].endswith("relpath/lib")
-    assert paths[1] == "/abs/path/lib"
-
-
-def test_get_filter_plugin_directory(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    result = instance._get_filter_plugin_directory()
-    parts = os_split(result)
-    x = ("molecule", "provisioner", "ansible", "plugins", "filter")
-
-    assert x == parts[-5:]
-
-
-def test_get_filter_plugins_directories_default(  # noqa: D103
-    instance: ansible.Ansible,
-    monkeypatch: pytest.MonkeyPatch,
-    test_cache_path: Path,
-) -> None:
-    monkeypatch.delenv("ANSIBLE_FILTER_PLUGINS", raising=False)
-
-    paths = instance._get_filter_plugins_directories()
-
-    number_paths = 5
-    assert len(paths) == number_paths
-    assert paths[0].endswith("molecule/provisioner/ansible/plugins/filter")
-    assert paths[1] == f"{test_cache_path}/plugins/filter"
-    assert paths[2] == f"{test_cache_path}/plugins/filter"
-    assert paths[3].endswith(".ansible/plugins/filter")
-    assert paths[4] == "/usr/share/ansible/plugins/filter"
-
-
-def test_get_filter_plugins_directories_single_ansible_filter_plugins(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    instance,
-    monkeypatch,
-):
-    monkeypatch.setenv("ANSIBLE_FILTER_PLUGINS", "/abs/path/plugins/filter")
-
-    paths = instance._get_filter_plugins_directories()
-
-    assert len(paths) == 6  # noqa: PLR2004
-    assert paths[0] == "/abs/path/plugins/filter"
-
-
-def test_get_filter_plugins_directories_multi_ansible_filter_plugins(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    instance,
-    monkeypatch,
-):
-    monkeypatch.setenv(
-        "ANSIBLE_FILTER_PLUGINS",
-        "relpath/plugins/filter:/abs/path/plugins/filter",
-    )
-
-    paths = instance._get_filter_plugins_directories()
-
-    assert len(paths) == 7  # noqa: PLR2004
-    assert paths[0].endswith("relpath/plugins/filter")
-    assert paths[1] == "/abs/path/plugins/filter"
 
 
 def test_absolute_path_for(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103

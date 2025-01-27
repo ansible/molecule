@@ -93,7 +93,7 @@ alter them when needed.
 
 Yes, roles contained in a
 [monorepo](https://en.wikipedia.org/wiki/Monorepo) with other roles are
-automatically picked up and `ANSIBLE_ROLES_PATH` is set accordingly. See
+automatically picked up. See
 [this
 page](guides/monolith.md)
 for more information.

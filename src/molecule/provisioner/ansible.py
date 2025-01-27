@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 #  Copyright (c) 2015-2018 Cisco Systems, Inc.
 
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,7 +33,6 @@ from typing import TYPE_CHECKING
 from ansible_compat.ports import cached_property
 
 from molecule import util
-from molecule.api import drivers
 from molecule.provisioner import ansible_playbook, ansible_playbooks, base
 
 
@@ -210,18 +208,6 @@ class Ansible(base.Base):
     !!! note
 
         This feature should be considered experimental.
-
-    Environment variables.  Molecule does its best to handle common Ansible
-    paths.  The defaults are as follows.
-
-    ::
-
-        ANSIBLE_ROLES_PATH:
-          $runtime_cache_dir/roles:$ephemeral_directory/roles/:$project_directory/../:~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
-        ANSIBLE_LIBRARY:
-          $ephemeral_directory/modules/:$project_directory/library/:~/.ansible/plugins/modules:/usr/share/ansible/plugins/modules
-        ANSIBLE_FILTER_PLUGINS:
-          $ephemeral_directory/plugins/filter/:$project_directory/filter/plugins/:~/.ansible/plugins/filter:/usr/share/ansible/plugins/modules
 
     Environment variables can be passed to the provisioner.  Variables in this
     section which match the names above will be appended to the above defaults,
@@ -471,81 +457,13 @@ class Ansible(base.Base):
         Returns:
             Default set of environment variables.
         """
-        # Finds if the current project is part of an ansible_collections hierarchy
-        collection_indicator = "ansible_collections"
-        # isolating test environment by injects ephemeral scenario directory on
-        # top of the collection_path_list. This prevents dependency commands
-        # from installing dependencies to user list of collections.
-        collections_path_list = [
-            util.abs_path(
-                os.path.join(  # noqa: PTH118
-                    self._config.scenario.ephemeral_directory,
-                    "collections",
-                ),
-            ),
-        ]
-        if collection_indicator in self._config.project_directory:
-            collection_path, right = self._config.project_directory.rsplit(
-                collection_indicator,
-                1,
-            )
-            collections_path_list.append(util.abs_path(collection_path))
-        collections_path_list.extend(
-            [
-                util.abs_path(
-                    os.path.join(  # noqa: PTH118
-                        os.path.expanduser("~"),  # noqa: PTH111
-                        ".ansible/collections",
-                    ),
-                ),
-                "/usr/share/ansible/collections",
-                "/etc/ansible/collections",
-            ],
-        )
-
-        if os.environ.get("ANSIBLE_COLLECTIONS_PATH", ""):
-            collections_path_list.extend(
-                list(
-                    map(
-                        util.abs_path,
-                        os.environ["ANSIBLE_COLLECTIONS_PATH"].split(":"),
-                    ),
-                ),
-            )
-
-        roles_path_list = [
-            util.abs_path(
-                os.path.join(self._config.scenario.ephemeral_directory, "roles"),  # noqa: PTH118
-            ),
-            util.abs_path(
-                os.path.join(self._config.project_directory, os.path.pardir),  # noqa: PTH118
-            ),
-            util.abs_path(
-                os.path.join(os.path.expanduser("~"), ".ansible", "roles"),  # noqa: PTH111, PTH118
-            ),
-            "/usr/share/ansible/roles",
-            "/etc/ansible/roles",
-        ]
-
-        if os.environ.get("ANSIBLE_ROLES_PATH", ""):
-            roles_path_list.extend(
-                list(map(util.abs_path, os.environ["ANSIBLE_ROLES_PATH"].split(":"))),
-            )
-
         env = util.merge_dicts(
             dict(os.environ),
             {
                 "ANSIBLE_CONFIG": self.config_file,
-                "ANSIBLE_ROLES_PATH": ":".join(roles_path_list),
-                "ANSIBLE_COLLECTIONS_PATH": ":".join(collections_path_list),
-                "ANSIBLE_LIBRARY": ":".join(self._get_modules_directories()),
-                "ANSIBLE_FILTER_PLUGINS": ":".join(
-                    self._get_filter_plugins_directories(),
-                ),
             },
         )
         env = util.merge_dicts(env, self._config.env)
-
         return env  # noqa: RET504
 
     @property
@@ -607,25 +525,6 @@ class Ansible(base.Base):
         env = self._config.config["provisioner"]["env"].copy()
         # ensure that all keys and values are strings
         env = {str(k): str(v) for k, v in env.items()}
-
-        library_path = default_env["ANSIBLE_LIBRARY"]
-        filter_plugins_path = default_env["ANSIBLE_FILTER_PLUGINS"]
-
-        try:
-            path = self._absolute_path_for(env, "ANSIBLE_LIBRARY")
-            library_path = f"{library_path}:{path}"
-        except KeyError:
-            pass
-
-        try:
-            path = self._absolute_path_for(env, "ANSIBLE_FILTER_PLUGINS")
-            filter_plugins_path = f"{filter_plugins_path}:{path}"
-        except KeyError:
-            pass
-
-        env["ANSIBLE_LIBRARY"] = library_path
-        env["ANSIBLE_FILTER_PLUGINS"] = filter_plugins_path
-
         return util.merge_dicts(default_env, env)
 
     @property
@@ -1023,97 +922,6 @@ class Ansible(base.Base):
 
     def _get_plugin_directory(self) -> str:
         return os.path.join(self.directory, "plugins")  # noqa: PTH118
-
-    def _get_modules_directories(self) -> list[str]:
-        """Return list of ansible module includes directories.
-
-        Adds modules directory from molecule and its plugins.
-
-        Returns:
-            List of module includes directories.
-        """
-        paths: list[str | None] = []
-        if os.environ.get("ANSIBLE_LIBRARY"):
-            paths = list(map(util.abs_path, os.environ["ANSIBLE_LIBRARY"].split(":")))
-
-        paths.append(
-            util.abs_path(os.path.join(self._get_plugin_directory(), "modules")),  # noqa: PTH118
-        )
-
-        for d in drivers().values():
-            p = d.modules_dir()
-            if p:
-                paths.append(p)
-        paths.extend(
-            [
-                util.abs_path(
-                    os.path.join(  # noqa: PTH118
-                        self._config.scenario.ephemeral_directory,
-                        "library",
-                    ),
-                ),
-                util.abs_path(
-                    os.path.join(self._config.project_directory, "library"),  # noqa: PTH118
-                ),
-                util.abs_path(
-                    os.path.join(  # noqa: PTH118
-                        os.path.expanduser("~"),  # noqa: PTH111
-                        ".ansible",
-                        "plugins",
-                        "modules",
-                    ),
-                ),
-                "/usr/share/ansible/plugins/modules",
-            ],
-        )
-
-        return [path for path in paths if path is not None]
-
-    def _get_filter_plugin_directory(self) -> str:
-        return util.abs_path(os.path.join(self._get_plugin_directory(), "filter"))  # noqa: PTH118
-
-    def _get_filter_plugins_directories(self) -> list[str]:
-        """Return list of ansible filter plugins includes directories.
-
-        Returns:
-            List of filter includes directories.
-        """
-        paths: list[str | None] = []
-        if os.environ.get("ANSIBLE_FILTER_PLUGINS"):
-            paths = list(
-                map(util.abs_path, os.environ["ANSIBLE_FILTER_PLUGINS"].split(":")),
-            )
-
-        paths.extend(
-            [
-                self._get_filter_plugin_directory(),
-                util.abs_path(
-                    os.path.join(  # noqa: PTH118
-                        self._config.scenario.ephemeral_directory,
-                        "plugins",
-                        "filter",
-                    ),
-                ),
-                util.abs_path(
-                    os.path.join(  # noqa: PTH118
-                        self._config.project_directory,
-                        "plugins",
-                        "filter",
-                    ),
-                ),
-                util.abs_path(
-                    os.path.join(  # noqa: PTH118
-                        os.path.expanduser("~"),  # noqa: PTH111
-                        ".ansible",
-                        "plugins",
-                        "filter",
-                    ),
-                ),
-                "/usr/share/ansible/plugins/filter",
-            ],
-        )
-
-        return [path for path in paths if path is not None]
 
     def _absolute_path_for(self, env: dict[str, str], key: str) -> str:
         return ":".join([self.abs_path(p) for p in env[key].split(":")])
