@@ -128,16 +128,16 @@ managers.
 
 ### Ansible Galaxy
 
-::: molecule.dependency.ansible_galaxy.AnsibleGalaxy
+::: molecule.dependency.AnsibleDependency
 
 ### Shell
 
-::: molecule.dependency.shell.Shell
+::: molecule.dependency.ShellDependency
 
 ## Driver
 
-Molecule uses [Ansible](#ansible-1) to manage instances to operate on.
-Molecule supports any provider [Ansible](#ansible-1) supports. This work
+Molecule uses Ansible to manage instances to operate on.
+Molecule supports any provider Ansible supports. This work
 is offloaded to the `provisioner`.
 
 The driver's name is specified in `molecule.yml`, and can

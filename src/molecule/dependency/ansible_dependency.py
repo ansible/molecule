@@ -20,7 +20,6 @@
 """Base Ansible Galaxy dependency module."""
 from __future__ import annotations
 
-import abc
 import copy
 import logging
 import os
@@ -41,7 +40,7 @@ if TYPE_CHECKING:
 LOG = logging.getLogger(__name__)
 
 
-class AnsibleGalaxyBase(base.Base):
+class AnsibleDependency(base.Base):
     """Ansible Galaxy dependency base class.
 
     Attributes:
@@ -61,16 +60,16 @@ class AnsibleGalaxyBase(base.Base):
         super().__init__(config)
         self._sh_command = []
 
-        self.command = "ansible-galaxy"
+        self.command = "ade"
 
     @property
-    @abc.abstractmethod
     def requirements_file(self) -> str:  # cover
         """Path to requirements file.
 
         Returns:
             Path to the requirements file for this dependency.
         """
+        return "requirements.yml"
 
     @property
     def default_options(self) -> MutableMapping[str, str | bool]:
@@ -140,7 +139,7 @@ class AnsibleGalaxyBase(base.Base):
         return util.merge_dicts(env, self._config.env)
 
     def bake(self) -> None:
-        """Bake an ``ansible-galaxy`` command so it's ready to execute and returns None."""
+        """Bake an ``ade`` command so it's ready to execute and returns None."""
         options = self.options
         verbose_flag = util.verbose_flag(options)
 

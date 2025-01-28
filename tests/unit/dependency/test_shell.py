@@ -46,7 +46,7 @@ def _instance(  # type: ignore[no-untyped-def]  # noqa: ANN202
     patched_config_validate,
     config_instance: config.Config,
 ):
-    return shell.Shell(config_instance)
+    return shell.ShellDependency(config_instance)
 
 
 def test_shell_config_private_member(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
