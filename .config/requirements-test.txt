@@ -6,7 +6,6 @@ docker >= 7.1.0 # testing
 filelock >= 3.9.0
 mypy
 pexpect >= 4.9.0, < 5
-pip-tools
 pre-commit
 pydoclint
 pylint
