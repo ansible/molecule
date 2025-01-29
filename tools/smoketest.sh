@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ANSIBLE=$(pipdeptree --reverse -p ansible)
+ANSIBLE=$(uv pip tree --invert --package ansible-core --strict)
 
 if [ -z "$ANSIBLE" ]; then
     echo "Ansible dependency not detected."

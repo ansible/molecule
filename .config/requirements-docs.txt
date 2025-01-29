@@ -1,3 +1,2 @@
 mkdocs-ansible>=24.3.0
-pipdeptree>=2.4.0
 linkchecker>=10.4.0
