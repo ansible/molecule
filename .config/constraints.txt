@@ -103,7 +103,6 @@ requests==2.32.3          # via docker, linkchecker, mkdocs-htmlproofer-plugin, 
 rich==13.9.4              # via enrich, molecule (pyproject.toml)
 rpds-py==0.22.3           # via jsonschema, referencing
 ruamel-yaml==0.18.10      # via ansible-lint
-ruamel-yaml-clib==0.2.12  # via ruamel-yaml
 ruff==0.9.3               # via molecule (pyproject.toml)
 six==1.17.0               # via python-dateutil
 soupsieve==2.6            # via beautifulsoup4
@@ -130,4 +129,5 @@ zipp==3.21.0              # via importlib-metadata
 # The following packages were excluded from the output:
 # ansible-core
 # resolvelib
+# ruamel-yaml-clib
 # typing-extensions
