@@ -60,8 +60,9 @@ class Test(base.Base):
 @click.option(
     "--scenario-name",
     "-s",
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
+    multiple=True,
+    default=[base.MOLECULE_DEFAULT_SCENARIO_NAME],
+    help=f"Name of the scenario to target. May be specified multiple times. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
 @click.option(
     "--platform-name",
@@ -82,6 +83,12 @@ class Test(base.Base):
     help="Test all scenarios. Default is False.",
 )
 @click.option(
+    "--exclude",
+    "-e",
+    multiple=True,
+    help="Name of the scenario to exclude from running. May be specified multiple times.",
+)
+@click.option(
     "--destroy",
     type=click.Choice(["always", "never"]),
     default="always",
@@ -95,7 +102,8 @@ class Test(base.Base):
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
 def test(  # noqa: PLR0913
     ctx: click.Context,
-    scenario_name: str | None,
+    scenario_name: list[str],
+    exclude: list[str],
     driver_name: str,
     __all: bool,  # noqa: FBT001
     destroy: Literal["always", "never"],
@@ -108,6 +116,7 @@ def test(  # noqa: PLR0913
     Args:
         ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
+        exclude: Name of the scenarios to avoid targeting.
         driver_name: Name of the driver to use.
         __all: Whether molecule should target scenario_name or all scenarios.
         destroy: The destroy strategy to use.
@@ -131,4 +140,4 @@ def test(  # noqa: PLR0913
     if parallel:
         util.validate_parallel_cmd_args(command_args)
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)
+    base.execute_cmdline_scenarios(scenario_name, exclude, args, command_args, ansible_args)

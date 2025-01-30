@@ -99,7 +99,8 @@ class Base(abc.ABC):
 
 
 def execute_cmdline_scenarios(
-    scenario_name: str | None,
+    scenario_names: list[str] | None,
+    excludes: list[str],
     args: MoleculeArgs,
     command_args: CommandArgs,
     ansible_args: tuple[str, ...] = (),
@@ -113,7 +114,8 @@ def execute_cmdline_scenarios(
     to generate the scenario(s) configuration.
 
     Args:
-        scenario_name: Name of scenario to run, or ``None`` to run all.
+        scenario_names: Name of scenarios to run, or ``None`` to run all.
+        excludes: Name of scenarios to not run.
         args: ``args`` dict from ``click`` command context
         command_args: dict of command arguments, including the target
         ansible_args: Optional tuple of arguments to pass to the `ansible-playbook` command
@@ -122,19 +124,31 @@ def execute_cmdline_scenarios(
         SystemExit: If scenario exits prematurely.
     """
     glob_str = MOLECULE_GLOB
-    if scenario_name:
+    if scenario_names is None:
+        scenario_names = ["*"]
+
+    configs: list[config.Config] = []
+    for scenario_name in scenario_names:
         glob_str = glob_str.replace("*", scenario_name)
+        configs.extend(
+            config
+            for config in get_configs(args, command_args, ansible_args, glob_str)
+            if config.scenario.name not in excludes
+        )
+
     scenarios = molecule.scenarios.Scenarios(
-        get_configs(args, command_args, ansible_args, glob_str),
-        scenario_name,
+        configs,
+        scenario_names,
     )
 
-    if scenario_name and scenarios:
-        LOG.info(
-            "%s scenario test matrix: %s",
-            scenario_name,
-            ", ".join(scenarios.sequence(scenario_name)),
-        )
+    # Should do something with this?
+    for scenario_name in scenario_names:
+        if scenario_name != "*" and scenarios:
+            LOG.info(
+                "%s scenario test matrix: %s",
+                scenario_name,
+                ", ".join(scenarios.sequence(scenario_name)),
+            )
 
     for scenario in scenarios:
         if scenario.config.config["prerun"]:

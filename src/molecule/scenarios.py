@@ -41,16 +41,16 @@ class Scenarios:
     def __init__(
         self,
         configs: list[Config],
-        scenario_name: str | None = None,
+        scenario_names: list[str] | None = None,
     ) -> None:
         """Initialize a new scenarios class and returns None.
 
         Args:
             configs: Molecule config instances.
-            scenario_name: The name of the scenario.
+            scenario_names: The names of the scenarios.
         """
         self._configs = configs
-        self._scenario_name = scenario_name
+        self._scenario_names = [] if scenario_names is None else scenario_names
         self._scenarios = self.all
 
     def __iter__(self) -> Scenarios:
@@ -81,7 +81,7 @@ class Scenarios:
         Returns:
             All Scenario objects.
         """
-        if self._scenario_name:
+        if self._scenario_names:
             scenarios = self._filter_for_scenario()
             self._verify()
 
@@ -123,8 +123,8 @@ class Scenarios:
     def _verify(self) -> None:
         """Verify the specified scenario was found."""
         scenario_names = [c.scenario.name for c in self._configs]
-        if self._scenario_name not in scenario_names:
-            msg = f"Scenario '{self._scenario_name}' not found.  Exiting."
+        if missing_names := set(self._scenario_names).difference(scenario_names):
+            msg = f"Scenario(s) '{missing_names}' not found.  Exiting."
             util.sysexit_with_message(msg)
 
     def _filter_for_scenario(self) -> list[Scenario]:
@@ -133,7 +133,7 @@ class Scenarios:
         Returns:
             list
         """
-        return [c.scenario for c in self._configs if c.scenario.name == self._scenario_name]
+        return [c.scenario for c in self._configs if c.scenario.name in self._scenario_names]
 
     def _get_matrix(self) -> dict[str, dict[str, list[str]]]:
         """Build a matrix of scenarios and step sequences.

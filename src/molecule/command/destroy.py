@@ -65,8 +65,9 @@ class Destroy(base.Base):
 @click.option(
     "--scenario-name",
     "-s",
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
+    multiple=True,
+    default=[base.MOLECULE_DEFAULT_SCENARIO_NAME],
+    help=f"Name of the scenario to target. May be specified multiple times. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
 @click.option(
     "--driver-name",
@@ -79,6 +80,12 @@ class Destroy(base.Base):
     "__all",
     default=MOLECULE_PARALLEL,
     help="Destroy all scenarios. Default is False.",
+)
+@click.option(
+    "--exclude",
+    "-e",
+    multiple=True,
+    help="Name of the scenario to exclude from running. May be specified multiple times.",
 )
 @click.option(
     "--parallel/--no-parallel",
