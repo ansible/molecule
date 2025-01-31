@@ -124,33 +124,34 @@ def execute_cmdline_scenarios(
         SystemExit: If scenario exits prematurely.
     """
     glob_str = MOLECULE_GLOB
-    if scenario_names is None:
-        scenario_names = ["*"]
     if excludes is None:
         excludes = []
 
     configs: list[config.Config] = []
-    for scenario_name in scenario_names:
-        glob_str = glob_str.replace("*", scenario_name)
-        configs.extend(
-            config
-            for config in get_configs(args, command_args, ansible_args, glob_str)
-            if config.scenario.name not in excludes
-        )
+    if scenario_names is None:
+        configs = get_configs(args, command_args, ansible_args, glob_str)
+    else:
+        for scenario_name in scenario_names:
+            glob_str = glob_str.replace("*", scenario_name)
+            configs.extend(
+                config
+                for config in get_configs(args, command_args, ansible_args, glob_str)
+                if config.scenario.name not in excludes
+            )
 
     scenarios = molecule.scenarios.Scenarios(
         configs,
         scenario_names,
     )
 
-    # Should do something with this?
-    for scenario_name in scenario_names:
-        if scenario_name != "*" and scenarios:
-            LOG.info(
-                "%s scenario test matrix: %s",
-                scenario_name,
-                ", ".join(scenarios.sequence(scenario_name)),
-            )
+    if scenario_names is not None:
+        for scenario_name in scenario_names:
+            if scenario_name != "*" and scenarios:
+                LOG.info(
+                    "%s scenario test matrix: %s",
+                    scenario_name,
+                    ", ".join(scenarios.sequence(scenario_name)),
+                )
 
     for scenario in scenarios:
         if scenario.config.config["prerun"]:
