@@ -252,7 +252,7 @@ def test_execute_cmdline_scenarios_prune(
         patched_execute_subcommand: Mocked execute_subcommand function.
         patched_prune: Mocked prune function.
     """
-    scenario_name = "default"
+    scenario_name = ["default"]
     args: MoleculeArgs = {}
     command_args: CommandArgs = {"destroy": "always", "subcommand": "test"}
 
@@ -273,7 +273,7 @@ def test_execute_cmdline_scenarios_no_prune(
         patched_prune: Mocked prune function.
         patched_execute_subcommand: Mocked execute_subcommand function.
     """
-    scenario_name = "default"
+    scenario_name = ["default"]
     args: MoleculeArgs = {}
     command_args: CommandArgs = {"destroy": "never", "subcommand": "test"}
 
@@ -301,7 +301,7 @@ def test_execute_cmdline_scenarios_exit_destroy(
         patched_execute_subcommand: Mocked execute_subcommand function.
         patched_sysexit: Mocked util.sysexit function.
     """
-    scenario_name = "default"
+    scenario_name = ["default"]
     args: MoleculeArgs = {}
     command_args: CommandArgs = {"destroy": "always", "subcommand": "test"}
     patched_execute_scenario.side_effect = SystemExit()
@@ -335,7 +335,7 @@ def test_execute_cmdline_scenarios_exit_nodestroy(
         patched_prune: Mocked prune function.
         patched_sysexit: Mocked util.sysexit function.
     """
-    scenario_name = "default"
+    scenario_name = ["default"]
     args: MoleculeArgs = {}
     command_args: CommandArgs = {"destroy": "never", "subcommand": "test"}
 
