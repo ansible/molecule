@@ -124,7 +124,11 @@ class Scenarios:
         """Verify the specified scenario was found."""
         scenario_names = [c.scenario.name for c in self._configs]
         if missing_names := set(self._scenario_names).difference(scenario_names):
-            msg = f"Scenario(s) '{missing_names}' not found.  Exiting."
+            scenario = "Scenario"
+            if len(missing_names) > 1:
+                scenario += "s"
+            missing = ", ".join(missing_names)
+            msg = f"{scenario} '{missing}' not found.  Exiting."
             util.sysexit_with_message(msg)
 
     def _filter_for_scenario(self) -> list[Scenario]:

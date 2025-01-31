@@ -49,7 +49,7 @@ def test_configs_private_member(  # noqa: D103
 def test_scenario_name_private_member(  # noqa: D103
     _instance: scenarios.Scenarios,  # noqa: PT019
 ) -> None:
-    assert _instance._scenario_name is None
+    assert _instance._scenario_names is None
 
 
 def test_scenarios_private_member(  # noqa: D103
@@ -80,7 +80,7 @@ def test_all_property(_instance: scenarios.Scenarios) -> None:  # noqa: PT019, D
 def test_all_filters_on_scenario_name_property(  # noqa: D103
     _instance: scenarios.Scenarios,  # noqa: PT019
 ) -> None:
-    _instance._scenario_name = "default"
+    _instance._scenario_names = ["default"]
 
     assert len(_instance.all) == 1
 
@@ -126,7 +126,7 @@ foo:
 def test_verify_does_not_raise_when_found(  # noqa: D103
     _instance: scenarios.Scenarios,  # noqa: PT019
 ) -> None:
-    _instance._scenario_name = "default"
+    _instance._scenario_names = ["default"]
 
     _instance._verify()
 
@@ -135,7 +135,7 @@ def test_verify_raises_when_scenario_not_found(  # noqa: D103
     _instance: scenarios.Scenarios,  # noqa: PT019
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    _instance._scenario_name = "invalid"
+    _instance._scenario_names = ["invalid"]
     with pytest.raises(SystemExit) as e:
         _instance._verify()
 
@@ -148,12 +148,12 @@ def test_verify_raises_when_scenario_not_found(  # noqa: D103
 def test_filter_for_scenario(  # noqa: D103
     _instance: scenarios.Scenarios,  # noqa: PT019
 ) -> None:
-    _instance._scenario_name = "default"
+    _instance._scenario_names = ["default"]
     result = _instance._filter_for_scenario()
     assert len(result) == 1
     assert result[0].name == "default"
 
-    _instance._scenario_name = "invalid"
+    _instance._scenario_names = ["invalid"]
     result = _instance._filter_for_scenario()
     assert result == []
 

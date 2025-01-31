@@ -94,7 +94,8 @@ class Destroy(base.Base):
 )
 def destroy(
     ctx: click.Context,
-    scenario_name: str | None,
+    scenario_name: list[str] | None,
+    exclude: list[str],
     driver_name: str,
     __all: bool,  # noqa: FBT001
     parallel: bool,  # noqa: FBT001
@@ -104,6 +105,7 @@ def destroy(
     Args:
         ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
+        exclude: Name of the scenarios to avoid targeting.
         driver_name: Molecule driver to use.
         __all: Whether molecule should target scenario_name or all scenarios.
         parallel: Whether the scenario(s) should be run in parallel mode.
@@ -122,5 +124,4 @@ def destroy(
     if parallel:
         util.validate_parallel_cmd_args(command_args)
 
-    scenarios = None if scenario_name is None else [scenario_name]
-    base.execute_cmdline_scenarios(scenarios, args, command_args)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args, excludes=exclude)
