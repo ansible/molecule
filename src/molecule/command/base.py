@@ -100,10 +100,10 @@ class Base(abc.ABC):
 
 def execute_cmdline_scenarios(
     scenario_names: list[str] | None,
-    excludes: list[str],
     args: MoleculeArgs,
     command_args: CommandArgs,
     ansible_args: tuple[str, ...] = (),
+    excludes: list[str] | None = None,
 ) -> None:
     """Execute scenario sequences based on parsed command-line arguments.
 
@@ -115,10 +115,10 @@ def execute_cmdline_scenarios(
 
     Args:
         scenario_names: Name of scenarios to run, or ``None`` to run all.
-        excludes: Name of scenarios to not run.
         args: ``args`` dict from ``click`` command context
         command_args: dict of command arguments, including the target
         ansible_args: Optional tuple of arguments to pass to the `ansible-playbook` command
+        excludes: Name of scenarios to not run.
 
     Raises:
         SystemExit: If scenario exits prematurely.
@@ -126,6 +126,8 @@ def execute_cmdline_scenarios(
     glob_str = MOLECULE_GLOB
     if scenario_names is None:
         scenario_names = ["*"]
+    if excludes is None:
+        excludes = []
 
     configs: list[config.Config] = []
     for scenario_name in scenario_names:

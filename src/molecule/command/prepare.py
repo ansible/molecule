@@ -154,4 +154,4 @@ def prepare(
         "force": force,
     }
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    base.execute_cmdline_scenarios([scenario_name], args, command_args)

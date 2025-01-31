@@ -122,4 +122,5 @@ def destroy(
     if parallel:
         util.validate_parallel_cmd_args(command_args)
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    scenarios = None if scenario_name is None else [scenario_name]
+    base.execute_cmdline_scenarios(scenarios, args, command_args)

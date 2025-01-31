@@ -102,7 +102,7 @@ class Test(base.Base):
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
 def test(  # noqa: PLR0913
     ctx: click.Context,
-    scenario_name: list[str],
+    scenario_name: list[str] | None,
     exclude: list[str],
     driver_name: str,
     __all: bool,  # noqa: FBT001
@@ -140,4 +140,4 @@ def test(  # noqa: PLR0913
     if parallel:
         util.validate_parallel_cmd_args(command_args)
 
-    base.execute_cmdline_scenarios(scenario_name, exclude, args, command_args, ansible_args)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args, exclude)
