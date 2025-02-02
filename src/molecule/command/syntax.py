@@ -71,4 +71,4 @@ def syntax(
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand}
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    base.execute_cmdline_scenarios([scenario_name], args, command_args)

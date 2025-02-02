@@ -146,6 +146,6 @@ def login(
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand, "host": host}
 
-    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
+    s = scenarios.Scenarios(base.get_configs(args, command_args), [scenario_name])
     for scenario in s.all:
         base.execute_subcommand(scenario.config, subcommand)
