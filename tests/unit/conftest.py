@@ -169,7 +169,7 @@ def patched_add_or_update_vars(mocker):  # type: ignore[no-untyped-def]  # noqa:
 
 @pytest.fixture
 def patched_ansible_galaxy(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    return mocker.patch("molecule.dependency.ansible_galaxy.AnsibleGalaxy.execute")
+    return mocker.patch("molecule.dependency.ansible_dependency.AnsibleDependency.execute")
 
 
 @pytest.fixture
