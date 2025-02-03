@@ -89,7 +89,7 @@ def _model_provisioner_allows_ansible_section_data():  # type: ignore[no-untyped
 
 @pytest.mark.parametrize(
     "config",
-    [("_model_provisioner_allows_ansible_section_data")],  # noqa: PT007
+    ["_model_provisioner_allows_ansible_section_data"],  # noqa: PT007
     indirect=True,
 )
 def test_provisioner_allows_name(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
