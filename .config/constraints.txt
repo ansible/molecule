@@ -18,7 +18,7 @@ cffi==1.17.1              # via cairocffi, cryptography
 cfgv==3.4.0               # via pre-commit
 chardet==5.2.0            # via tox
 charset-normalizer==3.4.1  # via requests
-click==8.1.8              # via black, click-help-colors, mkdocs, mkdocstrings, pip-tools, pydoclint, molecule (pyproject.toml)
+click==8.1.8              # via black, click-help-colors, mkdocs, pip-tools, pydoclint, molecule (pyproject.toml)
 click-help-colors==0.9.4  # via molecule (pyproject.toml)
 colorama==0.4.6           # via griffe, mkdocs-material, tox
 coverage==7.6.11          # via molecule (pyproject.toml)
@@ -61,7 +61,7 @@ mkdocs==1.6.1             # via mkdocs-ansible, mkdocs-autorefs, mkdocs-gen-file
 mkdocs-ansible==24.12.0   # via molecule (pyproject.toml)
 mkdocs-autorefs==1.3.0    # via mkdocstrings, mkdocstrings-python
 mkdocs-gen-files==0.5.0   # via mkdocs-ansible
-mkdocs-get-deps==0.2.0    # via mkdocs
+mkdocs-get-deps==0.2.0    # via mkdocs, mkdocstrings
 mkdocs-htmlproofer-plugin==1.3.0  # via mkdocs-ansible
 mkdocs-macros-plugin==1.3.7  # via mkdocs-ansible
 mkdocs-material==9.6.3    # via mkdocs-ansible
@@ -80,7 +80,7 @@ pexpect==4.9.0            # via molecule (pyproject.toml)
 pillow==11.1.0            # via cairosvg, mkdocs-ansible
 pip-tools==7.4.1          # via molecule (pyproject.toml)
 pipdeptree==2.25.0        # via molecule (pyproject.toml)
-platformdirs==4.3.6       # via black, mkdocs-get-deps, mkdocstrings, pylint, tox, virtualenv
+platformdirs==4.3.6       # via black, mkdocs-get-deps, pylint, tox, virtualenv
 pluggy==1.5.0             # via pytest, tox, molecule (pyproject.toml)
 pre-commit==4.1.0         # via molecule (pyproject.toml)
 ptyprocess==0.7.0         # via pexpect
@@ -101,7 +101,7 @@ python-dateutil==2.9.0.post0  # via ghp-import, mkdocs-macros-plugin
 python-slugify==8.0.4     # via mkdocs-monorepo-plugin
 pyyaml==6.0.2             # via ansible-compat, ansible-core, ansible-lint, mkdocs, mkdocs-get-deps, mkdocs-macros-plugin, pre-commit, pymdown-extensions, pyyaml-env-tag, yamllint, molecule (pyproject.toml)
 pyyaml-env-tag==0.1       # via mkdocs
-referencing==0.36.2       # via jsonschema, jsonschema-specifications, types-jsonschema
+referencing==0.36.2       # via ansible-lint, jsonschema, jsonschema-specifications, types-jsonschema
 regex==2024.11.6          # via mkdocs-material
 requests==2.32.3          # via docker, linkchecker, mkdocs-htmlproofer-plugin, mkdocs-material, molecule (pyproject.toml)
 rich==13.9.4              # via enrich, molecule (pyproject.toml)
