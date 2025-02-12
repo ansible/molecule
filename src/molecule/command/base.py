@@ -139,19 +139,7 @@ def execute_cmdline_scenarios(
                 if config.scenario.name not in excludes
             )
 
-    scenarios = molecule.scenarios.Scenarios(
-        configs,
-        scenario_names,
-    )
-
-    if scenario_names is not None:
-        for scenario_name in scenario_names:
-            if scenario_name != "*" and scenarios:
-                LOG.info(
-                    "%s scenario test matrix: %s",
-                    scenario_name,
-                    ", ".join(scenarios.sequence(scenario_name)),
-                )
+    scenarios = _generate_scenarios(scenario_names, configs)
 
     for scenario in scenarios:
         if scenario.config.config["prerun"]:
@@ -186,6 +174,36 @@ def execute_cmdline_scenarios(
                 util.sysexit()
             else:
                 raise
+
+
+def _generate_scenarios(
+    scenario_names: list[str] | None,
+    configs: list[config.Config],
+) -> molecule.scenarios.Scenarios:
+    """Generate Scenarios object from names and configs.
+
+    Args:
+        scenario_names: Names of scenarios to include.
+        configs: List of Config objects to consider.
+
+    Returns:
+        Combined Scenarios object.
+    """
+    scenarios = molecule.scenarios.Scenarios(
+        configs,
+        scenario_names,
+    )
+
+    if scenario_names is not None:
+        for scenario_name in scenario_names:
+            if scenario_name != "*" and scenarios:
+                LOG.info(
+                    "%s scenario test matrix: %s",
+                    scenario_name,
+                    ", ".join(scenarios.sequence(scenario_name)),
+                )
+
+    return scenarios
 
 
 def execute_subcommand(
