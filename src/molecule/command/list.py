@@ -91,7 +91,7 @@ def list_(
     statuses = []
     s = scenarios.Scenarios(
         base.get_configs(args, command_args, glob_str=MOLECULE_GLOB),
-        [scenario_name],
+        None if scenario_name is None else [scenario_name],
     )
     for scenario in s:
         statuses.extend(base.execute_subcommand(scenario.config, subcommand))

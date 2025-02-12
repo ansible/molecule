@@ -49,7 +49,7 @@ def test_configs_private_member(  # noqa: D103
 def test_scenario_name_private_member(  # noqa: D103
     _instance: scenarios.Scenarios,  # noqa: PT019
 ) -> None:
-    assert _instance._scenario_names is None
+    assert _instance._scenario_names == []
 
 
 def test_scenarios_private_member(  # noqa: D103
