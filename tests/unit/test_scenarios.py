@@ -145,6 +145,20 @@ def test_verify_raises_when_scenario_not_found(  # noqa: D103
     assert msg in caplog.text
 
 
+def test_verify_raises_when_multiple_scenarios_not_found(  # noqa: D103
+    _instance: scenarios.Scenarios,  # noqa: PT019
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    _instance._scenario_names = ["invalid", "also invalid"]
+    with pytest.raises(SystemExit) as e:
+        _instance._verify()
+
+    assert e.value.code == 1
+
+    msg = "Scenarios 'also invalid, invalid' not found.  Exiting."
+    assert msg in caplog.text
+
+
 def test_filter_for_scenario(  # noqa: D103
     _instance: scenarios.Scenarios,  # noqa: PT019
 ) -> None:
