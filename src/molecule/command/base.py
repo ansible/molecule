@@ -123,21 +123,22 @@ def execute_cmdline_scenarios(
     Raises:
         SystemExit: If scenario exits prematurely.
     """
-    glob_str = MOLECULE_GLOB
     if excludes is None:
         excludes = []
 
     configs: list[config.Config] = []
     if scenario_names is None:
-        configs = get_configs(args, command_args, ansible_args, glob_str)
+        configs = [
+            config
+            for config in get_configs(args, command_args, ansible_args, MOLECULE_GLOB)
+            if config.scenario.name not in excludes
+        ]
     else:
+        # filter out excludes
+        scenario_names = [name for name in scenario_names if name not in excludes]
         for scenario_name in scenario_names:
-            glob_str = glob_str.replace("*", scenario_name)
-            configs.extend(
-                config
-                for config in get_configs(args, command_args, ansible_args, glob_str)
-                if config.scenario.name not in excludes
-            )
+            glob_str = MOLECULE_GLOB.replace("*", scenario_name)
+            configs.extend(get_configs(args, command_args, ansible_args, glob_str))
 
     scenarios = _generate_scenarios(scenario_names, configs)
 
