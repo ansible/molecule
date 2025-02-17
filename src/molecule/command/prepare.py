@@ -117,14 +117,27 @@ class Prepare(base.Base):
 @click.option(
     "--scenario-name",
     "-s",
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
+    multiple=True,
+    default=[base.MOLECULE_DEFAULT_SCENARIO_NAME],
+    help=f"Name of the scenario to target. May be specified multiple times. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
 @click.option(
     "--driver-name",
     "-d",
     type=click.Choice([str(s) for s in drivers()]),
     help=f"Name of driver to use. ({DEFAULT_DRIVER})",
+)
+@click.option(
+    "--all/--no-all",
+    "__all",
+    default=False,
+    help="Prepare all scenarios. Default is False.",
+)
+@click.option(
+    "--exclude",
+    "-e",
+    multiple=True,
+    help="Name of the scenario to exclude from running. May be specified multiple times.",
 )
 @click.option(
     "--force/--no-force",
@@ -134,8 +147,10 @@ class Prepare(base.Base):
 )
 def prepare(
     ctx: click.Context,
-    scenario_name: str,
+    scenario_name: list[str] | None,
+    exclude: list[str],
     driver_name: str,
+    __all: bool,  # noqa: FBT001
     force: bool,  # noqa: FBT001
 ) -> None:  # pragma: no cover
     """Use the provisioner to prepare the instances into a particular starting state.
@@ -143,7 +158,9 @@ def prepare(
     Args:
         ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
+        exclude: Name of the scenarios to avoid targeting.
         driver_name: Name of the Molecule driver to use.
+        __all: Whether molecule should target scenario_name or all scenarios.
         force: Whether to use force mode.
     """
     args: MoleculeArgs = ctx.obj.get("args")
@@ -154,4 +171,7 @@ def prepare(
         "force": force,
     }
 
-    base.execute_cmdline_scenarios([scenario_name], args, command_args)
+    if __all:
+        scenario_name = None
+
+    base.execute_cmdline_scenarios(scenario_name, args, command_args, excludes=exclude)
