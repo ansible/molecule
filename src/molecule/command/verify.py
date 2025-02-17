@@ -53,21 +53,41 @@ class Verify(base.Base):
 @click.option(
     "--scenario-name",
     "-s",
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
+    multiple=True,
+    default=[base.MOLECULE_DEFAULT_SCENARIO_NAME],
+    help=f"Name of the scenario to target. May be specified multiple times. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
+)
+@click.option(
+    "--all/--no-all",
+    "__all",
+    default=False,
+    help="Verify all scenarios. Default is False.",
+)
+@click.option(
+    "--exclude",
+    "-e",
+    multiple=True,
+    help="Name of the scenario to exclude from running. May be specified multiple times.",
 )
 def verify(
     ctx: click.Context,
-    scenario_name: str = "default",
+    scenario_name: list[str] | None,
+    exclude: list[str],
+    __all: bool,  # noqa: FBT001
 ) -> None:  # pragma: no cover
     """Run automated tests against instances.
 
     Args:
         ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
+        exclude: Name of the scenarios to avoid targeting.
+        __all: Whether molecule should target scenario_name or all scenarios.
     """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand}
 
-    base.execute_cmdline_scenarios([scenario_name], args, command_args)
+    if __all:
+        scenario_name = None
+
+    base.execute_cmdline_scenarios(scenario_name, args, command_args, excludes=exclude)
