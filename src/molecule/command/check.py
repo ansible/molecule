@@ -57,8 +57,21 @@ class Check(base.Base):
 @click.option(
     "--scenario-name",
     "-s",
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
+    multiple=True,
+    default=[base.MOLECULE_DEFAULT_SCENARIO_NAME],
+    help=f"Name of the scenario to target. May be specified multiple times. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
+)
+@click.option(
+    "--all/--no-all",
+    "__all",
+    default=False,
+    help="Check all scenarios. Default is False.",
+)
+@click.option(
+    "--exclude",
+    "-e",
+    multiple=True,
+    help="Name of the scenario to exclude from running. May be specified multiple times.",
 )
 @click.option(
     "--parallel/--no-parallel",
@@ -67,7 +80,9 @@ class Check(base.Base):
 )
 def check(  # pragma: no cover
     ctx: click.Context,
-    scenario_name: str,
+    scenario_name: list[str] | None,
+    exclude: list[str],
+    __all: bool,  # noqa: FBT001
     *,
     parallel: bool,
 ) -> None:
@@ -76,13 +91,18 @@ def check(  # pragma: no cover
     Args:
         ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
+        exclude: Name of the scenarios to avoid targeting.
+        __all: Whether molecule should target scenario_name or all scenarios.
         parallel: Whether the scenario(s) should be run in parallel.
     """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"parallel": parallel, "subcommand": subcommand}
 
+    if __all:
+        scenario_name = None
+
     if parallel:
         util.validate_parallel_cmd_args(command_args)
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args, excludes=exclude)
