@@ -89,7 +89,7 @@ repos:
         args:
           - --output-format=colorized
         additional_dependencies:
-          - ansible-compat>=25.1.0
+          - ansible-compat>=25.1.4
           - click
           - click-help-colors
           - enrich>=1.2.7
@@ -105,7 +105,7 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies:
-          - ansible-compat>=25.1.0
+          - ansible-compat>=25.1.4
           - click
           - click-help-colors
           - enrich
