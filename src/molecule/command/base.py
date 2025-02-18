@@ -99,10 +99,11 @@ class Base(abc.ABC):
 
 
 def execute_cmdline_scenarios(
-    scenario_name: str | None,
+    scenario_names: list[str] | None,
     args: MoleculeArgs,
     command_args: CommandArgs,
     ansible_args: tuple[str, ...] = (),
+    excludes: list[str] | None = None,
 ) -> None:
     """Execute scenario sequences based on parsed command-line arguments.
 
@@ -113,28 +114,33 @@ def execute_cmdline_scenarios(
     to generate the scenario(s) configuration.
 
     Args:
-        scenario_name: Name of scenario to run, or ``None`` to run all.
+        scenario_names: Name of scenarios to run, or ``None`` to run all.
         args: ``args`` dict from ``click`` command context
         command_args: dict of command arguments, including the target
         ansible_args: Optional tuple of arguments to pass to the `ansible-playbook` command
+        excludes: Name of scenarios to not run.
 
     Raises:
         SystemExit: If scenario exits prematurely.
     """
-    glob_str = MOLECULE_GLOB
-    if scenario_name:
-        glob_str = glob_str.replace("*", scenario_name)
-    scenarios = molecule.scenarios.Scenarios(
-        get_configs(args, command_args, ansible_args, glob_str),
-        scenario_name,
-    )
+    if excludes is None:
+        excludes = []
 
-    if scenario_name and scenarios:
-        LOG.info(
-            "%s scenario test matrix: %s",
-            scenario_name,
-            ", ".join(scenarios.sequence(scenario_name)),
-        )
+    configs: list[config.Config] = []
+    if scenario_names is None:
+        configs = [
+            config
+            for config in get_configs(args, command_args, ansible_args, MOLECULE_GLOB)
+            if config.scenario.name not in excludes
+        ]
+    else:
+        # filter out excludes
+        scenario_names = [name for name in scenario_names if name not in excludes]
+        for scenario_name in scenario_names:
+            glob_str = MOLECULE_GLOB.replace("*", scenario_name)
+            configs.extend(get_configs(args, command_args, ansible_args, glob_str))
+
+    scenarios = _generate_scenarios(scenario_names, configs)
 
     for scenario in scenarios:
         if scenario.config.config["prerun"]:
@@ -169,6 +175,36 @@ def execute_cmdline_scenarios(
                 util.sysexit()
             else:
                 raise
+
+
+def _generate_scenarios(
+    scenario_names: list[str] | None,
+    configs: list[config.Config],
+) -> molecule.scenarios.Scenarios:
+    """Generate Scenarios object from names and configs.
+
+    Args:
+        scenario_names: Names of scenarios to include.
+        configs: List of Config objects to consider.
+
+    Returns:
+        Combined Scenarios object.
+    """
+    scenarios = molecule.scenarios.Scenarios(
+        configs,
+        scenario_names,
+    )
+
+    if scenario_names is not None:
+        for scenario_name in scenario_names:
+            if scenario_name != "*" and scenarios:
+                LOG.info(
+                    "%s scenario test matrix: %s",
+                    scenario_name,
+                    ", ".join(scenarios.sequence(scenario_name)),
+                )
+
+    return scenarios
 
 
 def execute_subcommand(
