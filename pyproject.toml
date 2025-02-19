@@ -424,6 +424,7 @@ no-emit-package = [
   "ansible-core",
   "pip",
   "resolvelib",
+  "ruamel-yaml-clib",
   "typing_extensions",
   "uv"
 ]

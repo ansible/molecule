@@ -127,7 +127,8 @@ repos:
       - id: pip-compile-upgrade
         # To run it execute: `pre-commit run pip-compile-upgrade --hook-stage manual`
         name: Upgrade constraints files and requirements
-        files: ^(pyproject\.toml|requirements\.txt)$
+        files: ^(pyproject\.toml|.config/.*)$
+        always_run: true
         language: python
         entry: python3 -m uv pip compile -q --all-extras --output-file=.config/constraints.txt pyproject.toml --upgrade
         pass_filenames: false
