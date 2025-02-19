@@ -94,5 +94,6 @@ def matrix(
     args: MoleculeArgs = ctx.obj.get("args")
     command_args: CommandArgs = {"subcommand": subcommand}
 
-    s = scenarios.Scenarios(base.get_configs(args, command_args), [scenario_name])
+    scenario_names = [] if scenario_name is None else [scenario_name]
+    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_names)
     s.print_matrix()
