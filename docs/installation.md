@@ -103,12 +103,11 @@ has some benefits:
 
 ## Container
 
-`Molecule` is built into a container image by the [Ansible Creator Execution
-Environment](https://github.com/ansible/creator-ee) project, `creator-ee`.
+`Molecule` is built into a [container image for Ansible Development Tools 
+(ADT)](https://ansible.readthedocs.io/projects/dev-tools/container/)
 
 Any questions or bugs related to the use of Molecule from within a container
-should be addressed by the Ansible Creator Execution Environment
-project.
+should be addressed by the ADT project.
 
 ## Source
 
