@@ -30,7 +30,7 @@ from molecule import util
 if TYPE_CHECKING:
     from molecule.config import Config
     from molecule.scenario import Scenario
-    from molecule.types import ScenarioResult
+    from molecule.types import ScenariosResults
 
 
 LOG = logging.getLogger(__name__)
@@ -53,7 +53,7 @@ class Scenarios:
         self._configs = configs
         self._scenario_names = [] if scenario_names is None else scenario_names
         self._scenarios = self.all
-        self.results: list[dict[str, str | list[ScenarioResult]]] = []
+        self.results: list[ScenariosResults] = []
 
     def __iter__(self) -> Scenarios:
         """Make object iterable.
