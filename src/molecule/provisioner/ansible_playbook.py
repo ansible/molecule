@@ -28,6 +28,7 @@ from typing import TYPE_CHECKING
 
 from molecule import util
 from molecule.api import MoleculeRuntimeWarning
+from molecule.types import ScenarioResult
 
 
 if TYPE_CHECKING:
@@ -120,6 +121,9 @@ class AnsiblePlaybook:
 
         if not self._playbook:
             LOG.warning("Skipping, %s action has no playbook.", self._config.action)
+            self._config.scenario.results.append(
+                ScenarioResult(subcommand=self._config.action, state="SKIPPED"),
+            )
             return ""
 
         with warnings.catch_warnings(record=True) as warns:
@@ -134,6 +138,10 @@ class AnsiblePlaybook:
             )
 
         if result.returncode != 0:
+            self._config.scenario.results.append(
+                ScenarioResult(subcommand=self._config.action, state="FAILED"),
+            )
+
             from rich.markup import escape
 
             util.sysexit_with_message(
@@ -142,6 +150,9 @@ class AnsiblePlaybook:
                 warns=warns,
             )
 
+        self._config.scenario.results.append(
+            ScenarioResult(subcommand=self._config.action, state="PASSED"),
+        )
         return result.stdout
 
     def add_cli_arg(self, name: str, value: str | bool) -> None:
