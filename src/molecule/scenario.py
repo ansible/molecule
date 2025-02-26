@@ -38,6 +38,7 @@ from molecule.text import checksum
 
 if TYPE_CHECKING:
     from molecule.config import Config
+    from molecule.types import ScenarioResult
 
 
 LOG = logging.getLogger(__name__)
@@ -54,6 +55,7 @@ class Scenario:
         """
         self._lock = None
         self.config = config
+        self.results: list[ScenarioResult] = []
         self._setup()
 
     def __repr__(self) -> str:
