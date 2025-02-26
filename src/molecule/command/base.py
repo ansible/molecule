@@ -143,50 +143,16 @@ def execute_cmdline_scenarios(
     scenarios = _generate_scenarios(scenario_names, configs)
 
     try:
-        for scenario in scenarios:
-            if scenario.config.config["prerun"]:
-                role_name_check = scenario.config.config["role_name_check"]
-                LOG.info("Performing prerun with role_name_check=%s...", role_name_check)
-                scenario.config.runtime.prepare_environment(
-                    install_local=True,
-                    role_name_check=role_name_check,
-                )
+        _run_scenarios(scenarios, command_args)
 
-            if command_args.get("subcommand") == "reset":
-                LOG.info("Removing %s", scenario.ephemeral_directory)
-                shutil.rmtree(scenario.ephemeral_directory)
-                return
-            try:
-                execute_scenario(scenario)
-            except SystemExit:
-                # if the command has a 'destroy' arg, like test does,
-                # handle that behavior here.
-                if command_args.get("destroy") == "always":
-                    msg = (
-                        f"An error occurred during the {scenario.config.subcommand} sequence action: "
-                        f"'{scenario.config.action}'. Cleaning up."
-                    )
-                    LOG.warning(msg)
-                    execute_subcommand(scenario.config, "cleanup")
-                    execute_subcommand(scenario.config, "destroy")
-                    # always prune ephemeral dir if destroying on failure
-                    scenario.prune()
-                    if scenario.config.is_parallel:
-                        scenario._remove_scenario_state_directory()  # noqa: SLF001
-                    util.sysexit()
-                else:
-                    raise
-            finally:
-                # Store results regardless
-                scenarios.results.append({"name": scenario.name, "results": scenario.results})
-    # TODO: This should really be replaced with actual control flow, and not abusing SystemExit like this,
-    #       but this is what is here now.
-    except SystemExit:
+    # TODO @Qalthos: This should really be replaced with actual control flow, and not abusing SystemExit like this,  # noqa: FIX002, TD003
+    #                but this is what is here now.
+    except SystemExit:  # noqa: TRY203
         raise
     finally:
         import yaml
 
-        print(yaml.safe_dump(scenarios.results))
+        print(yaml.safe_dump(scenarios.results))  # noqa: T201
 
 
 def _generate_scenarios(
@@ -217,6 +183,54 @@ def _generate_scenarios(
                 )
 
     return scenarios
+
+
+def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: CommandArgs) -> None:
+    """Loop through Scenarios object and execute each.
+
+    Args:
+        scenarios: The Scenarios object holding all of the Scenario objects.
+        command_args: dict of command arguments.
+
+    Raises:
+        SystemExit: when a scenario fails prematurely.
+    """
+    for scenario in scenarios:
+        if scenario.config.config["prerun"]:
+            role_name_check = scenario.config.config["role_name_check"]
+            LOG.info("Performing prerun with role_name_check=%s...", role_name_check)
+            scenario.config.runtime.prepare_environment(
+                install_local=True,
+                role_name_check=role_name_check,
+            )
+
+        if command_args.get("subcommand") == "reset":
+            LOG.info("Removing %s", scenario.ephemeral_directory)
+            shutil.rmtree(scenario.ephemeral_directory)
+            return
+        try:
+            execute_scenario(scenario)
+        except SystemExit:
+            # if the command has a 'destroy' arg, like test does,
+            # handle that behavior here.
+            if command_args.get("destroy") == "always":
+                msg = (
+                    f"An error occurred during the {scenario.config.subcommand} sequence action: "
+                    f"'{scenario.config.action}'. Cleaning up."
+                )
+                LOG.warning(msg)
+                execute_subcommand(scenario.config, "cleanup")
+                execute_subcommand(scenario.config, "destroy")
+                # always prune ephemeral dir if destroying on failure
+                scenario.prune()
+                if scenario.config.is_parallel:
+                    scenario._remove_scenario_state_directory()  # noqa: SLF001
+                util.sysexit()
+            else:
+                raise
+        finally:
+            # Store results regardless
+            scenarios.results.append({"name": scenario.name, "results": scenario.results})
 
 
 def execute_subcommand(
