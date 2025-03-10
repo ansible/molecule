@@ -277,3 +277,27 @@ class CommandArgs(TypedDict, total=False):
     platform_name: str
     scenario_name: str
     subcommand: str
+
+
+class ScenarioResult(TypedDict):
+    """Dictionary containing the result of a Scenario action.
+
+    Attributes:
+        subcommand: The action that ran.
+        state: The outcome of the action ("PASSED", "FAILED", or "SKIPPED).
+    """
+
+    subcommand: str | None
+    state: Literal["PASSED", "FAILED", "SKIPPED"]
+
+
+class ScenariosResults(TypedDict):
+    """Dictionary containing the results of multiple Scenario runs.
+
+    Attributes:
+        name: The name of the scenario.
+        results: A list of ScenarioResult objects.
+    """
+
+    name: str
+    results: list[ScenarioResult]

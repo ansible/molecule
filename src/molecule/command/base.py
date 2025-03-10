@@ -142,6 +142,59 @@ def execute_cmdline_scenarios(
 
     scenarios = _generate_scenarios(scenario_names, configs)
 
+    try:
+        _run_scenarios(scenarios, command_args)
+
+    # TODO @Qalthos: This should really be replaced with actual control flow, and not abusing SystemExit like this,  # noqa: FIX002, TD003
+    #                but this is what is here now.
+    except SystemExit:  # noqa: TRY203
+        raise
+    finally:
+        import yaml
+
+        print(yaml.safe_dump(scenarios.results))  # noqa: T201
+
+
+def _generate_scenarios(
+    scenario_names: list[str] | None,
+    configs: list[config.Config],
+) -> molecule.scenarios.Scenarios:
+    """Generate Scenarios object from names and configs.
+
+    Args:
+        scenario_names: Names of scenarios to include.
+        configs: List of Config objects to consider.
+
+    Returns:
+        Combined Scenarios object.
+    """
+    scenarios = molecule.scenarios.Scenarios(
+        configs,
+        scenario_names,
+    )
+
+    if scenario_names is not None:
+        for scenario_name in scenario_names:
+            if scenario_name != "*" and scenarios:
+                LOG.info(
+                    "%s scenario test matrix: %s",
+                    scenario_name,
+                    ", ".join(scenarios.sequence(scenario_name)),
+                )
+
+    return scenarios
+
+
+def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: CommandArgs) -> None:
+    """Loop through Scenarios object and execute each.
+
+    Args:
+        scenarios: The Scenarios object holding all of the Scenario objects.
+        command_args: dict of command arguments.
+
+    Raises:
+        SystemExit: when a scenario fails prematurely.
+    """
     for scenario in scenarios:
         if scenario.config.config["prerun"]:
             role_name_check = scenario.config.config["role_name_check"]
@@ -175,36 +228,9 @@ def execute_cmdline_scenarios(
                 util.sysexit()
             else:
                 raise
-
-
-def _generate_scenarios(
-    scenario_names: list[str] | None,
-    configs: list[config.Config],
-) -> molecule.scenarios.Scenarios:
-    """Generate Scenarios object from names and configs.
-
-    Args:
-        scenario_names: Names of scenarios to include.
-        configs: List of Config objects to consider.
-
-    Returns:
-        Combined Scenarios object.
-    """
-    scenarios = molecule.scenarios.Scenarios(
-        configs,
-        scenario_names,
-    )
-
-    if scenario_names is not None:
-        for scenario_name in scenario_names:
-            if scenario_name != "*" and scenarios:
-                LOG.info(
-                    "%s scenario test matrix: %s",
-                    scenario_name,
-                    ", ".join(scenarios.sequence(scenario_name)),
-                )
-
-    return scenarios
+        finally:
+            # Store results regardless
+            scenarios.results.append({"name": scenario.name, "results": scenario.results})
 
 
 def execute_subcommand(
