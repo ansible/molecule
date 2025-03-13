@@ -118,25 +118,7 @@ class Idempotence(base.Base):
 
 @base.click_command_ex()
 @click.pass_context
-@click.option(
-    "--scenario-name",
-    "-s",
-    multiple=True,
-    default=[base.MOLECULE_DEFAULT_SCENARIO_NAME],
-    help=f"Name of the scenario to target. May be specified multiple times. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
-)
-@click.option(
-    "--all/--no-all",
-    "__all",
-    default=False,
-    help="Target all scenarios. Default is False.",
-)
-@click.option(
-    "--exclude",
-    "-e",
-    multiple=True,
-    help="Name of the scenario to exclude from running. May be specified multiple times.",
-)
+@base.click_command_options
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
 def idempotence(
     ctx: click.Context,
