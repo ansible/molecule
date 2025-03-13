@@ -62,29 +62,36 @@ class Check(base.Base):
     help=f"Name of the scenario to target. May be specified multiple times. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
 @click.option(
-    "--all/--no-all",
-    "__all",
-    default=False,
-    help="Check all scenarios. Default is False.",
-)
-@click.option(
     "--exclude",
     "-e",
     multiple=True,
     help="Name of the scenario to exclude from running. May be specified multiple times.",
 )
 @click.option(
+    "--all/--no-all",
+    "__all",
+    default=False,
+    help="Check all scenarios. Default is False.",
+)
+@click.option(
     "--parallel/--no-parallel",
     default=MOLECULE_PARALLEL,
     help="Enable or disable parallel mode. Default is disabled.",
 )
+@click.option(
+    "--report/--no-report",
+    default=False,
+    help="Enable or disable end-of-run summary report. Default is disabled. Experimental.",
+)
 def check(  # pragma: no cover
     ctx: click.Context,
+    /,
     scenario_name: list[str] | None,
     exclude: list[str],
-    __all: bool,  # noqa: FBT001
     *,
+    __all: bool,
     parallel: bool,
+    report: bool,
 ) -> None:
     """Use the provisioner to perform a Dry-Run (destroy, dependency, create, prepare, converge).
 
@@ -94,10 +101,11 @@ def check(  # pragma: no cover
         exclude: Name of the scenarios to avoid targeting.
         __all: Whether molecule should target scenario_name or all scenarios.
         parallel: Whether the scenario(s) should be run in parallel.
+        report: Whether to show an after-run summary report.
     """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args: CommandArgs = {"parallel": parallel, "subcommand": subcommand}
+    command_args: CommandArgs = {"parallel": parallel, "subcommand": subcommand, "report": report}
 
     if __all:
         scenario_name = None

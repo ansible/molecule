@@ -150,9 +150,10 @@ def execute_cmdline_scenarios(
     except SystemExit:  # noqa: TRY203
         raise
     finally:
-        import yaml
+        if command_args.get("report"):
+            import yaml
 
-        print(yaml.safe_dump(scenarios.results))  # noqa: T201
+            print(yaml.safe_dump(scenarios.results))  # noqa: T201
 
 
 def _generate_scenarios(

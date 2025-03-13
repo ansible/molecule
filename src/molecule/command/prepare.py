@@ -122,6 +122,12 @@ class Prepare(base.Base):
     help=f"Name of the scenario to target. May be specified multiple times. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
 @click.option(
+    "--exclude",
+    "-e",
+    multiple=True,
+    help="Name of the scenario to exclude from running. May be specified multiple times.",
+)
+@click.option(
     "--driver-name",
     "-d",
     type=click.Choice([str(s) for s in drivers()]),
@@ -134,24 +140,26 @@ class Prepare(base.Base):
     help="Prepare all scenarios. Default is False.",
 )
 @click.option(
-    "--exclude",
-    "-e",
-    multiple=True,
-    help="Name of the scenario to exclude from running. May be specified multiple times.",
-)
-@click.option(
     "--force/--no-force",
     "-f",
     default=False,
     help="Enable or disable force mode. Default is disabled.",
 )
-def prepare(
+@click.option(
+    "--report/--no-report",
+    default=False,
+    help="Enable or disable end-of-run summary report. Default is disabled. Experimental.",
+)
+def prepare(  # noqa: PLR0913
     ctx: click.Context,
+    /,
     scenario_name: list[str] | None,
     exclude: list[str],
     driver_name: str,
-    __all: bool,  # noqa: FBT001
-    force: bool,  # noqa: FBT001
+    *,
+    __all: bool,
+    force: bool,
+    report: bool,
 ) -> None:  # pragma: no cover
     """Use the provisioner to prepare the instances into a particular starting state.
 
@@ -162,6 +170,7 @@ def prepare(
         driver_name: Name of the Molecule driver to use.
         __all: Whether molecule should target scenario_name or all scenarios.
         force: Whether to use force mode.
+        report: Whether to show an after-run summary report.
     """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
@@ -169,6 +178,7 @@ def prepare(
         "subcommand": subcommand,
         "driver_name": driver_name,
         "force": force,
+        "report": report,
     }
 
     if __all:

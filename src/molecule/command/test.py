@@ -65,10 +65,10 @@ class Test(base.Base):
     help=f"Name of the scenario to target. May be specified multiple times. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
 @click.option(
-    "--platform-name",
-    "-p",
-    default=MOLECULE_PLATFORM_NAME,
-    help="Name of the platform to target only. Default is None",
+    "--exclude",
+    "-e",
+    multiple=True,
+    help="Name of the scenario to exclude from running. May be specified multiple times.",
 )
 @click.option(
     "--driver-name",
@@ -77,39 +77,47 @@ class Test(base.Base):
     help=f"Name of driver to use. ({DEFAULT_DRIVER})",
 )
 @click.option(
+    "--destroy",
+    type=click.Choice(["always", "never"]),
+    default="always",
+    help=("The destroy strategy used at the conclusion of a Molecule run (always)."),
+)
+@click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
+@click.option(
+    "--platform-name",
+    "-p",
+    default=MOLECULE_PLATFORM_NAME,
+    help="Name of the platform to target only. Default is None",
+)
+@click.option(
     "--all/--no-all",
     "__all",
     default=False,
     help="Test all scenarios. Default is False.",
 )
 @click.option(
-    "--exclude",
-    "-e",
-    multiple=True,
-    help="Name of the scenario to exclude from running. May be specified multiple times.",
-)
-@click.option(
-    "--destroy",
-    type=click.Choice(["always", "never"]),
-    default="always",
-    help=("The destroy strategy used at the conclusion of a Molecule run (always)."),
-)
-@click.option(
     "--parallel/--no-parallel",
     default=MOLECULE_PARALLEL,
     help="Enable or disable parallel mode. Default is disabled.",
 )
-@click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
+@click.option(
+    "--report/--no-report",
+    default=False,
+    help="Enable or disable end-of-run summary report. Default is disabled. Experimental.",
+)
 def test(  # noqa: PLR0913
     ctx: click.Context,
+    /,
     scenario_name: list[str] | None,
     exclude: list[str],
     driver_name: str,
-    __all: bool,  # noqa: FBT001
     destroy: Literal["always", "never"],
-    parallel: bool,  # noqa: FBT001
     ansible_args: tuple[str, ...],
     platform_name: str,
+    *,
+    __all: bool,
+    parallel: bool,
+    report: bool,
 ) -> None:  # pragma: no cover
     """Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy).
 
@@ -118,11 +126,12 @@ def test(  # noqa: PLR0913
         scenario_name: Name of the scenario to target.
         exclude: Name of the scenarios to avoid targeting.
         driver_name: Name of the driver to use.
-        __all: Whether molecule should target scenario_name or all scenarios.
         destroy: The destroy strategy to use.
-        parallel: Whether the scenario(s) should be run in parallel mode.
         ansible_args: Arguments to forward to Ansible.
         platform_name: Name of the platform to use.
+        __all: Whether molecule should target scenario_name or all scenarios.
+        parallel: Whether the scenario(s) should be run in parallel mode.
+        report: Whether to show an after-run summary report.
     """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
@@ -132,6 +141,7 @@ def test(  # noqa: PLR0913
         "subcommand": subcommand,
         "driver_name": driver_name,
         "platform_name": platform_name,
+        "report": report,
     }
 
     if __all:

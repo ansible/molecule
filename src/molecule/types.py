@@ -264,6 +264,7 @@ class CommandArgs(TypedDict, total=False):
         host: Host to access.
         parallel: Whether to enable parallel mode.
         platform_name: Name of the platform to target.
+        report: Whether to show an after-run summary report.
         scenario_name: Name of the scenario to target.
         subcommand: Name of subcommand being run.
     """
@@ -275,6 +276,7 @@ class CommandArgs(TypedDict, total=False):
     host: str
     parallel: bool
     platform_name: str
+    report: bool
     scenario_name: str
     subcommand: str
 
