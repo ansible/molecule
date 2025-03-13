@@ -427,6 +427,41 @@ def click_command_ex(name: str | None = None) -> ClickCommand:
     )
 
 
+def click_command_options(func: Callable[..., None]) -> Callable[..., None]:
+    """Provide a baseline set of reusable options for molecule actions.
+
+    Args:
+        func: Function to be decorated.
+
+    Returns:
+        Function with click options for scenario_name, exclude, all, and report added.
+    """
+    func = click.option(
+        "--report/--no-report",
+        default=False,
+        help="Enable or disable end-of-run summary report. Default is disabled. Experimental.",
+    )(func)
+    func = click.option(
+        "--all/--no-all",
+        "__all",
+        default=False,
+        help="Check all scenarios. Default is False.",
+    )(func)
+    func = click.option(
+        "--exclude",
+        "-e",
+        multiple=True,
+        help="Name of the scenario to exclude from running. May be specified multiple times.",
+    )(func)
+    return click.option(
+        "--scenario-name",
+        "-s",
+        multiple=True,
+        default=[MOLECULE_DEFAULT_SCENARIO_NAME],
+        help=f"Name of the scenario to target. May be specified multiple times. ({MOLECULE_DEFAULT_SCENARIO_NAME})",
+    )(func)
+
+
 def result_callback(
     *args: object,  # noqa: ARG001
     **kwargs: object,  # noqa: ARG001
