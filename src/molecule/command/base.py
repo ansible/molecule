@@ -150,9 +150,10 @@ def execute_cmdline_scenarios(
     except SystemExit:  # noqa: TRY203
         raise
     finally:
-        import yaml
+        if command_args.get("report"):
+            import yaml
 
-        print(yaml.safe_dump(scenarios.results))  # noqa: T201
+            print(yaml.safe_dump(scenarios.results))  # noqa: T201
 
 
 def _generate_scenarios(
@@ -433,8 +434,13 @@ def click_command_options(func: Callable[..., None]) -> Callable[..., None]:
         func: Function to be decorated.
 
     Returns:
-        Function with click options for scenario_name, exclude, and all added.
+        Function with click options for scenario_name, exclude, all, and report added.
     """
+    func = click.option(
+        "--report/--no-report",
+        default=False,
+        help="EXPERIMENTAL: Enable or disable end-of-run summary report. Default is disabled.",
+    )(func)
     func = click.option(
         "--exclude",
         "-e",

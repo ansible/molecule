@@ -84,14 +84,17 @@ class Test(base.Base):
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
 def test(  # noqa: PLR0913
     ctx: click.Context,
+    /,
     scenario_name: list[str] | None,
     exclude: list[str],
     driver_name: str,
     __all: bool,  # noqa: FBT001
+    *,
     destroy: Literal["always", "never"],
-    parallel: bool,  # noqa: FBT001
+    parallel: bool,
     ansible_args: tuple[str, ...],
     platform_name: str,
+    report: bool,
 ) -> None:  # pragma: no cover
     """Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy).
 
@@ -105,6 +108,7 @@ def test(  # noqa: PLR0913
         parallel: Whether the scenario(s) should be run in parallel mode.
         ansible_args: Arguments to forward to Ansible.
         platform_name: Name of the platform to use.
+        report: Whether to show an after-run summary report.
     """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
@@ -114,6 +118,7 @@ def test(  # noqa: PLR0913
         "subcommand": subcommand,
         "driver_name": driver_name,
         "platform_name": platform_name,
+        "report": report,
     }
 
     if __all:

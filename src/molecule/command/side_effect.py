@@ -62,9 +62,12 @@ class SideEffect(base.Base):
 @base.click_command_options
 def side_effect(
     ctx: click.Context,
+    /,
     scenario_name: list[str] | None,
     exclude: list[str],
-    __all: bool,  # noqa: FBT001
+    *,
+    __all: bool,
+    report: bool,
 ) -> None:  # pragma: no cover
     """Use the provisioner to perform side-effects to the instances.
 
@@ -73,10 +76,11 @@ def side_effect(
         scenario_name: Name of the scenario to target.
         exclude: Name of the scenarios to avoid targeting.
         __all: Whether molecule should target scenario_name or all scenarios.
+        report: Whether to show an after-run summary report.
     """
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args: CommandArgs = {"subcommand": subcommand}
+    command_args: CommandArgs = {"subcommand": subcommand, "report": report}
 
     if __all:
         scenario_name = None

@@ -74,13 +74,16 @@ class Destroy(base.Base):
     default=MOLECULE_PARALLEL,
     help="Enable or disable parallel mode. Default is disabled.",
 )
-def destroy(
+def destroy(  # noqa: PLR0913
     ctx: click.Context,
+    /,
     scenario_name: list[str] | None,
     exclude: list[str],
     driver_name: str,
     __all: bool,  # noqa: FBT001
-    parallel: bool,  # noqa: FBT001
+    *,
+    parallel: bool,
+    report: bool,
 ) -> None:  # pragma: no cover
     """Use the provisioner to destroy the instances.
 
@@ -91,6 +94,7 @@ def destroy(
         driver_name: Molecule driver to use.
         __all: Whether molecule should target scenario_name or all scenarios.
         parallel: Whether the scenario(s) should be run in parallel mode.
+        report: Whether to show an after-run summary report.
     """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
@@ -98,6 +102,7 @@ def destroy(
         "parallel": parallel,
         "subcommand": subcommand,
         "driver_name": driver_name,
+        "report": report,
     }
 
     if __all:

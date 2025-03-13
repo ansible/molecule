@@ -62,10 +62,12 @@ class Check(base.Base):
 )
 def check(  # pragma: no cover
     ctx: click.Context,
+    /,
     scenario_name: list[str] | None,
     exclude: list[str],
     __all: bool,  # noqa: FBT001
     *,
+    report: bool,
     parallel: bool,
 ) -> None:
     """Use the provisioner to perform a Dry-Run (destroy, dependency, create, prepare, converge).
@@ -75,11 +77,12 @@ def check(  # pragma: no cover
         scenario_name: Name of the scenario to target.
         exclude: Name of the scenarios to avoid targeting.
         __all: Whether molecule should target scenario_name or all scenarios.
+        report: Whether to show an after-run summary report.
         parallel: Whether the scenario(s) should be run in parallel.
     """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args: CommandArgs = {"parallel": parallel, "subcommand": subcommand}
+    command_args: CommandArgs = {"parallel": parallel, "subcommand": subcommand, "report": report}
 
     if __all:
         scenario_name = None

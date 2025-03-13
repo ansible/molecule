@@ -125,6 +125,7 @@ def idempotence(
     scenario_name: list[str] | None,
     exclude: list[str],
     __all: bool,  # noqa: FBT001
+    report: bool,  # noqa: FBT001
     ansible_args: tuple[str, ...],
 ) -> None:  # pragma: no cover
     """Use the provisioner to configure the instances.
@@ -136,11 +137,12 @@ def idempotence(
         scenario_name: Name of the scenario to target.
         exclude: Name of the scenarios to avoid targeting.
         __all: Whether molecule should target scenario_name or all scenarios.
+        report: Whether to show an after-run summary report.
         ansible_args: Arguments to forward to Ansible.
     """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args: CommandArgs = {"subcommand": subcommand}
+    command_args: CommandArgs = {"subcommand": subcommand, "report": report}
 
     if __all:
         scenario_name = None
