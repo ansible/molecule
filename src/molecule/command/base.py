@@ -442,16 +442,16 @@ def click_command_options(func: Callable[..., None]) -> Callable[..., None]:
         help="Enable or disable end-of-run summary report. Default is disabled. Experimental.",
     )(func)
     func = click.option(
-        "--all/--no-all",
-        "__all",
-        default=False,
-        help="Check all scenarios. Default is False.",
-    )(func)
-    func = click.option(
         "--exclude",
         "-e",
         multiple=True,
-        help="Name of the scenario to exclude from running. May be specified multiple times.",
+        help="Name of the scenario to exclude from targeting. May be specified multiple times. Can exclude scenarios already included with scenario-name or all.",
+    )(func)
+    func = click.option(
+        "--all/--no-all",
+        "__all",
+        default=False,
+        help="Target all scenarios. Default is False. Overrides scenario-name.",
     )(func)
     return click.option(
         "--scenario-name",
