@@ -264,6 +264,7 @@ class CommandArgs(TypedDict, total=False):
         host: Host to access.
         parallel: Whether to enable parallel mode.
         platform_name: Name of the platform to target.
+        report: Whether to show an after-run summary report.
         scenario_name: Name of the scenario to target.
         subcommand: Name of subcommand being run.
     """
@@ -275,5 +276,30 @@ class CommandArgs(TypedDict, total=False):
     host: str
     parallel: bool
     platform_name: str
+    report: bool
     scenario_name: str
     subcommand: str
+
+
+class ScenarioResult(TypedDict):
+    """Dictionary containing the result of a Scenario action.
+
+    Attributes:
+        subcommand: The action that ran.
+        state: The outcome of the action ("PASSED", "FAILED", or "SKIPPED).
+    """
+
+    subcommand: str | None
+    state: Literal["PASSED", "FAILED", "SKIPPED"]
+
+
+class ScenariosResults(TypedDict):
+    """Dictionary containing the results of multiple Scenario runs.
+
+    Attributes:
+        name: The name of the scenario.
+        results: A list of ScenarioResult objects.
+    """
+
+    name: str
+    results: list[ScenarioResult]

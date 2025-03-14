@@ -142,6 +142,60 @@ def execute_cmdline_scenarios(
 
     scenarios = _generate_scenarios(scenario_names, configs)
 
+    try:
+        _run_scenarios(scenarios, command_args)
+
+    # TODO @Qalthos: This should really be replaced with actual control flow, and not abusing SystemExit like this,  # noqa: FIX002, TD003
+    #                but this is what is here now.
+    except SystemExit:  # noqa: TRY203
+        raise
+    finally:
+        if command_args.get("report"):
+            import yaml
+
+            print(yaml.safe_dump(scenarios.results))  # noqa: T201
+
+
+def _generate_scenarios(
+    scenario_names: list[str] | None,
+    configs: list[config.Config],
+) -> molecule.scenarios.Scenarios:
+    """Generate Scenarios object from names and configs.
+
+    Args:
+        scenario_names: Names of scenarios to include.
+        configs: List of Config objects to consider.
+
+    Returns:
+        Combined Scenarios object.
+    """
+    scenarios = molecule.scenarios.Scenarios(
+        configs,
+        scenario_names,
+    )
+
+    if scenario_names is not None:
+        for scenario_name in scenario_names:
+            if scenario_name != "*" and scenarios:
+                LOG.info(
+                    "%s scenario test matrix: %s",
+                    scenario_name,
+                    ", ".join(scenarios.sequence(scenario_name)),
+                )
+
+    return scenarios
+
+
+def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: CommandArgs) -> None:
+    """Loop through Scenarios object and execute each.
+
+    Args:
+        scenarios: The Scenarios object holding all of the Scenario objects.
+        command_args: dict of command arguments.
+
+    Raises:
+        SystemExit: when a scenario fails prematurely.
+    """
     for scenario in scenarios:
         if scenario.config.config["prerun"]:
             role_name_check = scenario.config.config["role_name_check"]
@@ -175,36 +229,9 @@ def execute_cmdline_scenarios(
                 util.sysexit()
             else:
                 raise
-
-
-def _generate_scenarios(
-    scenario_names: list[str] | None,
-    configs: list[config.Config],
-) -> molecule.scenarios.Scenarios:
-    """Generate Scenarios object from names and configs.
-
-    Args:
-        scenario_names: Names of scenarios to include.
-        configs: List of Config objects to consider.
-
-    Returns:
-        Combined Scenarios object.
-    """
-    scenarios = molecule.scenarios.Scenarios(
-        configs,
-        scenario_names,
-    )
-
-    if scenario_names is not None:
-        for scenario_name in scenario_names:
-            if scenario_name != "*" and scenarios:
-                LOG.info(
-                    "%s scenario test matrix: %s",
-                    scenario_name,
-                    ", ".join(scenarios.sequence(scenario_name)),
-                )
-
-    return scenarios
+        finally:
+            # Store results regardless
+            scenarios.results.append({"name": scenario.name, "results": scenario.results})
 
 
 def execute_subcommand(
@@ -398,6 +425,41 @@ def click_command_ex(name: str | None = None) -> ClickCommand:
         help_headers_color="yellow",
         help_options_color="green",
     )
+
+
+def click_command_options(func: Callable[..., None]) -> Callable[..., None]:
+    """Provide a baseline set of reusable options for molecule actions.
+
+    Args:
+        func: Function to be decorated.
+
+    Returns:
+        Function with click options for scenario_name, exclude, all, and report added.
+    """
+    func = click.option(
+        "--report/--no-report",
+        default=False,
+        help="Enable or disable end-of-run summary report. Default is disabled. Experimental.",
+    )(func)
+    func = click.option(
+        "--exclude",
+        "-e",
+        multiple=True,
+        help="Name of the scenario to exclude from targeting. May be specified multiple times. Can exclude scenarios already included with scenario-name or all.",
+    )(func)
+    func = click.option(
+        "--all/--no-all",
+        "__all",
+        default=False,
+        help="Target all scenarios. Default is False. Overrides scenario-name.",
+    )(func)
+    return click.option(
+        "--scenario-name",
+        "-s",
+        multiple=True,
+        default=[MOLECULE_DEFAULT_SCENARIO_NAME],
+        help=f"Name of the scenario to target. May be specified multiple times. ({MOLECULE_DEFAULT_SCENARIO_NAME})",
+    )(func)
 
 
 def result_callback(

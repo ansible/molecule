@@ -62,37 +62,22 @@ class Create(base.Base):
 
 @base.click_command_ex()
 @click.pass_context
-@click.option(
-    "--scenario-name",
-    "-s",
-    multiple=True,
-    default=[base.MOLECULE_DEFAULT_SCENARIO_NAME],
-    help=f"Name of the scenario to target. May be specified multiple times. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
-)
+@base.click_command_options
 @click.option(
     "--driver-name",
     "-d",
     type=click.Choice([str(s) for s in drivers()]),
     help=f"Name of driver to use. ({DEFAULT_DRIVER})",
 )
-@click.option(
-    "--all/--no-all",
-    "__all",
-    default=False,
-    help="Start all scenarios. Default is False.",
-)
-@click.option(
-    "--exclude",
-    "-e",
-    multiple=True,
-    help="Name of the scenario to exclude from running. May be specified multiple times.",
-)
 def create(
     ctx: click.Context,
+    /,
     scenario_name: list[str] | None,
     exclude: list[str],
     driver_name: str,
-    __all: bool,  # noqa: FBT001
+    *,
+    __all: bool,
+    report: bool,
 ) -> None:  # pragma: no cover
     """Use the provisioner to start the instances.
 
@@ -102,10 +87,15 @@ def create(
         exclude: Name of the scenarios to avoid targeting.
         driver_name: Name of the Molecule driver to use.
         __all: Whether molecule should target scenario_name or all scenarios.
+        report: Whether to show an after-run summary report.
     """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args: CommandArgs = {"subcommand": subcommand, "driver_name": driver_name}
+    command_args: CommandArgs = {
+        "subcommand": subcommand,
+        "driver_name": driver_name,
+        "report": report,
+    }
 
     if __all:
         scenario_name = None
