@@ -51,7 +51,7 @@ if TYPE_CHECKING:
     from typing import NoReturn
 
     from molecule.scenario import Scenario
-    from molecule.types import CommandArgs, MoleculeArgs
+    from molecule.types import CommandArgs, MoleculeArgs, ScenariosResults
 
     ClickCommand = Callable[[Callable[..., None]], click.Command]
     ClickGroup = Callable[[Callable[..., None]], click.Group]
@@ -151,9 +151,7 @@ def execute_cmdline_scenarios(
         raise
     finally:
         if command_args.get("report"):
-            import yaml
-
-            print(yaml.safe_dump(scenarios.results))  # noqa: T201
+            print(generate_report(scenarios.results))  # noqa: T201
 
 
 def _generate_scenarios(
@@ -475,3 +473,17 @@ def result_callback(
     # We want to be used we run out custom exit code, regardless if run was
     # a success or failure.
     util.sysexit(0)
+
+
+def generate_report(results: list[ScenariosResults]) -> str:
+    """Print end-of-run report.
+
+    Args:
+        results: Dictionary containing results from each scenario.
+
+    Returns:
+        The formatted end-of-run report.
+    """
+    import yaml
+
+    return yaml.safe_dump(results)

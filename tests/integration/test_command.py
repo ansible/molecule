@@ -38,6 +38,7 @@ from tests.conftest import mac_on_gh  # pylint:disable=C0411
 
 if TYPE_CHECKING:
     from molecule.app import App
+    from molecule.types import ScenariosResults
 
 
 def run(cmd: list[str], env: dict[str, str] | None = None) -> subprocess.CompletedProcess[Any]:
@@ -186,6 +187,51 @@ def test_command(
         assert "converge.yml" in result.stdout
     else:
         assert "PLAY RECAP" in result.stdout
+
+
+def test_command_report(
+    test_ephemeral_dir_env: dict[str, str],
+) -> None:
+    """Test the output of the --report flag.
+
+    Args:
+        test_ephemeral_dir_env: The ephemeral directory env.
+    """
+    cmd = ["molecule", "test", "--report"]
+    result = run(cmd=cmd, env=test_ephemeral_dir_env)
+    assert result.returncode == 0
+
+    scenario_result: ScenariosResults = {
+        "name": "default",
+        "results": [
+            {
+                "state": "PASSED",
+                "subcommand": "destroy",
+            },
+            {
+                "state": "PASSED",
+                "subcommand": "syntax",
+            },
+            {
+                "state": "PASSED",
+                "subcommand": "create",
+            },
+            {
+                "state": "PASSED",
+                "subcommand": "converge",
+            },
+            {
+                "state": "PASSED",
+                "subcommand": "idempotence",
+            },
+            {
+                "state": "PASSED",
+                "subcommand": "destroy",
+            },
+        ],
+    }
+    report = base.generate_report([scenario_result])
+    assert result.stdout.strip().endswith(report.strip())
 
 
 @pytest.mark.extensive
