@@ -6,6 +6,7 @@ ansible-lint==25.1.3      # via molecule (pyproject.toml)
 astroid==3.3.9            # via pylint
 attrs==25.3.0             # via jsonschema, referencing
 babel==2.17.0             # via mkdocs-material
+backrefs==5.8             # via mkdocs-material
 beautifulsoup4==4.13.3    # via linkchecker, mkdocs-htmlproofer-plugin
 black==25.1.0             # via ansible-lint, molecule (pyproject.toml)
 bracex==2.5.post1         # via wcmatch
@@ -60,7 +61,7 @@ mkdocs==1.6.1             # via mkdocs-ansible, mkdocs-autorefs, mkdocs-gen-file
 mkdocs-ansible==25.2.0    # via molecule (pyproject.toml)
 mkdocs-autorefs==1.4.1    # via mkdocstrings, mkdocstrings-python
 mkdocs-gen-files==0.5.0   # via mkdocs-ansible
-mkdocs-get-deps==0.2.0    # via mkdocs, mkdocstrings
+mkdocs-get-deps==0.2.0    # via mkdocs
 mkdocs-htmlproofer-plugin==1.3.0  # via mkdocs-ansible
 mkdocs-macros-plugin==1.3.7  # via mkdocs-ansible
 mkdocs-material==9.6.8    # via mkdocs-ansible
@@ -98,12 +99,11 @@ python-slugify==8.0.4     # via mkdocs-monorepo-plugin
 pyyaml==6.0.2             # via ansible-compat, ansible-core, ansible-lint, mkdocs, mkdocs-get-deps, mkdocs-macros-plugin, pre-commit, pymdown-extensions, pyyaml-env-tag, yamllint, molecule (pyproject.toml)
 pyyaml-env-tag==0.1       # via mkdocs
 referencing==0.36.2       # via ansible-lint, jsonschema, jsonschema-specifications, types-jsonschema
-regex==2024.11.6          # via mkdocs-material
 requests==2.32.3          # via docker, linkchecker, mkdocs-htmlproofer-plugin, mkdocs-material, molecule (pyproject.toml)
 rich==13.9.4              # via enrich, molecule (pyproject.toml)
 rpds-py==0.23.1           # via jsonschema, referencing
 ruamel-yaml==0.18.10      # via ansible-lint
-ruff==0.11.0               # via molecule (pyproject.toml)
+ruff==0.11.0              # via molecule (pyproject.toml)
 six==1.17.0               # via python-dateutil
 soupsieve==2.6            # via beautifulsoup4
 subprocess-tee==0.4.2     # via ansible-compat, ansible-lint
