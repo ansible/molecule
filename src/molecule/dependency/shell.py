@@ -36,7 +36,7 @@ if TYPE_CHECKING:
 LOG = logging.getLogger(__name__)
 
 
-class Shell(base.Base):
+class ShellDependency(base.Base):
     """``Shell`` is an alternate dependency manager.
 
     It is intended to run a command in situations where `Ansible Galaxy`_

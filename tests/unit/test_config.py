@@ -28,7 +28,8 @@ from typing import TYPE_CHECKING, Literal
 import pytest
 
 from molecule import config, platforms, scenario, state, util
-from molecule.dependency import ansible_galaxy, shell
+from molecule.dependency import ShellDependency
+from molecule.dependency.ansible_dependency import AnsibleDependency
 from molecule.provisioner import ansible
 from molecule.verifier.ansible import Ansible as AnsibleVerifier
 
@@ -164,7 +165,7 @@ def test_collection_property_broken_collection(
 
 
 def test_dependency_property(config_instance: config.Config) -> None:  # noqa: D103
-    assert isinstance(config_instance.dependency, ansible_galaxy.AnsibleGalaxy)
+    assert isinstance(config_instance.dependency, AnsibleDependency)
 
 
 @pytest.fixture
@@ -178,7 +179,7 @@ def _config_dependency_shell_section_data() -> dict[Literal["dependency"], Depen
     indirect=True,
 )
 def test_dependency_property_is_shell(config_instance: config.Config) -> None:  # noqa: D103
-    assert isinstance(config_instance.dependency, shell.Shell)
+    assert isinstance(config_instance.dependency, ShellDependency)
 
 
 @pytest.fixture
