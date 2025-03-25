@@ -24,6 +24,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from molecule.command import idempotence
+from molecule.exceptions import ScenarioFailureError
 
 
 if TYPE_CHECKING:
@@ -75,13 +76,13 @@ def test_execute_raises_when_not_converged(  # type: ignore[no-untyped-def]  # n
     _instance,  # noqa: PT019
 ):
     _instance._config.state.change_state("converged", False)  # noqa: FBT003
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(ScenarioFailureError) as e:
         _instance.execute()
 
     assert e.value.code == 1
 
     msg = "Instances not converged.  Please converge instances first."
-    assert msg in caplog.text
+    assert e.value.message == msg
 
 
 def test_execute_raises_when_fails_idempotence(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
@@ -92,13 +93,13 @@ def test_execute_raises_when_fails_idempotence(  # type: ignore[no-untyped-def] 
     _instance,  # noqa: PT019
 ):
     _patched_is_idempotent.return_value = False
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(ScenarioFailureError) as e:
         _instance.execute()
 
     assert e.value.code == 1
 
     msg = "Idempotence test failed because of the following tasks:\n"
-    assert msg in caplog.text
+    assert e.value.message == msg
 
 
 def test_is_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103

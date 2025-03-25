@@ -30,6 +30,7 @@ import pytest
 
 from molecule import config, util
 from molecule.command import base
+from molecule.exceptions import ScenarioFailureError
 
 
 if TYPE_CHECKING:
@@ -342,7 +343,7 @@ def test_execute_cmdline_scenarios_exit_nodestroy(
     patched_execute_scenario.side_effect = SystemExit()
 
     # Catch the expected SystemExit reraise
-    with pytest.raises(SystemExit):
+    with pytest.raises(ScenarioFailureError):
         base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
     assert patched_execute_scenario.called
@@ -439,13 +440,13 @@ def test_verify_configs_raises_with_no_configs(caplog: pytest.LogCaptureFixture)
     Args:
         caplog: pytest caplog fixture.
     """
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(ScenarioFailureError) as e:
         base._verify_configs([])
 
     assert e.value.code == 1
 
     msg = "'molecule/*/molecule.yml' glob failed.  Exiting."
-    assert msg in caplog.text
+    assert e.value.message == msg
 
 
 def test_verify_configs_raises_with_duplicate_configs(
@@ -460,13 +461,13 @@ def test_verify_configs_raises_with_duplicate_configs(
     """
     configs = [config_instance, config_instance]
 
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(ScenarioFailureError) as e:
         base._verify_configs(configs)
 
     assert e.value.code == 1
 
     msg = "Duplicate scenario name 'default' found.  Exiting."
-    assert msg in caplog.text
+    assert e.value.message == msg
 
 
 def test_get_subcommand() -> None:
