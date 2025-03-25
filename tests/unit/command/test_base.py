@@ -446,7 +446,7 @@ def test_verify_configs_raises_with_no_configs(caplog: pytest.LogCaptureFixture)
     assert e.value.code == 1
 
     msg = "'molecule/*/molecule.yml' glob failed.  Exiting."
-    assert e.value.message == msg
+    assert msg in caplog.text
 
 
 def test_verify_configs_raises_with_duplicate_configs(
@@ -467,7 +467,7 @@ def test_verify_configs_raises_with_duplicate_configs(
     assert e.value.code == 1
 
     msg = "Duplicate scenario name 'default' found.  Exiting."
-    assert e.value.message == msg
+    assert msg in caplog.text
 
 
 def test_get_subcommand() -> None:

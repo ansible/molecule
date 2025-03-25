@@ -206,18 +206,7 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
             return
         try:
             execute_scenario(scenario)
-        except ScenarioFailureError as exc:
-            # detail is usually a multi-line string which is not suitable for normal
-            # logger.
-            if exc.detail:
-                detail_str = (
-                    safe_dump(exc.detail) if isinstance(exc.detail, dict) else str(exc.detail)
-                )
-                print(detail_str)  # noqa: T201
-            LOG.critical(exc.message, extra={"highlighter": False})
-
-            for warn in exc.warns:
-                LOG.warning(warn.__dict__["message"].args[0])
+        except ScenarioFailureError:
             # if the command has a 'destroy' arg, like test does,
             # handle that behavior here.
             if command_args.get("destroy") == "always":

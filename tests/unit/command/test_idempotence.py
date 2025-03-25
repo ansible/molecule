@@ -82,7 +82,7 @@ def test_execute_raises_when_not_converged(  # type: ignore[no-untyped-def]  # n
     assert e.value.code == 1
 
     msg = "Instances not converged.  Please converge instances first."
-    assert e.value.message == msg
+    assert msg in caplog.text
 
 
 def test_execute_raises_when_fails_idempotence(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
@@ -99,7 +99,7 @@ def test_execute_raises_when_fails_idempotence(  # type: ignore[no-untyped-def] 
     assert e.value.code == 1
 
     msg = "Idempotence test failed because of the following tasks:\n"
-    assert e.value.message == msg
+    assert msg in caplog.text
 
 
 def test_is_idempotent(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103

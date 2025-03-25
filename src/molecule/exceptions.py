@@ -2,12 +2,19 @@
 
 from __future__ import annotations
 
+import logging
+
 from typing import TYPE_CHECKING, Any
+
+from molecule.util import safe_dump
 
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
     from warnings import WarningMessage
+
+
+LOG = logging.getLogger(__name__)
 
 
 class ScenarioFailureError(Exception):
@@ -30,7 +37,16 @@ class ScenarioFailureError(Exception):
         """
         super().__init__()
 
-        self.message = message
+        # detail is usually a multi-line string which is not suitable for normal
+        # logger.
+        if detail:
+            detail_str = safe_dump(detail) if isinstance(detail, dict) else str(detail)
+            print(detail_str)  # noqa: T201
+
+        if message:
+            LOG.critical(message, extra={"highlighter": False})
+
+        for warn in warns:
+            LOG.warning(warn.__dict__["message"].args[0])
+
         self.code = code
-        self.detail = detail
-        self.warns = warns
