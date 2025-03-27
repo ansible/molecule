@@ -305,9 +305,10 @@ def test_execute_cmdline_scenarios_exit_destroy(
     scenario_name = ["default"]
     args: MoleculeArgs = {}
     command_args: CommandArgs = {"destroy": "always", "subcommand": "test"}
-    patched_execute_scenario.side_effect = SystemExit()
+    patched_execute_scenario.side_effect = ScenarioFailureError()
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    assert patched_execute_scenario.called
 
     call_count = 2
     assert patched_execute_subcommand.call_count == call_count
@@ -323,32 +324,33 @@ def test_execute_cmdline_scenarios_exit_destroy(
 def test_execute_cmdline_scenarios_exit_nodestroy(
     patched_execute_scenario: MagicMock,
     patched_prune: MagicMock,
+    patched_execute_subcommand: MagicMock,
     patched_sysexit: MagicMock,
 ) -> None:
-    """Ensure execute_cmdline_scenarios handles errors correctly when 'destroy' is 'always'.
+    """Ensure execute_cmdline_scenarios handles errors correctly when 'destroy' is 'never'.
 
-    - destroy subcommand is not run when execute_scenario raises SystemExit
+    - destroy subcommand is not run when execute_scenario raises ScenarioFailureError
     - scenario is not pruned
-    - caught SystemExit is reraised
+    - ScenarioFailureError is caught and handled
 
     Args:
         patched_execute_scenario: Mocked execute_scenario function.
         patched_prune: Mocked prune function.
+        patched_execute_subcommand: Mocked execute_subcommand function.
         patched_sysexit: Mocked util.sysexit function.
     """
     scenario_name = ["default"]
     args: MoleculeArgs = {}
     command_args: CommandArgs = {"destroy": "never", "subcommand": "test"}
+    patched_execute_scenario.side_effect = ScenarioFailureError()
 
-    patched_execute_scenario.side_effect = SystemExit()
-
-    # Catch the expected SystemExit reraise
-    with pytest.raises(ScenarioFailureError):
-        base.execute_cmdline_scenarios(scenario_name, args, command_args)
-
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)
     assert patched_execute_scenario.called
+
+    call_count = 0
+    assert patched_execute_subcommand.call_count == call_count
     assert not patched_prune.called
-    assert not patched_sysexit.called
+    assert patched_sysexit.called
 
 
 def test_execute_subcommand(config_instance: config.Config) -> None:
