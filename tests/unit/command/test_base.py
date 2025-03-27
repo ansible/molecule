@@ -291,6 +291,7 @@ def test_execute_cmdline_scenarios_no_prune(
         ("never", ()),
     ),
 )
+@pytest.mark.parametrize("exception", (ScenarioFailureError, SystemExit))
 @pytest.mark.usefixtures("config_instance")
 def test_execute_cmdline_scenarios_exit_destroy(  # noqa: PLR0913
     patched_execute_scenario: MagicMock,
@@ -299,6 +300,7 @@ def test_execute_cmdline_scenarios_exit_destroy(  # noqa: PLR0913
     patched_sysexit: MagicMock,
     destroy: Literal["always", "never"],
     subcommands: tuple[str, ...],
+    exception: type,
 ) -> None:
     """Ensure execute_cmdline_scenarios handles errors correctly when 'destroy' is set.
 
@@ -312,11 +314,12 @@ def test_execute_cmdline_scenarios_exit_destroy(  # noqa: PLR0913
         patched_sysexit: Mocked util.sysexit function.
         destroy: Value to set 'destroy' arg to.
         subcommands: Expected subcommands to run after execute_scenario fails.
+        exception: Class of exception for scenario to raise.
     """
     scenario_name = ["default"]
     args: MoleculeArgs = {}
     command_args: CommandArgs = {"destroy": destroy, "subcommand": "test"}
-    patched_execute_scenario.side_effect = ScenarioFailureError()
+    patched_execute_scenario.side_effect = exception()
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
     assert patched_execute_scenario.called
