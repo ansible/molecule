@@ -104,7 +104,6 @@ def print_environment_vars(env: dict[str, str] | None) -> None:
             "SHELL REPLAY",
             " ".join([f"{k}={v}" for (k, v) in sorted(combined_env.items())]),
         )
-        print()  # noqa: T201
 
 
 def do_report() -> None:
