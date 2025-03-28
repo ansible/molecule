@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
     from warnings import WarningMessage
 
 
@@ -21,7 +22,7 @@ class MoleculeError(Exception):
         self,
         message: str = "",
         code: int = 1,
-        warns: tuple[WarningMessage, ...] = (),
+        warns: Sequence[WarningMessage] = (),
     ) -> None:
         """Custom exception to handle scenario run failures.
 
