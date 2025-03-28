@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 LOG = logging.getLogger(__name__)
 
 
-class ScenarioFailureError(Exception):
-    """Details about a scenario that failed."""
+class MoleculeError(Exception):
+    """Generic Molecule error."""
 
     def __init__(
         self,
@@ -39,3 +39,7 @@ class ScenarioFailureError(Exception):
             LOG.warning(warn.__dict__["message"].args[0])
 
         self.code = code
+
+
+class ScenarioFailureError(MoleculeError):
+    """Details about a scenario that failed."""

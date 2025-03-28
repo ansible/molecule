@@ -31,7 +31,7 @@ from typing import TYPE_CHECKING
 
 import click
 
-from molecule import api, util
+from molecule import api
 from molecule.command import base as command_base
 from molecule.command.init import base
 from molecule.config import (
@@ -40,6 +40,7 @@ from molecule.config import (
     Config,
     molecule_directory,
 )
+from molecule.exceptions import MoleculeError
 
 
 if TYPE_CHECKING:
@@ -104,6 +105,9 @@ class Scenario(base.Base):
 
         Args:
             action_args: Arguments for this command. Unused.
+
+        Raises:
+            MoleculeError: when the scenario cannot be created.
         """
         scenario_name = self._command_args["scenario_name"]
 
@@ -114,7 +118,7 @@ class Scenario(base.Base):
 
         if scenario_directory.is_dir():
             msg = f"The directory molecule/{scenario_name} exists. Cannot create new scenario."
-            util.sysexit_with_message(msg)
+            raise MoleculeError(msg)
 
         extra_vars = json.dumps(self._command_args)
         cmd = [
@@ -150,7 +154,7 @@ def _role_exists(
     role_directory = Path.cwd().parent / value
     if not role_directory.exists():
         msg = f"The role '{value}' not found. Please choose the proper role name."
-        util.sysexit_with_message(msg)
+        raise MoleculeError(msg)
     return value
 
 

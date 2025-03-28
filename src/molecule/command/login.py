@@ -30,8 +30,9 @@ from typing import TYPE_CHECKING
 
 import click
 
-from molecule import scenarios, util
+from molecule import scenarios
 from molecule.command import base
+from molecule.exceptions import MoleculeError
 
 
 if TYPE_CHECKING:
@@ -80,11 +81,14 @@ class Login(base.Base):
                     "which with --host.\n\n"
                     f"Available hosts:\n{host_list}"
                 )
-                util.sysexit_with_message(msg)
+                raise MoleculeError(msg)
         match = [x for x in hosts if x.startswith(hostname)]
         if len(match) == 0:
-            msg = f"There are no hosts that match '{hostname}'.  You can only login to valid hosts."
-            util.sysexit_with_message(msg)
+            msg = (
+                f"There are no hosts that match '{hostname}'.  You "
+                "can only login to valid hosts."
+            )
+            raise MoleculeError(msg)
         elif len(match) != 1:
             # If there are multiple matches, but one of them is an exact string
             # match, assume this is the one they're looking for and use it.
@@ -96,7 +100,7 @@ class Login(base.Base):
                     "can only login to one at a time.\n\n"
                     f"Available hosts:\n{host_list}"
                 )
-                util.sysexit_with_message(msg)
+                raise MoleculeError(msg)
 
         return match[0]
 
