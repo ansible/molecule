@@ -42,7 +42,7 @@ from wcmatch import glob
 import molecule.scenarios
 
 from molecule import config, logger, text, util
-from molecule.console import should_do_markup
+from molecule.console import console, should_do_markup
 from molecule.exceptions import ScenarioFailureError
 from molecule.scenario import Scenario
 from molecule.util import safe_dump
@@ -148,7 +148,7 @@ def execute_cmdline_scenarios(
         util.sysexit(code=exc.code)
     finally:
         if command_args.get("report"):
-            print(generate_report(scenarios.results))  # noqa: T201
+            console.print(generate_report(scenarios.results))
 
 
 def _generate_scenarios(
