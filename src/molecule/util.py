@@ -128,7 +128,6 @@ def sysexit(code: int = 1) -> NoReturn:
 def sysexit_with_message(
     msg: str,
     code: int = 1,
-    detail: MutableMapping[str, Any] | None = None,
     warns: Iterable[WarningMessage] = (),
 ) -> NoReturn:
     """Exit with an error message.
@@ -136,14 +135,8 @@ def sysexit_with_message(
     Args:
         msg: The message to display.
         code: The return code to exit with.
-        detail: A potentially complex object that will be displayed alongside msg.
         warns: A series of warnings to send alongside the message.
     """
-    # detail is usually a multi-line string which is not suitable for normal
-    # logger.
-    if detail:
-        detail_str = safe_dump(detail) if isinstance(detail, dict) else str(detail)
-        print(detail_str)  # noqa: T201
     LOG.critical(msg, extra={"highlighter": False})
 
     for warn in warns:

@@ -43,7 +43,9 @@ import molecule.scenarios
 
 from molecule import config, logger, text, util
 from molecule.console import should_do_markup
+from molecule.exceptions import ScenarioFailureError
 from molecule.scenario import Scenario
+from molecule.util import safe_dump
 
 
 if TYPE_CHECKING:
@@ -119,9 +121,6 @@ def execute_cmdline_scenarios(
         command_args: dict of command arguments, including the target
         ansible_args: Optional tuple of arguments to pass to the `ansible-playbook` command
         excludes: Name of scenarios to not run.
-
-    Raises:
-        SystemExit: If scenario exits prematurely.
     """
     if excludes is None:
         excludes = []
@@ -145,10 +144,8 @@ def execute_cmdline_scenarios(
     try:
         _run_scenarios(scenarios, command_args)
 
-    # TODO @Qalthos: This should really be replaced with actual control flow, and not abusing SystemExit like this,  # noqa: FIX002, TD003
-    #                but this is what is here now.
-    except SystemExit:  # noqa: TRY203
-        raise
+    except ScenarioFailureError as exc:
+        util.sysexit(code=exc.code)
     finally:
         if command_args.get("report"):
             print(generate_report(scenarios.results))  # noqa: T201
@@ -192,7 +189,7 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
         command_args: dict of command arguments.
 
     Raises:
-        SystemExit: when a scenario fails prematurely.
+        ScenarioFailureError: when a scenario fails prematurely.
     """
     for scenario in scenarios:
         if scenario.config.config["prerun"]:
@@ -209,6 +206,22 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
             return
         try:
             execute_scenario(scenario)
+        except ScenarioFailureError:
+            # if the command has a 'destroy' arg, like test does,
+            # handle that behavior here.
+            if command_args.get("destroy") == "always":
+                msg = (
+                    f"An error occurred during the {scenario.config.subcommand} sequence action: "
+                    f"'{scenario.config.action}'. Cleaning up."
+                )
+                LOG.warning(msg)
+                execute_subcommand(scenario.config, "cleanup")
+                execute_subcommand(scenario.config, "destroy")
+                # always prune ephemeral dir if destroying on failure
+                scenario.prune()
+                if scenario.config.is_parallel:
+                    scenario._remove_scenario_state_directory()  # noqa: SLF001
+            raise
         except SystemExit:
             # if the command has a 'destroy' arg, like test does,
             # handle that behavior here.
@@ -224,9 +237,7 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
                 scenario.prune()
                 if scenario.config.is_parallel:
                     scenario._remove_scenario_state_directory()  # noqa: SLF001
-                util.sysexit()
-            else:
-                raise
+            raise ScenarioFailureError from None
         finally:
             # Store results regardless
             scenarios.results.append({"name": scenario.name, "results": scenario.results})
@@ -348,17 +359,20 @@ def _verify_configs(configs: list[config.Config], glob_str: str = MOLECULE_GLOB)
     Args:
         configs: A list containing absolute paths to Molecule config files.
         glob_str: A string representing the glob used to find Molecule config files.
+
+    Raises:
+        ScenarioFailureError: When scenario configs cannot be verified.
     """
     if configs:
         scenario_names = [c.scenario.name for c in configs]
         for scenario_name, n in collections.Counter(scenario_names).items():
             if n > 1:
                 msg = f"Duplicate scenario name '{scenario_name}' found.  Exiting."
-                util.sysexit_with_message(msg)
+                raise ScenarioFailureError(message=msg)
 
     else:
         msg = f"'{glob_str}' glob failed.  Exiting."
-        util.sysexit_with_message(msg)
+        raise ScenarioFailureError(message=msg)
 
 
 def _get_subcommand(string: str) -> str:
@@ -484,6 +498,4 @@ def generate_report(results: list[ScenariosResults]) -> str:
     Returns:
         The formatted end-of-run report.
     """
-    import yaml
-
-    return yaml.safe_dump(results)
+    return safe_dump(results)

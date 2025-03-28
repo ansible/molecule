@@ -24,12 +24,13 @@ import os
 import subprocess
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 import pytest
 
 from molecule import config, util
 from molecule.command import base
+from molecule.exceptions import ScenarioFailureError
 
 
 if TYPE_CHECKING:
@@ -283,71 +284,52 @@ def test_execute_cmdline_scenarios_no_prune(
     assert not patched_prune.called
 
 
+@pytest.mark.parametrize(
+    ("destroy", "subcommands"),
+    (
+        ("always", ("cleanup", "destroy")),
+        ("never", ()),
+    ),
+)
+@pytest.mark.parametrize("exception", (ScenarioFailureError, SystemExit))
 @pytest.mark.usefixtures("config_instance")
-def test_execute_cmdline_scenarios_exit_destroy(
+def test_execute_cmdline_scenarios_exit_destroy(  # noqa: PLR0913
     patched_execute_scenario: MagicMock,
     patched_prune: MagicMock,
     patched_execute_subcommand: MagicMock,
     patched_sysexit: MagicMock,
+    destroy: Literal["always", "never"],
+    subcommands: tuple[str, ...],
+    exception: type,
 ) -> None:
-    """Ensure execute_cmdline_scenarios handles errors correctly when 'destroy' is 'always'.
+    """Ensure execute_cmdline_scenarios handles errors correctly when 'destroy' is set.
 
-    - cleanup and destroy subcommands are run when execute_scenario raises SystemExit
-    - scenario is pruned
+    - destroy subcommand is only run when destroy == "always"
+    - scenario is only pruned when destroy == "always"
 
     Args:
         patched_execute_scenario: Mocked execute_scenario function.
         patched_prune: Mocked prune function.
         patched_execute_subcommand: Mocked execute_subcommand function.
         patched_sysexit: Mocked util.sysexit function.
+        destroy: Value to set 'destroy' arg to.
+        subcommands: Expected subcommands to run after execute_scenario fails.
+        exception: Class of exception for scenario to raise.
     """
     scenario_name = ["default"]
     args: MoleculeArgs = {}
-    command_args: CommandArgs = {"destroy": "always", "subcommand": "test"}
-    patched_execute_scenario.side_effect = SystemExit()
+    command_args: CommandArgs = {"destroy": destroy, "subcommand": "test"}
+    patched_execute_scenario.side_effect = exception()
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
-
-    call_count = 2
-    assert patched_execute_subcommand.call_count == call_count
-    # pull out the second positional call argument for each call,
-    # which is the called subcommand. 'cleanup' and 'destroy' should be called.
-    assert patched_execute_subcommand.call_args_list[0][0][1] == "cleanup"
-    assert patched_execute_subcommand.call_args_list[1][0][1] == "destroy"
-    assert patched_prune.called
-    assert patched_sysexit.called
-
-
-@pytest.mark.usefixtures("config_instance")
-def test_execute_cmdline_scenarios_exit_nodestroy(
-    patched_execute_scenario: MagicMock,
-    patched_prune: MagicMock,
-    patched_sysexit: MagicMock,
-) -> None:
-    """Ensure execute_cmdline_scenarios handles errors correctly when 'destroy' is 'always'.
-
-    - destroy subcommand is not run when execute_scenario raises SystemExit
-    - scenario is not pruned
-    - caught SystemExit is reraised
-
-    Args:
-        patched_execute_scenario: Mocked execute_scenario function.
-        patched_prune: Mocked prune function.
-        patched_sysexit: Mocked util.sysexit function.
-    """
-    scenario_name = ["default"]
-    args: MoleculeArgs = {}
-    command_args: CommandArgs = {"destroy": "never", "subcommand": "test"}
-
-    patched_execute_scenario.side_effect = SystemExit()
-
-    # Catch the expected SystemExit reraise
-    with pytest.raises(SystemExit):
-        base.execute_cmdline_scenarios(scenario_name, args, command_args)
-
     assert patched_execute_scenario.called
-    assert not patched_prune.called
-    assert not patched_sysexit.called
+
+    call_count = len(subcommands)
+    assert patched_execute_subcommand.call_count == call_count
+    for i, subcommand in enumerate(subcommands):
+        assert patched_execute_subcommand.call_args_list[i][0][1] == subcommand
+    assert patched_prune.called is (destroy == "always")
+    assert patched_sysexit.called
 
 
 def test_execute_subcommand(config_instance: config.Config) -> None:
@@ -439,7 +421,7 @@ def test_verify_configs_raises_with_no_configs(caplog: pytest.LogCaptureFixture)
     Args:
         caplog: pytest caplog fixture.
     """
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(ScenarioFailureError) as e:
         base._verify_configs([])
 
     assert e.value.code == 1
@@ -460,7 +442,7 @@ def test_verify_configs_raises_with_duplicate_configs(
     """
     configs = [config_instance, config_instance]
 
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(ScenarioFailureError) as e:
         base._verify_configs(configs)
 
     assert e.value.code == 1

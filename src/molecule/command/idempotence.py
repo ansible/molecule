@@ -27,8 +27,8 @@ from typing import TYPE_CHECKING
 
 import click
 
-from molecule import util
 from molecule.command import base
+from molecule.exceptions import ScenarioFailureError
 from molecule.text import strip_ansi_escape
 
 
@@ -51,10 +51,13 @@ class Idempotence(base.Base):
 
         Args:
             action_args: Arguments for this command. Unused.
+
+        Raises:
+            ScenarioFailureError: when idempotence fails to run.
         """
         if not self._config.state.converged:
             msg = "Instances not converged.  Please converge instances first."
-            util.sysexit_with_message(msg)
+            raise ScenarioFailureError(message=msg)
 
         if self._config.provisioner:
             output = self._config.provisioner.converge()
@@ -66,7 +69,7 @@ class Idempotence(base.Base):
             else:
                 details = "\n".join(self._non_idempotent_tasks(output))
                 msg = f"Idempotence test failed because of the following tasks:\n{details}"
-                util.sysexit_with_message(msg)
+                raise ScenarioFailureError(message=msg)
 
     def _is_idempotent(self, output: str) -> bool:
         """Parse the output of the provisioning for changed and returns a bool.

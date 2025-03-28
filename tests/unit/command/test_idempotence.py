@@ -24,6 +24,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from molecule.command import idempotence
+from molecule.exceptions import ScenarioFailureError
 
 
 if TYPE_CHECKING:
@@ -75,7 +76,7 @@ def test_execute_raises_when_not_converged(  # type: ignore[no-untyped-def]  # n
     _instance,  # noqa: PT019
 ):
     _instance._config.state.change_state("converged", False)  # noqa: FBT003
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(ScenarioFailureError) as e:
         _instance.execute()
 
     assert e.value.code == 1
@@ -92,7 +93,7 @@ def test_execute_raises_when_fails_idempotence(  # type: ignore[no-untyped-def] 
     _instance,  # noqa: PT019
 ):
     _patched_is_idempotent.return_value = False
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(ScenarioFailureError) as e:
         _instance.execute()
 
     assert e.value.code == 1
