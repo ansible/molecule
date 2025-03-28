@@ -45,7 +45,6 @@ if TYPE_CHECKING:
     from collections.abc import Generator, Iterable, MutableMapping
     from io import TextIOWrapper
     from typing import Any, AnyStr, NoReturn, TypeVar
-    from warnings import WarningMessage
 
     from molecule.types import CommandArgs, ConfigData, Options, PlatformData
 
@@ -123,25 +122,6 @@ def sysexit(code: int = 1) -> NoReturn:
         code: The return code to emit.
     """
     sys.exit(code)
-
-
-def sysexit_with_message(
-    msg: str,
-    code: int = 1,
-    warns: Iterable[WarningMessage] = (),
-) -> NoReturn:
-    """Exit with an error message.
-
-    Args:
-        msg: The message to display.
-        code: The return code to exit with.
-        warns: A series of warnings to send alongside the message.
-    """
-    LOG.critical(msg, extra={"highlighter": False})
-
-    for warn in warns:
-        LOG.warning(warn.__dict__["message"].args[0])
-    sysexit(code)
 
 
 def os_walk(
