@@ -38,6 +38,7 @@ from rich.syntax import Syntax
 
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
+from molecule.exceptions import MoleculeError
 
 
 if TYPE_CHECKING:
@@ -261,11 +262,15 @@ def safe_load(string: str | TextIOWrapper):  # type: ignore[no-untyped-def]  # n
 
     Returns:
         A dict of the parsed string.
+
+
+    Raises:
+        MoleculeError: when YAML loading fails.
     """
     try:
         return yaml.safe_load(string) or {}
     except yaml.scanner.ScannerError as e:
-        sysexit_with_message(str(e))
+        raise MoleculeError(str(e)) from None
     return {}
 
 
@@ -390,10 +395,13 @@ def validate_parallel_cmd_args(cmd_args: CommandArgs) -> None:
 
     Args:
         cmd_args: Arguments to validate.
+
+    Raises:
+        MoleculeError: when incompatible options are present.
     """
     if cmd_args.get("parallel") and cmd_args.get("destroy") == "never":
         msg = 'Combining "--parallel" and "--destroy=never" is not supported'
-        sysexit_with_message(msg)
+        raise MoleculeError(msg)
 
 
 def _parallelize_platforms(
