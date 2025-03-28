@@ -36,6 +36,7 @@ from molecule import api, interpolation, platforms, scenario, state, util
 from molecule.app import get_app
 from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
+from molecule.exceptions import MoleculeError
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
 from molecule.util import boolean
@@ -297,6 +298,9 @@ class Config:
 
         Returns:
             The driver for this scenario.
+
+        Raises:
+            MoleculeError: when the specified driver cannot be found.
         """
         driver_name = self._get_driver_name()
         driver = None
@@ -304,7 +308,7 @@ class Config:
         api_drivers = api.drivers(config=self)
         if driver_name not in api_drivers:
             msg = f"Failed to find driver {driver_name}. Please ensure that the driver is correctly installed."
-            util.sysexit_with_message(msg)
+            raise MoleculeError(msg)
 
         driver = api_drivers[driver_name]
         driver.name = driver_name
@@ -431,14 +435,14 @@ class Config:
                 f"Instance(s) were created with the '{driver_name}' driver, but the "
                 f"subcommand is using '{driver_from_cli}' driver."
             )
-            util.sysexit_with_message(msg)
+            raise MoleculeError(msg)
 
         if driver_from_state_file and driver_name not in api.drivers():
             msg = (
                 f"Driver '{driver_name}' from state-file "
                 f"'{self.state.state_file}' is not available."
             )
-            util.sysexit_with_message(msg)
+            raise MoleculeError(msg)
 
         if driver_from_scenario != driver_name:
             msg = (
@@ -533,7 +537,7 @@ class Config:
             return i.interpolate(stream, keep_string)
         except interpolation.InvalidInterpolation as e:
             msg = f"parsing config file '{self.molecule_file}'.\n\n{e.place}\n{e.string}"
-            util.sysexit_with_message(msg)
+            raise MoleculeError(msg) from e
         return ""
 
     def _get_defaults(self) -> ConfigData:
@@ -630,14 +634,18 @@ class Config:
         }
 
     def _validate(self) -> None:
-        """Validate molecule file."""
+        """Validate molecule file.
+
+        Raises:
+            MoleculeError: when config file fails to validate.
+        """
         msg = f"Validating schema {self.molecule_file}."
         LOG.debug(msg)
 
         errors = schema_v3.validate(self.config)
         if errors:
             msg = f"Failed to validate {self.molecule_file}\n\n{errors}"
-            util.sysexit_with_message(msg)
+            raise MoleculeError(msg)
 
 
 def molecule_directory(path: str | Path) -> str:
