@@ -34,7 +34,7 @@ from ansible_compat.ports import cache, cached_property
 from molecule import api, interpolation, platforms, scenario, state, util
 from molecule.app import get_app
 from molecule.data import __file__ as data_module
-from molecule.dependency import ansible_galaxy, shell
+from molecule.dependency import AnsibleDependency, ShellDependency
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
 from molecule.util import boolean
@@ -284,9 +284,9 @@ class Config:
         """
         dependency_name = self.config["dependency"]["name"]
         if dependency_name == "galaxy":
-            return ansible_galaxy.AnsibleGalaxy(self)
+            return AnsibleDependency(self)
         if dependency_name == "shell":
-            return shell.Shell(self)
+            return ShellDependency(self)
         return None
 
     @cached_property
