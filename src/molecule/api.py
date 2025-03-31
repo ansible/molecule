@@ -13,6 +13,7 @@ import pluggy
 from ansible_compat.ports import cache
 
 from molecule.driver.base import Driver
+from molecule.exceptions import MoleculeError
 from molecule.verifier.base import Verifier
 
 
@@ -45,7 +46,7 @@ def drivers(config: Config | None = None) -> dict[str, Driver]:
     pm = pluggy.PluginManager("molecule.driver")
     try:
         pm.load_setuptools_entrypoints("molecule.driver")
-    except (Exception, SystemExit):
+    except MoleculeError:
         # These are not fatal because a broken driver should not make the entire
         # tool unusable.
         LOG.error("Failed to load driver entry point %s", traceback.format_exc())  # noqa: TRY400
@@ -54,7 +55,7 @@ def drivers(config: Config | None = None) -> dict[str, Driver]:
             try:
                 driver = plugin(config)
                 plugins[driver.name] = driver
-            except (Exception, SystemExit, TypeError) as e:
+            except (MoleculeError, TypeError) as e:
                 LOG.error(  # noqa: TRY400
                     "Failed to load %s driver: %s",
                     pm.get_name(plugin),
