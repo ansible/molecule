@@ -222,22 +222,6 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
                 if scenario.config.is_parallel:
                     scenario._remove_scenario_state_directory()  # noqa: SLF001
             raise
-        except SystemExit:
-            # if the command has a 'destroy' arg, like test does,
-            # handle that behavior here.
-            if command_args.get("destroy") == "always":
-                msg = (
-                    f"An error occurred during the {scenario.config.subcommand} sequence action: "
-                    f"'{scenario.config.action}'. Cleaning up."
-                )
-                LOG.warning(msg)
-                execute_subcommand(scenario.config, "cleanup")
-                execute_subcommand(scenario.config, "destroy")
-                # always prune ephemeral dir if destroying on failure
-                scenario.prune()
-                if scenario.config.is_parallel:
-                    scenario._remove_scenario_state_directory()  # noqa: SLF001
-            raise ScenarioFailureError from None
         finally:
             # Store results regardless
             scenarios.results.append({"name": scenario.name, "results": scenario.results})
