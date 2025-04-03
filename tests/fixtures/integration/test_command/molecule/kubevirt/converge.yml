@@ -26,4 +26,4 @@
 
     - name: Print some info
       ansible.builtin.assert:
-        that: result.stdout | regex_search("^Linux")
+        that: result.stdout is ansible.builtin.match("Linux")
