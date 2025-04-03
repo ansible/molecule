@@ -467,8 +467,12 @@ def boolean(value: bool | AnyStr, *, strict: bool = True) -> bool:
     """
     # Based on https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/parsing/convert_bool.py
 
-    BOOLEANS_TRUE = frozenset(("y", "yes", "on", "1", "true", "t", 1, 1.0, True))  # noqa: N806
-    BOOLEANS_FALSE = frozenset(("n", "no", "off", "0", "false", "f", 0, 0.0, False, ""))  # noqa: N806
+    BOOLEANS_TRUE = frozenset(  # noqa: N806
+        ("y", "yes", "on", "1", "true", "t", 1, 1.0, True),
+    )
+    BOOLEANS_FALSE = frozenset(  # noqa: N806
+        ("n", "no", "off", "0", "false", "f", 0, 0.0, False, ""),
+    )
     BOOLEANS = BOOLEANS_TRUE.union(BOOLEANS_FALSE)  # noqa: N806
 
     if isinstance(value, bool):

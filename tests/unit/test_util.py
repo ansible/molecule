@@ -31,6 +31,7 @@ import pytest
 from molecule import util
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
+from molecule.exceptions import MoleculeError
 from molecule.text import strip_ansi_escape
 
 
@@ -54,7 +55,9 @@ def test_print_debug() -> None:  # noqa: D103
     assert result == expected
 
 
-def test_print_environment_vars(capsys: pytest.CaptureFixture[str]) -> None:  # noqa: D103
+def test_print_environment_vars(  # noqa: D103
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     env = {
         "ANSIBLE_FOO": "foo",
         "ANSIBLE_BAR": "bar",
@@ -231,7 +234,7 @@ def test_safe_load_exits_when_cannot_parse() -> None:  # noqa: D103
 %foo:
 """.strip()
 
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(MoleculeError) as e:
         util.safe_load(data)
 
     assert e.value.code == 1
