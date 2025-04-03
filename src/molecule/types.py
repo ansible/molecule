@@ -1,4 +1,3 @@
-# noqa: A005
 """Assorted convenience types for molecule."""
 
 from __future__ import annotations

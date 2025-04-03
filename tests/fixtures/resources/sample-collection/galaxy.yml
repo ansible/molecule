@@ -7,6 +7,7 @@ authors:
 description: Acme Goodies Collection
 build_ignore:
   - "*.egg-info"
+  - .ansible
   - .DS_Store
   - .eggs
   - .gitignore

@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 import logging
-import os
 
 from typing import TYPE_CHECKING
 
@@ -31,7 +30,7 @@ import click
 from molecule import util
 from molecule.api import drivers
 from molecule.command import base
-from molecule.config import DEFAULT_DRIVER
+from molecule.config import DEFAULT_DRIVER, MOLECULE_PARALLEL
 
 
 if TYPE_CHECKING:
@@ -39,7 +38,6 @@ if TYPE_CHECKING:
 
 
 LOG = logging.getLogger(__name__)
-MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
 
 
 class Destroy(base.Base):
