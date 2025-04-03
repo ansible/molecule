@@ -24,6 +24,7 @@ from subprocess import CompletedProcess
 import pytest
 
 from molecule import config
+from molecule.exceptions import MoleculeError
 from molecule.provisioner import ansible_playbook
 
 
@@ -258,7 +259,7 @@ def test_executes_catches_and_exits_return_code(  # type: ignore[no-untyped-def]
             stderr="err",
         ),
     ]
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(MoleculeError) as e:
         _instance.execute()
 
     assert e.value.code == 1
