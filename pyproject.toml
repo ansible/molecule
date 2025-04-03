@@ -53,9 +53,6 @@ documentation = "https://molecule.readthedocs.io/"
 homepage = "https://github.com/ansible-community/molecule"
 repository = "https://github.com/ansible-community/molecule"
 
-[tool.black]
-line-length = 100
-
 [tool.coverage.report]
 exclude_also = ["if TYPE_CHECKING:", "pragma: no cover"]
 fail_under = 90
@@ -379,7 +376,7 @@ select = ["ALL"]
 parametrize-values-type = "tuple"
 
 [tool.ruff.lint.isort]
-known-first-party = ["molecule"]
+known-first-party = ["src"]
 lines-after-imports = 2 # Ensures consistency for cases when there's variable vs function/class definitions after imports
 lines-between-types = 1 # Separate import/from with 1 line
 required-imports = ["from __future__ import annotations"]

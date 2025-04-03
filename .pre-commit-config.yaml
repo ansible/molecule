@@ -46,11 +46,6 @@ repos:
           - prettier-plugin-toml
           - prettier-plugin-sort-json
 
-  - repo: https://github.com/psf/black
-    rev: 25.1.0
-    hooks:
-      - id: black
-
   - repo: https://github.com/pappasam/toml-sort
     rev: v0.24.2
     hooks:
@@ -65,9 +60,7 @@ repos:
     rev: v0.9.9
     hooks:
       - id: ruff
-        args:
-          - --exit-non-zero-on-fix
-
+        entry: sh -c 'ruff check --fix --force-exclude && ruff format --force-exclude'
   - repo: https://github.com/streetsidesoftware/cspell-cli
     rev: v8.17.3
     hooks:

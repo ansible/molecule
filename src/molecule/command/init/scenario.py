@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Base class used by init scenario command."""
+
 from __future__ import annotations
 
 import json
@@ -33,7 +34,12 @@ import click
 from molecule import api, util
 from molecule.command import base as command_base
 from molecule.command.init import base
-from molecule.config import DEFAULT_DRIVER, MOLECULE_EMBEDDED_DATA_DIR, Config, molecule_directory
+from molecule.config import (
+    DEFAULT_DRIVER,
+    MOLECULE_EMBEDDED_DATA_DIR,
+    Config,
+    molecule_directory,
+)
 
 
 if TYPE_CHECKING:

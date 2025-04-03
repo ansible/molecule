@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Delegated Driver Module."""
+
 from __future__ import annotations
 
 import logging
@@ -192,11 +193,7 @@ class Delegated(Driver):
             connection_options = " ".join(self.ssh_connection_options)
 
             return (
-                "ssh {address} "
-                "-l {user} "
-                "-p {port} "
-                "-i {identity_file} "
-                f"{connection_options}"
+                f"ssh {{address}} -l {{user}} -p {{port}} -i {{identity_file}} {connection_options}"
             )
         return ""
 

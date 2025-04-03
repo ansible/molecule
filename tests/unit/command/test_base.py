@@ -415,7 +415,9 @@ def test_verify_configs(config_instance: config.Config) -> None:
     base._verify_configs(configs)
 
 
-def test_verify_configs_raises_with_no_configs(caplog: pytest.LogCaptureFixture) -> None:
+def test_verify_configs_raises_with_no_configs(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     """Ensure verify_configs raises when no configs are provided.
 
     Args:

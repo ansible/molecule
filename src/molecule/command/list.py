@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """List Command Module."""
+
 from __future__ import annotations
 
 import logging
@@ -142,7 +143,13 @@ def _print_yaml_data(
         data: A list of tabular data to display.
     """
     l = [  # noqa: E741
-        dict(zip(headers, [getattr(datum, field) for field in datum._fields], strict=False))
+        dict(
+            zip(
+                headers,
+                [getattr(datum, field) for field in datum._fields],
+                strict=False,
+            ),
+        )
         for datum in data
     ]
 

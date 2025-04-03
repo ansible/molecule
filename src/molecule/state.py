@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """State Module."""
+
 from __future__ import annotations
 
 import logging
@@ -30,7 +31,6 @@ from molecule import util
 
 
 if TYPE_CHECKING:
-
     from molecule.config import Config
 
 
