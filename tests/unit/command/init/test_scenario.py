@@ -27,6 +27,7 @@ import pytest
 
 from molecule.command.init import scenario
 from molecule.config import Config
+from molecule.exceptions import MoleculeError
 
 
 if TYPE_CHECKING:
@@ -100,7 +101,7 @@ def test_execute_scenario_exists(
     monkeypatch.chdir(test_cache_path)
     instance.execute()
 
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(MoleculeError) as e:
         instance.execute()
 
     assert e.value.code == 1

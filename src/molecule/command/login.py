@@ -84,12 +84,9 @@ class Login(base.Base):
                 raise MoleculeError(msg)
         match = [x for x in hosts if x.startswith(hostname)]
         if len(match) == 0:
-            msg = (
-                f"There are no hosts that match '{hostname}'.  You "
-                "can only login to valid hosts."
-            )
+            msg = f"There are no hosts that match '{hostname}'.  You can only login to valid hosts."
             raise MoleculeError(msg)
-        elif len(match) != 1:
+        if len(match) != 1:
             # If there are multiple matches, but one of them is an exact string
             # match, assume this is the one they're looking for and use it.
             if hostname in match:
