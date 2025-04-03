@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Testinfra Verifier Module."""
+
 from __future__ import annotations
 
 import glob
@@ -33,7 +34,6 @@ from molecule.api import Verifier
 
 
 if TYPE_CHECKING:
-
     from molecule.config import Config
     from molecule.verifier.base import Schema
 

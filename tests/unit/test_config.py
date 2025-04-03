@@ -274,8 +274,7 @@ def test_get_driver_name_raises_when_different_driver_used(  # noqa: D103
     assert e.value.code == 1
 
     msg = (
-        "Instance(s) were created with the 'foo' driver, "
-        "but the subcommand is using 'bar' driver."
+        "Instance(s) were created with the 'foo' driver, but the subcommand is using 'bar' driver."
     )
 
     assert msg in caplog.text

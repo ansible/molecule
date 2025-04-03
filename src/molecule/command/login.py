@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Login Command Module."""
+
 from __future__ import annotations
 
 import logging
@@ -82,10 +83,7 @@ class Login(base.Base):
                 util.sysexit_with_message(msg)
         match = [x for x in hosts if x.startswith(hostname)]
         if len(match) == 0:
-            msg = (
-                f"There are no hosts that match '{hostname}'.  You "
-                "can only login to valid hosts."
-            )
+            msg = f"There are no hosts that match '{hostname}'.  You can only login to valid hosts."
             util.sysexit_with_message(msg)
         elif len(match) != 1:
             # If there are multiple matches, but one of them is an exact string

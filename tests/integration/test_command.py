@@ -69,7 +69,13 @@ def has_pure_docker() -> bool:
     elif default_docker_socket.exists():
         # detect if docker is NOT using podman's backend (libpod)
         result = run(
-            ["curl", "--silent", "--unix-socket", "/var/run/docker.sock", "http:/v1/_ping"],
+            [
+                "curl",
+                "--silent",
+                "--unix-socket",
+                "/var/run/docker.sock",
+                "http:/v1/_ping",
+            ],
         )
         if result.returncode != 0:
             failure = "Docker does not seem to respond to default socket."
@@ -88,7 +94,10 @@ def has_pure_docker() -> bool:
                     failure = "Docker is using podman's backend, run `sudo podman-mac-helper uninstall` to disable it."
                 else:
                     failure = "Docker is using podman's backend, so we will skip running docker tests as they are high likely to fail. See https://github.com/ansible-collections/community.docker/issues/660 https://github.com/containers/podman/issues/16548"
-            elif result.stdout.rstrip() not in ("Not Found", '{"message":"page not found"}'):
+            elif result.stdout.rstrip() not in (
+                "Not Found",
+                '{"message":"page not found"}',
+            ):
                 failure = f"Unexpected response from Docker's default socket {result.stdout}."
     else:
         result = run(["docker", "context", "inspect", "--format", "{{.Endpoints.docker.Host}}"])

@@ -39,9 +39,10 @@ if TYPE_CHECKING:
 
 
 @pytest.fixture
-def _command_provisioner_section_with_cleanup_data() -> (
-    dict[Literal["provisioner"], ProvisionerData]
-):
+def _command_provisioner_section_with_cleanup_data() -> dict[
+    Literal["provisioner"],
+    ProvisionerData,
+]:
     return {"provisioner": {"name": "ansible", "playbooks": {"cleanup": "cleanup.yml"}}}
 
 
