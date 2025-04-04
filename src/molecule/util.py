@@ -38,13 +38,13 @@ from rich.syntax import Syntax
 
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
+from molecule.exceptions import MoleculeError
 
 
 if TYPE_CHECKING:
     from collections.abc import Generator, Iterable, MutableMapping
     from io import TextIOWrapper
     from typing import Any, AnyStr, NoReturn, TypeVar
-    from warnings import WarningMessage
 
     from molecule.types import CommandArgs, ConfigData, Options, PlatformData
 
@@ -104,7 +104,7 @@ def print_environment_vars(env: dict[str, str] | None) -> None:
             "SHELL REPLAY",
             " ".join([f"{k}={v}" for (k, v) in sorted(combined_env.items())]),
         )
-        print()  # noqa: T201
+        console.print()
 
 
 def do_report() -> None:
@@ -123,25 +123,6 @@ def sysexit(code: int = 1) -> NoReturn:
         code: The return code to emit.
     """
     sys.exit(code)
-
-
-def sysexit_with_message(
-    msg: str,
-    code: int = 1,
-    warns: Iterable[WarningMessage] = (),
-) -> NoReturn:
-    """Exit with an error message.
-
-    Args:
-        msg: The message to display.
-        code: The return code to exit with.
-        warns: A series of warnings to send alongside the message.
-    """
-    LOG.critical(msg, extra={"highlighter": False})
-
-    for warn in warns:
-        LOG.warning(warn.__dict__["message"].args[0])
-    sysexit(code)
 
 
 def os_walk(
@@ -262,11 +243,15 @@ def safe_load(string: str | TextIOWrapper):  # type: ignore[no-untyped-def]  # n
 
     Returns:
         A dict of the parsed string.
+
+
+    Raises:
+        MoleculeError: when YAML loading fails.
     """
     try:
         return yaml.safe_load(string) or {}
     except yaml.scanner.ScannerError as e:
-        sysexit_with_message(str(e))
+        raise MoleculeError(str(e)) from None
     return {}
 
 
@@ -391,10 +376,13 @@ def validate_parallel_cmd_args(cmd_args: CommandArgs) -> None:
 
     Args:
         cmd_args: Arguments to validate.
+
+    Raises:
+        MoleculeError: when incompatible options are present.
     """
     if cmd_args.get("parallel") and cmd_args.get("destroy") == "never":
         msg = 'Combining "--parallel" and "--destroy=never" is not supported'
-        sysexit_with_message(msg)
+        raise MoleculeError(msg)
 
 
 def _parallelize_platforms(
