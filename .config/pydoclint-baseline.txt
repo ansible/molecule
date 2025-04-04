@@ -10,176 +10,80 @@ tests/conftest.py
     DOC201: Function `test_fixture_dir` does not have a return section in docstring
     DOC101: Function `mock_ephemeral_directory`: Docstring contains fewer arguments than in function signature.
     DOC103: Function `mock_ephemeral_directory`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [_self: Scenario].
-    DOC501: Function `pytest_sessionfinish` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `pytest_sessionfinish` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
 --------------------
 tests/fixtures/integration/test_command/scenarios/cleanup/molecule/default/tests/test_cleanup.py
     DOC101: Function `test_hosts_file`: Docstring contains fewer arguments than in function signature.
     DOC106: Function `test_hosts_file`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
     DOC107: Function `test_hosts_file`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Function `test_hosts_file`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [host: ].
-    DOC501: Function `test_hosts_file` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_hosts_file` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
 --------------------
 tests/fixtures/integration/test_command/scenarios/side_effect/molecule/default/tests/test_side_effect.py
     DOC101: Function `test_side_effect_removed_file`: Docstring contains fewer arguments than in function signature.
     DOC106: Function `test_side_effect_removed_file`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
     DOC107: Function `test_side_effect_removed_file`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Function `test_side_effect_removed_file`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [host: ].
-    DOC501: Function `test_side_effect_removed_file` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_side_effect_removed_file` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
 --------------------
 tests/fixtures/integration/test_command/scenarios/test_destroy_strategy/molecule/default/tests/test_destroy_strategy.py
     DOC101: Function `test_hostname`: Docstring contains fewer arguments than in function signature.
     DOC106: Function `test_hostname`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
     DOC107: Function `test_hostname`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Function `test_hostname`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [host: ].
-    DOC501: Function `test_hostname` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_hostname` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
     DOC101: Function `test_etc_molecule_directory`: Docstring contains fewer arguments than in function signature.
     DOC106: Function `test_etc_molecule_directory`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
     DOC107: Function `test_etc_molecule_directory`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Function `test_etc_molecule_directory`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [host: ].
-    DOC501: Function `test_etc_molecule_directory` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_etc_molecule_directory` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
     DOC101: Function `test_etc_molecule_ansible_hostname_file`: Docstring contains fewer arguments than in function signature.
     DOC106: Function `test_etc_molecule_ansible_hostname_file`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
     DOC107: Function `test_etc_molecule_ansible_hostname_file`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Function `test_etc_molecule_ansible_hostname_file`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [host: ].
-    DOC501: Function `test_etc_molecule_ansible_hostname_file` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_etc_molecule_ansible_hostname_file` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
 --------------------
 tests/fixtures/integration/test_command/scenarios/verifier/molecule/testinfra/shared/test_shared.py
     DOC101: Function `test_ansible_hostname`: Docstring contains fewer arguments than in function signature.
     DOC106: Function `test_ansible_hostname`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
     DOC107: Function `test_ansible_hostname`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Function `test_ansible_hostname`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [host: ].
-    DOC501: Function `test_ansible_hostname` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_ansible_hostname` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
 --------------------
 tests/fixtures/integration/test_command/scenarios/verifier/molecule/testinfra/tests/test_testinfra.py
     DOC101: Function `test_ansible_hostname`: Docstring contains fewer arguments than in function signature.
     DOC106: Function `test_ansible_hostname`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
     DOC107: Function `test_ansible_hostname`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Function `test_ansible_hostname`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [host: ].
-    DOC501: Function `test_ansible_hostname` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_ansible_hostname` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
 --------------------
 tests/fixtures/integration/test_command/scenarios/verifier/molecule/testinfra-pre-commit/tests/test_testinfra_pre_commit.py
     DOC101: Function `test_ansible_hostname`: Docstring contains fewer arguments than in function signature.
     DOC106: Function `test_ansible_hostname`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
     DOC107: Function `test_ansible_hostname`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Function `test_ansible_hostname`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [host: ].
-    DOC501: Function `test_ansible_hostname` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_ansible_hostname` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
---------------------
-tests/integration/conftest.py
-    DOC501: Function `_with_scenario` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `_with_scenario` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
 --------------------
 tests/integration/test_command.py
     DOC601: Class `ParamDefault`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
     DOC603: Class `ParamDefault`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [argnames: tuple[str, str], argvalues: tuple[tuple[str, str]], ids: str, indirect: tuple[str, str]]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
     DOC101: Function `test_command`: Docstring contains fewer arguments than in function signature.
     DOC103: Function `test_command`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC501: Function `test_command` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_command` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_command_report` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_command_report` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
     DOC101: Function `test_command_idempotence`: Docstring contains fewer arguments than in function signature.
     DOC103: Function `test_command_idempotence`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC501: Function `test_command_idempotence` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_command_idempotence` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_command_dependency` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_command_dependency` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_command_init_scenario` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_command_init_scenario` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
     DOC101: Function `test_command_list_with_format_plain`: Docstring contains fewer arguments than in function signature.
     DOC103: Function `test_command_list_with_format_plain`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC501: Function `test_command_list_with_format_plain` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_command_list_with_format_plain` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
     DOC101: Function `test_with_missing_platform_name`: Docstring contains fewer arguments than in function signature.
     DOC103: Function `test_with_missing_platform_name`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC501: Function `test_with_missing_platform_name` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_with_missing_platform_name` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
     DOC101: Function `test_role_name_check_one`: Docstring contains fewer arguments than in function signature.
     DOC103: Function `test_role_name_check_one`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC501: Function `test_role_name_check_one` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_role_name_check_one` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_sample_collection` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_sample_collection` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_with_and_without_gitignore` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_with_and_without_gitignore` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
     DOC101: Function `test_podman`: Docstring contains fewer arguments than in function signature.
     DOC103: Function `test_podman`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC501: Function `test_podman` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_podman` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
     DOC101: Function `test_docker`: Docstring contains fewer arguments than in function signature.
     DOC103: Function `test_docker`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC501: Function `test_docker` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_docker` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
     DOC101: Function `test_smoke`: Docstring contains fewer arguments than in function signature.
     DOC103: Function `test_smoke`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC501: Function `test_smoke` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_smoke` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
 --------------------
 tests/unit/command/init/test_scenario.py
     DOC201: Function `fixture_command_args` does not have a return section in docstring
     DOC201: Function `fixture_instance` does not have a return section in docstring
-    DOC501: Function `test_scenario_execute` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_scenario_execute` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_execute_scenario_exists` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_execute_scenario_exists` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
---------------------
-tests/unit/command/test_base.py
-    DOC501: Function `test_command_config_private_member` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_command_config_private_member` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_init_calls_setup` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_init_calls_setup` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_command_setup` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_command_setup` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_execute_cmdline_scenarios` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_execute_cmdline_scenarios` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_execute_cmdline_scenarios_prune` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_execute_cmdline_scenarios_prune` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_execute_cmdline_scenarios_no_prune` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_execute_cmdline_scenarios_no_prune` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_execute_cmdline_scenarios_exit_destroy` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_execute_cmdline_scenarios_exit_destroy` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_execute_subcommand` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_execute_subcommand` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_execute_scenario` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_execute_scenario` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_execute_scenario_destroy` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_execute_scenario_destroy` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_get_configs` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_get_configs` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_verify_configs_raises_with_no_configs` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_verify_configs_raises_with_no_configs` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_verify_configs_raises_with_duplicate_configs` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_verify_configs_raises_with_duplicate_configs` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_get_subcommand` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_get_subcommand` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_command_completion` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_command_completion` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
 --------------------
 tests/unit/conftest.py
     DOC201: Function `fixture_molecule_data` does not have a return section in docstring
 --------------------
-tests/unit/model/v2/test_schema.py
-    DOC501: Function `test_molecule_schema` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_molecule_schema` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
---------------------
 tests/unit/provisioner/test_ansible.py
     DOC201: Function `fixture_instance` does not have a return section in docstring
---------------------
-tests/unit/test_config.py
-    DOC501: Function `test_collection_directory_property` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_collection_directory_property` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_collection_property` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_collection_property` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_collection_property_broken_collection` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_collection_property_broken_collection` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
 --------------------
 tests/unit/test_logger.py
     DOC101: Function `_patched_logger_env`: Docstring contains fewer arguments than in function signature.
@@ -187,24 +91,4 @@ tests/unit/test_logger.py
     DOC107: Function `_patched_logger_env`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Function `_patched_logger_env`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [monkeypatch: , request: ].
     DOC201: Function `_patched_logger_env` does not have a return section in docstring
---------------------
-tests/unit/test_scenario.py
-    DOC501: Function `test_ephemeral_directory_overridden_via_env_var` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_ephemeral_directory_overridden_via_env_var` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
---------------------
-tests/unit/test_util.py
-    DOC501: Function `test_write_file` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_write_file` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_safe_load_file` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_safe_load_file` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_abs_path` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_abs_path` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_abs_path_with_path` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_abs_path_with_path` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_abs_path_with_empty_path` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_abs_path_with_empty_path` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_abs_path_with_symlink` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_abs_path_with_symlink` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
-    DOC501: Function `test_oxford_comma` has raise/assert statements, but the docstring does not have a "Raises" section
-    DOC503: Function `test_oxford_comma` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['AssertionError (implicitly from the `assert` statement)'].
 --------------------

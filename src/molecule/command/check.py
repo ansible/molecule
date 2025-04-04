@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 import logging
-import os
 
 from typing import TYPE_CHECKING
 
@@ -30,6 +29,7 @@ import click
 
 from molecule import util
 from molecule.command import base
+from molecule.config import MOLECULE_PARALLEL
 
 
 if TYPE_CHECKING:
@@ -37,7 +37,6 @@ if TYPE_CHECKING:
 
 
 LOG = logging.getLogger(__name__)
-MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
 
 
 class Check(base.Base):

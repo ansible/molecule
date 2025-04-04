@@ -57,4 +57,4 @@ class Roles(AnsibleGalaxyBase):
         Returns:
             Path to the requirements file for this dependency.
         """
-        return cast(str, self.options["role-file"])
+        return cast("str", self.options["role-file"])

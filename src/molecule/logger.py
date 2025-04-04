@@ -124,7 +124,7 @@ def github_actions_groups(func: Callable[P, R]) -> Callable[P, R]:
 
     @wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-        self = cast(HasConfig, args[0])
+        self = cast("HasConfig", args[0])
         scenario = self._config.scenario.name
         subcommand = underscore(self.__class__.__name__)
         console.print(
@@ -159,7 +159,7 @@ def gitlab_ci_sections(func: Callable[P, R]) -> Callable[P, R]:
 
     @wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-        self = cast(HasConfig, args[0])
+        self = cast("HasConfig", args[0])
         scenario = self._config.scenario.name
         subcommand = underscore(self.__class__.__name__)
         console.print(
@@ -203,7 +203,7 @@ def travis_ci_folds(func: Callable[P, R]) -> Callable[P, R]:
 
     @wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-        self = cast(HasConfig, args[0])
+        self = cast("HasConfig", args[0])
         scenario = self._config.scenario.name
         subcommand = underscore(self.__class__.__name__)
         console.print(
@@ -239,7 +239,7 @@ def section_logger(func: Callable[P, R]) -> Callable[P, R]:
 
     @wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-        self = cast(HasConfig, args[0])
+        self = cast("HasConfig", args[0])
         LOG.info(
             "[info]Running [scenario]%s[/] > [action]%s[/][/]",
             self._config.scenario.name,

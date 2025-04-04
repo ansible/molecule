@@ -25,7 +25,6 @@ import glob
 import logging
 import os
 
-from collections.abc import MutableMapping
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
@@ -34,6 +33,8 @@ from molecule.api import Verifier
 
 
 if TYPE_CHECKING:
+    from collections.abc import MutableMapping
+
     from molecule.config import Config
     from molecule.verifier.base import Schema
 
@@ -125,7 +126,7 @@ class Testinfra(Verifier):
         Returns:
             The default verifier options.
         """
-        d = cast(MutableMapping[str, str | bool], self._config.driver.testinfra_options)
+        d = cast("MutableMapping[str, str | bool]", self._config.driver.testinfra_options)
         d["p"] = "no:cacheprovider"
         if self._config.debug:
             d["debug"] = True
@@ -159,7 +160,7 @@ class Testinfra(Verifier):
         Returns:
             The default verifier environment variables.
         """
-        env = cast(dict[str, str], os.environ)
+        env = cast("dict[str, str]", os.environ)
         env = util.merge_dicts(env, self._config.env)
         if self._config.provisioner:
             env = util.merge_dicts(env, self._config.provisioner.env)
