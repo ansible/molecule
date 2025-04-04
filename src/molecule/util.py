@@ -465,7 +465,7 @@ def lookup_config_file(filename: str) -> str | None:
     return None
 
 
-def boolean(value: bool | AnyStr, *, strict: bool = True) -> bool:  # noqa: FBT001
+def boolean(value: bool | AnyStr, *, strict: bool = True) -> bool:
     """Evaluate any object as boolean matching ansible behavior.
 
     Args:
