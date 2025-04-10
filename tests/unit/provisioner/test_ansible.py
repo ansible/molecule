@@ -27,6 +27,7 @@ from typing import TYPE_CHECKING, Any
 import pytest
 
 from molecule import config, util
+from molecule.exceptions import MoleculeError
 from molecule.provisioner import ansible, ansible_playbooks
 from tests.unit.conftest import os_split  # pylint:disable=C0411
 
@@ -689,7 +690,7 @@ def test_link_vars_raises_when_source_not_found(instance: ansible.Ansible, caplo
     c = instance._config.config
     c["provisioner"]["inventory"]["links"] = {"foo": "../bar"}
 
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(MoleculeError) as e:
         instance._link_or_update_vars()
 
     assert e.value.code == 1
@@ -712,7 +713,7 @@ def test_verify_inventory_raises_when_missing_hosts(  # type: ignore[no-untyped-
     instance,
 ):
     instance._config.config["platforms"] = []
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(MoleculeError) as e:
         instance._verify_inventory()
 
     assert e.value.code == 1

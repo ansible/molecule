@@ -38,13 +38,13 @@ from rich.syntax import Syntax
 
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
+from molecule.exceptions import MoleculeError
 
 
 if TYPE_CHECKING:
     from collections.abc import Generator, Iterable, MutableMapping
     from io import TextIOWrapper
     from typing import Any, AnyStr, NoReturn, TypeVar
-    from warnings import WarningMessage
 
     from molecule.types import CommandArgs, ConfigData, Options, PlatformData
 
@@ -104,7 +104,6 @@ def print_environment_vars(env: dict[str, str] | None) -> None:
             "SHELL REPLAY",
             " ".join([f"{k}={v}" for (k, v) in sorted(combined_env.items())]),
         )
-        print()  # noqa: T201
 
 
 def do_report() -> None:
@@ -123,25 +122,6 @@ def sysexit(code: int = 1) -> NoReturn:
         code: The return code to emit.
     """
     sys.exit(code)
-
-
-def sysexit_with_message(
-    msg: str,
-    code: int = 1,
-    warns: Iterable[WarningMessage] = (),
-) -> NoReturn:
-    """Exit with an error message.
-
-    Args:
-        msg: The message to display.
-        code: The return code to exit with.
-        warns: A series of warnings to send alongside the message.
-    """
-    LOG.critical(msg, extra={"highlighter": False})
-
-    for warn in warns:
-        LOG.warning(warn.__dict__["message"].args[0])
-    sysexit(code)
 
 
 def os_walk(
@@ -262,11 +242,15 @@ def safe_load(string: str | TextIOWrapper):  # type: ignore[no-untyped-def]  # n
 
     Returns:
         A dict of the parsed string.
+
+
+    Raises:
+        MoleculeError: when YAML loading fails.
     """
     try:
         return yaml.safe_load(string) or {}
     except yaml.scanner.ScannerError as e:
-        sysexit_with_message(str(e))
+        raise MoleculeError(str(e)) from None
     return {}
 
 
@@ -391,10 +375,13 @@ def validate_parallel_cmd_args(cmd_args: CommandArgs) -> None:
 
     Args:
         cmd_args: Arguments to validate.
+
+    Raises:
+        MoleculeError: when incompatible options are present.
     """
     if cmd_args.get("parallel") and cmd_args.get("destroy") == "never":
         msg = 'Combining "--parallel" and "--destroy=never" is not supported'
-        sysexit_with_message(msg)
+        raise MoleculeError(msg)
 
 
 def _parallelize_platforms(
@@ -480,8 +467,12 @@ def boolean(value: bool | AnyStr, *, strict: bool = True) -> bool:
     """
     # Based on https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/parsing/convert_bool.py
 
-    BOOLEANS_TRUE = frozenset(("y", "yes", "on", "1", "true", "t", 1, 1.0, True))  # noqa: N806
-    BOOLEANS_FALSE = frozenset(("n", "no", "off", "0", "false", "f", 0, 0.0, False, ""))  # noqa: N806
+    BOOLEANS_TRUE = frozenset(  # noqa: N806
+        ("y", "yes", "on", "1", "true", "t", 1, 1.0, True),
+    )
+    BOOLEANS_FALSE = frozenset(  # noqa: N806
+        ("n", "no", "off", "0", "false", "f", 0, 0.0, False, ""),
+    )
     BOOLEANS = BOOLEANS_TRUE.union(BOOLEANS_FALSE)  # noqa: N806
 
     if isinstance(value, bool):

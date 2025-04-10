@@ -33,6 +33,7 @@ from typing import TYPE_CHECKING
 from ansible_compat.ports import cached_property
 
 from molecule import util
+from molecule.exceptions import MoleculeError
 from molecule.provisioner import ansible_playbook, ansible_playbooks, base
 
 
@@ -838,14 +839,18 @@ class Ansible(base.Base):
                 shutil.rmtree(d)
 
     def _link_or_update_vars(self) -> None:
-        """Create or updates the symlink to group_vars and returns None."""
+        """Create or updates the symlink to group_vars and returns None.
+
+        Raises:
+            MoleculeError: if source file does not exist.
+        """
         for d, source in self.links.items():
             target = os.path.join(self.inventory_directory, d)  # noqa: PTH118
             source = os.path.join(self._config.scenario.directory, source)  # noqa: PTH118, PLW2901
 
             if not os.path.exists(source):  # noqa: PTH110
                 msg = f"The source path '{source}' does not exist."
-                util.sysexit_with_message(msg)
+                raise MoleculeError(msg)
             if os.path.exists(target):  # noqa: PTH110
                 if os.path.realpath(target) == os.path.realpath(source):
                     msg = f"Required symlink {target} to {source} exist, skip creation"
@@ -883,10 +888,14 @@ class Ansible(base.Base):
         )
 
     def _verify_inventory(self) -> None:
-        """Verify the inventory is valid and returns None."""
+        """Verify the inventory is valid and returns None.
+
+        Raises:
+            MoleculeError: if inventory is missing.
+        """
         if not self.inventory:
             msg = "Instances missing from the 'platform' section of molecule.yml."
-            util.sysexit_with_message(msg)
+            raise MoleculeError(msg)
 
     def _get_config_template(self) -> str:
         """Return a config template string.
