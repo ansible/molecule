@@ -49,7 +49,7 @@ jsmin==3.0.1              # via mkdocs-minify-plugin
 jsonschema==4.23.0        # via ansible-compat, ansible-lint, molecule (pyproject.toml)
 jsonschema-specifications==2024.10.1  # via jsonschema
 linkchecker==10.5.0       # via mkdocs-ansible, molecule (pyproject.toml)
-markdown==3.7             # via markdown-include, mkdocs, mkdocs-autorefs, mkdocs-htmlproofer-plugin, mkdocs-material, mkdocstrings, pymdown-extensions
+markdown==3.8             # via markdown-include, mkdocs, mkdocs-autorefs, mkdocs-htmlproofer-plugin, mkdocs-material, mkdocstrings, pymdown-extensions
 markdown-exec==1.10.3     # via mkdocs-ansible
 markdown-include==0.8.1   # via mkdocs-ansible
 markdown-it-py==3.0.0     # via rich
@@ -77,7 +77,7 @@ packaging==24.2           # via ansible-compat, ansible-core, ansible-lint, blac
 paginate==0.5.7           # via mkdocs-material
 pathspec==0.12.1          # via ansible-lint, black, mkdocs, mkdocs-macros-plugin, yamllint
 pexpect==4.9.0            # via molecule (pyproject.toml)
-pillow==11.1.0            # via cairosvg, mkdocs-ansible
+pillow==11.2.1            # via cairosvg, mkdocs-ansible
 platformdirs==4.3.7       # via black, mkdocs-get-deps, pylint, tox, virtualenv
 pluggy==1.5.0             # via pytest, tox, molecule (pyproject.toml)
 pre-commit==4.2.0         # via molecule (pyproject.toml)
@@ -103,7 +103,7 @@ requests==2.32.3          # via docker, linkchecker, mkdocs-htmlproofer-plugin, 
 rich==14.0.0              # via enrich, molecule (pyproject.toml)
 rpds-py==0.24.0           # via jsonschema, referencing
 ruamel-yaml==0.18.10      # via ansible-lint
-ruff==0.11.4              # via molecule (pyproject.toml)
+ruff==0.11.5              # via molecule (pyproject.toml)
 six==1.17.0               # via python-dateutil
 soupsieve==2.6            # via beautifulsoup4
 subprocess-tee==0.4.2     # via ansible-compat, ansible-lint
@@ -118,7 +118,7 @@ tox==4.25.0               # via molecule (pyproject.toml)
 types-jsonschema==4.23.0.20241208  # via molecule (pyproject.toml)
 types-pexpect==4.9.0.20241208  # via molecule (pyproject.toml)
 types-pyyaml==6.0.12.20250402  # via molecule (pyproject.toml)
-urllib3==2.3.0            # via docker, requests
+urllib3==2.4.0            # via docker, requests
 virtualenv==20.30.0       # via pre-commit, tox
 watchdog==6.0.0           # via mkdocs
 wcmatch==10.0             # via ansible-lint, molecule (pyproject.toml)
