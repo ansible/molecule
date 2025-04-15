@@ -246,6 +246,26 @@ def test_execute_cmdline_scenarios(patched_execute_scenario: MagicMock) -> None:
 
 
 @pytest.mark.usefixtures("config_instance")
+def test_execute_cmdline_scenarios_missing(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Confirm execute_scenario exits properly when given a nonexistent scenario.
+
+    Args:
+        caplog: pytest caplog fixture.
+    """
+    scenario_name = ["nonexistent"]
+    args: MoleculeArgs = {}
+    command_args: CommandArgs = {"destroy": "always", "subcommand": "test"}
+
+    with pytest.raises(SystemExit):
+        base.execute_cmdline_scenarios(scenario_name, args, command_args)
+
+    error_msg = "'molecule/nonexistent/molecule.yml' glob failed.  Exiting."
+    assert error_msg in caplog.text
+
+
+@pytest.mark.usefixtures("config_instance")
 def test_execute_cmdline_scenarios_prune(
     patched_execute_subcommand: MagicMock,
     patched_prune: MagicMock,
