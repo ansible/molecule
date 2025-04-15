@@ -133,11 +133,14 @@ def execute_cmdline_scenarios(
             if config.scenario.name not in excludes
         ]
     else:
-        # filter out excludes
-        scenario_names = [name for name in scenario_names if name not in excludes]
-        for scenario_name in scenario_names:
-            glob_str = MOLECULE_GLOB.replace("*", scenario_name)
-            configs.extend(get_configs(args, command_args, ansible_args, glob_str))
+        try:
+            # filter out excludes
+            scenario_names = [name for name in scenario_names if name not in excludes]
+            for scenario_name in scenario_names:
+                glob_str = MOLECULE_GLOB.replace("*", scenario_name)
+                configs.extend(get_configs(args, command_args, ansible_args, glob_str))
+        except ScenarioFailureError as exc:
+            util.sysexit(code=exc.code)
 
     scenarios = _generate_scenarios(scenario_names, configs)
 

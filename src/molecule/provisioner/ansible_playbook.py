@@ -29,7 +29,7 @@ from typing import TYPE_CHECKING
 
 from molecule import util
 from molecule.api import MoleculeRuntimeWarning
-from molecule.exceptions import MoleculeError
+from molecule.exceptions import ScenarioFailureError
 from molecule.types import ScenarioResult
 
 
@@ -119,7 +119,7 @@ class AnsiblePlaybook:
             Output from ansible-playbook.
 
         Raises:
-            MoleculeError: when Ansible returns nonzero code.
+            ScenarioFailureError: when Ansible returns nonzero code.
         """
         if not self._ansible_command:
             self.bake()
@@ -150,7 +150,7 @@ class AnsiblePlaybook:
             from rich.markup import escape
 
             msg = f"Ansible return code was {result.returncode}, command was: [dim]{escape(shlex.join(result.args))}[/dim]"
-            raise MoleculeError(
+            raise ScenarioFailureError(
                 msg,
                 code=result.returncode,
                 warns=warns,
