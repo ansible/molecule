@@ -42,9 +42,10 @@ from molecule.exceptions import MoleculeError
 
 
 if TYPE_CHECKING:
-    from collections.abc import Generator, Iterable, MutableMapping
+    from collections.abc import Generator, Iterable, MutableMapping, Sequence
     from io import TextIOWrapper
     from typing import Any, AnyStr, NoReturn, TypeVar
+    from warnings import WarningMessage
 
     from molecule.types import CommandArgs, ConfigData, Options, PlatformData
 
@@ -122,6 +123,24 @@ def sysexit(code: int = 1) -> NoReturn:
         code: The return code to emit.
     """
     sys.exit(code)
+
+
+def sysexit_with_message(
+    msg: str,
+    code: int = 1,
+    warns: Sequence[WarningMessage] = (),
+) -> NoReturn:
+    """This method is a lie for compatibility purposes.
+
+    Args:
+        msg: The message to display.
+        code: The return code to exit with.
+        warns: A series of warnings to send alongside the message.
+
+    Raises:
+        MoleculeError: always.
+    """
+    raise MoleculeError(message=msg, code=code, warns=warns)
 
 
 def os_walk(
