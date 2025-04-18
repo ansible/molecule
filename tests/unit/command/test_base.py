@@ -193,7 +193,10 @@ def test_command_config_private_member(instance: ExtendedBase) -> None:
     assert isinstance(instance._config, config.Config)
 
 
-def test_init_calls_setup(patched_base_setup: MagicMock, instance: ExtendedBase) -> None:
+def test_init_calls_setup(
+    patched_base_setup: MagicMock,
+    instance: ExtendedBase,
+) -> None:
     """Ensure the setup method is called during initialization.
 
     Args:
@@ -240,6 +243,26 @@ def test_execute_cmdline_scenarios(patched_execute_scenario: MagicMock) -> None:
 
     scenario_count = 1
     assert patched_execute_scenario.call_count == scenario_count
+
+
+@pytest.mark.usefixtures("config_instance")
+def test_execute_cmdline_scenarios_missing(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Confirm execute_scenario exits properly when given a nonexistent scenario.
+
+    Args:
+        caplog: pytest caplog fixture.
+    """
+    scenario_name = ["nonexistent"]
+    args: MoleculeArgs = {}
+    command_args: CommandArgs = {"destroy": "always", "subcommand": "test"}
+
+    with pytest.raises(SystemExit):
+        base.execute_cmdline_scenarios(scenario_name, args, command_args)
+
+    error_msg = "'molecule/nonexistent/molecule.yml' glob failed.  Exiting."
+    assert error_msg in caplog.text
 
 
 @pytest.mark.usefixtures("config_instance")
@@ -291,7 +314,6 @@ def test_execute_cmdline_scenarios_no_prune(
         ("never", ()),
     ),
 )
-@pytest.mark.parametrize("exception", (ScenarioFailureError, SystemExit))
 @pytest.mark.usefixtures("config_instance")
 def test_execute_cmdline_scenarios_exit_destroy(  # noqa: PLR0913
     patched_execute_scenario: MagicMock,
@@ -300,7 +322,6 @@ def test_execute_cmdline_scenarios_exit_destroy(  # noqa: PLR0913
     patched_sysexit: MagicMock,
     destroy: Literal["always", "never"],
     subcommands: tuple[str, ...],
-    exception: type,
 ) -> None:
     """Ensure execute_cmdline_scenarios handles errors correctly when 'destroy' is set.
 
@@ -314,12 +335,11 @@ def test_execute_cmdline_scenarios_exit_destroy(  # noqa: PLR0913
         patched_sysexit: Mocked util.sysexit function.
         destroy: Value to set 'destroy' arg to.
         subcommands: Expected subcommands to run after execute_scenario fails.
-        exception: Class of exception for scenario to raise.
     """
     scenario_name = ["default"]
     args: MoleculeArgs = {}
     command_args: CommandArgs = {"destroy": destroy, "subcommand": "test"}
-    patched_execute_scenario.side_effect = exception()
+    patched_execute_scenario.side_effect = ScenarioFailureError()
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
     assert patched_execute_scenario.called
@@ -346,7 +366,10 @@ def test_execute_subcommand(config_instance: config.Config) -> None:
     assert config_instance.action == "list"
 
 
-def test_execute_scenario(mocker: MockerFixture, patched_execute_subcommand: MagicMock) -> None:
+def test_execute_scenario(
+    mocker: MockerFixture,
+    patched_execute_subcommand: MagicMock,
+) -> None:
     """Ensure execute_scenario runs normally.
 
     - call a spoofed scenario with a sequence that does not include destroy
@@ -485,7 +508,13 @@ def test_command_completion(shell: str) -> None:
             check=False,
         ).stdout.split()[3][0:3]
 
-    result = subprocess.run(["molecule"], env=env, text=True, capture_output=True, check=False)
+    result = subprocess.run(
+        ["molecule"],
+        env=env,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
 
     if "bash" in shell and (float(bash_version) < 4.4):  # noqa: PLR2004
         string = "Shell completion is not supported for Bash versions older than 4.4"

@@ -42,7 +42,7 @@ from wcmatch import glob
 import molecule.scenarios
 
 from molecule import config, logger, text, util
-from molecule.console import should_do_markup
+from molecule.console import console, should_do_markup
 from molecule.exceptions import ScenarioFailureError
 from molecule.scenario import Scenario
 from molecule.util import safe_dump
@@ -133,11 +133,14 @@ def execute_cmdline_scenarios(
             if config.scenario.name not in excludes
         ]
     else:
-        # filter out excludes
-        scenario_names = [name for name in scenario_names if name not in excludes]
-        for scenario_name in scenario_names:
-            glob_str = MOLECULE_GLOB.replace("*", scenario_name)
-            configs.extend(get_configs(args, command_args, ansible_args, glob_str))
+        try:
+            # filter out excludes
+            scenario_names = [name for name in scenario_names if name not in excludes]
+            for scenario_name in scenario_names:
+                glob_str = MOLECULE_GLOB.replace("*", scenario_name)
+                configs.extend(get_configs(args, command_args, ansible_args, glob_str))
+        except ScenarioFailureError as exc:
+            util.sysexit(code=exc.code)
 
     scenarios = _generate_scenarios(scenario_names, configs)
 
@@ -148,7 +151,7 @@ def execute_cmdline_scenarios(
         util.sysexit(code=exc.code)
     finally:
         if command_args.get("report"):
-            print(generate_report(scenarios.results))  # noqa: T201
+            console.print(generate_report(scenarios.results))
 
 
 def _generate_scenarios(
@@ -222,22 +225,6 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
                 if scenario.config.is_parallel:
                     scenario._remove_scenario_state_directory()  # noqa: SLF001
             raise
-        except SystemExit:
-            # if the command has a 'destroy' arg, like test does,
-            # handle that behavior here.
-            if command_args.get("destroy") == "always":
-                msg = (
-                    f"An error occurred during the {scenario.config.subcommand} sequence action: "
-                    f"'{scenario.config.action}'. Cleaning up."
-                )
-                LOG.warning(msg)
-                execute_subcommand(scenario.config, "cleanup")
-                execute_subcommand(scenario.config, "destroy")
-                # always prune ephemeral dir if destroying on failure
-                scenario.prune()
-                if scenario.config.is_parallel:
-                    scenario._remove_scenario_state_directory()  # noqa: SLF001
-            raise ScenarioFailureError from None
         finally:
             # Store results regardless
             scenarios.results.append({"name": scenario.name, "results": scenario.results})
