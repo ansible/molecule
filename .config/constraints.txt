@@ -39,7 +39,7 @@ ghp-import==2.1.0         # via mkdocs
 griffe==1.7.2             # via mkdocstrings-python
 hjson==3.1.0              # via mkdocs-macros-plugin, super-collections
 htmlmin2==0.1.13          # via mkdocs-minify-plugin
-identify==2.6.10           # via pre-commit
+identify==2.6.10          # via pre-commit
 idna==3.10                # via requests
 importlib-metadata==8.6.1  # via ansible-lint
 iniconfig==2.1.0          # via pytest
