@@ -1,0 +1,7 @@
+#!/bin/bash
+# cspell: ignore exuo
+set -euo pipefail
+coverage combine -q "--data-file=${TOX_ENV_DIR}/.coverage" "${TOX_ENV_DIR}"/.coverage.*
+coverage xml "--data-file=${TOX_ENV_DIR}/.coverage" -o "${TOX_ENV_DIR}/coverage.xml" --ignore-errors --fail-under=0
+COVERAGE_FILE="${TOX_ENV_DIR}/.coverage" coverage lcov --fail-under=0 --ignore-errors -q
+COVERAGE_FILE="${TOX_ENV_DIR}/.coverage" coverage report --ignore-errors
