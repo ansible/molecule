@@ -43,9 +43,10 @@ htmlcov/
 .coverage
 .coverage.*
 .cache
+coverage.lcov
+coverage.xml
 junit.xml
 nosetests.xml
-coverage.xml
 *.cover
 *.py,cover
 .hypothesis/
