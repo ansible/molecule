@@ -292,14 +292,13 @@ pipeline {
 }
 ```
 
-The following Jenkinsfile uses the [Ansible Creator
-Execution Environment](https://github.com/ansible/creator-ee) image.
+The following Jenkinsfile uses the [Ansible Dev Tools](https://ansible.readthedocs.io/projects/dev-tools/container/) image.
 
 ```groovy
 pipeline {
   agent {
     docker {
-      image 'quay.io/ansible/creator-ee'
+      image 'ghcr.io/ansible/community-ansible-dev-tools'
       args '-v /var/run/docker.sock:/var/run/docker.sock'
     }
   }
