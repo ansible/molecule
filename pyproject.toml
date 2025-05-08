@@ -343,6 +343,7 @@ fail-on = [
 [tool.pytest.ini_options]
 addopts = "-ra --showlocals --durations=10 --instafail"
 cache_dir = "./.cache/.pytest"
+junit_family = "legacy" # see https://docs.codecov.com/docs/test-analytics
 markers = [
   "serial: Run this test serially via filelock.",
   "extensive: marks tests that we want to skip by default, as they are indirectly covered by other tests"

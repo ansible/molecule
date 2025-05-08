@@ -43,8 +43,10 @@ htmlcov/
 .coverage
 .coverage.*
 .cache
-nosetests.xml
+coverage.lcov
 coverage.xml
+junit.xml
+nosetests.xml
 *.cover
 *.py,cover
 .hypothesis/
