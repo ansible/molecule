@@ -22,7 +22,6 @@ from __future__ import annotations
 import binascii
 import os
 import tempfile
-import warnings
 
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -30,9 +29,9 @@ from typing import TYPE_CHECKING
 import pytest
 
 from molecule import util
-from molecule.api import IncompatibleMoleculeRuntimeWarning, MoleculeRuntimeWarning
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
+from molecule.exceptions import MoleculeError
 from molecule.text import strip_ansi_escape
 
 
@@ -56,7 +55,9 @@ def test_print_debug() -> None:  # noqa: D103
     assert result == expected
 
 
-def test_print_environment_vars(capsys: pytest.CaptureFixture[str]) -> None:  # noqa: D103
+def test_print_environment_vars(  # noqa: D103
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     env = {
         "ANSIBLE_FOO": "foo",
         "ANSIBLE_BAR": "bar",
@@ -95,40 +96,6 @@ def test_sysexit_with_custom_code() -> None:  # noqa: D103
         util.sysexit(2)
 
     assert e.value.code == 2  # noqa: PLR2004
-
-
-def test_sysexit_with_message(caplog: pytest.LogCaptureFixture) -> None:  # noqa: D103
-    with pytest.raises(SystemExit) as e:
-        util.sysexit_with_message("foo")
-
-    assert e.value.code == 1
-
-    assert "foo" in caplog.text
-
-
-def test_sysexit_with_warns(caplog: pytest.LogCaptureFixture) -> None:  # noqa: D103
-    with pytest.raises(SystemExit) as e:  # noqa: PT012
-        with warnings.catch_warnings(record=True) as warns:
-            warnings.filterwarnings("default", category=MoleculeRuntimeWarning)
-            warnings.warn("xxx", category=IncompatibleMoleculeRuntimeWarning)  # noqa: B028
-
-        util.sysexit_with_message("foo", warns=warns)
-
-    assert e.value.code == 1
-
-    assert "foo" in caplog.text
-    assert "xxx" in caplog.text
-
-
-def test_sysexit_with_message_and_custom_code(  # noqa: D103
-    caplog: pytest.LogCaptureFixture,
-) -> None:
-    with pytest.raises(SystemExit) as e:
-        util.sysexit_with_message("foo", 2)
-
-    assert e.value.code == 2  # noqa: PLR2004
-
-    assert "foo" in caplog.text
 
 
 def test_run_command(app: App) -> None:  # noqa: D103
@@ -267,7 +234,7 @@ def test_safe_load_exits_when_cannot_parse() -> None:  # noqa: D103
 %foo:
 """.strip()
 
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(MoleculeError) as e:
         util.safe_load(data)
 
     assert e.value.code == 1

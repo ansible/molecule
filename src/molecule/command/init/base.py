@@ -26,7 +26,7 @@ import logging
 
 from pathlib import Path
 
-from molecule import util
+from molecule.exceptions import MoleculeError
 
 
 LOG = logging.getLogger(__name__)
@@ -45,6 +45,5 @@ class Base(abc.ABC):
 
     def _validate_template_dir(self, template_dir: str) -> None:
         if not Path(template_dir).is_dir():
-            util.sysexit_with_message(
-                "The specified template directory (" + str(template_dir) + ") does not exist",
-            )
+            msg = f"The specified template directory ({template_dir!s}) does not exist"
+            raise MoleculeError(message=msg)

@@ -34,6 +34,7 @@ from typing import TYPE_CHECKING
 
 from molecule import scenarios, util
 from molecule.constants import RC_TIMEOUT
+from molecule.exceptions import MoleculeError
 from molecule.text import checksum
 
 
@@ -132,7 +133,7 @@ class Scenario:
             The ephemeral directory for this scenario.
 
         Raises:
-            SystemExit: If lock cannot be acquired before timeout.
+            MoleculeError: If lock cannot be acquired before timeout.
         """
         path: Path
         if "MOLECULE_EPHEMERAL_DIRECTORY" not in os.environ:
@@ -163,7 +164,7 @@ class Scenario:
                         sleep(delay)
                 else:
                     LOG.warning("Timedout trying to acquire lock on %s", path)
-                    raise SystemExit(RC_TIMEOUT)
+                    raise MoleculeError(code=RC_TIMEOUT)
 
         return path.absolute().as_posix()
 

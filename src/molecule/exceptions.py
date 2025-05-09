@@ -8,20 +8,21 @@ from typing import TYPE_CHECKING
 
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
     from warnings import WarningMessage
 
 
 LOG = logging.getLogger(__name__)
 
 
-class ScenarioFailureError(Exception):
-    """Details about a scenario that failed."""
+class MoleculeError(Exception):
+    """Generic Molecule error."""
 
     def __init__(
         self,
         message: str = "",
         code: int = 1,
-        warns: tuple[WarningMessage, ...] = (),
+        warns: Sequence[WarningMessage] = (),
     ) -> None:
         """Custom exception to handle scenario run failures.
 
@@ -39,3 +40,7 @@ class ScenarioFailureError(Exception):
             LOG.warning(warn.__dict__["message"].args[0])
 
         self.code = code
+
+
+class ScenarioFailureError(MoleculeError):
+    """Details about a scenario that failed."""
