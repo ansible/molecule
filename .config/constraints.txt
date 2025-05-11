@@ -3,7 +3,7 @@
 ansi2html==1.9.2          # via molecule (pyproject.toml)
 ansible-compat==25.1.5    # via ansible-lint, molecule (pyproject.toml)
 ansible-lint==25.4.0      # via molecule (pyproject.toml)
-astroid==3.3.10            # via pylint
+astroid==3.3.10           # via pylint
 attrs==25.3.0             # via jsonschema, referencing
 babel==2.17.0             # via mkdocs-material
 backrefs==5.8             # via mkdocs-material
