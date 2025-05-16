@@ -87,7 +87,7 @@
                 "gce",
                 "libvirt",
                 "lxd",
-		"kubevirt"
+                "kubevirt"
               ]
             },
             {
