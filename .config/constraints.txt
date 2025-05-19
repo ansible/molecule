@@ -12,7 +12,7 @@ black==25.1.0             # via ansible-lint
 bracex==2.5.post1         # via wcmatch
 cachetools==5.5.2         # via tox
 cairocffi==1.7.1          # via cairosvg
-cairosvg==2.8.2           # via mkdocs-ansible
+cairosvg==2.7.1           # via mkdocs-ansible
 certifi==2025.4.26        # via requests
 cffi==1.17.1              # via cairocffi, cryptography
 cfgv==3.4.0               # via pre-commit
@@ -57,7 +57,7 @@ markupsafe==3.0.2         # via jinja2, mkdocs, mkdocs-autorefs, mkdocstrings
 mccabe==0.7.0             # via pylint
 mdurl==0.1.2              # via markdown-it-py
 mergedeep==1.3.4          # via mkdocs, mkdocs-get-deps
-mkdocs==1.6.1             # via mkdocs-ansible, mkdocs-autorefs, mkdocs-gen-files, mkdocs-htmlproofer-plugin, mkdocs-macros-plugin, mkdocs-material, mkdocs-minify-plugin, mkdocs-monorepo-plugin, mkdocstrings
+mkdocs==1.6.1             # via mkdocs-ansible, mkdocs-autorefs, mkdocs-gen-files, mkdocs-htmlproofer-plugin, mkdocs-macros-plugin, mkdocs-material, mkdocs-minify-plugin, mkdocstrings
 mkdocs-ansible==25.5.0    # via molecule (pyproject.toml)
 mkdocs-autorefs==1.4.1    # via mkdocstrings, mkdocstrings-python
 mkdocs-gen-files==0.5.0   # via mkdocs-ansible
@@ -67,7 +67,6 @@ mkdocs-macros-plugin==1.3.7  # via mkdocs-ansible
 mkdocs-material==9.6.14   # via mkdocs-ansible
 mkdocs-material-extensions==1.3.1  # via mkdocs-ansible, mkdocs-material
 mkdocs-minify-plugin==0.8.0  # via mkdocs-ansible
-mkdocs-monorepo-plugin==1.1.0  # via mkdocs-ansible
 mkdocstrings==0.29.1      # via mkdocs-ansible, mkdocstrings-python
 mkdocstrings-python==1.16.10  # via mkdocs-ansible
 mypy==1.15.0              # via molecule (pyproject.toml)
@@ -95,7 +94,6 @@ pytest-plus==0.8.1        # via molecule (pyproject.toml)
 pytest-testinfra==10.2.2  # via molecule (pyproject.toml)
 pytest-xdist==3.6.1       # via molecule (pyproject.toml)
 python-dateutil==2.9.0.post0  # via ghp-import, mkdocs-macros-plugin
-python-slugify==8.0.4     # via mkdocs-monorepo-plugin
 pyyaml==6.0.2             # via ansible-compat, ansible-core, ansible-lint, mkdocs, mkdocs-get-deps, mkdocs-macros-plugin, pre-commit, pymdown-extensions, pyyaml-env-tag, yamllint, molecule (pyproject.toml)
 pyyaml-env-tag==1.1       # via mkdocs
 referencing==0.36.2       # via ansible-lint, jsonschema, jsonschema-specifications, types-jsonschema
@@ -103,13 +101,12 @@ requests==2.32.3          # via docker, linkchecker, mkdocs-htmlproofer-plugin, 
 rich==14.0.0              # via enrich, molecule (pyproject.toml)
 rpds-py==0.25.0           # via jsonschema, referencing
 ruamel-yaml==0.18.10      # via ansible-lint
-ruff==0.11.10              # via molecule (pyproject.toml)
+ruff==0.11.10             # via molecule (pyproject.toml)
 six==1.17.0               # via python-dateutil
 soupsieve==2.7            # via beautifulsoup4
 subprocess-tee==0.4.2     # via ansible-compat, ansible-lint
 super-collections==0.5.3  # via mkdocs-macros-plugin
 termcolor==3.1.0          # via mkdocs-macros-plugin
-text-unidecode==1.3       # via python-slugify
 tinycss2==1.4.0           # via cairosvg, cssselect2
 toml-sort==0.24.2         # via molecule (pyproject.toml)
 tomli==2.2.1              # via black, coverage, mypy, pydoclint, pylint, pyproject-api, pytest, tox
