@@ -168,6 +168,28 @@ class Scenario:
 
         return path.absolute().as_posix()
 
+    @cached_property
+    def shared_ephemeral_directory(self) -> str:
+        """Acquire the shared ephemeral directory.
+
+        Returns:
+            The common ephemeral directory for all scenarios.
+        """
+        if not self.config.shared_data or self.config.is_parallel:
+            # only return shared directory if allowed
+            return self.ephemeral_directory
+
+        path: Path
+        if "MOLECULE_EPHEMERAL_DIRECTORY" not in os.environ:
+            project_directory = Path(self.config.project_directory).name
+
+            project_scenario_directory = f"molecule.{checksum(project_directory, 4)}"
+            path = self.config.runtime.cache_dir / "tmp" / project_scenario_directory
+        else:
+            path = Path(os.getenv("MOLECULE_EPHEMERAL_DIRECTORY", ""))
+
+        return path.absolute().as_posix()
+
     @property
     def inventory_directory(self) -> str:
         """Inventory directory.
@@ -175,8 +197,12 @@ class Scenario:
         Returns:
             The directory containing the scenario's inventory.
         """
-        path = Path(self.ephemeral_directory) / "inventory"
-        return str(path)
+        if self.config.shared_data:
+            ephemeral = Path(self.shared_ephemeral_directory)
+        else:
+            ephemeral = Path(self.ephemeral_directory)
+
+        return str(ephemeral / "inventory")
 
     @property
     def check_sequence(self) -> list[str]:
