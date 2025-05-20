@@ -340,6 +340,15 @@ fail-on = [
   "useless-suppression"
 ]
 
+[tool.pyrefly]
+project_excludes = ["**/build*"]
+project_includes = ["src", "tests"]
+python_version = "3.10.0"
+replace_imports_with_any = [
+  "click_help_colors",
+  "testinfra.*"
+]
+
 [tool.pytest.ini_options]
 addopts = "-ra --showlocals --durations=10 --instafail"
 cache_dir = "./.cache/.pytest"
