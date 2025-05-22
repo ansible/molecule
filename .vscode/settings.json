@@ -21,6 +21,5 @@
   "python.testing.unittestEnabled": false,
   "triggerTaskOnSave.tasks": {
     "pydoclint": ["*.py"]
-  },
-  "ansible.python.interpreterPath": "/Users/shamishr/.pyenv/versions/3.13.0/envs/nav/bin/python"
+  }
 }
