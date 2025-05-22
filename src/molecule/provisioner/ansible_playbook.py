@@ -72,7 +72,11 @@ class AnsiblePlaybook:
             self._env = self._config.provisioner.env
 
     def bake(self) -> None:
-        """Bake an ``ansible-playbook`` command so it's ready to execute."""
+        """Bake ``ansible-playbook`` or ``navigator run`` command so it's ready to execute.
+
+        Raises:
+            ValueError: when backend is incorrect.
+        """
         if not self._playbook:
             return
 
@@ -101,13 +105,29 @@ class AnsiblePlaybook:
             else:
                 ansible_args = []
 
-            self._ansible_command = [
-                "ansible-playbook",
-                *util.dict2args(options),
-                *util.bool2args(verbose_flag),
-                *ansible_args,
-                self._playbook,  # must always go last
-            ]
+            backend = self._config.provisioner.config_options.get("backend", "ansible-playbook")
+
+            if backend == "ansible-playbook":
+                self._ansible_command = [
+                    "ansible-playbook",
+                    *util.dict2args(options),
+                    *util.bool2args(verbose_flag),
+                    *ansible_args,
+                    self._playbook,  # must always go last
+                ]
+
+            elif backend == "ansible-navigator":
+                self._ansible_command = [
+                    "ansible-navigator",
+                    "run",
+                    self._playbook,
+                    *util.dict2args(options),
+                    *util.bool2args(verbose_flag),
+                    *ansible_args,
+                ]
+            else:
+                msg = f"Unsupported backend: {backend}"
+                raise ValueError(msg)
 
     def execute(self, action_args: list[str] | None = None) -> str:  # noqa: ARG002
         """Execute ``ansible-playbook``.
