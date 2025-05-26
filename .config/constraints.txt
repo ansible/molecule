@@ -2,7 +2,7 @@
 #    tox run -e deps
 ansi2html==1.9.2          # via molecule (pyproject.toml)
 ansible-compat==25.5.0    # via ansible-lint, molecule (pyproject.toml)
-ansible-lint==25.4.0      # via molecule (pyproject.toml)
+ansible-lint==25.5.0      # via molecule (pyproject.toml)
 astroid==3.3.10           # via pylint
 attrs==25.3.0             # via jsonschema, referencing
 babel==2.17.0             # via mkdocs-material
@@ -22,7 +22,7 @@ click==8.2.1              # via black, click-help-colors, mkdocs, pydoclint, mol
 click-help-colors==0.9.4  # via molecule (pyproject.toml)
 colorama==0.4.6           # via griffe, mkdocs-material, tox
 coverage==7.8.2           # via molecule (pyproject.toml)
-cryptography==45.0.2      # via ansible-core
+cryptography==45.0.3      # via ansible-core
 csscompressor==0.9.5      # via mkdocs-minify-plugin
 cssselect2==0.8.0         # via cairosvg
 defusedxml==0.7.1         # via cairosvg
@@ -100,7 +100,7 @@ referencing==0.36.2       # via ansible-lint, jsonschema, jsonschema-specificati
 requests==2.32.3          # via docker, linkchecker, mkdocs-htmlproofer-plugin, mkdocs-material, molecule (pyproject.toml)
 rich==14.0.0              # via enrich, molecule (pyproject.toml)
 rpds-py==0.25.1           # via jsonschema, referencing
-ruamel-yaml==0.18.10      # via ansible-lint
+ruamel-yaml==0.18.11      # via ansible-lint
 ruff==0.11.11             # via molecule (pyproject.toml)
 six==1.17.0               # via python-dateutil
 soupsieve==2.7            # via beautifulsoup4
