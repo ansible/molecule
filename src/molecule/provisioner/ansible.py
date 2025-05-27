@@ -477,6 +477,15 @@ class Ansible(base.Base):
         return self._config.config["provisioner"]["name"]
 
     @property
+    def backend(self) -> str:
+        """The backend to use for provisioner.
+
+        Returns:
+            The backend to use for provisioner.
+        """
+        return self._config.config["provisioner"]["backend"]
+
+    @property
     def ansible_args(self) -> list[str]:
         """Provisioner ansible args.
 
