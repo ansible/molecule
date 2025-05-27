@@ -105,7 +105,7 @@ class AnsiblePlaybook:
             else:
                 ansible_args = []
 
-            backend = self._config.provisioner.config_options.get("backend", "ansible-playbook")
+            backend = self._config.provisioner.backend or "ansible-playbook"
 
             if backend == "ansible-playbook":
                 self._ansible_command = [
@@ -121,6 +121,8 @@ class AnsiblePlaybook:
                     "ansible-navigator",
                     "run",
                     self._playbook,
+                    "--mode",
+                    "stdout",
                     *util.dict2args(options),
                     *util.bool2args(verbose_flag),
                     *ansible_args,

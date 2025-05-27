@@ -145,6 +145,7 @@ class ProvisionerData(TypedDict, total=False):
 
     Attributes:
         name: Name of the provisioner.
+        backend: The backend to use for provisioner.
         config_options: Configuration options.
         ansible_args: Arguments to use with ansible.
         connection_options: Options for the connection.
@@ -157,6 +158,7 @@ class ProvisionerData(TypedDict, total=False):
     """
 
     name: str
+    backend: str
     config_options: dict[str, Any]
     ansible_args: list[str]
     connection_options: dict[str, Any]

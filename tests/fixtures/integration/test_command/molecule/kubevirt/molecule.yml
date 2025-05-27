@@ -21,8 +21,8 @@ platforms:
     memory: 1Gi
 provisioner:
   name: ansible
+  backend: ansible-playbook # or ansible-navigator
   config_options:
-    backend: ansible-playbook # or ansible-navigator
     defaults:
       interpreter_python: auto_silent
       callback_whitelist: profile_tasks, timer, yaml

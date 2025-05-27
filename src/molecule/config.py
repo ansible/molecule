@@ -568,6 +568,7 @@ class Config:
             "role_name_check": 0,
             "provisioner": {
                 "name": "ansible",
+                "backend": "",
                 "config_options": {},
                 "ansible_args": [],
                 "connection_options": {},
