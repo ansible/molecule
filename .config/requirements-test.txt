@@ -1,5 +1,6 @@
 ansi2html >= 1.8.0
 ansible-lint >= 6.12.1
+ansible-navigator
 coverage[toml]
 docker >= 7.1.0 # testing
 filelock >= 3.9.0

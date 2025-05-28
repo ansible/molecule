@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import logging
 import shlex
+import subprocess
 import warnings
 
 from typing import TYPE_CHECKING
@@ -76,6 +77,7 @@ class AnsiblePlaybook:
 
         Raises:
             ValueError: when backend is incorrect.
+            RuntimeError: when ansible-navigator is not available.
         """
         if not self._playbook:
             return
@@ -106,6 +108,20 @@ class AnsiblePlaybook:
                 ansible_args = []
 
             backend = self._config.provisioner.backend or "ansible-playbook"
+
+            # ensure if ansible-navigator is installed
+            if backend == "ansible-navigator":
+                try:
+                    result = subprocess.run(
+                        ["ansible-navigator", "--version"],
+                        capture_output=True,
+                        text=True,
+                        check=True,
+                    )
+                    LOG.info("ansible-navigator version: %s", result.stdout.strip())
+                except subprocess.CalledProcessError as exc:
+                    msg = "ansible-navigator is not available. Please ensure that it is installed."
+                    raise RuntimeError(msg) from exc
 
             if backend == "ansible-playbook":
                 self._ansible_command = [
