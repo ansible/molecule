@@ -485,6 +485,15 @@ class Ansible(base.Base):
         """
         return self._config.config["provisioner"]["backend"]
 
+    @backend.setter
+    def backend(self, value: str) -> None:
+        """Backend setter.
+
+        Args:
+            value: New backend value of the provisioner.
+        """
+        self._config.config["provisioner"]["backend"] = value
+
     @property
     def ansible_args(self) -> list[str]:
         """Provisioner ansible args.
