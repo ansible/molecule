@@ -488,7 +488,7 @@ def test_docker(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path, app: Ap
     assert proc.returncode == 0
 
 
-def test_smoke_with_navigator_as_provisioner_backend(
+def test_smoke(
     monkeypatch: pytest.MonkeyPatch,
     test_fixture_dir: Path,
 ) -> None:

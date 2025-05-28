@@ -1,5 +1,2 @@
 platforms:
   - name: localhost
-provisioner:
-  name: ansible
-  backend: ansible-navigator
