@@ -502,3 +502,19 @@ def test_smoke(
     command = ["molecule", "test", "--scenario-name", "smoke"]
     result = run(command)
     assert result.returncode == 0, result
+
+
+def test_with_provisioner_backend(
+    monkeypatch: pytest.MonkeyPatch,
+    test_fixture_dir: Path,
+) -> None:
+    """Execute test-scenario (smoke test) that should spot potentially breaking changes.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        test_fixture_dir: Path to the test fixture directory.
+    """
+    monkeypatch.chdir(test_fixture_dir)
+    command = ["molecule", "test", "--scenario-name", "test-scenario"]
+    result = run(command)
+    assert result.returncode == 0, result
