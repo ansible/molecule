@@ -158,13 +158,13 @@ class Config:
         return self.command_args.get("parallel", False)
 
     @property
-    def shared_data(self) -> bool:
+    def shared_inventory(self) -> bool:
         """Should molecule share ephemeral data.
 
         Returns:
             Whether molecule should share ephemeral data.
         """
-        return self.command_args.get("shared", False)
+        return self.command_args.get("shared_inventory", False)
 
     @property
     def platform_name(self) -> str | None:

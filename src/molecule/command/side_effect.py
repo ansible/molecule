@@ -69,7 +69,7 @@ def side_effect(
     *,
     __all: bool,
     report: bool,
-    shared: bool,
+    shared_inventory: bool,
 ) -> None:  # pragma: no cover
     """Use the provisioner to perform side-effects to the instances.
 
@@ -79,11 +79,15 @@ def side_effect(
         exclude: Name of the scenarios to avoid targeting.
         __all: Whether molecule should target scenario_name or all scenarios.
         report: Whether to show an after-run summary report.
-        shared: Whether the ephemeral directory is shared or not.
+        shared_inventory: Whether the inventory should be shared between scenarios.
     """
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args: CommandArgs = {"subcommand": subcommand, "report": report, "shared": shared}
+    command_args: CommandArgs = {
+        "subcommand": subcommand,
+        "report": report,
+        "shared_inventory": shared_inventory,
+    }
 
     if __all:
         scenario_name = None

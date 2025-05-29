@@ -175,10 +175,6 @@ class Scenario:
         Returns:
             The common ephemeral directory for all scenarios.
         """
-        if not self.config.shared_data or self.config.is_parallel:
-            # only return shared directory if allowed
-            return self.ephemeral_directory
-
         path: Path
         if "MOLECULE_EPHEMERAL_DIRECTORY" not in os.environ:
             project_directory = Path(self.config.project_directory).name
@@ -197,7 +193,7 @@ class Scenario:
         Returns:
             The directory containing the scenario's inventory.
         """
-        if self.config.shared_data:
+        if self.config.shared_inventory and not self.config.is_parallel:
             ephemeral = Path(self.shared_ephemeral_directory)
         else:
             ephemeral = Path(self.ephemeral_directory)

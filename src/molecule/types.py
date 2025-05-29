@@ -265,7 +265,7 @@ class CommandArgs(TypedDict, total=False):
         platform_name: Name of the platform to target.
         report: Whether to show an after-run summary report.
         scenario_name: Name of the scenario to target.
-        shared: Whether ephemeral directory should be shared between scenarios.
+        shared_inventory: Whether inventory should be shared between scenarios.
         subcommand: Name of subcommand being run.
     """
 
@@ -278,7 +278,7 @@ class CommandArgs(TypedDict, total=False):
     platform_name: str
     report: bool
     scenario_name: str
-    shared: bool
+    shared_inventory: bool
     subcommand: str
 
 

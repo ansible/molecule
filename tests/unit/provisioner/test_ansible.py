@@ -279,7 +279,7 @@ def test_inventory_directory_property_shared(instance: Ansible) -> None:
     Args:
         instance: Ansible provisioner instance.
     """
-    instance._config.command_args["shared"] = True
+    instance._config.command_args["shared_inventory"] = True
     x = Path(instance._config.scenario.shared_ephemeral_directory, "inventory")
     assert str(x) == instance.inventory_directory
 
@@ -290,7 +290,7 @@ def test_inventory_directory_property_shared_parallel(instance: Ansible) -> None
     Args:
         instance: Ansible provisioner instance.
     """
-    instance._config.command_args["shared"] = True
+    instance._config.command_args["shared_inventory"] = True
     instance._config.command_args["parallel"] = True
     # Parallel disables shared ephemeral directory
     x = Path(instance._config.scenario.ephemeral_directory, "inventory")

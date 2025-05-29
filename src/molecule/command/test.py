@@ -95,7 +95,7 @@ def test(  # noqa: PLR0913
     ansible_args: tuple[str, ...],
     platform_name: str,
     report: bool,
-    shared: bool,
+    shared_inventory: bool,
 ) -> None:  # pragma: no cover
     """Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy).
 
@@ -110,7 +110,7 @@ def test(  # noqa: PLR0913
         ansible_args: Arguments to forward to Ansible.
         platform_name: Name of the platform to use.
         report: Whether to show an after-run summary report.
-        shared: Whether the ephemeral directory is shared or not.
+        shared_inventory: Whether the inventory should be shared between scenarios.
     """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
@@ -121,7 +121,7 @@ def test(  # noqa: PLR0913
         "driver_name": driver_name,
         "platform_name": platform_name,
         "report": report,
-        "shared": shared,
+        "shared_inventory": shared_inventory,
     }
 
     if __all:
