@@ -284,6 +284,19 @@ def test_inventory_directory_property_shared(instance: Ansible) -> None:
     assert str(x) == instance.inventory_directory
 
 
+def test_inventory_directory_property_shared_parallel(instance: Ansible) -> None:
+    """Test the shared_inventory_directory property with parallel mode on.
+
+    Args:
+        instance: Ansible provisioner instance.
+    """
+    instance._config.command_args["shared"] = True
+    instance._config.command_args["parallel"] = True
+    # Parallel disables shared ephemeral directory
+    x = Path(instance._config.scenario.ephemeral_directory, "inventory")
+    assert str(x) == instance.inventory_directory
+
+
 def test_inventory_file_property(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     x = os.path.join(  # noqa: PTH118
         instance._config.scenario.inventory_directory,
