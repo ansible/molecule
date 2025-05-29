@@ -520,6 +520,7 @@ def test_with_provisioner_backend_as_ansible_playbook(
     assert result.returncode == 0, result
 
 
+@mac_on_gh
 def test_with_provisioner_backend_as_ansible_navigator(
     monkeypatch: pytest.MonkeyPatch,
     test_fixture_dir: Path,
