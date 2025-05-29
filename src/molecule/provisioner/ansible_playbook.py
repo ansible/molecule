@@ -109,18 +109,17 @@ class AnsiblePlaybook:
 
             backend = self._config.provisioner.backend or "ansible-playbook"
 
-            # ensure if ansible-navigator is installed
             if backend:
                 try:
                     result = subprocess.run(
-                        ["ansible-navigator", "--version"],
+                        [backend, "--version"],
                         capture_output=True,
                         text=True,
                         check=True,
                     )
-                    LOG.info("ansible-navigator version: %s", result.stdout.strip())
+                    LOG.info("%s version: %s", backend, result.stdout.strip())
                 except subprocess.CalledProcessError as exc:
-                    msg = "ansible-navigator is not available. Please ensure that it is installed."
+                    msg = f"{backend} is not available. Please ensure that it is installed."
                     raise RuntimeError(msg) from exc
 
             if backend == "ansible-playbook":
