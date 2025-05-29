@@ -437,6 +437,11 @@ def click_command_options(func: Callable[..., None]) -> Callable[..., None]:
     """
     # NOTE: because click.option is a decorator, options applied this way will appear in the opposite order.
     func = click.option(
+        "--shared-state/--no-shared-state",
+        default=False,
+        help="EXPERIMENTAL: Enable or disable sharing (some) state between scenarios. Default is disabled.",
+    )(func)
+    func = click.option(
         "--shared-inventory/--no-shared-inventory",
         default=False,
         help="EXPERIMENTAL: Enable or disable sharing inventory between scenarios. Default is disabled.",
