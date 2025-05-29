@@ -22,6 +22,7 @@ from __future__ import annotations
 import collections
 import os
 
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import pytest
@@ -36,6 +37,8 @@ if TYPE_CHECKING:
     from unittest.mock import MagicMock, Mock
 
     from pytest_mock import MockerFixture
+
+    from molecule.provisioner.ansible import Ansible
 
 
 @pytest.fixture
@@ -260,9 +263,25 @@ def test_links_property(instance):  # type: ignore[no-untyped-def]  # noqa: ANN2
     assert instance.links == {}
 
 
-def test_inventory_directory_property(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    x = os.path.join(instance._config.scenario.ephemeral_directory, "inventory")  # noqa: PTH118
-    assert x == instance.inventory_directory
+def test_inventory_directory_property(instance: Ansible) -> None:
+    """Test the inventory_directory property.
+
+    Args:
+        instance: Ansible provisioner instance.
+    """
+    x = Path(instance._config.scenario.ephemeral_directory, "inventory")
+    assert str(x) == instance.inventory_directory
+
+
+def test_inventory_directory_property_shared(instance: Ansible) -> None:
+    """Test the shared_inventory_directory property.
+
+    Args:
+        instance: Ansible provisioner instance.
+    """
+    instance._config.command_args["shared"] = True
+    x = Path(instance._config.scenario.shared_ephemeral_directory, "inventory")
+    assert str(x) == instance.inventory_directory
 
 
 def test_inventory_file_property(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
