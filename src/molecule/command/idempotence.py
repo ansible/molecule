@@ -124,13 +124,15 @@ class Idempotence(base.Base):
 @click.pass_context
 @base.click_command_options
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
-def idempotence(
+def idempotence(  # noqa: PLR0913
     ctx: click.Context,
     scenario_name: list[str] | None,
     exclude: list[str],
     __all: bool,  # noqa: FBT001
-    report: bool,  # noqa: FBT001
+    *,
     ansible_args: tuple[str, ...],
+    report: bool,
+    shared_inventory: bool,
 ) -> None:  # pragma: no cover
     """Use the provisioner to configure the instances.
 
@@ -141,12 +143,17 @@ def idempotence(
         scenario_name: Name of the scenario to target.
         exclude: Name of the scenarios to avoid targeting.
         __all: Whether molecule should target scenario_name or all scenarios.
-        report: Whether to show an after-run summary report.
         ansible_args: Arguments to forward to Ansible.
+        report: Whether to show an after-run summary report.
+        shared_inventory: Whether the inventory should be shared between scenarios.
     """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args: CommandArgs = {"subcommand": subcommand, "report": report}
+    command_args: CommandArgs = {
+        "subcommand": subcommand,
+        "report": report,
+        "shared_inventory": shared_inventory,
+    }
 
     if __all:
         scenario_name = None
