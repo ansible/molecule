@@ -110,7 +110,7 @@ class AnsiblePlaybook:
             backend = self._config.provisioner.backend or "ansible-playbook"
 
             # ensure if ansible-navigator is installed
-            if backend == "ansible-navigator":
+            if backend:
                 try:
                     result = subprocess.run(
                         ["ansible-navigator", "--version"],
