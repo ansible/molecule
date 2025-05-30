@@ -102,7 +102,7 @@ def has_pure_docker() -> bool:
     else:
         result = run(["docker", "context", "inspect", "--format", "{{.Endpoints.docker.Host}}"])
         if result.returncode != 0:
-            failure = "Docker was not able to report its currently active socket for current context: {result}"
+            failure = f"Docker was not able to report its currently active socket for current context: {result}"
         else:
             docker_current_socket = result.stdout.rstrip()
             warnings.warn(
