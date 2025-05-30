@@ -72,6 +72,7 @@ def cleanup(
 
     Any changes made to external systems during the stages of testing.
 
+    \f
     Args:
         ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
@@ -79,7 +80,7 @@ def cleanup(
         __all: Whether molecule should target scenario_name or all scenarios.
         report: Whether to show an after-run summary report.
         shared_inventory: Whether the inventory should be shared between scenarios.
-    """
+    """  # noqa: D301
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {

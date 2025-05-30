@@ -99,6 +99,7 @@ def test(  # noqa: PLR0913
 ) -> None:  # pragma: no cover
     """Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy).
 
+    \f
     Args:
         ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
@@ -111,7 +112,7 @@ def test(  # noqa: PLR0913
         platform_name: Name of the platform to use.
         report: Whether to show an after-run summary report.
         shared_inventory: Whether the inventory should be shared between scenarios.
-    """
+    """  # noqa: D301
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
