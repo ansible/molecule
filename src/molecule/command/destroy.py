@@ -84,6 +84,7 @@ def destroy(  # noqa: PLR0913
     parallel: bool,
     report: bool,
     shared_inventory: bool,
+    shared_state: bool,
 ) -> None:  # pragma: no cover
     """Use the provisioner to destroy the instances.
 
@@ -97,6 +98,7 @@ def destroy(  # noqa: PLR0913
         parallel: Whether the scenario(s) should be run in parallel mode.
         report: Whether to show an after-run summary report.
         shared_inventory: Whether the inventory should be shared between scenarios.
+        shared_state: Whether the (some) state should be shared between scenarios.
     """  # noqa: D301
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
@@ -106,6 +108,7 @@ def destroy(  # noqa: PLR0913
         "driver_name": driver_name,
         "report": report,
         "shared_inventory": shared_inventory,
+        "shared_state": shared_state,
     }
 
     if __all:
