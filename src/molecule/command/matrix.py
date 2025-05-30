@@ -87,11 +87,12 @@ def matrix(
 ) -> None:  # pragma: no cover
     """List matrix of steps used to test instances.
 
+    \f
     Args:
         ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
         subcommand: Subcommand to target.
-    """
+    """  # noqa: D301
     args: MoleculeArgs = ctx.obj.get("args")
     command_args: CommandArgs = {"subcommand": subcommand}
 

@@ -136,11 +136,12 @@ def login(
 ) -> None:  # pragma: no cover
     """Log in to one instance.
 
+    \f
     Args:
         ctx: Click context object holding commandline arguments.
         host: Host to access.
         scenario_name: Name of the scenario to target.
-    """
+    """  # noqa: D301
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand, "host": host}

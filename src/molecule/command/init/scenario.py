@@ -195,13 +195,14 @@ def scenario(
 
     If name is not specified the 'default' value will be used.
 
+    \f
     Args:
         ctx: Click context object holding commandline arguments.
         dependency_name: Name of dependency to initialize.
         driver_name: Name of driver to use.
         provisioner_name: Name of provisioner to use.
         scenario_name: Name of scenario to initialize.
-    """
+    """  # noqa: D301
     command_args: CommandArgs = {
         "dependency_name": dependency_name,
         "driver_name": driver_name,

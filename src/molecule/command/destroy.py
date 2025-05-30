@@ -87,6 +87,7 @@ def destroy(  # noqa: PLR0913
 ) -> None:  # pragma: no cover
     """Use the provisioner to destroy the instances.
 
+    \f
     Args:
         ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
@@ -96,7 +97,7 @@ def destroy(  # noqa: PLR0913
         parallel: Whether the scenario(s) should be run in parallel mode.
         report: Whether to show an after-run summary report.
         shared_inventory: Whether the inventory should be shared between scenarios.
-    """
+    """  # noqa: D301
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
