@@ -181,3 +181,6 @@ tests/fixtures/resources/.extensions/
 # docs output
 _readthedocs/
 .ansible
+
+# Ignore ansible-navigator artifact files in test scenarios
+tests/fixtures/integration/**/converge-artifact-*.json

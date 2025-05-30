@@ -488,7 +488,10 @@ def test_docker(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path, app: Ap
     assert proc.returncode == 0
 
 
-def test_smoke(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path, app: App) -> None:
+def test_smoke(
+    monkeypatch: pytest.MonkeyPatch,
+    test_fixture_dir: Path,
+) -> None:
     """Execute smoke-test scenario that should spot potentially breaking changes.
 
     Args:
@@ -497,5 +500,38 @@ def test_smoke(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path, app: App
     """
     monkeypatch.chdir(test_fixture_dir)
     command = ["molecule", "test", "--scenario-name", "smoke"]
+    result = run(command)
+    assert result.returncode == 0, result
+
+
+def test_with_provisioner_backend_as_ansible_playbook(
+    monkeypatch: pytest.MonkeyPatch,
+    test_fixture_dir: Path,
+) -> None:
+    """Execute test-scenario (smoke test) that should spot potentially breaking changes.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        test_fixture_dir: Path to the test fixture directory.
+    """
+    monkeypatch.chdir(test_fixture_dir)
+    command = ["molecule", "test", "--scenario-name", "test-scenario"]
+    result = run(command)
+    assert result.returncode == 0, result
+
+
+@mac_on_gh
+def test_with_provisioner_backend_as_ansible_navigator(
+    monkeypatch: pytest.MonkeyPatch,
+    test_fixture_dir: Path,
+) -> None:
+    """Execute test-scenario-for-nav (smoke test) that should spot potentially breaking changes.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        test_fixture_dir: Path to the test fixture directory.
+    """
+    monkeypatch.chdir(test_fixture_dir)
+    command = ["molecule", "test", "--scenario-name", "test-scenario-for-nav"]
     result = run(command)
     assert result.returncode == 0, result

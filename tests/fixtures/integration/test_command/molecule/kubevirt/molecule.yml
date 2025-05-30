@@ -21,6 +21,7 @@ platforms:
     memory: 1Gi
 provisioner:
   name: ansible
+  backend: ansible-playbook # or ansible-navigator
   config_options:
     defaults:
       interpreter_python: auto_silent
