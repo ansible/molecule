@@ -12,7 +12,7 @@ black==25.1.0             # via ansible-lint
 bracex==2.5.post1         # via wcmatch
 cachetools==6.0.0         # via tox
 cairocffi==1.7.1          # via cairosvg
-cairosvg==2.8.2           # via mkdocs-ansible
+cairosvg==2.7.1           # via mkdocs-ansible
 certifi==2025.4.26        # via requests
 cffi==1.17.1              # via cairocffi, cryptography
 cfgv==3.4.0               # via pre-commit
@@ -74,7 +74,7 @@ mypy-extensions==1.1.0    # via black, mypy
 nodeenv==1.9.1            # via pre-commit
 packaging==25.0           # via ansible-compat, ansible-core, ansible-lint, black, mkdocs, mkdocs-macros-plugin, pyproject-api, pytest, tox, molecule (pyproject.toml)
 paginate==0.5.7           # via mkdocs-material
-pathspec==0.12.1          # via ansible-lint, black, mkdocs, mkdocs-macros-plugin, yamllint
+pathspec==0.12.1          # via ansible-lint, black, mkdocs, mkdocs-macros-plugin, mypy, yamllint
 pexpect==4.9.0            # via molecule (pyproject.toml)
 pillow==11.2.1            # via cairosvg, mkdocs-ansible
 platformdirs==4.3.8       # via black, mkdocs-get-deps, pylint, tox, virtualenv
