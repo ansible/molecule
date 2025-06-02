@@ -82,7 +82,7 @@ get_section_logger_tests = [
     get_section_logger_tests,
     indirect=True,
 )
-def test_get_section_loggers(_patched_logger_env):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+def test_get_section_loggers(_patched_logger_env):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     expected_section_loggers = _patched_logger_env
     get_section_loggers.cache_clear()
     section_loggers = get_section_loggers()
