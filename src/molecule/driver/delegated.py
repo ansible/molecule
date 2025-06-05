@@ -24,7 +24,7 @@ from __future__ import annotations
 import logging
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from molecule import util
 from molecule.api import Driver
@@ -32,6 +32,8 @@ from molecule.data import __file__ as data_module
 
 
 if TYPE_CHECKING:
+    from typing import Any
+
     from molecule.config import Config
 
 
@@ -242,7 +244,7 @@ class Delegated(Driver):
     def ansible_connection_options(
         self,
         instance_name: str,
-    ) -> dict[str, str]:
+    ) -> dict[str, Any]:
         """Ansible connection options.
 
         Args:
@@ -286,15 +288,15 @@ class Delegated(Driver):
                 conn_dict["ansible_ssh_common_args"] = " ".join(
                     self.ssh_connection_options,
                 )
-
-                return conn_dict  # noqa: TRY300
-
             except StopIteration:
                 return {}
             except OSError:
                 # Instance has yet to be provisioned , therefore the
                 # instance_config is not on disk.
                 return {}
+            else:
+                return conn_dict
+
         return self.options.get("ansible_connection_options", {})
 
     def _created(self) -> str:
