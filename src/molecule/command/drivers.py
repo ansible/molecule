@@ -48,10 +48,11 @@ def drivers(
 ) -> None:  # pragma: no cover
     """List drivers.
 
+    \f
     Args:
         ctx: Click context object holding commandline arguments.
         format: Output format to use.
-    """
+    """  # noqa: D301
     drivers = []  # pylint: disable=redefined-outer-name
     for driver in api.drivers().values():
         description = str(driver)

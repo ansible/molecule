@@ -60,32 +60,36 @@ class Check(base.Base):
     default=MOLECULE_PARALLEL,
     help="Enable or disable parallel mode. Default is disabled.",
 )
-def check(  # pragma: no cover
+def check(  # noqa: PLR0913
     ctx: click.Context,
     /,
     scenario_name: list[str] | None,
     exclude: list[str],
     __all: bool,  # noqa: FBT001
     *,
-    report: bool,
     parallel: bool,
-) -> None:
+    report: bool,
+    shared_inventory: bool,
+) -> None:  # pragma: no cover
     """Use the provisioner to perform a Dry-Run (destroy, dependency, create, prepare, converge).
 
+    \f
     Args:
         ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
         exclude: Name of the scenarios to avoid targeting.
         __all: Whether molecule should target scenario_name or all scenarios.
-        report: Whether to show an after-run summary report.
         parallel: Whether the scenario(s) should be run in parallel.
-    """
+        report: Whether to show an after-run summary report.
+        shared_inventory: Whether the inventory should be shared between scenarios.
+    """  # noqa: D301
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
         "parallel": parallel,
         "subcommand": subcommand,
         "report": report,
+        "shared_inventory": shared_inventory,
     }
 
     if __all:

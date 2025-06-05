@@ -435,6 +435,12 @@ def click_command_options(func: Callable[..., None]) -> Callable[..., None]:
     Returns:
         Function with click options for scenario_name, exclude, all, and report added.
     """
+    # NOTE: because click.option is a decorator, options applied this way will appear in the opposite order.
+    func = click.option(
+        "--shared-inventory/--no-shared-inventory",
+        default=False,
+        help="EXPERIMENTAL: Enable or disable sharing inventory between scenarios. Default is disabled.",
+    )(func)
     func = click.option(
         "--report/--no-report",
         default=False,
