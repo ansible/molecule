@@ -408,6 +408,10 @@
     "ProvisionerModel": {
       "additionalProperties": true,
       "properties": {
+        "backend": {
+          "title": "Backend",
+          "type": "string"
+        },
         "config_options": {
           "$ref": "#/$defs/ProvisionerConfigOptionsModel"
         },

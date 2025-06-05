@@ -94,6 +94,17 @@ class Ansible(base.Base):
           log: True
     ```
 
+    Molecule uses ansible-playbook to execute the playbooks. However, it has the
+    ability to test playbooks inside of an execution-environment using ansible-navigator
+    backend as a provisioner. This is done by setting ``ansible_navigator`` as the
+    backend in ``provisioner`` section of ``molecule.yml``.
+
+    ``` yaml
+        provisioner:
+          name: ansible
+          backend: ansible-navigator
+    ```
+
     The create/destroy playbooks for Docker and Podman are bundled with
     Molecule.  These playbooks have a clean API from `molecule.yml`, and
     are the most commonly used.  The bundled playbooks can still be overridden.
@@ -475,6 +486,24 @@ class Ansible(base.Base):
             The provisioner name.
         """
         return self._config.config["provisioner"]["name"]
+
+    @property
+    def backend(self) -> str:
+        """The backend to use for provisioner.
+
+        Returns:
+            The backend to use for provisioner.
+        """
+        return self._config.config["provisioner"]["backend"]
+
+    @backend.setter
+    def backend(self, value: str) -> None:
+        """Backend setter.
+
+        Args:
+            value: New backend value of the provisioner.
+        """
+        self._config.config["provisioner"]["backend"] = value
 
     @property
     def ansible_args(self) -> list[str]:

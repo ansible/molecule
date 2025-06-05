@@ -72,8 +72,6 @@ tests/integration/test_command.py
     DOC103: Function `test_podman`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
     DOC101: Function `test_docker`: Docstring contains fewer arguments than in function signature.
     DOC103: Function `test_docker`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC101: Function `test_smoke`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `test_smoke`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
 --------------------
 tests/unit/command/init/test_scenario.py
     DOC201: Function `fixture_command_args` does not have a return section in docstring
