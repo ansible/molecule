@@ -169,7 +169,7 @@ def _role_exists(
 @click.option(
     "--driver-name",
     "-d",
-    type=click.Choice([str(s) for s in api.drivers()]),
+    type=str,
     default=DEFAULT_DRIVER,
     help=f"Name of driver to initialize. ({DEFAULT_DRIVER})",
 )
@@ -184,6 +184,7 @@ def _role_exists(
     default=command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
     required=False,
 )
+
 def scenario(
     ctx: click.Context,  # noqa: ARG001
     dependency_name: str,
@@ -202,7 +203,33 @@ def scenario(
         driver_name: Name of driver to use.
         provisioner_name: Name of provisioner to use.
         scenario_name: Name of scenario to initialize.
+
+    Raises:
+        click.Abort: If the specified driver is not available.        
     """  # noqa: D301
+    config = Config("", args={})
+    available_drivers = list(api.drivers(config).keys())
+    if driver_name not in available_drivers:
+        if len(available_drivers) == 1 and available_drivers[0] == "default":
+            click.echo(
+                click.style(
+                    f"Driver '{driver_name}' not available.\n\n"
+                    f"Install cloud drivers with:\n"
+                    f"  pip install molecule-plugins\n\n"
+                    f"Currently available drivers: {available_drivers}\n",
+                    fg="red",
+                ), err=True,
+            )
+        else:
+            click.echo(
+                click.style(
+                    f"Driver '{driver_name}' not available.\n"
+                    f"Available drivers: {available_drivers}",
+                    fg="red",
+                ), err=True,
+            )
+        raise click.Abort
+
     command_args: CommandArgs = {
         "dependency_name": dependency_name,
         "driver_name": driver_name,
