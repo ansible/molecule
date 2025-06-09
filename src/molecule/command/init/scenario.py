@@ -184,7 +184,6 @@ def _role_exists(
     default=command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
     required=False,
 )
-
 def scenario(
     ctx: click.Context,  # noqa: ARG001
     dependency_name: str,
@@ -205,7 +204,7 @@ def scenario(
         scenario_name: Name of scenario to initialize.
 
     Raises:
-        click.Abort: If the specified driver is not available.        
+        click.Abort: If the specified driver is not available.
     """  # noqa: D301
     config = Config("", args={})
     available_drivers = list(api.drivers(config).keys())
@@ -218,7 +217,8 @@ def scenario(
                     f"  pip install molecule-plugins\n\n"
                     f"Currently available drivers: {available_drivers}\n",
                     fg="red",
-                ), err=True,
+                ),
+                err=True,
             )
         else:
             click.echo(
@@ -226,7 +226,8 @@ def scenario(
                     f"Driver '{driver_name}' not available.\n"
                     f"Available drivers: {available_drivers}",
                     fg="red",
-                ), err=True,
+                ),
+                err=True,
             )
         raise click.Abort
 
