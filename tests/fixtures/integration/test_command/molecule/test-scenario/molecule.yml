@@ -1,0 +1,7 @@
+---
+executor:
+  backend: ansible-playbook
+platforms:
+  - name: localhost
+provisioner:
+  name: ansible

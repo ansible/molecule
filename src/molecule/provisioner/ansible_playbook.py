@@ -77,7 +77,7 @@ class AnsiblePlaybook:
 
         Raises:
             ValueError: when backend is incorrect.
-            RuntimeError: when ansible-navigator is not available.
+            RuntimeError: when ansible-playbook or ansible-navigator is not available.
         """
         if not self._playbook:
             return
@@ -147,13 +147,13 @@ class AnsiblePlaybook:
                 raise ValueError(msg)
 
     def execute(self, action_args: list[str] | None = None) -> str:  # noqa: ARG002
-        """Execute ``ansible-playbook``.
+        """Execute ``ansible-playbook`` or ``ansible-navigator run``.
 
         Args:
             action_args: Arguments to forward to the action. Unused.
 
         Returns:
-            Output from ansible-playbook.
+            Output from ansible-playbook or ansible-navigator.
 
         Raises:
             ScenarioFailureError: when Ansible returns nonzero code.

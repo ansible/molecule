@@ -127,6 +127,28 @@ def test_bake(_inventory_directory, _instance):  # type: ignore[no-untyped-def] 
     assert _instance._ansible_command == args
 
 
+def test_bake_with_ansible_navigator(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+    pb = _instance._config.provisioner.playbooks.converge
+    _instance._playbook = pb
+    _instance._config.config["executor"]["backend"] = "ansible-navigator"
+    _instance.bake()
+
+    args = [
+        "ansible-navigator",
+        "run",
+        pb,
+        "--mode",
+        "stdout",
+        "--become",
+        "--inventory",
+        _inventory_directory,
+        "--skip-tags",
+        "molecule-notest,notest",
+    ]
+
+    assert _instance._ansible_command == args
+
+
 def test_bake_removes_non_interactive_options_from_non_converge_playbooks(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     _inventory_directory,  # noqa: PT019
     _instance,  # noqa: PT019

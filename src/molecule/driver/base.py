@@ -33,6 +33,8 @@ from molecule.status import Status
 
 
 if TYPE_CHECKING:
+    from typing import Any
+
     from molecule.config import Config
     from molecule.types import DriverOptions
 
@@ -131,7 +133,7 @@ class Driver(ABC):
     def ansible_connection_options(
         self,
         instance_name: str,
-    ) -> dict[str, str]:  # pragma: no cover
+    ) -> dict[str, Any]:  # pragma: no cover
         """Ansible specific connection options supplied to inventory and returns a dict.
 
         Args:

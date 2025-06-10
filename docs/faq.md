@@ -111,3 +111,19 @@ dependencies:
   - role: <your-dependee-role>
     when: lookup('env', 'MOLECULE_FILE')
 ```
+
+## How can I execute molecule playbooks inside of an execution-environment?
+
+By default, Molecule uses ansible-playbook to execute the playbooks.
+However, it has the ability to test playbooks inside of an execution-environment
+using ansible-navigator as executor backend. This is done by setting
+`ansible_navigator` as the backend in `executor` section of `molecule.yml`.
+(Note: This feature is experimental and under development).
+
+```yaml
+---
+executor:
+  backend: ansible-navigator
+provisioner:
+  name: ansible
+```
