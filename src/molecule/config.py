@@ -325,6 +325,15 @@ class Config:
         return driver
 
     @property
+    def executor(self) -> str:
+        """Return playbook executor.
+
+        Returns:
+            The executor backend.
+        """
+        return self.config.get("executor", {}).get("backend", "ansible-playbook")
+
+    @property
     def env(self) -> dict[str, str]:
         """Environment variables.
 
@@ -571,6 +580,9 @@ class Config:
                 "options": {"managed": True},
                 "ssh_connection_options": [],
                 "safe_files": [],
+            },
+            "executor": {
+                "backend": "ansible-playbook",
             },
             "platforms": [],
             "prerun": True,

@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import logging
 import shlex
+import subprocess
 import warnings
 
 from typing import TYPE_CHECKING
@@ -72,7 +73,12 @@ class AnsiblePlaybook:
             self._env = self._config.provisioner.env
 
     def bake(self) -> None:
-        """Bake an ``ansible-playbook`` command so it's ready to execute."""
+        """Bake ``ansible-playbook`` or ``navigator run`` command so it's ready to execute.
+
+        Raises:
+            ValueError: when backend is incorrect.
+            RuntimeError: when ansible-navigator is not available.
+        """
         if not self._playbook:
             return
 
@@ -101,13 +107,44 @@ class AnsiblePlaybook:
             else:
                 ansible_args = []
 
-            self._ansible_command = [
-                "ansible-playbook",
-                *util.dict2args(options),
-                *util.bool2args(verbose_flag),
-                *ansible_args,
-                self._playbook,  # must always go last
-            ]
+            backend = self._config.executor
+
+            if backend:
+                try:
+                    result = subprocess.run(
+                        [backend, "--version"],
+                        capture_output=True,
+                        text=True,
+                        check=True,
+                    )
+                    LOG.info("%s version: %s", backend, result.stdout.strip())
+                except subprocess.CalledProcessError as exc:
+                    msg = f"{backend} is not available. Please ensure that it is installed."
+                    raise RuntimeError(msg) from exc
+
+            if backend == "ansible-playbook":
+                self._ansible_command = [
+                    "ansible-playbook",
+                    *util.dict2args(options),
+                    *util.bool2args(verbose_flag),
+                    *ansible_args,
+                    self._playbook,  # must always go last
+                ]
+
+            elif backend == "ansible-navigator":
+                self._ansible_command = [
+                    "ansible-navigator",
+                    "run",
+                    self._playbook,
+                    "--mode",
+                    "stdout",
+                    *util.dict2args(options),
+                    *util.bool2args(verbose_flag),
+                    *ansible_args,
+                ]
+            else:
+                msg = f"Unsupported backend: {backend}"
+                raise ValueError(msg)
 
     def execute(self, action_args: list[str] | None = None) -> str:  # noqa: ARG002
         """Execute ``ansible-playbook``.
