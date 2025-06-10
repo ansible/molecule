@@ -138,9 +138,11 @@ def prepare(  # noqa: PLR0913
     *,
     force: bool,
     report: bool,
+    shared_inventory: bool,
 ) -> None:  # pragma: no cover
     """Use the provisioner to prepare the instances into a particular starting state.
 
+    \f
     Args:
         ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
@@ -149,7 +151,8 @@ def prepare(  # noqa: PLR0913
         __all: Whether molecule should target scenario_name or all scenarios.
         force: Whether to use force mode.
         report: Whether to show an after-run summary report.
-    """
+        shared_inventory: Whether the inventory should be shared between scenarios.
+    """  # noqa: D301
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
@@ -157,6 +160,7 @@ def prepare(  # noqa: PLR0913
         "driver_name": driver_name,
         "force": force,
         "report": report,
+        "shared_inventory": shared_inventory,
     }
 
     if __all:

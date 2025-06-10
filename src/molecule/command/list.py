@@ -80,11 +80,12 @@ def list_(
 ) -> None:  # pragma: no cover
     """List status of instances.
 
+    \f
     Args:
         ctx: Click context object holding commandline arguments.
         scenario_name: Name of the scenario to target.
         format: Output format type.
-    """
+    """  # noqa: D301
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand, "format": format}

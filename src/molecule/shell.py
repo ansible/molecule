@@ -153,13 +153,14 @@ def main(
 
         eval "$(_MOLECULE_COMPLETE=SHELL_source molecule)"
 
+    \f
     Args:
         ctx: Click context object.
         debug: Debug option value.
         verbose: Verbose option value.
         base_config: Base config option value.
         env_file: Environment variable file option value.
-    """
+    """  # noqa: D301
     ctx.obj = {}
     ctx.obj["args"] = {}
     ctx.obj["args"]["debug"] = debug
