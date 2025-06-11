@@ -130,6 +130,17 @@
       "title": "MoleculeDriverOptionsModel",
       "type": "object"
     },
+    "MoleculeExecutorModel": {
+      "additionalProperties": false,
+      "properties": {
+        "backend": {
+          "title": "Backend for playbook executor",
+          "type": "string"
+        }
+      },
+      "title": "MoleculeExecutorModel",
+      "type": "object"
+    },
     "MoleculePlatformModel": {
       "additionalProperties": true,
       "properties": {
@@ -533,6 +544,9 @@
     },
     "driver": {
       "$ref": "#/$defs/MoleculeDriverModel"
+    },
+    "executor": {
+      "$ref": "#/$defs/MoleculeExecutorModel"
     },
     "lint": {
       "title": "Lint",

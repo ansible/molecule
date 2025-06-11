@@ -88,6 +88,16 @@ class DriverData(TypedDict, total=False):
     safe_files: list[str]
 
 
+class ExecutorData(TypedDict, total=False):
+    """Molecule playbook executor configuration.
+
+    Attributes:
+        backend: The backend to use for executing playbooks.
+    """
+
+    backend: str
+
+
 class InventoryData(TypedDict):
     """Inventory data for a molecule run.
 
@@ -216,6 +226,7 @@ class ConfigData(TypedDict):
     Attributes:
         dependency: Dependency config.
         driver: Driver config.
+        executor: Executor config.
         platforms: List of platforms.
         prerun: Should prerun tasks be run.
         role_name_check: ???
@@ -226,6 +237,7 @@ class ConfigData(TypedDict):
 
     dependency: DependencyData
     driver: DriverData
+    executor: ExecutorData
     platforms: list[PlatformData]
     prerun: bool
     role_name_check: int
