@@ -194,6 +194,11 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
     Raises:
         ScenarioFailureError: when a scenario fails prematurely.
     """
+    default: config.Config | None = None
+    for scenario in scenarios:
+        if scenario.name == "default":
+            default = scenario.config
+
     for scenario in scenarios:
         if scenario.config.config["prerun"]:
             role_name_check = scenario.config.config["role_name_check"]
@@ -208,7 +213,7 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
             shutil.rmtree(scenario.ephemeral_directory)
             return
         try:
-            execute_scenario(scenario)
+            execute_scenario(scenario, default)
         except ScenarioFailureError:
             # if the command has a 'destroy' arg, like test does,
             # handle that behavior here.
@@ -256,14 +261,22 @@ def execute_subcommand(
     return command(current_config).execute(args)
 
 
-def execute_scenario(scenario: Scenario) -> None:
+def execute_scenario(scenario: Scenario, default_config: config.Config | None = None) -> None:
     """Execute each command in the given scenario's configured sequence.
 
     Args:
         scenario: The scenario to execute.
+        default_config: The scenario to delegate to for shared tasks
     """
     for action in scenario.sequence:
-        execute_subcommand(scenario.config, action)
+        if (
+            default_config is not None
+            and action in ("prepare", "destroy")
+            and scenario.config.shared_data
+        ):
+            execute_subcommand(default_config, action)
+        else:
+            execute_subcommand(scenario.config, action)
 
     if "destroy" in scenario.sequence and scenario.config.command_args.get("destroy") != "never":
         scenario.prune()

@@ -167,6 +167,15 @@ class Config:
         return self.command_args.get("shared_inventory", False)
 
     @property
+    def shared_data(self) -> bool:
+        """Should molecule share ephemeral data.
+
+        Returns:
+            Whether molecule should share ephemeral data.
+        """
+        return self.command_args.get("shared_state", False)
+
+    @property
     def platform_name(self) -> str | None:
         """Configured platform.
 
