@@ -153,35 +153,6 @@ class Scenarios:
         Returns:
             A dictionary for each scenario listing action sequences for each step.
         """
-        shared_state = self._configs[0].command_args.get("shared_state", False)
-        if shared_state:
-            for scenario in self.all:
-                if scenario.name == "default":
-                    default = scenario
-                    break
-            else:
-                # no default scenario, fallback
-                shared_state = False
-
-        if shared_state:
-            return {
-                scenario.name: {
-                    "check": scenario.check_sequence,
-                    "cleanup": scenario.cleanup_sequence,
-                    "converge": scenario.converge_sequence,
-                    "create": scenario.create_sequence,
-                    "dependency": scenario.dependency_sequence,
-                    "destroy": default.destroy_sequence,
-                    "idempotence": scenario.idempotence_sequence,
-                    "prepare": default.prepare_sequence,
-                    "side_effect": scenario.side_effect_sequence,
-                    "syntax": scenario.syntax_sequence,
-                    "test": scenario.test_sequence,
-                    "verify": scenario.verify_sequence,
-                }
-                for scenario in self.all
-            }
-
         return {
             scenario.name: {
                 "check": scenario.check_sequence,

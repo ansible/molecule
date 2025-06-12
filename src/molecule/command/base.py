@@ -184,7 +184,7 @@ def _generate_scenarios(
     return scenarios
 
 
-def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: CommandArgs) -> None:
+def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: CommandArgs) -> None:  # noqa: C901,PLR0912
     """Loop through Scenarios object and execute each.
 
     Args:
@@ -198,6 +198,10 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
     for scenario in scenarios:
         if scenario.name == "default":
             default = scenario.config
+
+    # Run initial create
+    if default is not None and "create" in scenarios.all[0].sequence and default.shared_data:
+        execute_subcommand(default, "create")
 
     for scenario in scenarios:
         if scenario.config.config["prerun"]:
@@ -213,7 +217,7 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
             shutil.rmtree(scenario.ephemeral_directory)
             return
         try:
-            execute_scenario(scenario, default)
+            execute_scenario(scenario)
         except ScenarioFailureError:
             # if the command has a 'destroy' arg, like test does,
             # handle that behavior here.
@@ -224,7 +228,10 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
                 )
                 LOG.warning(msg)
                 execute_subcommand(scenario.config, "cleanup")
-                execute_subcommand(scenario.config, "destroy")
+                if default is not None and default.shared_data:
+                    execute_subcommand(default, "destroy")
+                else:
+                    execute_subcommand(scenario.config, "destroy")
                 # always prune ephemeral dir if destroying on failure
                 scenario.prune()
                 if scenario.config.is_parallel:
@@ -233,6 +240,10 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
         finally:
             # Store results regardless
             scenarios.results.append({"name": scenario.name, "results": scenario.results})
+
+    # Run final destroy
+    if default is not None and "destroy" in scenario.sequence and default.shared_data:
+        execute_subcommand(default, "destroy")
 
 
 def execute_subcommand(
@@ -261,22 +272,18 @@ def execute_subcommand(
     return command(current_config).execute(args)
 
 
-def execute_scenario(scenario: Scenario, default_config: config.Config | None = None) -> None:
+def execute_scenario(scenario: Scenario) -> None:
     """Execute each command in the given scenario's configured sequence.
 
     Args:
         scenario: The scenario to execute.
-        default_config: The scenario to delegate to for shared tasks
     """
     for action in scenario.sequence:
-        if (
-            default_config is not None
-            and action in ("prepare", "destroy")
-            and scenario.config.shared_data
-        ):
-            execute_subcommand(default_config, action)
-        else:
-            execute_subcommand(scenario.config, action)
+        if scenario.config.shared_data and action in ("create", "destroy"):
+            # Ignore
+            return
+
+        execute_subcommand(scenario.config, action)
 
     if "destroy" in scenario.sequence and scenario.config.command_args.get("destroy") != "never":
         scenario.prune()
