@@ -147,7 +147,7 @@ class Scenario:
         else:
             path = Path(os.getenv("MOLECULE_EPHEMERAL_DIRECTORY", ""))
         path.mkdir(parents=True, exist_ok=True)
-        
+
         if self.config.is_parallel and not self._lock:
             lock_file = path / ".lock"
             with lock_file.open("w") as self._lock:  # type: ignore[assignment]
