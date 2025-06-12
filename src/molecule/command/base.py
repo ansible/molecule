@@ -43,7 +43,7 @@ import molecule.scenarios
 
 from molecule import config, logger, text, util
 from molecule.console import console, should_do_markup
-from molecule.exceptions import ScenarioFailureError
+from molecule.exceptions import MoleculeError, ScenarioFailureError
 from molecule.scenario import Scenario
 from molecule.util import safe_dump
 
@@ -142,10 +142,17 @@ def execute_cmdline_scenarios(
         except ScenarioFailureError as exc:
             util.sysexit(code=exc.code)
 
+    default_glob = MOLECULE_GLOB.replace("*", MOLECULE_DEFAULT_SCENARIO_NAME)
+    default_config = None
+    try:
+        default_config = get_configs(args, command_args, ansible_args, default_glob)[0]
+    except MoleculeError:
+        LOG.info("default scenario not found, disabling shared state.")
+
     scenarios = _generate_scenarios(scenario_names, configs)
 
     try:
-        _run_scenarios(scenarios, command_args)
+        _run_scenarios(scenarios, command_args, default_config)
 
     except ScenarioFailureError as exc:
         util.sysexit(code=exc.code)
@@ -184,26 +191,30 @@ def _generate_scenarios(
     return scenarios
 
 
-def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: CommandArgs) -> None:  # noqa: C901,PLR0912
+def _run_scenarios(
+    scenarios: molecule.scenarios.Scenarios,
+    command_args: CommandArgs,
+    default_config: config.Config | None,
+) -> None:
     """Loop through Scenarios object and execute each.
 
     Args:
         scenarios: The Scenarios object holding all of the Scenario objects.
         command_args: dict of command arguments.
+        default_config: Molecule Config object for the default scenario.
 
     Raises:
         ScenarioFailureError: when a scenario fails prematurely.
     """
-    default: config.Config | None = None
-    for scenario in scenarios:
-        if scenario.name == "default":
-            default = scenario.config
-
     # Run initial create
-    if default is not None and "create" in scenarios.all[0].sequence and default.shared_data:
-        execute_subcommand(default, "create")
+    if (
+        default_config is not None
+        and "create" in scenarios.all[0].sequence
+        and default_config.shared_data
+    ):
+        execute_subcommand(default_config, "create")
 
-    for scenario in scenarios:
+    for scenario in scenarios.all:
         if scenario.config.config["prerun"]:
             role_name_check = scenario.config.config["role_name_check"]
             LOG.info("Performing prerun with role_name_check=%s...", role_name_check)
@@ -228,8 +239,8 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
                 )
                 LOG.warning(msg)
                 execute_subcommand(scenario.config, "cleanup")
-                if default is not None and default.shared_data:
-                    execute_subcommand(default, "destroy")
+                if default_config is not None and default_config.shared_data:
+                    execute_subcommand(default_config, "destroy")
                 else:
                     execute_subcommand(scenario.config, "destroy")
                 # always prune ephemeral dir if destroying on failure
@@ -242,8 +253,12 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
             scenarios.results.append({"name": scenario.name, "results": scenario.results})
 
     # Run final destroy
-    if default is not None and "destroy" in scenario.sequence and default.shared_data:
-        execute_subcommand(default, "destroy")
+    if (
+        default_config is not None
+        and "destroy" in scenarios.all[0].sequence
+        and default_config.shared_data
+    ):
+        execute_subcommand(default_config, "destroy")
 
 
 def execute_subcommand(
