@@ -146,6 +146,7 @@ class Scenario:
             path = self.config.runtime.cache_dir / "tmp" / project_scenario_directory
         else:
             path = Path(os.getenv("MOLECULE_EPHEMERAL_DIRECTORY", ""))
+        path.mkdir(parents=True, exist_ok=True)
 
         if self.config.is_parallel and not self._lock:
             lock_file = path / ".lock"
