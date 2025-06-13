@@ -206,13 +206,13 @@ def _run_scenarios(
     Raises:
         ScenarioFailureError: when a scenario fails prematurely.
     """
+    is_delegated = default_config is not None and default_config.shared_data
     # Run initial create
-    if (
-        default_config is not None
-        and "create" in scenarios.all[0].sequence
-        and default_config.shared_data
-    ):
+    if is_delegated and "create" in scenarios.all[0].sequence:
         execute_subcommand(default_config, "create")
+        default = default_config.scenario
+        scenarios.results.append({"name": default.name, "results": default.results})
+        default.results = []
 
     for scenario in scenarios.all:
         if scenario.config.config["prerun"]:
@@ -239,7 +239,7 @@ def _run_scenarios(
                 )
                 LOG.warning(msg)
                 execute_subcommand(scenario.config, "cleanup")
-                if default_config is not None and default_config.shared_data:
+                if is_delegated:
                     execute_subcommand(default_config, "destroy")
                 else:
                     execute_subcommand(scenario.config, "destroy")
@@ -251,14 +251,13 @@ def _run_scenarios(
         finally:
             # Store results regardless
             scenarios.results.append({"name": scenario.name, "results": scenario.results})
+            if is_delegated and default.results:
+                scenarios.results.append({"name": default.name, "results": default.results})
 
     # Run final destroy
-    if (
-        default_config is not None
-        and "destroy" in scenarios.all[0].sequence
-        and default_config.shared_data
-    ):
+    if is_delegated and "destroy" in scenarios.all[0].sequence:
         execute_subcommand(default_config, "destroy")
+        scenarios.results.append({"name": default.name, "results": default.results})
 
 
 def execute_subcommand(
@@ -296,7 +295,7 @@ def execute_scenario(scenario: Scenario) -> None:
     for action in scenario.sequence:
         if scenario.config.shared_data and action in ("create", "destroy"):
             # Ignore
-            return
+            continue
 
         execute_subcommand(scenario.config, action)
 
