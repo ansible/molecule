@@ -43,7 +43,7 @@ import molecule.scenarios
 
 from molecule import config, logger, text, util
 from molecule.console import console, should_do_markup
-from molecule.exceptions import ScenarioFailureError
+from molecule.exceptions import MoleculeError, ScenarioFailureError
 from molecule.scenario import Scenario
 from molecule.util import safe_dump
 
@@ -142,10 +142,17 @@ def execute_cmdline_scenarios(
         except ScenarioFailureError as exc:
             util.sysexit(code=exc.code)
 
+    default_glob = MOLECULE_GLOB.replace("*", MOLECULE_DEFAULT_SCENARIO_NAME)
+    default_config = None
+    try:
+        default_config = get_configs(args, command_args, ansible_args, default_glob)[0]
+    except MoleculeError:
+        LOG.info("default scenario not found, disabling shared state.")
+
     scenarios = _generate_scenarios(scenario_names, configs)
 
     try:
-        _run_scenarios(scenarios, command_args)
+        _run_scenarios(scenarios, command_args, default_config)
 
     except ScenarioFailureError as exc:
         util.sysexit(code=exc.code)
@@ -184,17 +191,30 @@ def _generate_scenarios(
     return scenarios
 
 
-def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: CommandArgs) -> None:
+def _run_scenarios(
+    scenarios: molecule.scenarios.Scenarios,
+    command_args: CommandArgs,
+    default_config: config.Config | None,
+) -> None:
     """Loop through Scenarios object and execute each.
 
     Args:
         scenarios: The Scenarios object holding all of the Scenario objects.
         command_args: dict of command arguments.
+        default_config: Molecule Config object for the default scenario.
 
     Raises:
         ScenarioFailureError: when a scenario fails prematurely.
     """
-    for scenario in scenarios:
+    is_delegated = default_config is not None and default_config.shared_data
+    # Run initial create
+    if is_delegated and "create" in scenarios.all[0].sequence:
+        execute_subcommand(default_config, "create")
+        default = default_config.scenario
+        scenarios.results.append({"name": default.name, "results": default.results})
+        default.results = []
+
+    for scenario in scenarios.all:
         if scenario.config.config["prerun"]:
             role_name_check = scenario.config.config["role_name_check"]
             LOG.info("Performing prerun with role_name_check=%s...", role_name_check)
@@ -219,7 +239,10 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
                 )
                 LOG.warning(msg)
                 execute_subcommand(scenario.config, "cleanup")
-                execute_subcommand(scenario.config, "destroy")
+                if is_delegated:
+                    execute_subcommand(default_config, "destroy")
+                else:
+                    execute_subcommand(scenario.config, "destroy")
                 # always prune ephemeral dir if destroying on failure
                 scenario.prune()
                 if scenario.config.is_parallel:
@@ -228,6 +251,13 @@ def _run_scenarios(scenarios: molecule.scenarios.Scenarios, command_args: Comman
         finally:
             # Store results regardless
             scenarios.results.append({"name": scenario.name, "results": scenario.results})
+            if is_delegated and default.results:
+                scenarios.results.append({"name": default.name, "results": default.results})
+
+    # Run final destroy
+    if is_delegated and "destroy" in scenarios.all[0].sequence:
+        execute_subcommand(default_config, "destroy")
+        scenarios.results.append({"name": default.name, "results": default.results})
 
 
 def execute_subcommand(
@@ -263,6 +293,10 @@ def execute_scenario(scenario: Scenario) -> None:
         scenario: The scenario to execute.
     """
     for action in scenario.sequence:
+        if scenario.config.shared_data and action in ("create", "destroy"):
+            # Ignore
+            continue
+
         execute_subcommand(scenario.config, action)
 
     if "destroy" in scenario.sequence and scenario.config.command_args.get("destroy") != "never":
@@ -436,6 +470,11 @@ def click_command_options(func: Callable[..., None]) -> Callable[..., None]:
         Function with click options for scenario_name, exclude, all, and report added.
     """
     # NOTE: because click.option is a decorator, options applied this way will appear in the opposite order.
+    func = click.option(
+        "--shared-state/--no-shared-state",
+        default=False,
+        help="EXPERIMENTAL: Enable or disable sharing (some) state between scenarios. Default is disabled.",
+    )(func)
     func = click.option(
         "--shared-inventory/--no-shared-inventory",
         default=False,
