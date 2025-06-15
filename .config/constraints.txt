@@ -16,8 +16,8 @@ black==25.1.0             # via ansible-lint
 bracex==2.5.post1         # via wcmatch
 cachetools==6.0.0         # via tox
 cairocffi==1.7.1          # via cairosvg
-cairosvg==2.7.1           # via mkdocs-ansible
-certifi==2025.4.26        # via requests
+cairosvg==2.8.2           # via mkdocs-ansible
+certifi==2025.6.15        # via requests
 cffi==1.17.1              # via cairocffi, cryptography, onigurumacffi
 cfgv==3.4.0               # via pre-commit
 chardet==5.2.0            # via tox
@@ -25,8 +25,8 @@ charset-normalizer==3.4.2  # via requests
 click==8.2.1              # via black, click-help-colors, mkdocs, pydoclint, molecule (pyproject.toml)
 click-help-colors==0.9.4  # via molecule (pyproject.toml)
 colorama==0.4.6           # via griffe, mkdocs-material, tox
-coverage==7.8.2           # via molecule (pyproject.toml)
-cryptography==45.0.3      # via ansible-core
+coverage==7.9.1           # via molecule (pyproject.toml)
+cryptography==45.0.4      # via ansible-core
 csscompressor==0.9.5      # via mkdocs-minify-plugin
 cssselect2==0.8.0         # via cairosvg
 defusedxml==0.7.1         # via cairosvg
@@ -107,10 +107,10 @@ python-dateutil==2.9.0.post0  # via ghp-import, mkdocs-macros-plugin
 pyyaml==6.0.2             # via ansible-builder, ansible-compat, ansible-core, ansible-lint, ansible-navigator, ansible-runner, mkdocs, mkdocs-get-deps, mkdocs-macros-plugin, pre-commit, pymdown-extensions, pyyaml-env-tag, yamllint, molecule (pyproject.toml)
 pyyaml-env-tag==1.1       # via mkdocs
 referencing==0.36.2       # via ansible-lint, jsonschema, jsonschema-specifications, types-jsonschema
-requests==2.32.3          # via docker, linkchecker, mkdocs-htmlproofer-plugin, mkdocs-material, molecule (pyproject.toml)
+requests==2.32.4          # via docker, linkchecker, mkdocs-htmlproofer-plugin, mkdocs-material, molecule (pyproject.toml)
 rich==14.0.0              # via enrich, molecule (pyproject.toml)
 rpds-py==0.25.1           # via jsonschema, referencing
-ruamel-yaml==0.18.13      # via ansible-lint
+ruamel-yaml==0.18.14      # via ansible-lint
 ruff==0.11.13             # via molecule (pyproject.toml)
 setuptools==80.9.0        # via pbr
 six==1.17.0               # via python-dateutil
@@ -133,7 +133,7 @@ watchdog==6.0.0           # via mkdocs
 wcmatch==10.0             # via ansible-lint, molecule (pyproject.toml)
 webencodings==0.5.1       # via cssselect2, tinycss2
 yamllint==1.37.1          # via ansible-lint
-zipp==3.22.0              # via importlib-metadata
+zipp==3.23.0              # via importlib-metadata
 
 # The following packages were excluded from the output:
 # ansible-core
