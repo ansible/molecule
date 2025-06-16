@@ -292,14 +292,19 @@ def execute_scenario(scenario: Scenario) -> None:
     Args:
         scenario: The scenario to execute.
     """
+    shared_data = scenario.config.shared_data is True
     for action in scenario.sequence:
-        if scenario.config.shared_data and action in ("create", "destroy"):
+        if shared_data and action in ("create", "destroy"):
             # Ignore
             continue
 
         execute_subcommand(scenario.config, action)
 
-    if "destroy" in scenario.sequence and scenario.config.command_args.get("destroy") != "never":
+    if (
+        not shared_data
+        and "destroy" in scenario.sequence
+        and scenario.config.command_args.get("destroy") != "never"
+    ):
         scenario.prune()
 
         if scenario.config.is_parallel:
