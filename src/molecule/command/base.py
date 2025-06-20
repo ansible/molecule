@@ -191,7 +191,7 @@ def _generate_scenarios(
     return scenarios
 
 
-def _run_scenarios(
+def _run_scenarios(  # noqa: C901
     scenarios: molecule.scenarios.Scenarios,
     command_args: CommandArgs,
     default_config: config.Config | None,
@@ -206,9 +206,12 @@ def _run_scenarios(
     Raises:
         ScenarioFailureError: when a scenario fails prematurely.
     """
-    is_delegated = default_config is not None and default_config.shared_data
     # Run initial create
-    if is_delegated and "create" in scenarios.all[0].sequence:
+    if (
+        default_config is not None
+        and default_config.shared_data is True
+        and "create" in scenarios.all[0].sequence
+    ):
         execute_subcommand(default_config, "create")
         default = default_config.scenario
         scenarios.results.append({"name": default.name, "results": default.results})
@@ -239,7 +242,7 @@ def _run_scenarios(
                 )
                 LOG.warning(msg)
                 execute_subcommand(scenario.config, "cleanup")
-                if is_delegated:
+                if default_config is not None and default_config.shared_data is True:
                     execute_subcommand(default_config, "destroy")
                 else:
                     execute_subcommand(scenario.config, "destroy")
@@ -251,11 +254,19 @@ def _run_scenarios(
         finally:
             # Store results regardless
             scenarios.results.append({"name": scenario.name, "results": scenario.results})
-            if is_delegated and default.results:
+            if (
+                default_config is not None
+                and default_config.shared_data is True
+                and default.results
+            ):
                 scenarios.results.append({"name": default.name, "results": default.results})
 
     # Run final destroy
-    if is_delegated and "destroy" in scenarios.all[0].sequence:
+    if (
+        default_config is not None
+        and default_config.shared_data is True
+        and "destroy" in scenarios.all[0].sequence
+    ):
         execute_subcommand(default_config, "destroy")
         scenarios.results.append({"name": default.name, "results": default.results})
 
