@@ -13,7 +13,6 @@
 
 - check
 - cleanup
-
   - This action has cleanup and is not enabled by default.
     See the provisioner's documentation for further details.
 

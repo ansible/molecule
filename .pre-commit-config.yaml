@@ -37,7 +37,7 @@ repos:
           )$
 
   - repo: https://github.com/pycontribs/mirrors-prettier
-    rev: v3.5.3
+    rev: v3.6.2
     hooks:
       - id: prettier
         always_run: true
@@ -94,7 +94,7 @@ repos:
           - wcmatch
 
   - repo: https://github.com/pre-commit/mirrors-mypy.git
-    rev: v1.16.0
+    rev: v1.16.1
     hooks:
       - id: mypy
         additional_dependencies:
@@ -139,7 +139,7 @@ repos:
         additional_dependencies:
           - uv>=0.5.21
   - repo: https://github.com/ansible/ansible-lint
-    rev: v25.5.0
+    rev: v25.6.1
     hooks:
       - id: ansible-lint
         stages: [manual]
