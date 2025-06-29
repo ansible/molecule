@@ -9,14 +9,14 @@ ansible-runner==2.4.1     # via ansible-navigator
 astroid==3.3.10           # via pylint
 attrs==25.3.0             # via jsonschema, referencing
 babel==2.17.0             # via mkdocs-material
-backrefs==5.8             # via mkdocs-material
+backrefs==5.9             # via mkdocs-material
 beautifulsoup4==4.13.4    # via linkchecker, mkdocs-htmlproofer-plugin
 bindep==2.13.0            # via ansible-builder
 black==25.1.0             # via ansible-lint
-bracex==2.5.post1         # via wcmatch
+bracex==2.6         # via wcmatch
 cachetools==6.1.0         # via tox
 cairocffi==1.7.1          # via cairosvg
-cairosvg==2.7.1           # via mkdocs-ansible
+cairosvg==2.8.2           # via mkdocs-ansible
 certifi==2025.6.15        # via requests
 cffi==1.17.1              # via cairocffi, cryptography, onigurumacffi
 cfgv==3.4.0               # via pre-commit
@@ -56,7 +56,7 @@ jsonschema-specifications==2025.4.1  # via jsonschema
 linkchecker==10.5.0       # via mkdocs-ansible, molecule (pyproject.toml)
 lockfile==0.12.2          # via python-daemon
 markdown==3.8.2           # via markdown-include, mkdocs, mkdocs-autorefs, mkdocs-htmlproofer-plugin, mkdocs-material, mkdocstrings, pymdown-extensions
-markdown-exec==1.10.3     # via mkdocs-ansible
+markdown-exec==1.11.0     # via mkdocs-ansible
 markdown-include==0.8.1   # via mkdocs-ansible
 markdown-it-py==3.0.0     # via rich
 markupsafe==3.0.2         # via jinja2, mkdocs, mkdocs-autorefs, mkdocstrings
@@ -111,7 +111,7 @@ requests==2.32.4          # via docker, linkchecker, mkdocs-htmlproofer-plugin, 
 rich==14.0.0              # via enrich, molecule (pyproject.toml)
 rpds-py==0.25.1           # via jsonschema, referencing
 ruamel-yaml==0.18.14      # via ansible-lint
-ruff==0.12.0              # via molecule (pyproject.toml)
+ruff==0.12.1              # via molecule (pyproject.toml)
 setuptools==80.9.0        # via pbr
 six==1.17.0               # via python-dateutil
 soupsieve==2.7            # via beautifulsoup4
@@ -130,7 +130,7 @@ tzdata==2025.2            # via ansible-navigator
 urllib3==2.5.0            # via docker, requests
 virtualenv==20.31.2       # via pre-commit, tox
 watchdog==6.0.0           # via mkdocs
-wcmatch==10.0             # via ansible-lint, molecule (pyproject.toml)
+wcmatch==10.1             # via ansible-lint, molecule (pyproject.toml)
 webencodings==0.5.1       # via cssselect2, tinycss2
 yamllint==1.37.1          # via ansible-lint
 zipp==3.23.0              # via importlib-metadata
