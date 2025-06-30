@@ -13,10 +13,10 @@ backrefs==5.9             # via mkdocs-material
 beautifulsoup4==4.13.4    # via linkchecker, mkdocs-htmlproofer-plugin
 bindep==2.13.0            # via ansible-builder
 black==25.1.0             # via ansible-lint
-bracex==2.6         # via wcmatch
+bracex==2.6               # via wcmatch
 cachetools==6.1.0         # via tox
 cairocffi==1.7.1          # via cairosvg
-cairosvg==2.8.2           # via mkdocs-ansible
+cairosvg==2.7.1           # via mkdocs-ansible
 certifi==2025.6.15        # via requests
 cffi==1.17.1              # via cairocffi, cryptography, onigurumacffi
 cfgv==3.4.0               # via pre-commit
