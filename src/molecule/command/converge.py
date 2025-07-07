@@ -65,6 +65,7 @@ def converge(  # noqa: PLR0913
     ansible_args: tuple[str],
     report: bool,
     shared_inventory: bool,
+    shared_state: bool,
 ) -> None:  # pragma: no cover
     """Use the provisioner to configure instances (dependency, create, prepare converge).
 
@@ -77,6 +78,7 @@ def converge(  # noqa: PLR0913
         ansible_args: Arguments to forward to Ansible.
         report: Whether to show an after-run summary report.
         shared_inventory: Whether the inventory should be shared between scenarios.
+        shared_state: Whether the (some) state should be shared between scenarios.
     """  # noqa: D301
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
@@ -84,6 +86,7 @@ def converge(  # noqa: PLR0913
         "subcommand": subcommand,
         "report": report,
         "shared_inventory": shared_inventory,
+        "shared_state": shared_state,
     }
 
     if __all:

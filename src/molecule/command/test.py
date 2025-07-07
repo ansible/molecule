@@ -96,6 +96,7 @@ def test(  # noqa: PLR0913
     platform_name: str,
     report: bool,
     shared_inventory: bool,
+    shared_state: bool,
 ) -> None:  # pragma: no cover
     """Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy).
 
@@ -112,6 +113,7 @@ def test(  # noqa: PLR0913
         platform_name: Name of the platform to use.
         report: Whether to show an after-run summary report.
         shared_inventory: Whether the inventory should be shared between scenarios.
+        shared_state: Whether the (some) state should be shared between scenarios.
     """  # noqa: D301
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
@@ -123,6 +125,7 @@ def test(  # noqa: PLR0913
         "platform_name": platform_name,
         "report": report,
         "shared_inventory": shared_inventory,
+        "shared_state": shared_state,
     }
 
     if __all:

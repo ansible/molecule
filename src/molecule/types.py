@@ -278,6 +278,7 @@ class CommandArgs(TypedDict, total=False):
         report: Whether to show an after-run summary report.
         scenario_name: Name of the scenario to target.
         shared_inventory: Whether inventory should be shared between scenarios.
+        shared_state: Whether (some) state should be shared between scenarios.
         subcommand: Name of subcommand being run.
     """
 
@@ -291,6 +292,7 @@ class CommandArgs(TypedDict, total=False):
     report: bool
     scenario_name: str
     shared_inventory: bool
+    shared_state: bool
     subcommand: str
 
 
