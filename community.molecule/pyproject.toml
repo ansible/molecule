@@ -1,0 +1,24 @@
+[dependency-groups]
+dev = [
+  "tox-ansible>=25.5.5",
+  "tox-extra>=2.1.0",
+  "tox-uv>=1.20.1"
+]
+
+[project]
+dependencies = []
+description = "Add your description here"
+name = "community-molecule"
+readme = "README.md"
+requires-python = ">=3.11"
+version = "0.1.0"
+
+[tool.codespell]
+# indention is a typo in ruamel.yaml's API
+ignore-words-list = "indention"
+skip = ".tox,.mypy_cache,build,.git,.eggs,pip-wheel-metadata"
+
+# prevents tox-ansible failure as it might incorrectly assume it is running
+# on a python package.
+[tool.setuptools]
+py-modules = []

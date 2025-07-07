@@ -62,7 +62,7 @@ repos:
       - id: ruff
         entry: sh -c 'ruff check --fix --force-exclude && ruff format --force-exclude'
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v9.0.1
+    rev: v9.1.0
     hooks:
       - id: cspell
         name: Spell check with cspell
@@ -130,7 +130,7 @@ repos:
         additional_dependencies:
           - uv>=0.5.21
       - id: pip-compile
-        name: Check constraints files and requirements
+        name: "pip-compile: check constraints files and requirements"
         always_run: true
         files: ^(pyproject\.toml|\.config/.*)$
         language: python

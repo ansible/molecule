@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - "fix empty ``instance_config.yml`` produced by ``header`` filter (https://github.com/ansible-collections/community.molecule/pull/1)."

@@ -1,0 +1,24 @@
+- name: Validate filter
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Check if community.molecule.header filter can be used
+      ansible.builtin.debug:
+        msg: "{{ '' | community.molecule.header }}"
+
+    - name: Test community.molecule.header filter result
+      ansible.builtin.set_fact:
+        with_header: "{{ '# This is test content\n' | community.molecule.header }}"
+
+    - name: Assert community.molecule.header filter result
+      ansible.builtin.assert:
+        that:
+          - "'# Molecule managed\n\n# This is test content\n' == with_header"
+
+    - name: Check if community.molecule.to_yaml filter can be used
+      ansible.builtin.debug:
+        msg: "{{ '' | community.molecule.to_yaml }}"
+
+    - name: Check if community.molecule.from_yaml filter can be used
+      ansible.builtin.debug:
+        msg: "{{ '' | community.molecule.from_yaml }}"

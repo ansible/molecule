@@ -341,7 +341,7 @@ fail-on = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "-ra --showlocals --durations=10 --instafail"
+addopts = "-ra --showlocals --durations=10"
 cache_dir = "./.cache/.pytest"
 junit_family = "legacy" # see https://docs.codecov.com/docs/test-analytics
 markers = [
