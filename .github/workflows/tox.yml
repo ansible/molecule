@@ -24,4 +24,6 @@ jobs:
       default_python: "3.10" # for lint
       max_python: "3.13"
       jobs_producing_coverage: 8
-      other_names_also: "eco"
+      other_names_also: |
+        collection
+        eco
