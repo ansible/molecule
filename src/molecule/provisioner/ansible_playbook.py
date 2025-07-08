@@ -28,6 +28,8 @@ import warnings
 
 from typing import TYPE_CHECKING
 
+from rich.markup import escape
+
 from molecule import util
 from molecule.api import MoleculeRuntimeWarning
 from molecule.exceptions import ScenarioFailureError
@@ -184,8 +186,6 @@ class AnsiblePlaybook:
                 ScenarioResult(subcommand=self._config.action, state="FAILED"),
             )
 
-            from rich.markup import escape
-
             msg = f"Ansible return code was {result.returncode}, command was: [dim]{escape(shlex.join(result.args))}[/dim]"
             raise ScenarioFailureError(
                 msg,
@@ -198,7 +198,7 @@ class AnsiblePlaybook:
         )
         return result.stdout
 
-    def add_cli_arg(self, name: str, value: str | bool) -> None:
+    def add_cli_arg(self, name: str, value: str | bool) -> None:  # noqa: FBT001
         """Add argument to CLI passed to ansible-playbook.
 
         Args:
