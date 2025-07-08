@@ -13,9 +13,9 @@ tags:
   - application
   - molecule
   - testing
-repository: https://github.com/ansible-collections/community.molecule
-homepage: https://github.com/ansible-collections/community.molecule
-issues: https://github.com/ansible-collections/community.molecule/issues
+repository: https://github.com/ansible/molecule
+homepage: https://github.com/ansible/molecule
+issues: https://github.com/ansible/molecule/issues
 build_ignore:
   - .ansible
   - .gitignore
