@@ -408,13 +408,14 @@ class Config:
         Returns:
             A molecule State instance.
         """
-        myState = state.State(self)  # noqa: N806
+        my_state = state.State(self)
+
         # look at state file for molecule.yml date modified and warn if they do not match
         if self.molecule_file and os.path.isfile(self.molecule_file):  # noqa: PTH113
             modTime = os.path.getmtime(self.molecule_file)  # noqa: PTH204, N806
-            if myState.molecule_yml_date_modified is None:
-                myState.change_state("molecule_yml_date_modified", modTime)
-            elif myState.molecule_yml_date_modified != modTime:
+            if my_state.molecule_yml_date_modified is None:
+                my_state.change_state("molecule_yml_date_modified", modTime)
+            elif my_state.molecule_yml_date_modified != modTime:
                 LOG.warning(
                     "The scenario config file ('%s') has been modified since the scenario was created. "
                     "If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or "
@@ -422,7 +423,7 @@ class Config:
                     self.molecule_file,
                 )
 
-        return state.State(self)
+        return state.SharedState(self) if self.shared_data else state.State(self)
 
     @cached_property
     def verifier(self) -> Verifier:
