@@ -191,7 +191,7 @@ def _generate_scenarios(
     return scenarios
 
 
-def _run_scenarios(  # noqa: C901
+def _run_scenarios(  # noqa: C901, PLR0912
     scenarios: molecule.scenarios.Scenarios,
     command_args: CommandArgs,
     default_config: config.Config | None,
@@ -207,15 +207,13 @@ def _run_scenarios(  # noqa: C901
         ScenarioFailureError: when a scenario fails prematurely.
     """
     # Run initial create
-    if (
-        default_config is not None
-        and default_config.shared_data is True
-        and "create" in scenarios.all[0].sequence
-    ):
-        execute_subcommand(default_config, "create")
+    if default_config is not None and default_config.shared_data is True:
         default = default_config.scenario
-        scenarios.results.append({"name": default.name, "results": default.results})
-        default.results = []
+        if "create" in scenarios.all[0].sequence:
+            execute_subcommand(default_config, "create")
+            scenarios.results.append({"name": default.name, "results": default.results})
+            # clear results for later reuse
+            default.results = []
 
     for scenario in scenarios.all:
         if scenario.config.config["prerun"]:
