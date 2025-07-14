@@ -238,6 +238,7 @@ def _run_scenarios(
                 execute_subcommand(scenario.config, "cleanup")
                 destroy_results = execute_subcommand_default(default_config, "destroy")
                 if destroy_results is not None:
+                    scenarios.results.append({"name": scenario.name, "results": scenario.results})
                     scenarios.results.append(destroy_results)
                 else:
                     execute_subcommand(scenario.config, "destroy")
@@ -267,24 +268,19 @@ def execute_subcommand_default(
 
     Returns:
         The result of the subcommand.
-
-    Raises:
-        MoleculeError: if default scenario not found
     """
-    if default_config is None:
-        msg = "Default scenario is missing"
-        raise MoleculeError(msg)
-    if default_config.shared_data is not True:
+    if default_config is None or default_config.shared_data is not True:
         # We have not been asked to do anything.
         return None
 
     default = default_config.scenario
     if subcommand in default.sequence:
-        execute_subcommand(default_config, "create")
+        execute_subcommand(default_config, subcommand)
         results: ScenariosResults = {"name": default.name, "results": copy.copy(default.results)}
         # clear results for later reuse
         default.results = []
         return results
+    LOG.warning("%s not found in default scenario, falling back to current scenario")
     return None
 
 
