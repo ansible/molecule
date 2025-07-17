@@ -205,6 +205,7 @@ def write_file(filename: str | Path, content: str, header: str | None = None) ->
 
     if isinstance(filename, str):
         filename = Path(filename)
+    filename.parent.mkdir(exist_ok=True)
     filename.write_text(content)
 
 
