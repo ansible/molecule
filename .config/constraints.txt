@@ -17,7 +17,7 @@ bracex==2.6               # via wcmatch
 cachetools==6.1.0         # via tox
 cairocffi==1.7.1          # via cairosvg
 cairosvg==2.7.1           # via mkdocs-ansible
-certifi==2025.7.14         # via requests
+certifi==2025.7.14        # via requests
 cffi==1.17.1              # via cairocffi, cryptography, onigurumacffi
 cfgv==3.4.0               # via pre-commit
 chardet==5.2.0            # via tox
