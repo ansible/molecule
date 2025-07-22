@@ -73,7 +73,7 @@ def test_scenario_execute(
     monkeypatch.chdir(tmp_path)
 
     # Mock the run_command to avoid ansible execution and create the directory structure
-    def mock_run_command(*args, **kwargs):
+    def mock_run_command(*args: object, **kwargs: object) -> None:
         # Create the molecule/test-scenario directory like ansible-playbook would
         scenario_dir = tmp_path / "molecule" / "test-scenario"
         scenario_dir.mkdir(parents=True, exist_ok=True)
