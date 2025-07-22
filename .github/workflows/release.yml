@@ -4,9 +4,19 @@ name: release
 on:
   release:
     types: [published]
-
+  workflow_dispatch:
+    inputs:
+      galaxy_publish:
+        type: boolean
+        description: Publish on galaxy.ansible.com
+        default: false
+      pypi_publish:
+        type: boolean
+        description: Publish on pypi.org
+        default: false
 jobs:
   release:
+    if: "${{ github.event_name == 'release' || inputs.pypi_publish }}"
     environment: release
     runs-on: ubuntu-24.04
     permissions:
@@ -36,7 +46,25 @@ jobs:
       - name: Publish to pypi.org
         uses: pypa/gh-action-pypi-publish@release/v1
 
+  publish-collection:
+    if: "${{ github.event_name == 'release' || inputs.galaxy_publish }}"
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the collection
+        run: ansible-galaxy collection build -v --force community.molecule
+      - name: Publish the collection on Galaxy
+        if: env.ANSIBLE_GALAXY_API_KEY != ''
+        env:
+          ANSIBLE_GALAXY_API_KEY: ${{ secrets.ansible_galaxy_api_key }}
+        run: |
+          [[ "$ANSIBLE_GALAXY_API_KEY" ]] || { echo "ANSIBLE_GALAXY_API_KEY is required to publish on galaxy" ; exit 1; }
+          TARBALL=$(ls -1 ./*.tar.gz)
+          ansible-galaxy collection publish "${TARBALL}" --api-key "$ANSIBLE_GALAXY_API_KEY"
+
   forum_post:
+    if: "${{ github.event_name == 'release' }}"
     needs: release
     runs-on: ubuntu-24.04
 

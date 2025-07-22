@@ -1,0 +1,24 @@
+# See https://docs.ansible.com/ansible/latest/dev_guide/collections_galaxy_meta.html
+# cspell: ignore Sorin Sbarnea
+namespace: community
+name: molecule
+version: 1.0.0
+readme: README.md
+authors:
+  - Sorin Sbarnea (github/ssbarnea)
+description: Ansible Molecule collection contains molecule specific plugins.
+license:
+  - MIT
+tags:
+  - application
+  - molecule
+  - testing
+repository: https://github.com/ansible/molecule
+homepage: https://github.com/ansible/molecule
+issues: https://github.com/ansible/molecule/issues
+build_ignore:
+  - .ansible
+  - .gitignore
+  - .github
+  - changelogs/.plugin-cache.yaml
+  - Makefile

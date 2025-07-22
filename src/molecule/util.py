@@ -205,6 +205,7 @@ def write_file(filename: str | Path, content: str, header: str | None = None) ->
 
     if isinstance(filename, str):
         filename = Path(filename)
+    filename.parent.mkdir(exist_ok=True)
     filename.write_text(content)
 
 
@@ -471,7 +472,7 @@ def lookup_config_file(filename: str) -> str | None:
     return None
 
 
-def boolean(value: bool | AnyStr, *, strict: bool = True) -> bool:
+def boolean(value: bool | AnyStr, *, strict: bool = True) -> bool:  # noqa: FBT001
     """Evaluate any object as boolean matching ansible behavior.
 
     Args:
@@ -530,7 +531,7 @@ def dict2args(data: MutableMapping[str, str | bool]) -> list[str]:
     return result
 
 
-def bool2args(data: bool | list[str]) -> list[str]:  # noqa: ARG001
+def bool2args(data: bool | list[str]) -> list[str]:  # noqa: ARG001, FBT001
     """Convert a boolean value to command line argument (flag).
 
     Args:

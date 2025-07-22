@@ -1,3 +1,7 @@
+Qalthos
+Sbarnea
+Sorin
+antsibull
 anyconfig
 argnames
 argvalues
@@ -22,6 +26,7 @@ dependee
 dequènes
 devel
 dind
+docsite
 dotglob
 emptydisk
 endgroup
@@ -81,7 +86,6 @@ prerun
 printenv
 profisioner
 pycolors
-Qalthos
 quux
 reget
 reraised

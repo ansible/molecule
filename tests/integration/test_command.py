@@ -33,6 +33,7 @@ import pytest
 from pytest import FixtureRequest  # noqa: PT013
 
 from molecule.command import base
+from molecule.util import safe_load
 from tests.conftest import mac_on_gh  # pylint:disable=C0411
 
 
@@ -532,3 +533,35 @@ def test_with_backend_as_ansible_navigator(
     command = ["molecule", "test", "--scenario-name", "test-scenario-for-nav"]
     result = run(command)
     assert result.returncode == 0, result
+
+
+def test_shared_actions(
+    monkeypatch: pytest.MonkeyPatch,
+    test_fixture_dir: Path,
+) -> None:
+    """Test that shared-state properly threads scenarios.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        test_fixture_dir: Path to the test fixture directory.
+    """
+    monkeypatch.chdir(test_fixture_dir)
+    cmd = [
+        "molecule",
+        "test",
+        "--shared-state",
+        "-s",
+        "test-scenario",
+        "-s",
+        "smoke",
+        "--report",
+    ]
+    result = run(cmd=cmd)
+    assert result.returncode == 0, result
+    out = result.stdout
+    # If we redesign --report, this needs to be updated
+    run_report = safe_load(out[out.rindex("---") :])
+    assert run_report[0]["name"] == "default"
+    assert run_report[1]["name"] == "test-scenario"
+    assert run_report[2]["name"] == "smoke"
+    assert run_report[3]["name"] == "default"

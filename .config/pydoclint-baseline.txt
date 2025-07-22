@@ -1,3 +1,18 @@
+community.molecule/plugins/filter/molecule_core.py
+    DOC101: Function `from_yaml`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `from_yaml`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [data: Any].
+    DOC201: Function `from_yaml` does not have a return section in docstring
+    DOC101: Function `to_yaml`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `to_yaml`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [data: Any].
+    DOC201: Function `to_yaml` does not have a return section in docstring
+    DOC101: Function `header`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `header`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [content: str].
+    DOC201: Function `header` does not have a return section in docstring
+    DOC101: Function `get_docker_networks`: Docstring contains fewer arguments than in function signature.
+    DOC103: Function `get_docker_networks`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [data: list[dict[str, Any]], labels: dict[str, str] | None, state: str].
+    DOC201: Function `get_docker_networks` does not have a return section in docstring
+    DOC201: Method `FilterModule.filters` does not have a return section in docstring
+--------------------
 tests/conftest.py
     DOC101: Function `app`: Docstring contains fewer arguments than in function signature.
     DOC103: Function `app`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [name: str].

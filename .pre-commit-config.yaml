@@ -22,6 +22,11 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
 
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.7
+    hooks:
+      - id: actionlint
+
   - repo: https://github.com/asottile/add-trailing-comma.git
     rev: v3.2.0
     hooks:
@@ -57,12 +62,12 @@ repos:
       - id: tox-ini-fmt
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.12
+    rev: v0.12.2
     hooks:
       - id: ruff
         entry: sh -c 'ruff check --fix --force-exclude && ruff format --force-exclude'
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v9.0.1
+    rev: v9.1.0
     hooks:
       - id: cspell
         name: Spell check with cspell
@@ -130,7 +135,7 @@ repos:
         additional_dependencies:
           - uv>=0.5.21
       - id: pip-compile
-        name: Check constraints files and requirements
+        name: "pip-compile: check constraints files and requirements"
         always_run: true
         files: ^(pyproject\.toml|\.config/.*)$
         language: python

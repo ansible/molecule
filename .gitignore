@@ -184,3 +184,5 @@ _readthedocs/
 
 # Ignore ansible-navigator artifact files in test scenarios
 tests/fixtures/integration/**/converge-artifact-*.json
+*.gz
+community.molecule/.ansible-sign

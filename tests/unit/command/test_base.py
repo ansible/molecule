@@ -412,6 +412,32 @@ def test_execute_scenario_destroy(
     assert scenario.prune.called
 
 
+def test_execute_scenario_shared_destroy(
+    mocker: MockerFixture,
+    patched_execute_subcommand: MagicMock,
+) -> None:
+    """Ensure execute_scenario runs normally.
+
+    - call a spoofed scenario with a sequence that includes destroy
+    - shared_state is set which means destroy should be ignored.
+    - execute_subcommand should be called once for each sequence item
+    - prune should not be called, since destroy has been elided from the sequence.
+
+    Args:
+        mocker: pytest mocker fixture.
+        patched_execute_subcommand: Mocked execute_subcommand function.
+    """
+    scenario = mocker.Mock()
+    scenario.config.shared_data = True
+    scenario.sequence = ("a", "b", "destroy", "c")
+    expected_sequence = ("a", "b", "c")
+
+    base.execute_scenario(scenario)
+
+    assert patched_execute_subcommand.call_count == len(expected_sequence)
+    assert not scenario.prune.called
+
+
 def test_get_configs(config_instance: config.Config) -> None:
     """Ensure get_configs returns a list of config.Config instances.
 

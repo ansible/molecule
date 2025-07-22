@@ -3,7 +3,7 @@ site_name: Ansible Molecule
 site_url: https://ansible.readthedocs.io/projects/molecule/
 repo_url: https://github.com/ansible/molecule
 edit_uri: blob/main/docs/
-copyright: Copyright © 2024 Red Hat, Inc.
+copyright: Copyright © Red Hat, Inc.
 docs_dir: docs
 strict: true
 
@@ -64,6 +64,8 @@ nav:
       - next.md
       - configuration.md
       - ci.md
+  - Collection:
+      - collection.md
   - Examples:
       - examples/docker.md
       - examples/podman.md

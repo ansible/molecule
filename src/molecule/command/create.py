@@ -80,6 +80,7 @@ def create(  # noqa: PLR0913
     *,
     report: bool,
     shared_inventory: bool,
+    shared_state: bool,
 ) -> None:  # pragma: no cover
     """Use the provisioner to start the instances.
 
@@ -92,6 +93,7 @@ def create(  # noqa: PLR0913
         __all: Whether molecule should target scenario_name or all scenarios.
         report: Whether to show an after-run summary report.
         shared_inventory: Whether the inventory should be shared between scenarios.
+        shared_state: Whether the (some) state should be shared between scenarios.
     """  # noqa: D301
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
@@ -100,6 +102,7 @@ def create(  # noqa: PLR0913
         "driver_name": driver_name,
         "report": report,
         "shared_inventory": shared_inventory,
+        "shared_state": shared_state,
     }
 
     if __all:
