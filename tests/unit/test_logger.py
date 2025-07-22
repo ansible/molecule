@@ -25,8 +25,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
+from molecule.ansi_output import should_do_markup
 from molecule.command.base import Base
-from molecule.console import should_do_markup
 from molecule.logger import get_section_loggers
 
 

@@ -21,12 +21,11 @@
 
 from __future__ import annotations
 
-import logging
-
 from typing import TYPE_CHECKING
 
 import click
 
+from molecule import config, logger
 from molecule.command import base
 
 
@@ -34,14 +33,20 @@ if TYPE_CHECKING:
     from molecule.types import CommandArgs
 
 
-LOG = logging.getLogger(__name__)
-
-
 class SideEffect(base.Base):
     """This action has side effects and not enabled by default.
 
     See the provisioners documentation for further details.
     """
+
+    def __init__(self, c: config.Config) -> None:
+        """Initialize SideEffect command.
+
+        Args:
+            c: An instance of a Molecule config.
+        """
+        super().__init__(c)
+        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
 
     def execute(self, action_args: list[str] | None = None) -> None:
         """Execute the actions necessary to perform a `molecule side-effect`.
@@ -52,7 +57,7 @@ class SideEffect(base.Base):
         if self._config.provisioner:
             if not self._config.provisioner.playbooks.side_effect:
                 msg = "Skipping, side effect playbook not configured."
-                LOG.warning(msg)
+                self._log.warning(msg)
                 return
 
             self._config.provisioner.side_effect(action_args)

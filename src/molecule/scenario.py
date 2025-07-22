@@ -23,7 +23,6 @@ from __future__ import annotations
 
 import fcntl
 import fnmatch
-import logging
 import os
 import shutil
 
@@ -32,7 +31,7 @@ from pathlib import Path
 from time import sleep
 from typing import TYPE_CHECKING
 
-from molecule import scenarios, util
+from molecule import logger, scenarios, util
 from molecule.constants import RC_TIMEOUT
 from molecule.exceptions import MoleculeError
 from molecule.text import checksum
@@ -41,9 +40,6 @@ from molecule.text import checksum
 if TYPE_CHECKING:
     from molecule.config import Config
     from molecule.types import ScenarioResult
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Scenario:
@@ -71,7 +67,8 @@ class Scenario:
     def _remove_scenario_state_directory(self) -> None:
         """Remove scenario cached disk stored state."""
         directory = str(Path(self.ephemeral_directory).parent)
-        LOG.info("Removing %s", directory)
+        scenario_log = logger.get_scenario_logger(__name__, self.name)
+        scenario_log.info("Removing %s", directory)
         shutil.rmtree(directory)
 
     def prune(self) -> None:
@@ -82,7 +79,8 @@ class Scenario:
         files declared as "safe_files" in the ``driver`` configuration
         declared in ``molecule.yml``.
         """
-        LOG.info("Pruning extra files from scenario ephemeral directory")
+        scenario_log = logger.get_scenario_logger(__name__, self.name)
+        scenario_log.info("Pruning extra files from scenario ephemeral directory")
 
         safe_files = [
             self.config.state.state_file,
@@ -157,14 +155,16 @@ class Scenario:
                         break
                     except OSError:
                         delay = 30 * i
-                        LOG.warning(
+                        scenario_log = logger.get_scenario_logger(__name__, self.name)
+                        scenario_log.warning(
                             "Retrying to acquire lock on %s, waiting for %s seconds",
                             path,
                             delay,
                         )
                         sleep(delay)
                 else:
-                    LOG.warning("Timedout trying to acquire lock on %s", path)
+                    scenario_log = logger.get_scenario_logger(__name__, self.name)
+                    scenario_log.warning("Timedout trying to acquire lock on %s", path)
                     raise MoleculeError(code=RC_TIMEOUT)
 
         return path.absolute().as_posix()

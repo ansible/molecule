@@ -29,15 +29,15 @@ from functools import wraps
 from typing import TYPE_CHECKING, Protocol, cast
 
 from ansible_compat.ports import cache
-from enrich.logging import RichHandler
 
-from molecule.console import console, console_stderr
+from molecule.ansi_output import AnsiOutput
+from molecule.console import console, original_stderr
 from molecule.text import underscore
 
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterable
-    from typing import Any, ParamSpec, TypeVar
+    from collections.abc import Callable, Iterable, MutableMapping
+    from typing import ParamSpec, TypeVar
 
     from molecule.config import Config
 
@@ -65,6 +65,80 @@ class HasConfig(Protocol):
     _config: Config
 
 
+class MoleculeConsoleHandler(logging.Handler):
+    """Custom logging handler that uses ANSI color codes directly.
+
+    Provides colored output without depending on RichHandler or competing formatters.
+    """
+
+    def __init__(
+        self,
+        *,
+        show_time: bool = False,
+        show_path: bool = False,
+    ) -> None:
+        """Initialize the console handler.
+
+        Args:
+            show_time: Whether to show timestamps.
+            show_path: Whether to show file paths.
+        """
+        super().__init__()
+        self.show_time = show_time
+        self.show_path = show_path
+        self.ansi_output = AnsiOutput()
+
+    def emit(self, record: logging.LogRecord) -> None:
+        """Emit a log record with scenario context using original stderr.
+
+        All messages go to the original stderr, bypassing Rich's redirection entirely.
+
+        Args:
+            record: The logging record to emit.
+        """
+        try:
+            # Format the message
+            message = self.format(record)
+
+            # Check if this message has scenario context passed from ScenarioLoggerAdapter
+            scenario_name = getattr(record, "molecule_scenario", None)
+
+            # Format with colors using AnsiOutput
+            # cspell:ignore levelname levelno
+            formatted_level = self.ansi_output.format_log_level(record.levelname, record.levelno)
+
+            if scenario_name:
+                processed_message = self.ansi_output.process_markup(message)
+                formatted_scenario = self.ansi_output.format_scenario(scenario_name)
+                output = f"{formatted_level} {formatted_scenario} {processed_message}"
+            else:
+                processed_message = self.ansi_output.process_markup(message)
+                output = f"{formatted_level} {processed_message}"
+
+            # Write directly to original stderr (captured before Rich redirection)
+            original_stderr.write(output + "\n")
+            original_stderr.flush()
+
+        except Exception:  # noqa: BLE001
+            self.handleError(record)
+
+    def format(self, record: logging.LogRecord) -> str:
+        """Format the log record message.
+
+        Args:
+            record: The logging record to format.
+
+        Returns:
+            The formatted message string.
+        """
+        # Use the default formatter if one is set
+        if self.formatter:
+            return self.formatter.format(record)
+
+        # Simple default formatting
+        return record.getMessage()
+
+
 def configure() -> None:
     """Configure a molecule root logger.
 
@@ -73,12 +147,17 @@ def configure() -> None:
     # Keep using root logger because we do want to process messages from other
     # libraries.
     logger = logging.getLogger()
-    handler = RichHandler(
-        console=console_stderr,
+
+    # Use our custom ANSI color handler instead of RichHandler
+    handler = MoleculeConsoleHandler(
         show_time=False,
         show_path=False,
-        markup=True,
     )
+
+    # Set a minimal formatter since we handle styling in the handler
+    formatter = logging.Formatter("%(message)s")
+    handler.setFormatter(formatter)
+
     logger.addHandler(handler)
     logger.propagate = False
     logger.setLevel(logging.INFO)
@@ -110,6 +189,51 @@ def get_logger(name: str) -> logging.Logger:
         A child logger of molecule.
     """
     return logging.getLogger("molecule." + name)
+
+
+class ScenarioLoggerAdapter(logging.LoggerAdapter):  # type: ignore[type-arg]
+    """Logger adapter that automatically includes scenario context in messages.
+
+    This adapter prepends scenario names to log messages to provide better
+    context when multiple scenarios are running or being processed.
+    """
+
+    def process(
+        self,
+        msg: object,
+        kwargs: MutableMapping[str, object],
+    ) -> tuple[object, MutableMapping[str, object]]:
+        """Process the logging record.
+
+        Args:
+            msg: The log message.
+            kwargs: Additional keyword arguments.
+
+        Returns:
+            A tuple of (processed_message, kwargs).
+        """
+        scenario_name = self.extra.get("scenario_name", "unknown") if self.extra else "unknown"
+        # Pass scenario name through kwargs instead of prefixing the message
+        # Create new extra dict or copy existing one to avoid modifying the original
+        current_extra = kwargs.get("extra", {})
+        new_extra = dict(current_extra) if isinstance(current_extra, dict) else {}
+        new_extra["molecule_scenario"] = scenario_name
+        kwargs["extra"] = new_extra
+        return msg, kwargs
+
+
+def get_scenario_logger(name: str, scenario_name: str) -> ScenarioLoggerAdapter:
+    """Return a scenario-aware logger that includes scenario name in all messages.
+
+    Args:
+        name: Name of the child logger.
+        scenario_name: Name of the scenario for context.
+
+    Returns:
+        A ScenarioLoggerAdapter that includes scenario context in all messages.
+    """
+    logger = get_logger(name)
+    return ScenarioLoggerAdapter(logger, {"scenario_name": scenario_name})
 
 
 def github_actions_groups(func: Callable[P, R]) -> Callable[P, R]:
@@ -240,7 +364,8 @@ def section_logger(func: Callable[P, R]) -> Callable[P, R]:
     @wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         self = cast("HasConfig", args[0])
-        LOG.info(
+        scenario_log = get_scenario_logger(__name__, self._config.scenario.name)
+        scenario_log.info(
             "[info]Running [scenario]%s[/] > [action]%s[/][/]",
             self._config.scenario.name,
             underscore(self.__class__.__name__),
@@ -254,7 +379,7 @@ def section_logger(func: Callable[P, R]) -> Callable[P, R]:
 
 
 @cache
-def get_section_loggers() -> Iterable[Callable[..., Any]]:
+def get_section_loggers() -> Iterable[Callable[[Callable[..., object]], Callable[..., object]]]:
     """Return a list of section wrappers to be added.
 
     Returns:

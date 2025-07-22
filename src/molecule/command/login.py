@@ -21,7 +21,6 @@
 
 from __future__ import annotations
 
-import logging
 import os
 import shlex
 import subprocess
@@ -30,7 +29,7 @@ from typing import TYPE_CHECKING
 
 import click
 
-from molecule import scenarios
+from molecule import logger, scenarios
 from molecule.command import base
 from molecule.exceptions import MoleculeError
 
@@ -38,9 +37,6 @@ from molecule.exceptions import MoleculeError
 if TYPE_CHECKING:
     from molecule import config
     from molecule.types import CommandArgs
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Login(base.Base):
@@ -54,6 +50,7 @@ class Login(base.Base):
         """
         super().__init__(c)
         self._pt = None
+        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to perform a `molecule login`.
@@ -108,7 +105,7 @@ class Login(base.Base):
         login_options["columns"] = columns
         login_options["lines"] = lines
         if not self._config.driver.login_cmd_template:
-            LOG.warning(
+            self._log.warning(
                 "Login command is not supported for [dim]%s[/] host because 'login_cmd_template' was not defined in driver options.",
                 login_options["instance"],
             )

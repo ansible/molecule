@@ -41,7 +41,8 @@ from click_help_colors import HelpColorsCommand, HelpColorsGroup
 from wcmatch import glob
 
 from molecule import config, logger, text, util
-from molecule.console import console, should_do_markup
+from molecule.ansi_output import should_do_markup
+from molecule.console import console
 from molecule.exceptions import MoleculeError, ScenarioFailureError
 from molecule.scenarios import Scenarios
 from molecule.util import safe_dump
@@ -78,7 +79,7 @@ class Base(abc.ABC):
         """Decorate execute from all subclasses."""
         super().__init_subclass__()
         for wrapper in logger.get_section_loggers():
-            cls.execute = wrapper(cls.execute)  # type: ignore[method-assign]
+            cls.execute = wrapper(cls.execute)  # type: ignore[method-assign,assignment]
 
     @abc.abstractmethod
     def execute(
@@ -146,7 +147,8 @@ def execute_cmdline_scenarios(
     try:
         default_config = get_configs(args, command_args, ansible_args, default_glob)[0]
     except MoleculeError:
-        LOG.info("default scenario not found, disabling shared state.")
+        # Use a generic logger for this since it's not tied to a specific scenario
+        logging.getLogger(__name__).info("default scenario not found, disabling shared state.")
 
     scenarios = _generate_scenarios(scenario_names, configs)
 
@@ -181,9 +183,9 @@ def _generate_scenarios(
     if scenario_names is not None:
         for scenario_name in scenario_names:
             if scenario_name != "*" and scenarios:
-                LOG.info(
-                    "%s scenario test matrix: %s",
-                    scenario_name,
+                scenario_log = logger.get_scenario_logger(__name__, scenario_name)
+                scenario_log.info(
+                    "scenario test matrix: %s",
                     ", ".join(scenarios.sequence(scenario_name)),
                 )
 
@@ -213,14 +215,16 @@ def _run_scenarios(
     for scenario in scenarios.all:
         if scenario.config.config["prerun"]:
             role_name_check = scenario.config.config["role_name_check"]
-            LOG.info("Performing prerun with role_name_check=%s...", role_name_check)
+            scenario_log = logger.get_scenario_logger(__name__, scenario.config.scenario.name)
+            scenario_log.info("Performing prerun with role_name_check=%s...", role_name_check)
             scenario.config.runtime.prepare_environment(
                 install_local=True,
                 role_name_check=role_name_check,
             )
 
         if command_args.get("subcommand") == "reset":
-            LOG.info("Removing %s", scenario.ephemeral_directory)
+            scenario_log = logger.get_scenario_logger(__name__, scenario.config.scenario.name)
+            scenario_log.info("Removing %s", scenario.ephemeral_directory)
             shutil.rmtree(scenario.ephemeral_directory)
             return
         try:
@@ -234,7 +238,8 @@ def _run_scenarios(
                     f"An error occurred during the {scenario.config.subcommand} sequence action: "
                     f"'{scenario.config.action}'. Cleaning up."
                 )
-                LOG.warning(msg)
+                scenario_log = logger.get_scenario_logger(__name__, scenario.config.scenario.name)
+                scenario_log.warning(msg)
                 execute_subcommand(scenario.config, "cleanup")
                 destroy_results = execute_subcommand_default(default_config, "destroy")
                 if destroy_results is not None:
@@ -280,7 +285,12 @@ def execute_subcommand_default(
         # clear results for later reuse
         default.results = []
         return results
-    LOG.warning("%s not found in default scenario, falling back to current scenario")
+    # Use the default scenario name for this warning since it's about the default scenario
+    scenario_log = logger.get_scenario_logger(__name__, default.name)
+    scenario_log.warning(
+        "%s not found in default scenario, falling back to current scenario",
+        subcommand,
+    )
     return None
 
 

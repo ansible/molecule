@@ -31,7 +31,7 @@ from typing import TYPE_CHECKING
 
 import click
 
-from molecule import api
+from molecule import api, logger
 from molecule.command import base as command_base
 from molecule.command.init import base
 from molecule.config import (
@@ -99,6 +99,9 @@ class Scenario(base.Base):
         """
         self._config = config
         self._command_args = command_args
+        # For init scenario, use the scenario name from command args
+        scenario_name = command_args.get("scenario_name", "unknown")
+        self._log = logger.get_scenario_logger(__name__, scenario_name)
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to perform a `molecule init scenario`.
@@ -112,7 +115,7 @@ class Scenario(base.Base):
         scenario_name = self._command_args["scenario_name"]
 
         msg = f"Initializing new scenario {scenario_name}..."
-        LOG.info(msg)
+        self._log.info(msg)
         molecule_path = Path(molecule_directory(Path.cwd()))
         scenario_directory = molecule_path / scenario_name
 
@@ -138,7 +141,7 @@ class Scenario(base.Base):
         self._config.app.run_command(cmd, env=env, check=True)
 
         msg = f"Initialized scenario in {scenario_directory} successfully."
-        LOG.info(msg)
+        self._log.info(msg)
 
 
 def _role_exists(

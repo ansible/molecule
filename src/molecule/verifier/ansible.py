@@ -21,22 +21,19 @@
 
 from __future__ import annotations
 
-import logging
 import os
 
 from typing import TYPE_CHECKING, cast
 
-from molecule import util
+from molecule import logger, util
 from molecule.api import Verifier
 
 
 if TYPE_CHECKING:
     from collections.abc import MutableMapping
 
+    from molecule.config import Config
     from molecule.verifier.base import Schema
-
-
-log = logging.getLogger(__name__)
 
 
 class Ansible(Verifier):
@@ -68,6 +65,15 @@ class Ansible(Verifier):
             FOO: bar
     ```
     """
+
+    def __init__(self, config: Config) -> None:
+        """Initialize Ansible verifier.
+
+        Args:
+            config: An instance of a Molecule config.
+        """
+        super().__init__(config)
+        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
 
     @property
     def name(self) -> str:
@@ -108,17 +114,17 @@ class Ansible(Verifier):
         """
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
-            log.warning(msg)
+            self._log.warning(msg)
             return
 
         msg = "Running Ansible Verifier"
-        log.info(msg)
+        self._log.info(msg)
 
         if self._config.provisioner:
             self._config.provisioner.verify(action_args)
 
             msg = "Verifier completed successfully."
-            log.info(msg)
+            self._log.info(msg)
 
     def schema(self) -> Schema:
         """Return validation schema.

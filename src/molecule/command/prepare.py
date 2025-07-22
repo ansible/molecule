@@ -21,12 +21,11 @@
 
 from __future__ import annotations
 
-import logging
-
 from typing import TYPE_CHECKING
 
 import click
 
+from molecule import config, logger
 from molecule.api import drivers
 from molecule.command import base
 from molecule.config import DEFAULT_DRIVER
@@ -34,9 +33,6 @@ from molecule.config import DEFAULT_DRIVER
 
 if TYPE_CHECKING:
     from molecule.types import CommandArgs, MoleculeArgs
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Prepare(base.Base):
@@ -92,6 +88,15 @@ class Prepare(base.Base):
         molecule.yml.
     """
 
+    def __init__(self, c: config.Config) -> None:
+        """Initialize Prepare command.
+
+        Args:
+            c: An instance of a Molecule config.
+        """
+        super().__init__(c)
+        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
+
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to prepare the instances.
 
@@ -100,13 +105,13 @@ class Prepare(base.Base):
         """
         if self._config.state.prepared and not self._config.command_args.get("force"):
             msg = "Skipping, instances already prepared."
-            LOG.warning(msg)
+            self._log.warning(msg)
             return
 
         if self._config.provisioner:
             if not self._config.provisioner.playbooks.prepare:
                 msg = "Skipping, prepare playbook not configured."
-                LOG.warning(msg)
+                self._log.warning(msg)
                 return
 
             self._config.provisioner.prepare()
