@@ -73,7 +73,8 @@ class Ansible(Verifier):
             config: An instance of a Molecule config.
         """
         super().__init__(config)
-        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
+        scenario_name = self._config.scenario.name if self._config else "unknown"
+        self._log = logger.get_scenario_logger(__name__, scenario_name)
 
     @property
     def name(self) -> str:

@@ -92,7 +92,7 @@ def verifiers(config: Config | None = None) -> dict[str, Verifier]:
                 plugin = plugin_class(config)
                 plugins[plugin.name] = plugin
         except Exception as e:  # noqa: BLE001, PERF203
-            LOG.error("Failed to load %s driver: %s", pm.get_name(plugin), str(e))  # noqa: TRY400
+            LOG.error("Failed to load %s driver: %s", plugin_class.__name__, str(e))  # noqa: TRY400
     return plugins
 
 
