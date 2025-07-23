@@ -28,7 +28,7 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
-from molecule import util
+from molecule import logger, util
 from molecule.api import Verifier
 
 
@@ -109,6 +109,8 @@ class Testinfra(Verifier):
         super().__init__(config)
         self._testinfra_command: list[str] = []
         self._tests = []  # type: ignore[var-annotated]
+        scenario_name = self._config.scenario.name if self._config else "unknown"
+        self._log = logger.get_scenario_logger(__name__, scenario_name)
 
     @property
     def name(self) -> str:
@@ -206,7 +208,7 @@ class Testinfra(Verifier):
         """
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
-            LOG.warning(msg)
+            self._log.warning(msg)
             return
 
         if self._config:
@@ -215,13 +217,13 @@ class Testinfra(Verifier):
             self._tests = []
         if not len(self._tests) > 0:
             msg = "Skipping, no tests found."
-            LOG.warning(msg)
+            self._log.warning(msg)
             return
 
         self.bake()
 
         msg = f"Executing Testinfra tests found in {self.directory}/..."
-        LOG.info(msg)
+        self._log.info(msg)
 
         result = self._config.app.run_command(
             self._testinfra_command,
@@ -231,7 +233,7 @@ class Testinfra(Verifier):
         )
         if result.returncode == 0:
             msg = "Verifier completed successfully."
-            LOG.info(msg)
+            self._log.info(msg)
         else:
             util.sysexit(result.returncode)
 

@@ -21,13 +21,11 @@
 
 from __future__ import annotations
 
-import logging
-
 from typing import TYPE_CHECKING
 
 import click
 
-from molecule import util
+from molecule import config, logger, util
 from molecule.api import drivers
 from molecule.command import base
 from molecule.config import DEFAULT_DRIVER, MOLECULE_PARALLEL
@@ -37,11 +35,17 @@ if TYPE_CHECKING:
     from molecule.types import CommandArgs, MoleculeArgs
 
 
-LOG = logging.getLogger(__name__)
-
-
 class Destroy(base.Base):
     """Destroy Command Class."""
+
+    def __init__(self, c: config.Config) -> None:
+        """Initialize Destroy command.
+
+        Args:
+            c: An instance of a Molecule config.
+        """
+        super().__init__(c)
+        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to perform a `molecule destroy`.
@@ -51,7 +55,7 @@ class Destroy(base.Base):
         """
         if self._config.command_args.get("destroy") == "never":
             msg = "Skipping, '--destroy=never' requested."
-            LOG.warning(msg)
+            self._log.warning(msg)
             return
 
         if self._config.provisioner:

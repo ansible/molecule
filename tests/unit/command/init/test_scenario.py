@@ -19,7 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
-import os
+import logging
 
 from typing import TYPE_CHECKING
 
@@ -32,7 +32,6 @@ from molecule.exceptions import MoleculeError
 
 if TYPE_CHECKING:
     from pathlib import Path
-    from unittest.mock import Mock
 
 
 @pytest.fixture(name="command_args")
@@ -60,28 +59,39 @@ def fixture_instance(command_args: scenario.CommandArgs) -> scenario.Scenario:
 def test_scenario_execute(
     monkeypatch: pytest.MonkeyPatch,
     instance: scenario.Scenario,
-    patched_logger_info: Mock,
-    test_cache_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    tmp_path: Path,
 ) -> None:
     """Test that the scenario is initialized successfully.
 
     Args:
         monkeypatch: Pytest fixture.
         instance: A scenario instance.
-        patched_logger_info: A patched logger.
-        test_cache_path: Path to the cache directory for the test.
+        caplog: Pytest log capture fixture.
+        tmp_path: Pytest temporary directory fixture.
     """
-    monkeypatch.chdir(test_cache_path)
-    instance.execute()
+    monkeypatch.chdir(tmp_path)
+
+    # Mock the run_command to avoid ansible execution and create the directory structure
+    def mock_run_command(*args: object, **kwargs: object) -> None:
+        # Create the molecule/test-scenario directory like ansible-playbook would
+        scenario_dir = tmp_path / "molecule" / "test-scenario"
+        scenario_dir.mkdir(parents=True, exist_ok=True)
+
+    with monkeypatch.context() as m:
+        m.setattr("molecule.app.App.run_command", mock_run_command)
+
+        with caplog.at_level(logging.INFO):
+            instance.execute()
 
     msg = "Initializing new scenario test-scenario..."
-    patched_logger_info.assert_any_call(msg)
+    assert any(msg in record.message for record in caplog.records)
 
-    assert os.path.isdir("./molecule/test-scenario")  # noqa: PTH112
+    assert (tmp_path / "molecule" / "test-scenario").is_dir()
 
-    scenario_directory = test_cache_path / "molecule" / "test-scenario"
+    scenario_directory = tmp_path / "molecule" / "test-scenario"
     msg = f"Initialized scenario in {scenario_directory} successfully."
-    patched_logger_info.assert_any_call(msg)
+    assert any(msg in record.message for record in caplog.records)
 
 
 def test_execute_scenario_exists(

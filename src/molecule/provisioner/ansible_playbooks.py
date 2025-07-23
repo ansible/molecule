@@ -27,7 +27,7 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from molecule import util
+from molecule import logger, util
 
 
 if TYPE_CHECKING:
@@ -59,6 +59,7 @@ class AnsiblePlaybooks:
             config: An instance of a Molecule config.
         """
         self._config = config
+        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
 
     @property
     def cleanup(self) -> str | None:
@@ -151,8 +152,8 @@ class AnsiblePlaybooks:
         if driver_dict:
             try:
                 playbook = driver_dict[section]
-            except Exception as exc:
-                LOG.exception(exc)  # noqa: TRY401
+            except KeyError as exc:
+                self._log.exception(exc)
         if self._config.provisioner and playbook is not None:
             playbook = self._config.provisioner.abs_path(playbook)
             if playbook:
@@ -214,7 +215,7 @@ class AnsiblePlaybooks:
         if basename in pb_rename_map:
             fb_playbook = play_path.parent / pb_rename_map[basename]
             if fb_playbook.is_file():
-                LOG.warning(
+                self._log.warning(
                     "%s was deprecated, rename it to %s",
                     fb_playbook.name,
                     basename,

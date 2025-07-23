@@ -21,12 +21,11 @@
 
 from __future__ import annotations
 
-import logging
-
 from typing import TYPE_CHECKING
 
 import click
 
+from molecule import config, logger
 from molecule.command import base
 
 
@@ -34,11 +33,17 @@ if TYPE_CHECKING:
     from molecule.types import CommandArgs, MoleculeArgs
 
 
-LOG = logging.getLogger(__name__)
-
-
 class Cleanup(base.Base):
     """Cleanup Command Class."""
+
+    def __init__(self, c: config.Config) -> None:
+        """Initialize Cleanup command.
+
+        Args:
+            c: An instance of a Molecule config.
+        """
+        super().__init__(c)
+        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to cleanup the instances.
@@ -49,7 +54,7 @@ class Cleanup(base.Base):
         if self._config.provisioner:
             if not self._config.provisioner.playbooks.cleanup:
                 msg = "Skipping, cleanup playbook not configured."
-                LOG.warning(msg)
+                self._log.warning(msg)
                 return
 
             self._config.provisioner.cleanup()

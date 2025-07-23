@@ -29,7 +29,7 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from molecule import util
+from molecule import logger, util
 from molecule.dependency import base
 
 
@@ -61,6 +61,7 @@ class AnsibleGalaxyBase(base.Base):
         """
         super().__init__(config)
         self._sh_command = []
+        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
 
         self.command = "ansible-galaxy"
 
@@ -160,13 +161,13 @@ class AnsibleGalaxyBase(base.Base):
         """
         if not self.enabled:
             msg = "Skipping, dependency is disabled."
-            LOG.warning(msg)
+            self._log.warning(msg)
             return
         super().execute()
 
         if not self._has_requirements_file():
             msg = "Skipping, missing the requirements file."
-            LOG.warning(msg)
+            self._log.warning(msg)
             return
 
         if not self._sh_command:

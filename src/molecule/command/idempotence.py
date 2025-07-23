@@ -21,13 +21,13 @@
 
 from __future__ import annotations
 
-import logging
 import re
 
 from typing import TYPE_CHECKING
 
 import click
 
+from molecule import config, logger
 from molecule.command import base
 from molecule.exceptions import ScenarioFailureError
 from molecule.text import strip_ansi_escape
@@ -37,15 +37,21 @@ if TYPE_CHECKING:
     from molecule.types import CommandArgs, MoleculeArgs
 
 
-LOG = logging.getLogger(__name__)
-
-
 class Idempotence(base.Base):
     """Runs the converge step a second time.
 
     If no tasks will be marked as changed \
     the scenario will be considered idempotent.
     """
+
+    def __init__(self, c: config.Config) -> None:
+        """Initialize Idempotence command.
+
+        Args:
+            c: An instance of a Molecule config.
+        """
+        super().__init__(c)
+        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to perform a `molecule idempotence`.
@@ -66,7 +72,7 @@ class Idempotence(base.Base):
             idempotent = self._is_idempotent(output)
             if idempotent:
                 msg = "Idempotence completed successfully."
-                LOG.info(msg)
+                self._log.info(msg)
             else:
                 details = "\n".join(self._non_idempotent_tasks(output))
                 msg = f"Idempotence test failed because of the following tasks:\n{details}"

@@ -22,23 +22,19 @@
 from __future__ import annotations
 
 import abc
-import logging
 import os
 import time
 
 from subprocess import CalledProcessError
 from typing import TYPE_CHECKING
 
-from molecule import util
+from molecule import logger, util
 
 
 if TYPE_CHECKING:
     from collections.abc import MutableMapping
 
     from molecule.config import Config
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Base(abc.ABC):
@@ -62,35 +58,36 @@ class Base(abc.ABC):
         """
         self._config = config
         self._sh_command: str | list[str] = []
+        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
 
     def execute_with_retries(self) -> None:
         """Run dependency downloads with retry and timed back-off."""
         try:
             self._config.app.run_command(self._sh_command, debug=self._config.debug, check=True)
             msg = "Dependency completed successfully."
-            LOG.info(msg)
+            self._log.info(msg)
             return  # noqa: TRY300
         except CalledProcessError:
             pass
 
         for counter in range(1, (self.RETRY + 1)):
             msg = f"Retrying dependency ... {counter:d}/{self.RETRY:d} time(s)"
-            LOG.warning(msg)
+            self._log.warning(msg)
 
             msg = f"Sleeping for {self.SLEEP:d} seconds before retrying ..."
-            LOG.warning(msg)
+            self._log.warning(msg)
             time.sleep(self.SLEEP)
             self.SLEEP += self.BACKOFF
 
             try:
                 self._config.app.run_command(self._sh_command, debug=self._config.debug, check=True)
                 msg = "Dependency completed successfully."
-                LOG.info(msg)
+                self._log.info(msg)
                 return  # noqa: TRY300
             except CalledProcessError as _exception:
                 exception = _exception
 
-        LOG.error(str(exception))
+        self._log.error(str(exception))
         util.sysexit(exception.returncode)
 
     @abc.abstractmethod
