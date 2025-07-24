@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from molecule.ansi_output import AnsiOutput
 from molecule.util import safe_dump
 
 
@@ -42,7 +43,23 @@ def table(results: list[ScenariosResults]) -> str:
             parts.append([scenario["name"], result["subcommand"], result["state"]])
 
     rows = []
+    ansi = AnsiOutput()
+    scenario = ""
     for name, subcommand, state in parts:
-        rows.append(f"{name.ljust(scenario_width)} {subcommand.ljust(action_width)} {state}")
+        if name != scenario:
+            string = f"{name.ljust(scenario_width)} {subcommand.ljust(action_width)} "
+            scenario = name
+        else:
+            string = f"{''.ljust(scenario_width)} {subcommand.ljust(action_width)} "
+        match state:
+            case "PASSED":
+                string += f"[GREEN]{state}[/]"
+            case "SKIPPED":
+                string += f"[CYAN]{state}[/]"
+            case "FAILED":
+                string += f"[RED]{state}[/]"
+            case _:
+                pass
+        rows.append(ansi.process_markup(string))
 
     return "\n".join(rows)
