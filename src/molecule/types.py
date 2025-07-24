@@ -304,7 +304,7 @@ class ScenarioResult(TypedDict):
         state: The outcome of the action ("PASSED", "FAILED", or "SKIPPED).
     """
 
-    subcommand: str | None
+    subcommand: str
     state: Literal["PASSED", "FAILED", "SKIPPED"]
 
 
