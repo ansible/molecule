@@ -44,11 +44,11 @@ def table(results: list[ScenariosResults]) -> str:
 
     rows = []
     ansi = AnsiOutput()
-    scenario = ""
+    scenario_name = ""
     for name, subcommand, state in parts:
-        if name != scenario:
+        if name != scenario_name:
             string = f"{name.ljust(scenario_width)} {subcommand.ljust(action_width)} "
-            scenario = name
+            scenario_name = name
         else:
             string = f"{''.ljust(scenario_width)} {subcommand.ljust(action_width)} "
         match state:
@@ -59,7 +59,7 @@ def table(results: list[ScenariosResults]) -> str:
             case "FAILED":
                 string += f"[RED]{state}[/]"
             case _:
-                pass
+                string += state
         rows.append(ansi.process_markup(string))
 
     return "\n".join(rows)
