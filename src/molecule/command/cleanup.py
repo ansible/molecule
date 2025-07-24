@@ -23,13 +23,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import click
-
 from molecule import config, logger
+from molecule.click_cfg import click_command_ex, common_options
 from molecule.command import base
 
 
 if TYPE_CHECKING:
+    import click
+
     from molecule.types import CommandArgs, MoleculeArgs
 
 
@@ -60,42 +61,26 @@ class Cleanup(base.Base):
             self._config.provisioner.cleanup()
 
 
-@base.click_command_ex()
-@click.pass_context
-@base.click_command_options
-def cleanup(  # noqa: PLR0913
-    ctx: click.Context,
-    /,
-    scenario_name: list[str] | None,
-    exclude: list[str],
-    *,
-    __all: bool,
-    report: bool,
-    shared_inventory: bool,
-    shared_state: bool,
-) -> None:  # pragma: no cover
-    """Use the provisioner to cleanup any changes.
+@click_command_ex()
+@common_options()
+def cleanup(ctx: click.Context) -> None:  # pragma: no cover
+    """Use the provisioner to cleanup any changes made to external systems during the stages of testing.
 
-    Any changes made to external systems during the stages of testing.
-
-    \f
     Args:
         ctx: Click context object holding commandline arguments.
-        scenario_name: Name of the scenario to target.
-        exclude: Name of the scenarios to avoid targeting.
-        __all: Whether molecule should target scenario_name or all scenarios.
-        report: Whether to show an after-run summary report.
-        shared_inventory: Whether the inventory should be shared between scenarios.
-        shared_state: Whether the (some) state should be shared between scenarios.
-    """  # noqa: D301
+    """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
+        "report": ctx.params["report"],
+        "shared_inventory": ctx.params["shared_inventory"],
+        "shared_state": ctx.params["shared_state"],
         "subcommand": subcommand,
-        "report": report,
-        "shared_inventory": shared_inventory,
-        "shared_state": shared_state,
     }
+
+    __all = ctx.params["all"]
+    exclude = ctx.params["exclude"]
+    scenario_name = ctx.params["scenario_name"]
 
     if __all:
         scenario_name = None

@@ -27,40 +27,29 @@ import contextlib
 import copy
 import importlib
 import logging
-import os
 import shutil
 import subprocess
 
 from typing import TYPE_CHECKING, Any
 
-import click
 import wcmatch.pathlib
 import wcmatch.wcmatch
 
-from click_help_colors import HelpColorsCommand, HelpColorsGroup
 from wcmatch import glob
 
 from molecule import config, logger, text, util
-from molecule.ansi_output import should_do_markup
 from molecule.console import console
+from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME, MOLECULE_GLOB
 from molecule.exceptions import MoleculeError, ScenarioFailureError
 from molecule.scenarios import Scenarios
 from molecule.util import safe_dump
 
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
-    from typing import NoReturn
-
     from molecule.scenario import Scenario
     from molecule.types import CommandArgs, MoleculeArgs, ScenariosResults
 
-    ClickCommand = Callable[[Callable[..., None]], click.Command]
-    ClickGroup = Callable[[Callable[..., None]], click.Group]
-
 LOG = logging.getLogger(__name__)
-MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
-MOLECULE_DEFAULT_SCENARIO_NAME = "default"
 
 
 class Base(abc.ABC):
@@ -445,119 +434,6 @@ def _get_subcommand(string: str) -> str:
         A string representing the subcommand.
     """
     return string.split(".")[-1]
-
-
-def click_group_ex() -> ClickGroup:
-    """Return extended version of click.group().
-
-    Returns:
-        Click command group.
-    """
-    # Color coding used to group command types, documented only here as we may
-    # decide to change them later.
-    # green : (default) as sequence step
-    # blue : molecule own command, not dependent on scenario
-    # yellow : special commands, like full test sequence, or login
-    return click.group(
-        cls=HelpColorsGroup,
-        # Workaround to disable click help line truncation to ~80 chars
-        # https://github.com/pallets/click/issues/486
-        context_settings={
-            "max_content_width": 9999,
-            "color": should_do_markup(),
-            "help_option_names": ["-h", "--help"],
-        },
-        help_headers_color="yellow",
-        help_options_color="green",
-        help_options_custom_colors={
-            "drivers": "blue",
-            "init": "blue",
-            "list": "blue",
-            "matrix": "blue",
-            "login": "bright_yellow",
-            "reset": "blue",
-            "test": "bright_yellow",
-        },
-        result_callback=result_callback,
-    )
-
-
-def click_command_ex(name: str | None = None) -> ClickCommand:
-    """Return extended version of click.command().
-
-    Args:
-        name: A replacement name in the case the automatic one is insufficient.
-
-    Returns:
-        Click command group.
-    """
-    return click.command(
-        cls=HelpColorsCommand,
-        name=name,
-        help_headers_color="yellow",
-        help_options_color="green",
-    )
-
-
-def click_command_options(func: Callable[..., None]) -> Callable[..., None]:
-    """Provide a baseline set of reusable options for molecule actions.
-
-    Args:
-        func: Function to be decorated.
-
-    Returns:
-        Function with click options for scenario_name, exclude, all, and report added.
-    """
-    # NOTE: because click.option is a decorator, options applied this way will appear in the opposite order.
-    func = click.option(
-        "--shared-state/--no-shared-state",
-        default=False,
-        help="EXPERIMENTAL: Enable or disable sharing (some) state between scenarios. Default is disabled.",
-    )(func)
-    func = click.option(
-        "--shared-inventory/--no-shared-inventory",
-        default=False,
-        help="EXPERIMENTAL: Enable or disable sharing inventory between scenarios. Default is disabled.",
-    )(func)
-    func = click.option(
-        "--report/--no-report",
-        default=False,
-        help="EXPERIMENTAL: Enable or disable end-of-run summary report. Default is disabled.",
-    )(func)
-    func = click.option(
-        "--exclude",
-        "-e",
-        multiple=True,
-        help="Name of the scenario to exclude from targeting. May be specified multiple times. Can exclude scenarios already included with scenario-name or all.",
-    )(func)
-    func = click.option(
-        "--all/--no-all",
-        "__all",
-        default=False,
-        help="Target all scenarios. Overrides scenario-name. Default is disabled.",
-    )(func)
-    return click.option(
-        "--scenario-name",
-        "-s",
-        multiple=True,
-        default=[MOLECULE_DEFAULT_SCENARIO_NAME],
-        help=f"Name of the scenario to target. May be specified multiple times. ({MOLECULE_DEFAULT_SCENARIO_NAME})",
-    )(func)
-
-
-def result_callback(
-    *args: object,  # noqa: ARG001
-    **kwargs: object,  # noqa: ARG001
-) -> NoReturn:
-    """Click natural exit callback.
-
-    Args:
-        *args: Unused.
-        **kwargs: Unused.
-    """
-    # We want to be used we run out custom exit code, regardless if run was
-    # a success or failure.
-    util.sysexit(0)
 
 
 def generate_report(results: list[ScenariosResults]) -> str:

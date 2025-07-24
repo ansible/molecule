@@ -32,7 +32,7 @@ from typing import TYPE_CHECKING
 import click
 
 from molecule import api, logger
-from molecule.command import base as command_base
+from molecule.click_cfg import click_command_ex
 from molecule.command.init import base
 from molecule.config import (
     DEFAULT_DRIVER,
@@ -40,6 +40,7 @@ from molecule.config import (
     Config,
     molecule_directory,
 )
+from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME
 from molecule.exceptions import MoleculeError
 
 
@@ -161,7 +162,7 @@ def _role_exists(
     return value
 
 
-@command_base.click_command_ex()
+@click_command_ex()
 @click.pass_context
 @click.option(
     "--dependency-name",
@@ -184,7 +185,7 @@ def _role_exists(
 )
 @click.argument(
     "scenario-name",
-    default=command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
+    default=MOLECULE_DEFAULT_SCENARIO_NAME,
     required=False,
 )
 def scenario(
@@ -198,7 +199,6 @@ def scenario(
 
     If name is not specified the 'default' value will be used.
 
-    \f
     Args:
         ctx: Click context object holding commandline arguments.
         dependency_name: Name of dependency to initialize.
@@ -208,7 +208,7 @@ def scenario(
 
     Raises:
         click.Abort: If the specified driver is not available.
-    """  # noqa: D301
+    """
     config = Config("", args={})
     available_drivers = list(api.drivers(config).keys())
     if driver_name not in available_drivers:

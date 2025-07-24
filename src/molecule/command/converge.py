@@ -27,10 +27,16 @@ from typing import TYPE_CHECKING
 
 import click
 
+from molecule.click_cfg import (
+    click_command_ex,
+    common_options,
+)
 from molecule.command import base
 
 
 if TYPE_CHECKING:
+    import click
+
     from molecule.types import CommandArgs, MoleculeArgs
 
 
@@ -51,43 +57,27 @@ class Converge(base.Base):
         self._config.state.change_state("converged", value=True)
 
 
-@base.click_command_ex()
-@click.pass_context
-@base.click_command_options
-@click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
-def converge(  # noqa: PLR0913
-    ctx: click.Context,
-    /,
-    scenario_name: list[str] | None,
-    exclude: list[str],
-    __all: bool,  # noqa: FBT001
-    *,
-    ansible_args: tuple[str],
-    report: bool,
-    shared_inventory: bool,
-    shared_state: bool,
-) -> None:  # pragma: no cover
+@click_command_ex()
+@common_options("ansible_args")
+def converge(ctx: click.Context) -> None:  # pragma: no cover
     """Use the provisioner to configure instances (dependency, create, prepare converge).
 
-    \f
     Args:
         ctx: Click context object holding commandline arguments.
-        scenario_name: Name of the scenario to target.
-        exclude: Name of the scenarios to avoid targeting.
-        __all: Whether molecule should target scenario_name or all scenarios.
-        ansible_args: Arguments to forward to Ansible.
-        report: Whether to show an after-run summary report.
-        shared_inventory: Whether the inventory should be shared between scenarios.
-        shared_state: Whether the (some) state should be shared between scenarios.
-    """  # noqa: D301
+    """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
+        "report": ctx.params["report"],
+        "shared_inventory": ctx.params["shared_inventory"],
+        "shared_state": ctx.params["shared_state"],
         "subcommand": subcommand,
-        "report": report,
-        "shared_inventory": shared_inventory,
-        "shared_state": shared_state,
     }
+
+    __all = ctx.params["all"]
+    ansible_args = ctx.params["ansible_args"]
+    exclude = ctx.params["exclude"]
+    scenario_name = ctx.params["scenario_name"]
 
     if __all:
         scenario_name = None

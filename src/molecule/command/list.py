@@ -23,23 +23,24 @@ from __future__ import annotations
 
 import logging
 
-from typing import TYPE_CHECKING, Literal
-
-import click
+from typing import TYPE_CHECKING
 
 from rich import box
 from rich.syntax import Syntax
 from rich.table import Table
 
 from molecule import scenarios, text, util
+from molecule.click_cfg import click_command_ex, options
 from molecule.command import base
-from molecule.command.base import MOLECULE_GLOB
 from molecule.console import console
+from molecule.constants import MOLECULE_GLOB
 from molecule.status import Status
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs, MoleculeArgs
+    import click
+
+    from molecule.types import CommandArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -63,32 +64,23 @@ class List(base.Base):
         return self._config.driver.status()
 
 
-@base.click_command_ex(name="list")
-@click.pass_context
-@click.option("--scenario-name", "-s", help="Name of the scenario to target.")
-@click.option(
-    "--format",
-    "-f",
-    type=click.Choice(["simple", "plain", "yaml"]),
-    default="simple",
-    help="Change output format. (simple)",
-)
-def list_(
-    ctx: click.Context,
-    scenario_name: str,
-    format: Literal["simple", "plain", "yaml"],  # noqa: A002
-) -> None:  # pragma: no cover
+@click_command_ex(name="list")
+@options(["scenario_name_single", "format_full"])
+def list_(ctx: click.Context) -> None:  # pragma: no cover
     """List status of instances.
 
-    \f
     Args:
         ctx: Click context object holding commandline arguments.
-        scenario_name: Name of the scenario to target.
-        format: Output format type.
-    """  # noqa: D301
-    args: MoleculeArgs = ctx.obj.get("args")
+    """
+    args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args: CommandArgs = {"subcommand": subcommand, "format": format}
+    command_args: CommandArgs = {
+        "format": ctx.params["format"],
+        "subcommand": subcommand,
+    }
+
+    output_format = ctx.params["format"]
+    scenario_name = ctx.params["scenario_name"]
 
     statuses = []
     s = scenarios.Scenarios(
@@ -99,10 +91,10 @@ def list_(
         statuses.extend(base.execute_subcommand(scenario.config, subcommand))
 
     headers = [text.title(name) for name in Status._fields]
-    if format in ["simple", "plain"]:
-        table_format = format
+    if output_format in ["simple", "plain"]:
+        table_format = output_format
 
-        if format == "plain":
+        if output_format == "plain":
             headers = []
         _print_tabulate_data(headers, statuses, table_format)
     else:

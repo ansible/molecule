@@ -25,14 +25,15 @@ import logging
 
 from typing import TYPE_CHECKING
 
-import click
-
 from molecule import scenarios
+from molecule.click_cfg import click_command_ex, options
 from molecule.command import base
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs, MoleculeArgs
+    import click
+
+    from molecule.types import CommandArgs
 
 
 LOG = logging.getLogger(__name__)
@@ -74,27 +75,18 @@ class Matrix(base.Base):
     """
 
 
-@base.click_command_ex()
-@click.pass_context
-@click.option("--scenario-name", "-s", help="Name of the scenario to target.")
-# NOTE(retr0h): Cannot introspect base.Base for `click.Choice`, since
-# subclasses have not all loaded at this point.
-@click.argument("subcommand", nargs=1, type=click.UNPROCESSED)
-def matrix(
-    ctx: click.Context,
-    scenario_name: str,
-    subcommand: str,
-) -> None:  # pragma: no cover
+@click_command_ex()
+@options(["scenario_name_single", "subcommand"])
+def matrix(ctx: click.Context) -> None:  # pragma: no cover
     """List matrix of steps used to test instances.
 
-    \f
     Args:
         ctx: Click context object holding commandline arguments.
-        scenario_name: Name of the scenario to target.
-        subcommand: Subcommand to target.
-    """  # noqa: D301
-    args: MoleculeArgs = ctx.obj.get("args")
-    command_args: CommandArgs = {"subcommand": subcommand}
+    """
+    args = ctx.obj.get("args")
+    command_args: CommandArgs = {"subcommand": ctx.params["subcommand"]}
+
+    scenario_name = ctx.params["scenario_name"]
 
     scenario_names = [] if scenario_name is None else [scenario_name]
     s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_names)

@@ -25,14 +25,13 @@ import logging
 
 from typing import TYPE_CHECKING
 
-import click
-
-from molecule import util
+from molecule.click_cfg import click_command_ex, common_options
 from molecule.command import base
-from molecule.config import MOLECULE_PARALLEL
 
 
 if TYPE_CHECKING:
+    import click
+
     from molecule.types import CommandArgs, MoleculeArgs
 
 
@@ -52,53 +51,28 @@ class Check(base.Base):
             self._config.provisioner.check()
 
 
-@base.click_command_ex()
-@click.pass_context
-@base.click_command_options
-@click.option(
-    "--parallel/--no-parallel",
-    default=MOLECULE_PARALLEL,
-    help="Enable or disable parallel mode. Default is disabled.",
-)
-def check(  # noqa: PLR0913
-    ctx: click.Context,
-    /,
-    scenario_name: list[str] | None,
-    exclude: list[str],
-    __all: bool,  # noqa: FBT001
-    *,
-    parallel: bool,
-    report: bool,
-    shared_inventory: bool,
-    shared_state: bool,
-) -> None:  # pragma: no cover
+@click_command_ex()
+@common_options("parallel")
+def check(ctx: click.Context) -> None:  # pragma: no cover
     """Use the provisioner to perform a Dry-Run (destroy, dependency, create, prepare, converge).
 
-    \f
     Args:
         ctx: Click context object holding commandline arguments.
-        scenario_name: Name of the scenario to target.
-        exclude: Name of the scenarios to avoid targeting.
-        __all: Whether molecule should target scenario_name or all scenarios.
-        parallel: Whether the scenario(s) should be run in parallel.
-        report: Whether to show an after-run summary report.
-        shared_inventory: Whether the inventory should be shared between scenarios.
-        shared_state: Whether the (some) state should be shared between scenarios.
-    """  # noqa: D301
+    """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
-        "parallel": parallel,
+        "report": ctx.params["report"],
+        "shared_inventory": ctx.params["shared_inventory"],
+        "shared_state": ctx.params["shared_state"],
         "subcommand": subcommand,
-        "report": report,
-        "shared_inventory": shared_inventory,
-        "shared_state": shared_state,
     }
+
+    __all = ctx.params["all"]
+    exclude = ctx.params["exclude"]
+    scenario_name = ctx.params["scenario_name"]
 
     if __all:
         scenario_name = None
-
-    if parallel:
-        util.validate_parallel_cmd_args(command_args)
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args, excludes=exclude)
