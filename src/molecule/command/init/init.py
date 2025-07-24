@@ -23,14 +23,14 @@ from __future__ import annotations
 
 import logging
 
-from molecule.command import base
+from molecule.click_cfg import click_group_ex
 from molecule.command.init import scenario
 
 
 LOG = logging.getLogger(__name__)
 
 
-@base.click_group_ex()
+@click_group_ex()
 def init() -> None:  # pragma: no cover
     """Initialize a new scenario."""
 

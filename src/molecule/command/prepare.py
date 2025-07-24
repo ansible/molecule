@@ -23,16 +23,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import click
-
 from molecule import config, logger
-from molecule.api import drivers
+from molecule.click_cfg import click_command_ex, common_options
 from molecule.command import base
-from molecule.config import DEFAULT_DRIVER
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs, MoleculeArgs
+    import click
+
+    from molecule.types import CommandArgs
 
 
 class Prepare(base.Base):
@@ -118,58 +117,27 @@ class Prepare(base.Base):
             self._config.state.change_state("prepared", value=True)
 
 
-@base.click_command_ex()
-@click.pass_context
-@base.click_command_options
-@click.option(
-    "--driver-name",
-    "-d",
-    type=click.Choice([str(s) for s in drivers()]),
-    help=f"Name of driver to use. ({DEFAULT_DRIVER})",
-)
-@click.option(
-    "--force/--no-force",
-    "-f",
-    default=False,
-    help="Enable or disable force mode. Default is disabled.",
-)
-def prepare(  # noqa: PLR0913
-    ctx: click.Context,
-    /,
-    scenario_name: list[str] | None,
-    exclude: list[str],
-    driver_name: str,
-    __all: bool,  # noqa: FBT001
-    *,
-    force: bool,
-    report: bool,
-    shared_inventory: bool,
-    shared_state: bool,
-) -> None:  # pragma: no cover
+@click_command_ex()
+@common_options("force", "driver_name_with_choices", "format_simple")
+def prepare(ctx: click.Context) -> None:  # pragma: no cover
     """Use the provisioner to prepare the instances into a particular starting state.
 
-    \f
     Args:
         ctx: Click context object holding commandline arguments.
-        scenario_name: Name of the scenario to target.
-        exclude: Name of the scenarios to avoid targeting.
-        driver_name: Name of the Molecule driver to use.
-        __all: Whether molecule should target scenario_name or all scenarios.
-        force: Whether to use force mode.
-        report: Whether to show an after-run summary report.
-        shared_inventory: Whether the inventory should be shared between scenarios.
-        shared_state: Whether the (some) state should be shared between scenarios.
-    """  # noqa: D301
-    args: MoleculeArgs = ctx.obj.get("args")
+    """
+    args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
+        "force": ctx.params["force"],
+        "report": ctx.params["report"],
+        "shared_inventory": ctx.params["shared_inventory"],
+        "shared_state": ctx.params["shared_state"],
         "subcommand": subcommand,
-        "driver_name": driver_name,
-        "force": force,
-        "report": report,
-        "shared_inventory": shared_inventory,
-        "shared_state": shared_state,
     }
+
+    __all = ctx.params["all"]
+    exclude = ctx.params["exclude"]
+    scenario_name = ctx.params["scenario_name"]
 
     if __all:
         scenario_name = None
