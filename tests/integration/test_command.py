@@ -32,6 +32,7 @@ import pytest
 
 from pytest import FixtureRequest  # noqa: PT013
 
+from molecule import reporting
 from molecule.command import base
 from molecule.util import safe_load
 from tests.conftest import mac_on_gh  # pylint:disable=C0411
@@ -240,7 +241,7 @@ def test_command_report(
             },
         ],
     }
-    report = base.generate_report([scenario_result])
+    report = reporting.table([scenario_result])
     assert result.stdout.strip().endswith(report.strip())
 
 
