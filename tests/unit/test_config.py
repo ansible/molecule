@@ -71,7 +71,7 @@ def test_subcommand_property(config_instance: config.Config) -> None:  # noqa: D
 
 
 def test_action_property(config_instance: config.Config) -> None:  # noqa: D103
-    assert config_instance.action is None
+    assert config_instance.action == ""
 
 
 def test_action_setter(config_instance: config.Config) -> None:  # noqa: D103

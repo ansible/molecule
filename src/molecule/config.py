@@ -119,7 +119,7 @@ class Config:
         self.command_args = command_args
         self.ansible_args = ansible_args
         self.config = self._get_config()
-        self._action: str | None = None
+        self._action: str = ""
         self._run_uuid = str(uuid4())
         self.project_directory = os.getenv(
             "MOLECULE_PROJECT_DIRECTORY",
@@ -212,7 +212,7 @@ class Config:
         return self.command_args["subcommand"]
 
     @property
-    def action(self) -> str | None:
+    def action(self) -> str:
         """Action value.
 
         Returns:
