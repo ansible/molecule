@@ -25,6 +25,7 @@ import logging
 
 from typing import TYPE_CHECKING
 
+from molecule import util
 from molecule.click_cfg import click_command_ex, common_options
 from molecule.command import base
 
@@ -61,7 +62,9 @@ def check(ctx: click.Context) -> None:  # pragma: no cover
     """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
+    parallel = ctx.params["parallel"]
     command_args: CommandArgs = {
+        "parallel": parallel,
         "report": ctx.params["report"],
         "shared_inventory": ctx.params["shared_inventory"],
         "shared_state": ctx.params["shared_state"],
@@ -74,5 +77,8 @@ def check(ctx: click.Context) -> None:  # pragma: no cover
 
     if __all:
         scenario_name = None
+
+    if parallel:
+        util.validate_parallel_cmd_args(command_args)
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args, excludes=exclude)
