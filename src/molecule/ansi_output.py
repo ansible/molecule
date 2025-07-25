@@ -109,6 +109,9 @@ class AnsiOutput:
     ITALIC = "\033[3m"
     UNDERLINE = "\033[4m"
 
+    # Symbols
+    RIGHT_ARROW = "\u279c"
+
     def __init__(self) -> None:
         """Initialize the ANSI output formatter."""
         self.markup_enabled = should_do_markup()
@@ -189,19 +192,26 @@ class AnsiOutput:
         result = re.sub(r"\[/\]", self.RESET, processed)
         return str(result)
 
-    def format_scenario(self, scenario_name: str) -> str:
+    def format_scenario(self, scenario_name: str, step: str | None = None) -> str:
         """Format a scenario name with appropriate styling.
 
         Args:
             scenario_name: Name of the scenario.
+            step: Optional step name (e.g., 'converge', 'create', 'destroy').
 
         Returns:
             Formatted scenario name with color if markup is enabled.
         """
         if not self.markup_enabled:
+            if step:
+                return f"[{scenario_name} > {step}]"
             return f"[{scenario_name}]"
 
-        return f"{self.GREEN}[{scenario_name}]{self.RESET}"
+        if step:
+            return self.process_markup(
+                rf"[scenario]{scenario_name}[/] {self.RIGHT_ARROW} [action]{step}[/]:",
+            )
+        return self.process_markup(rf"[scenario]{scenario_name}[/]")
 
     def format_log_level(self, level_name: str) -> str:
         """Format a log level with appropriate color.

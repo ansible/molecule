@@ -159,11 +159,33 @@ def test_format_scenario(
     result = output.format_scenario(scenario_name)
 
     if markup_enabled:
-        assert "\033[32m" in result  # Green color
+        assert "\033[32m" in result  # Green color for scenario tag
         assert "\033[0m" in result  # Reset
-        assert "[test_scenario]" in result
+        assert "test_scenario" in result  # Just check for scenario name, not brackets
     else:
         assert result == expected_pattern
+
+
+def test_format_scenario_with_step(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test scenario formatting with step parameter."""
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    monkeypatch.setenv("FORCE_COLOR", "1")
+    output = AnsiOutput()
+
+    # Test with step
+    result = output.format_scenario("test_scenario", "converge")
+    assert "\033[32m" in result  # Green for scenario
+    assert "\033[33m" in result  # Yellow for action (step)
+    assert "test_scenario" in result
+    assert "converge" in result
+    assert "➜" in result  # Right arrow
+    assert ":" in result  # Colon at end
+
+    # Test without markup
+    monkeypatch.setenv("NO_COLOR", "1")
+    output_no_markup = AnsiOutput()
+    result_no_markup = output_no_markup.format_scenario("test_scenario", "converge")
+    assert result_no_markup == "[test_scenario > converge]"
 
 
 @pytest.mark.parametrize(
