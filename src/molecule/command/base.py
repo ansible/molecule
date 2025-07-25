@@ -37,12 +37,11 @@ import wcmatch.wcmatch
 
 from wcmatch import glob
 
-from molecule import config, logger, text, util
+from molecule import config, logger, reporting, text, util
 from molecule.console import console
 from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME, MOLECULE_GLOB
 from molecule.exceptions import MoleculeError, ScenarioFailureError
 from molecule.scenarios import Scenarios
-from molecule.util import safe_dump
 
 
 if TYPE_CHECKING:
@@ -147,8 +146,9 @@ def execute_cmdline_scenarios(
     except ScenarioFailureError as exc:
         util.sysexit(code=exc.code)
     finally:
-        if command_args.get("report"):
-            console.print(generate_report(scenarios.results))
+        if report_type := command_args.get("report"):
+            report_func = reporting.FORMATS[report_type]
+            console.print(report_func(scenarios.results))
 
 
 def _generate_scenarios(
@@ -434,15 +434,3 @@ def _get_subcommand(string: str) -> str:
         A string representing the subcommand.
     """
     return string.split(".")[-1]
-
-
-def generate_report(results: list[ScenariosResults]) -> str:
-    """Print end-of-run report.
-
-    Args:
-        results: Dictionary containing results from each scenario.
-
-    Returns:
-        The formatted end-of-run report.
-    """
-    return safe_dump(results)

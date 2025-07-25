@@ -21,6 +21,7 @@ from molecule.ansi_output import should_do_markup
 from molecule.api import drivers
 from molecule.config import MOLECULE_PARALLEL
 from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME, MOLECULE_PLATFORM_NAME
+from molecule.reporting import FORMATS
 
 
 if TYPE_CHECKING:
@@ -55,6 +56,7 @@ class CliOption:
         type: Python type for the option value.
         choices: List of valid choices for the option.
         is_flag: Whether this is a boolean flag option.
+        flag_value: The value to store when used as a flag.
         required: Whether the option is required.
         is_argument: Whether this is a positional argument rather than an option.
         nargs: Number of arguments for positional arguments.
@@ -70,6 +72,7 @@ class CliOption:
     type: type | None = None
     choices: list[str] | None = None
     is_flag: bool = False
+    flag_value: str = ""
     required: bool = False
     is_argument: bool = False
     nargs: int = 1
@@ -138,7 +141,10 @@ class CliOption:
             "default": self.default,
             "multiple": self.multiple,
             "required": self.required,
+            "is_flag": self.is_flag,
         }
+        if self.flag_value:
+            kwargs["flag_value"] = self.flag_value
 
         # Type and choices
         if self.choices:
@@ -313,8 +319,9 @@ class CliOptions:
         return CliOption(
             name="report",
             help="Enable or disable end-of-run summary report.",
-            is_flag=True,
-            default=False,
+            is_flag=False,
+            flag_value="yaml",
+            choices=list(FORMATS.keys()),
             experimental=True,
         )
 
