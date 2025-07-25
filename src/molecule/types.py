@@ -289,7 +289,7 @@ class CommandArgs(TypedDict, total=False):
     host: str
     parallel: bool
     platform_name: str
-    report: bool
+    report: str
     scenario_name: str
     shared_inventory: bool
     shared_state: bool

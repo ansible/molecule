@@ -146,8 +146,9 @@ def execute_cmdline_scenarios(
     except ScenarioFailureError as exc:
         util.sysexit(code=exc.code)
     finally:
-        if command_args.get("report"):
-            console.print(reporting.table(scenarios.results))
+        if report_type := command_args.get("report"):
+            report_func = reporting.FORMATS[report_type]
+            console.print(report_func(scenarios.results))
 
 
 def _generate_scenarios(
