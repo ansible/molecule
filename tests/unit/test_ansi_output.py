@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import logging
-
 import pytest
 
 from molecule.ansi_output import AnsiOutput, should_do_markup, to_bool
@@ -161,24 +159,46 @@ def test_format_scenario(
     result = output.format_scenario(scenario_name)
 
     if markup_enabled:
-        assert "\033[32m" in result  # Green color
+        assert "\033[32m" in result  # Green color for scenario tag
         assert "\033[0m" in result  # Reset
-        assert "[test_scenario]" in result
+        assert "test_scenario" in result  # Just check for scenario name, not brackets
     else:
         assert result == expected_pattern
 
 
+def test_format_scenario_with_step(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test scenario formatting with step parameter."""
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    monkeypatch.setenv("FORCE_COLOR", "1")
+    output = AnsiOutput()
+
+    # Test with step
+    result = output.format_scenario("test_scenario", "converge")
+    assert "\033[32m" in result  # Green for scenario
+    assert "\033[33m" in result  # Yellow for action (step)
+    assert "test_scenario" in result
+    assert "converge" in result
+    assert "➜" in result  # Right arrow
+    assert ":" in result  # Colon at end
+
+    # Test without markup
+    monkeypatch.setenv("NO_COLOR", "1")
+    output_no_markup = AnsiOutput()
+    result_no_markup = output_no_markup.format_scenario("test_scenario", "converge")
+    assert result_no_markup == "[test_scenario > converge]"
+
+
 @pytest.mark.parametrize(
-    ("level_name", "level_no", "expected_ansi"),
+    ("level_name", "expected_ansi"),
     (
-        ("INFO", logging.INFO, "\033[34m"),  # Blue for INFO
-        ("WARNING", logging.WARNING, "\033[31m"),  # Red for WARNING
-        ("ERROR", logging.ERROR, "\033[1m"),  # Bold for ERROR
+        ("DEBUG", "\033[2m"),  # Dim for DEBUG
+        ("INFO", "\033[36m"),  # Cyan for INFO (new Ansible-aligned scheme)
+        ("WARNING", "\033[35m"),  # Magenta for WARNING
+        ("ERROR", "\033[31m"),  # Red for ERROR (new Ansible-aligned scheme)
     ),
 )
 def test_format_log_level_markup_enabled(
     level_name: str,
-    level_no: int,
     expected_ansi: str,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -187,7 +207,7 @@ def test_format_log_level_markup_enabled(
     monkeypatch.setenv("FORCE_COLOR", "1")
     output = AnsiOutput()
 
-    result = output.format_log_level(level_name, level_no)
+    result = output.format_log_level(level_name)
     assert expected_ansi in result
     assert "\033[0m" in result  # Reset
 
@@ -197,7 +217,7 @@ def test_format_log_level_markup_disabled(monkeypatch: pytest.MonkeyPatch) -> No
     monkeypatch.setenv("NO_COLOR", "1")
     output = AnsiOutput()
 
-    result = output.format_log_level("INFO", logging.INFO)
+    result = output.format_log_level("INFO")
     assert result == "INFO    "  # 8 characters, left-aligned
     assert "\033[" not in result  # No ANSI codes
 
