@@ -2,6 +2,18 @@
 
 This module provides a reusable class for converting Rich-style markup
 to ANSI escape codes while respecting color configuration.
+
+Molecule Output Color Mapping
+
+This color scheme is designed to align closely with Ansible's own terminal color conventions,
+providing consistent visual language across Molecule and Ansible output. Key colors such as
+GREEN for success (OK), RED for errors, YELLOW for changes, and MAGENTA for warnings reflect
+Ansible's defaults as defined in `ansible/config/base.yml`. Other colors—such as CYAN and BLUE—
+are used for clarity, neutrality, or emphasis in Molecule-specific output like actions,
+scenario names, and commands.
+
+This approach ensures readability, terminal compatibility, and a familiar experience for users
+already accustomed to Ansible's interface.
 """
 
 from __future__ import annotations
@@ -101,22 +113,23 @@ class AnsiOutput:
         """Initialize the ANSI output formatter."""
         self.markup_enabled = should_do_markup()
 
-        # Rich-style markup to ANSI mapping
+        # Rich-style markup to ANSI mapping (Ansible-aligned)
         self.markup_map: dict[str, str] = {
-            # Basic styles from Molecule's theme
-            "info": self.DIM + self.CYAN,
-            "warning": self.MAGENTA,
-            "danger": self.BOLD + self.RED,
-            "scenario": self.GREEN,
-            "action": self.GREEN,
-            "section_title": self.BOLD + self.CYAN,
-            # Log level styles
-            "logging.level.debug": self.WHITE + self.DIM,
-            "logging.level.info": self.BLUE,
-            "logging.level.warning": self.RED,
-            "logging.level.error": self.BOLD + self.RED,
-            "logging.level.critical": self.BOLD + self.RED,
-            "logging.level.success": self.BOLD + self.GREEN,
+            # ─── Message Types ───────────────────────────────
+            "info": self.CYAN + self.DIM,  # Matches Ansible skip
+            "warning": self.MAGENTA + self.BOLD,  # Matches Ansible warn
+            "danger": self.RED + self.BOLD,  # Matches Ansible error
+            "scenario": self.GREEN,  # Matches Ansible OK
+            "action": self.YELLOW,  # Matches Ansible changed
+            "command": self.WHITE,
+            "section_title": self.CYAN + self.BOLD,  # Neutral and distinct
+            # ─── Logging Levels ──────────────────────────────
+            "logging.level.debug": self.DIM + self.BLUE,
+            "logging.level.info": self.CYAN + self.DIM,
+            "logging.level.success": self.GREEN + self.BOLD,
+            "logging.level.warning": self.MAGENTA + self.BOLD,
+            "logging.level.error": self.RED + self.BOLD,
+            "logging.level.critical": self.RED + self.BOLD + self.UNDERLINE,
             # Basic color names
             "red": self.RED,
             "green": self.GREEN,
