@@ -203,27 +203,18 @@ class AnsiOutput:
 
         return f"{self.GREEN}[{scenario_name}]{self.RESET}"
 
-    def format_log_level(self, level_name: str, level_no: int) -> str:
+    def format_log_level(self, level_name: str) -> str:
         """Format a log level with appropriate color.
 
         Args:
             level_name: Name of the log level (e.g., 'INFO', 'WARNING').
-            level_no: Numeric log level from logging module.
 
         Returns:
             Formatted log level with color if markup is enabled.
         """
+        width = 8
         if not self.markup_enabled:
-            return f"{level_name:<8}"
+            return f"{level_name:<{width}}"
 
-        # Map log levels to colors
-        level_colors = {
-            10: self.WHITE + self.DIM,  # DEBUG
-            20: self.BLUE,  # INFO
-            30: self.RED,  # WARNING
-            40: self.BOLD + self.RED,  # ERROR
-            50: self.BOLD + self.RED,  # CRITICAL
-        }
-
-        color = level_colors.get(level_no, "")
-        return f"{color}{level_name:<8}{self.RESET}"
+        markup_key = f"logging.level.{level_name.lower()}"
+        return self.process_markup(f"[{markup_key}]{level_name:<{width}}[/]")

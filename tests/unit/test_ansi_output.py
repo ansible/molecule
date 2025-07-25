@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import logging
-
 import pytest
 
 from molecule.ansi_output import AnsiOutput, should_do_markup, to_bool
@@ -169,16 +167,16 @@ def test_format_scenario(
 
 
 @pytest.mark.parametrize(
-    ("level_name", "level_no", "expected_ansi"),
+    ("level_name", "expected_ansi"),
     (
-        ("INFO", logging.INFO, "\033[34m"),  # Blue for INFO
-        ("WARNING", logging.WARNING, "\033[31m"),  # Red for WARNING
-        ("ERROR", logging.ERROR, "\033[1m"),  # Bold for ERROR
+        ("DEBUG", "\033[2m"),  # Dim for DEBUG
+        ("INFO", "\033[36m"),  # Cyan for INFO (new Ansible-aligned scheme)
+        ("WARNING", "\033[35m"),  # Magenta for WARNING
+        ("ERROR", "\033[31m"),  # Red for ERROR (new Ansible-aligned scheme)
     ),
 )
 def test_format_log_level_markup_enabled(
     level_name: str,
-    level_no: int,
     expected_ansi: str,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -187,7 +185,7 @@ def test_format_log_level_markup_enabled(
     monkeypatch.setenv("FORCE_COLOR", "1")
     output = AnsiOutput()
 
-    result = output.format_log_level(level_name, level_no)
+    result = output.format_log_level(level_name)
     assert expected_ansi in result
     assert "\033[0m" in result  # Reset
 
@@ -197,7 +195,7 @@ def test_format_log_level_markup_disabled(monkeypatch: pytest.MonkeyPatch) -> No
     monkeypatch.setenv("NO_COLOR", "1")
     output = AnsiOutput()
 
-    result = output.format_log_level("INFO", logging.INFO)
+    result = output.format_log_level("INFO")
     assert result == "INFO    "  # 8 characters, left-aligned
     assert "\033[" not in result  # No ANSI codes
 

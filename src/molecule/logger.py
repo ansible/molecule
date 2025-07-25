@@ -104,8 +104,8 @@ class MoleculeConsoleHandler(logging.Handler):
             scenario_name = getattr(record, "molecule_scenario", None)
 
             # Format with colors using AnsiOutput
-            # cspell:ignore levelname levelno
-            formatted_level = self.ansi_output.format_log_level(record.levelname, record.levelno)
+            # cspell:ignore levelname
+            formatted_level = self.ansi_output.format_log_level(record.levelname)
 
             if scenario_name:
                 processed_message = self.ansi_output.process_markup(message)
