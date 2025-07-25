@@ -12,18 +12,6 @@ if TYPE_CHECKING:
     from molecule.types import ScenariosResults
 
 
-def yaml(results: list[ScenariosResults]) -> str:
-    """Print end-of-run report.
-
-    Args:
-        results: Dictionary containing results from each scenario.
-
-    Returns:
-        The formatted end-of-run report.
-    """
-    return safe_dump(results)
-
-
 def table(results: list[ScenariosResults]) -> str:
     """Print end-of-run report as a table.
 
@@ -63,3 +51,21 @@ def table(results: list[ScenariosResults]) -> str:
         rows.append(ansi.process_markup(string))
 
     return "\n".join(rows)
+
+
+def yaml(results: list[ScenariosResults]) -> str:
+    """Print end-of-run report.
+
+    Args:
+        results: Dictionary containing results from each scenario.
+
+    Returns:
+        The formatted end-of-run report.
+    """
+    return safe_dump(results)
+
+
+FORMATS = {
+    "table": table,
+    "yaml": yaml,
+}
