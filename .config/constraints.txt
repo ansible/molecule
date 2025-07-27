@@ -25,7 +25,7 @@ charset-normalizer==3.4.2  # via requests
 click==8.2.1              # via black, click-help-colors, mkdocs, pydoclint, molecule (pyproject.toml)
 click-help-colors==0.9.4  # via molecule (pyproject.toml)
 colorama==0.4.6           # via griffe, mkdocs-material, tox
-coverage==7.9.2           # via molecule (pyproject.toml)
+coverage==7.10.0           # via molecule (pyproject.toml)
 cryptography==45.0.5      # via ansible-core
 csscompressor==0.9.5      # via mkdocs-minify-plugin
 cssselect2==0.8.0         # via cairosvg
@@ -41,7 +41,7 @@ exceptiongroup==1.3.0     # via pytest
 execnet==2.1.1            # via pytest-xdist
 filelock==3.18.0          # via ansible-lint, tox, virtualenv, molecule (pyproject.toml)
 ghp-import==2.1.0         # via mkdocs
-griffe==1.7.3             # via mkdocstrings-python
+griffe==1.8.0             # via mkdocstrings-python
 hjson==3.1.0              # via mkdocs-macros-plugin, super-collections
 htmlmin2==0.1.13          # via mkdocs-minify-plugin
 identify==2.6.12          # via pre-commit
@@ -70,10 +70,10 @@ mkdocs-gen-files==0.5.0   # via mkdocs-ansible
 mkdocs-get-deps==0.2.0    # via mkdocs
 mkdocs-htmlproofer-plugin==1.3.0  # via mkdocs-ansible
 mkdocs-macros-plugin==1.3.7  # via mkdocs-ansible
-mkdocs-material==9.6.15   # via mkdocs-ansible
+mkdocs-material==9.6.16   # via mkdocs-ansible
 mkdocs-material-extensions==1.3.1  # via mkdocs-ansible, mkdocs-material
 mkdocs-minify-plugin==0.8.0  # via mkdocs-ansible
-mkdocstrings==0.29.1      # via mkdocs-ansible, mkdocstrings-python
+mkdocstrings==0.30.0      # via mkdocs-ansible, mkdocstrings-python
 mkdocstrings-python==1.16.12  # via mkdocs-ansible
 mypy==1.17.0              # via molecule (pyproject.toml)
 mypy-extensions==1.1.0    # via black, mypy
@@ -108,10 +108,10 @@ pyyaml==6.0.2             # via ansible-builder, ansible-compat, ansible-core, a
 pyyaml-env-tag==1.1       # via mkdocs
 referencing==0.36.2       # via ansible-lint, jsonschema, jsonschema-specifications, types-jsonschema
 requests==2.32.4          # via docker, linkchecker, mkdocs-htmlproofer-plugin, mkdocs-material, molecule (pyproject.toml)
-rich==14.0.0              # via enrich, molecule (pyproject.toml)
+rich==14.1.0              # via enrich, molecule (pyproject.toml)
 rpds-py==0.26.0           # via jsonschema, referencing
 ruamel-yaml==0.18.14      # via ansible-lint
-ruff==0.12.4              # via molecule (pyproject.toml)
+ruff==0.12.5              # via molecule (pyproject.toml)
 setuptools==80.9.0        # via pbr
 six==1.17.0               # via python-dateutil
 soupsieve==2.7            # via beautifulsoup4
@@ -122,13 +122,13 @@ tinycss2==1.4.0           # via cairosvg, cssselect2
 toml-sort==0.24.2         # via molecule (pyproject.toml)
 tomli==2.2.1              # via black, coverage, mypy, pydoclint, pylint, pyproject-api, pytest, tox
 tomlkit==0.13.3           # via pylint, toml-sort
-tox==4.27.0               # via molecule (pyproject.toml)
+tox==4.28.3               # via molecule (pyproject.toml)
 types-jsonschema==4.25.0.20250720  # via molecule (pyproject.toml)
 types-pexpect==4.9.0.20250516  # via molecule (pyproject.toml)
 types-pyyaml==6.0.12.20250516  # via molecule (pyproject.toml)
 tzdata==2025.2            # via ansible-navigator
 urllib3==2.5.0            # via docker, requests
-virtualenv==20.31.2       # via pre-commit, tox
+virtualenv==20.32.0       # via pre-commit, tox
 watchdog==6.0.0           # via mkdocs
 wcmatch==10.1             # via ansible-lint, molecule (pyproject.toml)
 webencodings==0.5.1       # via cssselect2, tinycss2
