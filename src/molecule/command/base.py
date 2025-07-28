@@ -50,6 +50,19 @@ if TYPE_CHECKING:
     from molecule.types import CommandArgs, MoleculeArgs, ScenariosResults
 
 
+def _log(scenario_name: str, step: str, message: str, level: str = "info") -> None:
+    """Create scenario logger on-demand and log message.
+
+    Args:
+        scenario_name: Name of the scenario for context.
+        step: Step name for context (e.g., 'discovery', 'prerun', 'reset').
+        message: Log message (pre-formatted, no placeholders).
+        level: Log level ('info', 'warning', 'error', 'debug').
+    """
+    scenario_log = logger.get_scenario_logger(__name__, scenario_name, step)
+    getattr(scenario_log, level)(message)
+
+
 class Base(abc.ABC):
     """An abstract base class used to define the command interface."""
 
@@ -170,10 +183,11 @@ def _generate_scenarios(
     if scenario_names is not None:
         for scenario_name in scenario_names:
             if scenario_name != "*" and scenarios:
-                scenario_log = logger.get_scenario_logger(__name__, scenario_name)
-                scenario_log.info(
-                    "scenario test matrix: %s",
-                    ", ".join(scenarios.sequence(scenario_name)),
+                # Use generic "discovery" step since this is scenario discovery phase
+                _log(
+                    scenario_name,
+                    "discovery",
+                    f"scenario test matrix: {', '.join(scenarios.sequence(scenario_name))}",
                 )
 
     return scenarios
@@ -202,16 +216,22 @@ def _run_scenarios(
     for scenario in scenarios.all:
         if scenario.config.config["prerun"]:
             role_name_check = scenario.config.config["role_name_check"]
-            scenario_log = logger.get_scenario_logger(__name__, scenario.config.scenario.name)
-            scenario_log.info("Performing prerun with role_name_check=%s...", role_name_check)
+            _log(
+                scenario.config.scenario.name,
+                "prerun",
+                f"Performing prerun with role_name_check={role_name_check}...",
+            )
             scenario.config.runtime.prepare_environment(
                 install_local=True,
                 role_name_check=role_name_check,
             )
 
         if command_args.get("subcommand") == "reset":
-            scenario_log = logger.get_scenario_logger(__name__, scenario.config.scenario.name)
-            scenario_log.info("Removing %s", scenario.ephemeral_directory)
+            _log(
+                scenario.config.scenario.name,
+                "reset",
+                f"Removing {scenario.ephemeral_directory}",
+            )
             shutil.rmtree(scenario.ephemeral_directory)
             return
         try:
@@ -225,8 +245,13 @@ def _run_scenarios(
                     f"An error occurred during the {scenario.config.subcommand} sequence action: "
                     f"'{scenario.config.action}'. Cleaning up."
                 )
-                scenario_log = logger.get_scenario_logger(__name__, scenario.config.scenario.name)
-                scenario_log.warning(msg)
+                step_name = getattr(scenario.config, "action", "cleanup")
+                _log(
+                    scenario.config.scenario.name,
+                    step_name,
+                    msg,
+                    level="warning",
+                )
                 execute_subcommand(scenario.config, "cleanup")
                 destroy_results = execute_subcommand_default(default_config, "destroy")
                 if destroy_results is not None:
@@ -272,11 +297,11 @@ def execute_subcommand_default(
         # clear results for later reuse
         default.results = []
         return results
-    # Use the default scenario name for this warning since it's about the default scenario
-    scenario_log = logger.get_scenario_logger(__name__, default.name)
-    scenario_log.warning(
-        "%s not found in default scenario, falling back to current scenario",
+    _log(
+        default.name,
         subcommand,
+        f"{subcommand} not found in default scenario, falling back to current scenario",
+        level="warning",
     )
     return None
 
