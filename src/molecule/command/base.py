@@ -297,7 +297,6 @@ def execute_subcommand_default(
         # clear results for later reuse
         default.results = []
         return results
-    # Use the default scenario name for this warning since it's about the default scenario
     _log(
         default.name,
         subcommand,
