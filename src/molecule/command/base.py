@@ -49,8 +49,6 @@ if TYPE_CHECKING:
     from molecule.scenario import Scenario
     from molecule.types import CommandArgs, MoleculeArgs, ScenariosResults
 
-LOG = logging.getLogger(__name__)
-
 
 class Base(abc.ABC):
     """An abstract base class used to define the command interface."""
