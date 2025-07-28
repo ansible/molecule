@@ -23,7 +23,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from molecule import logger
+from molecule import config, logger
 from molecule.click_cfg import click_command_ex, common_options
 from molecule.command import base
 
@@ -37,16 +37,14 @@ if TYPE_CHECKING:
 class Create(base.Base):
     """Create Command Class."""
 
-    @property
-    def _log(self) -> logger.ScenarioLoggerAdapter:
-        """Get a fresh scenario logger with current context.
+    def __init__(self, c: config.Config) -> None:
+        """Initialize Create command.
 
-        Returns:
-            A scenario logger adapter with current scenario and step context.
+        Args:
+            c: An instance of a Molecule config.
         """
-        # Get step context from the current action being executed
-        step_name = getattr(self._config, "action", "create")
-        return logger.get_scenario_logger(__name__, self._config.scenario.name, step_name)
+        super().__init__(c)
+        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to perform a `molecule create`.
