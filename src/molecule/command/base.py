@@ -49,6 +49,7 @@ if TYPE_CHECKING:
     from molecule.scenario import Scenario
     from molecule.types import CommandArgs, MoleculeArgs, ScenariosResults
 
+
 def _log(scenario_name: str, step: str, message: str, level: str = "info") -> None:
     """Create scenario logger on-demand and log message.
 
@@ -60,6 +61,7 @@ def _log(scenario_name: str, step: str, message: str, level: str = "info") -> No
     """
     scenario_log = logger.get_scenario_logger(__name__, scenario_name, step)
     getattr(scenario_log, level)(message)
+
 
 class Base(abc.ABC):
     """An abstract base class used to define the command interface."""
