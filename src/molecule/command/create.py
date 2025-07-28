@@ -44,7 +44,17 @@ class Create(base.Base):
             c: An instance of a Molecule config.
         """
         super().__init__(c)
-        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
+
+    @property
+    def _log(self) -> logger.ScenarioLoggerAdapter:
+        """Get a fresh scenario logger with current context.
+
+        Returns:
+            A scenario logger adapter with current scenario and step context.
+        """
+        # Get step context from the current action being executed
+        step_name = getattr(self._config, "action", "create")
+        return logger.get_scenario_logger(__name__, self._config.scenario.name, step_name)
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to perform a `molecule create`.

@@ -58,7 +58,17 @@ class Base(abc.ABC):
         """
         self._config = config
         self._sh_command: str | list[str] = []
-        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
+
+    @property
+    def _log(self) -> logger.ScenarioLoggerAdapter:
+        """Get a fresh scenario logger with current context.
+
+        Returns:
+            A scenario logger adapter with current scenario and step context.
+        """
+        # Get step context from the current action being executed
+        step_name = getattr(self._config, "action", "dependency")
+        return logger.get_scenario_logger(__name__, self._config.scenario.name, step_name)
 
     def execute_with_retries(self) -> None:
         """Run dependency downloads with retry and timed back-off."""
