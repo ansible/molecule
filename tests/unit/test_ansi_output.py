@@ -156,14 +156,17 @@ def test_format_scenario(
         monkeypatch.setenv("NO_COLOR", "1")
 
     output = AnsiOutput()
-    result = output.format_scenario(scenario_name)
+    colored, plain = output.format_scenario(scenario_name)
 
     if markup_enabled:
-        assert "\033[32m" in result  # Green color for scenario tag
-        assert "\033[0m" in result  # Reset
-        assert "test_scenario" in result  # Just check for scenario name, not brackets
+        assert "\033[32m" in colored  # Green color for scenario tag
+        assert "\033[0m" in colored  # Reset
+        assert "test_scenario" in colored  # Just check for scenario name, not brackets
+        assert "test_scenario" in plain  # Plain version should also contain scenario name
+        assert "\033[" not in plain  # No ANSI codes in plain version
     else:
-        assert result == expected_pattern
+        assert colored == expected_pattern
+        assert plain == expected_pattern
 
 
 def test_format_scenario_with_step(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -173,19 +176,28 @@ def test_format_scenario_with_step(monkeypatch: pytest.MonkeyPatch) -> None:
     output = AnsiOutput()
 
     # Test with step
-    result = output.format_scenario("test_scenario", "converge")
-    assert "\033[32m" in result  # Green for scenario
-    assert "\033[33m" in result  # Yellow for action (step)
-    assert "test_scenario" in result
-    assert "converge" in result
-    assert "➜" in result  # Right arrow
-    assert ":" in result  # Colon at end
+    colored, plain = output.format_scenario("test_scenario", "converge")
+    assert "\033[32m" in colored  # Green for scenario
+    assert "\033[33m" in colored  # Yellow for action (step)
+    assert "test_scenario" in colored
+    assert "converge" in colored
+    assert "➜" in colored  # Right arrow
+    assert ":" in colored  # Colon at end
+
+    # Check plain version
+    assert "test_scenario" in plain
+    assert "converge" in plain
+    assert "\033[" not in plain  # No ANSI codes in plain version
 
     # Test without markup
     monkeypatch.setenv("NO_COLOR", "1")
     output_no_markup = AnsiOutput()
-    result_no_markup = output_no_markup.format_scenario("test_scenario", "converge")
-    assert result_no_markup == "[test_scenario > converge]"
+    colored_no_markup, plain_no_markup = output_no_markup.format_scenario(
+        "test_scenario",
+        "converge",
+    )
+    assert colored_no_markup == "[test_scenario > converge]"
+    assert plain_no_markup == "[test_scenario > converge]"
 
 
 @pytest.mark.parametrize(
@@ -207,9 +219,11 @@ def test_format_log_level_markup_enabled(
     monkeypatch.setenv("FORCE_COLOR", "1")
     output = AnsiOutput()
 
-    result = output.format_log_level(level_name)
-    assert expected_ansi in result
-    assert "\033[0m" in result  # Reset
+    colored, plain = output.format_log_level(level_name)
+    assert expected_ansi in colored
+    assert "\033[0m" in colored  # Reset
+    assert level_name in plain
+    assert "\033[" not in plain  # No ANSI codes in plain version
 
 
 def test_format_log_level_markup_disabled(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -217,9 +231,11 @@ def test_format_log_level_markup_disabled(monkeypatch: pytest.MonkeyPatch) -> No
     monkeypatch.setenv("NO_COLOR", "1")
     output = AnsiOutput()
 
-    result = output.format_log_level("INFO")
-    assert result == "INFO    "  # 8 characters, left-aligned
-    assert "\033[" not in result  # No ANSI codes
+    colored, plain = output.format_log_level("INFO")
+    assert colored == "INFO    "  # 8 characters, left-aligned
+    assert plain == "INFO    "  # Both should be the same when markup disabled
+    assert "\033[" not in colored  # No ANSI codes
+    assert "\033[" not in plain  # No ANSI codes
 
 
 def test_markup_map_contains_expected_styles() -> None:
@@ -233,6 +249,7 @@ def test_markup_map_contains_expected_styles() -> None:
         "danger",
         "scenario",
         "action",
+        "exec_phase",
         "logging.level.info",
         "logging.level.warning",
         "logging.level.error",
@@ -272,3 +289,18 @@ def test_complex_markup_processing(monkeypatch: pytest.MonkeyPatch) -> None:
     assert "Running" in result
     assert "test" in result
     assert "create" in result
+
+
+def test_exec_phase_markup_processing(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test processing of exec_phase markup."""
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    monkeypatch.setenv("FORCE_COLOR", "1")
+    output = AnsiOutput()
+
+    # Test exec_phase markup
+    result = output.process_markup("[exec_phase]Starting[/]")
+
+    # Should contain bright cyan for exec_phase
+    assert "\033[96m" in result  # Bright cyan for exec_phase
+    assert "\033[0m" in result  # Reset code
+    assert "Starting" in result

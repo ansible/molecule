@@ -92,6 +92,7 @@ class MoleculeConsoleHandler(logging.Handler):
         """Emit a log record with scenario context using original stderr.
 
         All messages go to the original stderr, bypassing Rich's redirection entirely.
+        Also updates the log record with a plain text version for caplog compatibility.
 
         Args:
             record: The logging record to emit.
@@ -102,21 +103,40 @@ class MoleculeConsoleHandler(logging.Handler):
 
             # Check if this message has scenario context passed from ScenarioLoggerAdapter
             scenario_name = getattr(record, "molecule_scenario", None)
+            step_name = getattr(record, "molecule_step", None)
 
-            # Format with colors using AnsiOutput
+            # Get both colored and plain versions using dual methods
             # cspell:ignore levelname
-            formatted_level = self.ansi_output.format_log_level(record.levelname)
+            colored_level, plain_level = self.ansi_output.format_log_level(record.levelname)
+
+            # Process message once for each version
+            colored_message = self.ansi_output.process_markup(message)
+            plain_message = self.ansi_output.strip_markup(message)
 
             if scenario_name:
-                processed_message = self.ansi_output.process_markup(message)
-                formatted_scenario = self.ansi_output.format_scenario(scenario_name)
-                output = f"{formatted_level} {formatted_scenario} {processed_message}"
-            else:
-                processed_message = self.ansi_output.process_markup(message)
-                output = f"{formatted_level} {processed_message}"
+                colored_scenario, plain_scenario = self.ansi_output.format_scenario(
+                    scenario_name,
+                    step_name,
+                )
 
-            # Write directly to original stderr (captured before Rich redirection)
-            original_stderr.write(output + "\n")
+                # Create colored output for display
+                colored_output = f"{colored_level} {colored_scenario} {colored_message}"
+
+                # Create plain output for caplog
+                plain_output = f"{plain_level} {plain_scenario} {plain_message}"
+            else:
+                # Create colored output for display
+                colored_output = f"{colored_level} {colored_message}"
+
+                # Create plain output for caplog
+                plain_output = f"{plain_level} {plain_message}"
+
+            # Update the log record with the plain version for caplog and other handlers
+            record.msg = plain_output
+            record.args = ()
+
+            # Write colored output to stderr for users
+            original_stderr.write(colored_output + "\n")
             original_stderr.flush()
 
         except Exception:  # noqa: BLE001
@@ -194,8 +214,8 @@ def get_logger(name: str) -> logging.Logger:
 class ScenarioLoggerAdapter(logging.LoggerAdapter):  # type: ignore[type-arg]
     """Logger adapter that automatically includes scenario context in messages.
 
-    This adapter prepends scenario names to log messages to provide better
-    context when multiple scenarios are running or being processed.
+    This adapter includes scenario names and optional step information in log messages
+    to provide better context when multiple scenarios are running or being processed.
     """
 
     def process(
@@ -213,27 +233,39 @@ class ScenarioLoggerAdapter(logging.LoggerAdapter):  # type: ignore[type-arg]
             A tuple of (processed_message, kwargs).
         """
         scenario_name = self.extra.get("scenario_name", "unknown") if self.extra else "unknown"
-        # Pass scenario name through kwargs instead of prefixing the message
+        step_name = self.extra.get("step_name") if self.extra else None
+
+        # Pass scenario and step information through kwargs
         # Create new extra dict or copy existing one to avoid modifying the original
         current_extra = kwargs.get("extra", {})
         new_extra = dict(current_extra) if isinstance(current_extra, dict) else {}
         new_extra["molecule_scenario"] = scenario_name
+        if step_name:
+            new_extra["molecule_step"] = step_name
         kwargs["extra"] = new_extra
         return msg, kwargs
 
 
-def get_scenario_logger(name: str, scenario_name: str) -> ScenarioLoggerAdapter:
+def get_scenario_logger(
+    name: str,
+    scenario_name: str,
+    step_name: str | None = None,
+) -> ScenarioLoggerAdapter:
     """Return a scenario-aware logger that includes scenario name in all messages.
 
     Args:
         name: Name of the child logger.
         scenario_name: Name of the scenario for context.
+        step_name: Optional step name (e.g., 'converge', 'create', 'destroy').
 
     Returns:
         A ScenarioLoggerAdapter that includes scenario context in all messages.
     """
     logger = get_logger(name)
-    return ScenarioLoggerAdapter(logger, {"scenario_name": scenario_name})
+    extra = {"scenario_name": scenario_name}
+    if step_name:
+        extra["step_name"] = step_name
+    return ScenarioLoggerAdapter(logger, extra)
 
 
 def github_actions_groups(func: Callable[P, R]) -> Callable[P, R]:
@@ -364,16 +396,12 @@ def section_logger(func: Callable[P, R]) -> Callable[P, R]:
     @wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         self = cast("HasConfig", args[0])
-        scenario_log = get_scenario_logger(__name__, self._config.scenario.name)
-        scenario_log.info(
-            "[info]Running [scenario]%s[/] > [action]%s[/][/]",
-            self._config.scenario.name,
-            underscore(self.__class__.__name__),
-            extra={"markup": True},
-        )
+        step_name = underscore(self.__class__.__name__)
+        scenario_log = get_scenario_logger(__name__, self._config.scenario.name, step_name)
+        scenario_log.info("[exec_phase]Starting[/]")
         rt = func(*args, **kwargs)
-        # section close code goes here
-        return rt  # noqa: RET504
+        scenario_log.info("[exec_phase]Completed[/]")
+        return rt
 
     return wrapper
 

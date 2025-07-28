@@ -124,6 +124,7 @@ class AnsiOutput:
             "danger": self.RED + self.BOLD,  # Matches Ansible error
             "scenario": self.GREEN,  # Matches Ansible OK
             "action": self.YELLOW,  # Matches Ansible changed
+            "exec_phase": self.BRIGHT_CYAN,  # Execution phase indicator
             "command": self.WHITE,
             "section_title": self.CYAN + self.BOLD,  # Neutral and distinct
             # ─── Logging Levels ──────────────────────────────
@@ -192,39 +193,46 @@ class AnsiOutput:
         result = re.sub(r"\[/\]", self.RESET, processed)
         return str(result)
 
-    def format_scenario(self, scenario_name: str, step: str | None = None) -> str:
-        """Format a scenario name with appropriate styling.
+    def format_log_level(self, level_name: str) -> tuple[str, str]:
+        """Format a log level returning both colored and plain versions.
+
+        Args:
+            level_name: Name of the log level (e.g., 'INFO', 'WARNING').
+
+        Returns:
+            Tuple of (colored_version, plain_version).
+        """
+        width = 8
+
+        if not self.markup_enabled:
+            plain = f"{level_name:<{width}}"
+            return plain, plain
+
+        markup_key = f"logging.level.{level_name.lower()}"
+        markup_text = f"[{markup_key}]{level_name:<{width}}[/]"
+        colored = self.process_markup(markup_text)
+        plain = self.strip_markup(markup_text)
+        return colored, plain
+
+    def format_scenario(self, scenario_name: str, step: str | None = None) -> tuple[str, str]:
+        """Format a scenario name returning both colored and plain versions.
 
         Args:
             scenario_name: Name of the scenario.
             step: Optional step name (e.g., 'converge', 'create', 'destroy').
 
         Returns:
-            Formatted scenario name with color if markup is enabled.
+            Tuple of (colored_version, plain_version).
         """
         if not self.markup_enabled:
-            if step:
-                return f"[{scenario_name} > {step}]"
-            return f"[{scenario_name}]"
+            plain = f"[{scenario_name} > {step}]" if step else f"[{scenario_name}]"
+            return plain, plain
 
         if step:
-            return self.process_markup(
-                rf"[scenario]{scenario_name}[/] {self.RIGHT_ARROW} [action]{step}[/]:",
-            )
-        return self.process_markup(rf"[scenario]{scenario_name}[/]")
+            markup_text = rf"[scenario]{scenario_name}[/] {self.RIGHT_ARROW} [action]{step}[/]:"
+        else:
+            markup_text = rf"[scenario]{scenario_name}[/]"
 
-    def format_log_level(self, level_name: str) -> str:
-        """Format a log level with appropriate color.
-
-        Args:
-            level_name: Name of the log level (e.g., 'INFO', 'WARNING').
-
-        Returns:
-            Formatted log level with color if markup is enabled.
-        """
-        width = 8
-        if not self.markup_enabled:
-            return f"{level_name:<{width}}"
-
-        markup_key = f"logging.level.{level_name.lower()}"
-        return self.process_markup(f"[{markup_key}]{level_name:<{width}}[/]")
+        colored = self.process_markup(markup_text)
+        plain = self.strip_markup(markup_text)
+        return colored, plain
