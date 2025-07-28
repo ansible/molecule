@@ -42,6 +42,19 @@ def test_to_bool(input_value: object, expected: bool) -> None:  # noqa: FBT001
         ({"FORCE_COLOR": "1"}, True),
         ({"TERM": "xterm-256color"}, True),
         ({"TERM": "dumb"}, False),
+        # New test cases that expose bugs
+        ({"NO_COLOR": "1", "FORCE_COLOR": "1"}, False),  # NO_COLOR should override FORCE_COLOR
+        ({"PY_COLORS": "0", "TERM": "xterm"}, False),  # PY_COLORS should override TERM
+        ({"CLICOLOR": "0", "TERM": "xterm"}, False),  # CLICOLOR should override TERM
+        (
+            {"ANSIBLE_FORCE_COLOR": "1", "NO_COLOR": "1"},
+            False,
+        ),  # NO_COLOR should override ANSIBLE_FORCE_COLOR
+        ({"NO_COLOR": "", "FORCE_COLOR": "1"}, True),  # Empty NO_COLOR should not disable colors
+        (
+            {"NO_COLOR": "", "TERM": "xterm"},
+            True,
+        ),  # Empty NO_COLOR should not disable colors, TERM should enable
     ),
 )
 def test_should_do_markup(
@@ -59,6 +72,22 @@ def test_should_do_markup(
         monkeypatch.setenv(key, value)
 
     assert should_do_markup() is expected
+
+
+def test_should_do_markup_tty_detection(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test TTY detection fallback behavior."""
+    # Clear all color-related environment variables
+    for var in ["NO_COLOR", "FORCE_COLOR", "PY_COLORS", "CLICOLOR", "ANSIBLE_FORCE_COLOR", "TERM"]:
+        monkeypatch.delenv(var, raising=False)
+
+    # Mock isatty to return False (non-TTY environment like CI/CD)
+    monkeypatch.setattr("sys.stdout.isatty", lambda: False)
+
+    # This should return False since we're not in a TTY, but current implementation may be wrong
+    result = should_do_markup()
+    assert result is False, (
+        "should_do_markup() should return False when not in a TTY and no color env vars set"
+    )
 
 
 def test_ansi_output_initialization() -> None:
