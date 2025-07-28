@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 import glob
-import logging
 import os
 
 from pathlib import Path
@@ -37,9 +36,6 @@ if TYPE_CHECKING:
 
     from molecule.config import Config
     from molecule.verifier.base import Schema
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Testinfra(Verifier):
