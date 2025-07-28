@@ -32,7 +32,7 @@ from uuid import uuid4
 
 from ansible_compat.ports import cache, cached_property
 
-from molecule import api, interpolation, platforms, scenario, state, util
+from molecule import api, interpolation, logger, platforms, scenario, state, util
 from molecule.app import get_app
 from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
@@ -416,7 +416,8 @@ class Config:
             if my_state.molecule_yml_date_modified is None:
                 my_state.change_state("molecule_yml_date_modified", modTime)
             elif my_state.molecule_yml_date_modified != modTime:
-                LOG.warning(
+                scenario_log = logger.get_scenario_logger(__name__, self.scenario.name, "config")
+                scenario_log.warning(
                     "The scenario config file ('%s') has been modified since the scenario was created. "
                     "If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or "
                     "'molecule reset' to clear current configuration.",
