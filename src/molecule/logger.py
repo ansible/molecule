@@ -45,8 +45,6 @@ if TYPE_CHECKING:
     R = TypeVar("R")
 
 
-LOG = logging.getLogger(__name__)
-
 LOG_LEVEL_LUT = {
     0: logging.INFO,
     1: logging.DEBUG,

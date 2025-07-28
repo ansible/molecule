@@ -21,8 +21,6 @@
 
 from __future__ import annotations
 
-import logging
-
 from typing import TYPE_CHECKING
 
 from molecule.click_cfg import click_command_ex, common_options
@@ -33,9 +31,6 @@ if TYPE_CHECKING:
     import click
 
     from molecule.types import CommandArgs, MoleculeArgs
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Syntax(base.Base):

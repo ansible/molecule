@@ -21,8 +21,6 @@
 
 from __future__ import annotations
 
-import logging
-
 from typing import TYPE_CHECKING
 
 from molecule import util
@@ -31,9 +29,6 @@ from molecule import util
 if TYPE_CHECKING:
     from molecule.config import Config
     from molecule.types import PlatformData
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Platforms:

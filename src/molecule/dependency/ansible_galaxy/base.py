@@ -23,7 +23,6 @@ from __future__ import annotations
 
 import abc
 import copy
-import logging
 import os
 
 from pathlib import Path
@@ -37,9 +36,6 @@ if TYPE_CHECKING:
     from collections.abc import MutableMapping
 
     from molecule.config import Config
-
-
-LOG = logging.getLogger(__name__)
 
 
 class AnsibleGalaxyBase(base.Base):

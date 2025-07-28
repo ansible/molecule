@@ -21,7 +21,6 @@
 
 from __future__ import annotations
 
-import logging
 import os
 
 from pathlib import Path
@@ -44,9 +43,6 @@ if TYPE_CHECKING:
         "side_effect",
         "verify",
     ]
-
-
-LOG = logging.getLogger(__name__)
 
 
 class AnsiblePlaybooks:

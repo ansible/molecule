@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 import json
-import logging
 import os
 import sys
 
@@ -63,9 +62,6 @@ if TYPE_CHECKING:
         provisioner_name: str
         scenario_name: str
         subcommand: str
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Scenario(base.Base):
