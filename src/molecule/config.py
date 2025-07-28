@@ -401,6 +401,15 @@ class Config:
         """
         return scenario.Scenario(self)
 
+    @property
+    def _log(self) -> logger.ScenarioLoggerAdapter:
+        """Get a scenario logger with config step context.
+
+        Returns:
+            A scenario logger adapter with current scenario and step context.
+        """
+        return logger.get_scenario_logger(__name__, self.scenario.name, "config")
+
     @cached_property
     def state(self) -> State:
         """Molecule state object.
@@ -416,8 +425,7 @@ class Config:
             if my_state.molecule_yml_date_modified is None:
                 my_state.change_state("molecule_yml_date_modified", modTime)
             elif my_state.molecule_yml_date_modified != modTime:
-                scenario_log = logger.get_scenario_logger(__name__, self.scenario.name, "config")
-                scenario_log.warning(
+                self._log.warning(
                     "The scenario config file ('%s') has been modified since the scenario was created. "
                     "If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or "
                     "'molecule reset' to clear current configuration.",
