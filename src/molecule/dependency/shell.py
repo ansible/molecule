@@ -25,7 +25,6 @@ import logging
 
 from typing import TYPE_CHECKING
 
-from molecule import logger
 from molecule.dependency import base
 
 
@@ -86,7 +85,6 @@ class Shell(base.Base):
         """
         super().__init__(config)
         self._sh_command = ""
-        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
 
     @property
     def command(self) -> str:

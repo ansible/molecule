@@ -39,7 +39,6 @@ from molecule.provisioner import ansible_playbook, ansible_playbooks, base
 if TYPE_CHECKING:
     from typing import Any
 
-    from molecule.config import Config
     from molecule.types import Options
 
     Vivify = collections.defaultdict[str, Any | "Vivify"]
@@ -407,14 +406,16 @@ class Ansible(base.Base):
     ```
     """
 
-    def __init__(self, config: Config) -> None:
-        """Initialize Ansible provisioner.
+    @property
+    def _log(self) -> logger.ScenarioLoggerAdapter:
+        """Get a fresh scenario logger with current context.
 
-        Args:
-            config: An instance of a Molecule config.
+        Returns:
+            A scenario logger adapter with current scenario and step context.
         """
-        super().__init__(config)
-        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
+        # Get step context from the current action being executed
+        step_name = getattr(self._config, "action", "provisioner")
+        return logger.get_scenario_logger(__name__, self._config.scenario.name, step_name)
 
     @property
     def default_config_options(self) -> dict[str, Any]:

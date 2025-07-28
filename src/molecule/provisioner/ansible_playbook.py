@@ -70,7 +70,16 @@ class AnsiblePlaybook:
         elif self._config.provisioner:
             self._env = self._config.provisioner.env
 
-        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
+    @property
+    def _log(self) -> logger.ScenarioLoggerAdapter:
+        """Get a fresh scenario logger with current context.
+
+        Returns:
+            A scenario logger adapter with current scenario and step context.
+        """
+        # Get step context from the current action being executed
+        step_name = getattr(self._config, "action", "provisioner")
+        return logger.get_scenario_logger(__name__, self._config.scenario.name, step_name)
 
     def bake(self) -> None:
         """Bake ``ansible-playbook`` or ``navigator run`` command so it's ready to execute.

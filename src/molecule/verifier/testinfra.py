@@ -109,8 +109,18 @@ class Testinfra(Verifier):
         super().__init__(config)
         self._testinfra_command: list[str] = []
         self._tests = []  # type: ignore[var-annotated]
+
+    @property
+    def _log(self) -> logger.ScenarioLoggerAdapter:
+        """Get a fresh scenario logger with current context.
+
+        Returns:
+            A scenario logger adapter with current scenario and step context.
+        """
+        # Get step context from the current action being executed
+        step_name = getattr(self._config, "action", "verify")
         scenario_name = self._config.scenario.name if self._config else "unknown"
-        self._log = logger.get_scenario_logger(__name__, scenario_name)
+        return logger.get_scenario_logger(__name__, scenario_name, step_name)
 
     @property
     def name(self) -> str:

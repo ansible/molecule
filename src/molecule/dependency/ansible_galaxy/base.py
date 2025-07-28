@@ -29,7 +29,7 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from molecule import logger, util
+from molecule import util
 from molecule.dependency import base
 
 
@@ -61,7 +61,6 @@ class AnsibleGalaxyBase(base.Base):
         """
         super().__init__(config)
         self._sh_command = []
-        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
 
         self.command = "ansible-galaxy"
 
