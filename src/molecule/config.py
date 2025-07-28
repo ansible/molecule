@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 import copy
-import logging
 import os
 import warnings
 
@@ -55,7 +54,6 @@ if TYPE_CHECKING:
     from molecule.verifier.base import Verifier
 
 
-LOG = logging.getLogger(__name__)
 MOLECULE_PARALLEL: bool = boolean(os.environ.get("MOLECULE_PARALLEL", ""))
 MOLECULE_DEBUG: bool = boolean(os.environ.get("MOLECULE_DEBUG", "False"))
 MOLECULE_VERBOSITY: int = int(os.environ.get("MOLECULE_VERBOSITY", "0"))
@@ -287,7 +285,7 @@ class Config:
 
         important_keys = {"name", "namespace"}
         if missing_keys := important_keys.difference(galaxy_data.keys()):
-            LOG.warning(
+            self._log.warning(
                 "The detected galaxy.yml file (%s) is invalid, missing mandatory field %s",
                 galaxy_file,
                 util.oxford_comma(missing_keys),
@@ -487,7 +485,7 @@ class Config:
                 f"has changed and now defines '{driver_from_scenario}'. "
                 "To change drivers, run 'molecule destroy' for converged scenarios or 'molecule reset' otherwise."
             )
-            LOG.warning(msg)
+            self._log.warning(msg)
 
         return driver_name
 
@@ -679,8 +677,12 @@ class Config:
         Raises:
             MoleculeError: when config file fails to validate.
         """
+        # Use scenario logger with hardcoded values since scenario property isn't available yet
+        scenario_name = self.config["scenario"]["name"]
+        validation_log = logger.get_scenario_logger(__name__, scenario_name, "validate")
+
         msg = f"Validating schema {self.molecule_file}."
-        LOG.debug(msg)
+        validation_log.debug(msg)
 
         errors = schema_v3.validate(self.config)
         if errors:
