@@ -170,7 +170,8 @@ def _generate_scenarios(
     if scenario_names is not None:
         for scenario_name in scenario_names:
             if scenario_name != "*" and scenarios:
-                scenario_log = logger.get_scenario_logger(__name__, scenario_name)
+                # Use generic "discovery" step since this is scenario discovery phase
+                scenario_log = logger.get_scenario_logger(__name__, scenario_name, "discovery")
                 scenario_log.info(
                     "scenario test matrix: %s",
                     ", ".join(scenarios.sequence(scenario_name)),
@@ -202,7 +203,11 @@ def _run_scenarios(
     for scenario in scenarios.all:
         if scenario.config.config["prerun"]:
             role_name_check = scenario.config.config["role_name_check"]
-            scenario_log = logger.get_scenario_logger(__name__, scenario.config.scenario.name)
+            scenario_log = logger.get_scenario_logger(
+                __name__,
+                scenario.config.scenario.name,
+                "prerun",
+            )
             scenario_log.info("Performing prerun with role_name_check=%s...", role_name_check)
             scenario.config.runtime.prepare_environment(
                 install_local=True,
@@ -210,7 +215,11 @@ def _run_scenarios(
             )
 
         if command_args.get("subcommand") == "reset":
-            scenario_log = logger.get_scenario_logger(__name__, scenario.config.scenario.name)
+            scenario_log = logger.get_scenario_logger(
+                __name__,
+                scenario.config.scenario.name,
+                "reset",
+            )
             scenario_log.info("Removing %s", scenario.ephemeral_directory)
             shutil.rmtree(scenario.ephemeral_directory)
             return
@@ -225,7 +234,12 @@ def _run_scenarios(
                     f"An error occurred during the {scenario.config.subcommand} sequence action: "
                     f"'{scenario.config.action}'. Cleaning up."
                 )
-                scenario_log = logger.get_scenario_logger(__name__, scenario.config.scenario.name)
+                step_name = getattr(scenario.config, "action", "cleanup")
+                scenario_log = logger.get_scenario_logger(
+                    __name__,
+                    scenario.config.scenario.name,
+                    step_name,
+                )
                 scenario_log.warning(msg)
                 execute_subcommand(scenario.config, "cleanup")
                 destroy_results = execute_subcommand_default(default_config, "destroy")
@@ -273,7 +287,7 @@ def execute_subcommand_default(
         default.results = []
         return results
     # Use the default scenario name for this warning since it's about the default scenario
-    scenario_log = logger.get_scenario_logger(__name__, default.name)
+    scenario_log = logger.get_scenario_logger(__name__, default.name, subcommand)
     scenario_log.warning(
         "%s not found in default scenario, falling back to current scenario",
         subcommand,
