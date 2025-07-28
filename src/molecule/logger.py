@@ -179,7 +179,7 @@ def configure() -> None:
     handler.setFormatter(formatter)
 
     logger.addHandler(handler)
-    logger.propagate = True
+    logger.propagate = False
     logger.setLevel(logging.INFO)
 
 
