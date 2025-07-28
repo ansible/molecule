@@ -20,6 +20,7 @@
 from __future__ import annotations
 
 import copy
+import logging
 import os
 
 from pathlib import Path
@@ -391,14 +392,26 @@ def test_get_defaults(  # noqa: D103
 def test_validate(  # noqa: D103
     mocker: MockerFixture,
     config_instance: config.Config,
-    patched_logger_debug: Mock,
+    caplog: pytest.LogCaptureFixture,
 ) -> None:
     m = mocker.patch("molecule.model.schema_v3.validate")
     m.return_value = None
 
-    config_instance._validate()
+    with caplog.at_level(logging.DEBUG):
+        config_instance._validate()
 
-    assert patched_logger_debug.call_count == 1
+    # Check that debug message was logged
+    assert len(caplog.records) == 1
+
+    # Check the log message content
+    record = caplog.records[0]
+    assert "Validating schema" in record.message
+    assert config_instance.molecule_file in record.message
+
+    # Check that scenario logger extras are present
+    assert hasattr(record, "molecule_scenario")
+    assert hasattr(record, "molecule_step")
+    assert record.molecule_step == "validate"
 
     m.assert_called_with(config_instance.config)
 
