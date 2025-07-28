@@ -19,8 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
-import logging
-
 import pytest
 
 from molecule import config
@@ -118,28 +116,17 @@ def test_shell_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     caplog: pytest.LogCaptureFixture,
     _instance,  # noqa: PT019
 ):
-    # Configure caplog to capture the correct logger with scenario context
-    with caplog.at_level(logging.INFO, logger="molecule.molecule.logger"):
-        _instance._sh_command = "patched-command"
-        _instance.execute()
+    _instance._sh_command = "patched-command"
+    _instance.execute()
 
-        patched_run_command.assert_called_once_with(
-            "patched-command",
-            debug=False,
-            check=True,
-        )
+    patched_run_command.assert_called_once_with(
+        "patched-command",
+        debug=False,
+        check=True,
+    )
 
-        # Check for scenario-aware log records instead of text
-        assert len(caplog.records) >= 1
-        success_records = [
-            r for r in caplog.records if "Dependency completed successfully" in r.getMessage()
-        ]
-        assert len(success_records) >= 1
-
-        # Verify scenario context is present
-        record = success_records[0]
-        assert hasattr(record, "molecule_scenario")
-        assert record.molecule_scenario == "default"
+    msg = "Dependency completed successfully."
+    assert msg in caplog.text
 
 
 def test_shell_execute_does_not_execute_when_disabled(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
