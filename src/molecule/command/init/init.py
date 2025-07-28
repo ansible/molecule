@@ -21,13 +21,8 @@
 
 from __future__ import annotations
 
-import logging
-
 from molecule.click_cfg import click_group_ex
 from molecule.command.init import scenario
-
-
-LOG = logging.getLogger(__name__)
 
 
 @click_group_ex()

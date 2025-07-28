@@ -21,8 +21,6 @@
 
 from __future__ import annotations
 
-import logging
-
 from typing import TYPE_CHECKING
 
 from rich import box
@@ -41,9 +39,6 @@ if TYPE_CHECKING:
     import click
 
     from molecule.types import CommandArgs
-
-
-LOG = logging.getLogger(__name__)
 
 
 class List(base.Base):

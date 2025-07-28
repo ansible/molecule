@@ -21,8 +21,6 @@
 
 from __future__ import annotations
 
-import logging
-
 from typing import TYPE_CHECKING
 
 import click
@@ -38,9 +36,6 @@ if TYPE_CHECKING:
     import click
 
     from molecule.types import CommandArgs, MoleculeArgs
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Converge(base.Base):
