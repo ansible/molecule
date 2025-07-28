@@ -21,8 +21,6 @@
 
 from __future__ import annotations
 
-import logging
-
 from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict, TypeVar, cast
@@ -32,9 +30,6 @@ from molecule import util
 
 if TYPE_CHECKING:
     from molecule.config import Config
-
-
-LOG = logging.getLogger(__name__)
 VALID_KEYS = [
     "created",
     "converged",
