@@ -25,7 +25,7 @@ charset-normalizer==3.4.2  # via requests
 click==8.2.1              # via black, click-help-colors, mkdocs, pydoclint, molecule (pyproject.toml)
 click-help-colors==0.9.4  # via molecule (pyproject.toml)
 colorama==0.4.6           # via griffe, mkdocs-material, tox
-coverage==7.10.0           # via molecule (pyproject.toml)
+coverage==7.10.0          # via molecule (pyproject.toml)
 cryptography==45.0.5      # via ansible-core
 csscompressor==0.9.5      # via mkdocs-minify-plugin
 cssselect2==0.8.0         # via cairosvg
