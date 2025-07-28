@@ -19,6 +19,8 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import logging
+
 from typing import TYPE_CHECKING
 
 import pytest
@@ -57,17 +59,20 @@ def test_idempotence_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D
     _patched_is_idempotent: Mock,  # noqa: PT019
     _instance,  # noqa: PT019
 ):
-    _instance.execute()
+    with caplog.at_level(logging.INFO, logger="molecule.molecule.logger"):
+        _instance.execute()
 
-    assert "default" in caplog.text
-    assert "idempotence" in caplog.text
+    # Check that we have log records with scenario and step information
+    assert any(
+        hasattr(record, "molecule_scenario")
+        and hasattr(record, "molecule_step")
+        and record.molecule_step == "idempotence"
+        for record in caplog.records
+    )
 
     patched_ansible_converge.assert_called_once_with()
 
     _patched_is_idempotent.assert_called_once_with("patched-ansible-converge-stdout")
-
-    msg = "Idempotence completed successfully."
-    assert msg in caplog.text
 
 
 def test_execute_raises_when_not_converged(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103

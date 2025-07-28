@@ -27,7 +27,7 @@ import subprocess
 
 from typing import TYPE_CHECKING
 
-from molecule import logger, scenarios
+from molecule import scenarios
 from molecule.click_cfg import click_command_ex, options
 from molecule.command import base
 from molecule.exceptions import MoleculeError
@@ -51,7 +51,6 @@ class Login(base.Base):
         """
         super().__init__(c)
         self._pt = None
-        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name, "login")
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to perform a `molecule login`.

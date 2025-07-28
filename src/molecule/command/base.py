@@ -86,6 +86,17 @@ class Base(abc.ABC):
             self._config.provisioner.write_config()
             self._config.provisioner.manage_inventory()
 
+    @property
+    def _log(self) -> logger.ScenarioLoggerAdapter:
+        """Get a scenario logger with automatic step name derivation.
+
+        Returns:
+            A scenario logger adapter with current scenario and step context.
+            The step name is automatically derived from the class name (e.g., 'Idempotence' -> 'idempotence').
+        """
+        step_name = self.__class__.__name__.lower()
+        return logger.get_scenario_logger(__name__, self._config.scenario.name, step_name)
+
 
 def execute_cmdline_scenarios(
     scenario_names: list[str] | None,
