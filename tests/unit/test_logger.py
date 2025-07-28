@@ -27,7 +27,7 @@ import pytest
 
 from molecule.ansi_output import should_do_markup
 from molecule.command.base import Base
-from molecule.logger import get_section_loggers
+from molecule.logger import get_scenario_logger, get_section_loggers
 
 
 if TYPE_CHECKING:
@@ -134,3 +134,31 @@ def test_logger_class():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
 
     # this test throws RecursionError prior to bugfix
     assert FooLogger("foo")
+
+
+def test_scenario_logger_with_step(caplog):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    # Test logger with step
+    logger_with_step = get_scenario_logger("test", "test_scenario", "converge")
+
+    with caplog.at_level(logging.INFO):
+        logger_with_step.info("Test message")
+
+    # Check that the log record has both scenario and step information
+    record = caplog.records[0]
+    assert hasattr(record, "molecule_scenario")
+    assert hasattr(record, "molecule_step")
+    assert record.molecule_scenario == "test_scenario"
+    assert record.molecule_step == "converge"
+
+    # Test logger without step
+    caplog.clear()
+    logger_without_step = get_scenario_logger("test", "test_scenario")
+
+    with caplog.at_level(logging.INFO):
+        logger_without_step.info("Test message")
+
+    # Check that the log record has scenario but no step information
+    record = caplog.records[0]
+    assert hasattr(record, "molecule_scenario")
+    assert not hasattr(record, "molecule_step")
+    assert record.molecule_scenario == "test_scenario"

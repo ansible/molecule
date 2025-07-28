@@ -19,6 +19,8 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import logging
+
 from typing import TYPE_CHECKING
 
 import pytest
@@ -49,8 +51,17 @@ def test_check_execute(  # noqa: D103
     patched_config_validate: Mock,
     config_instance: config.Config,
 ) -> None:
-    c = check.Check(config_instance)
-    c.execute()
+    # Configure caplog to capture the correct logger
+    with caplog.at_level(logging.INFO, logger="molecule.molecule.logger"):
+        c = check.Check(config_instance)
+        c.execute()
 
-    assert "default" in caplog.text
-    assert "check" in caplog.text
+        # Check that logs contain scenario and step information in extras
+        assert len(caplog.records) >= 1
+        record = caplog.records[0]
+        assert hasattr(record, "molecule_scenario")
+        assert record.molecule_scenario == "default"
+        assert hasattr(record, "molecule_step")
+        assert record.molecule_step == "check"
+
+    _patched_ansible_check.assert_called_once_with()
