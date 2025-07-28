@@ -23,7 +23,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from molecule import config, logger
+from molecule import logger
 from molecule.click_cfg import click_command_ex, common_options
 from molecule.command import base
 
@@ -36,14 +36,6 @@ if TYPE_CHECKING:
 
 class Create(base.Base):
     """Create Command Class."""
-
-    def __init__(self, c: config.Config) -> None:
-        """Initialize Create command.
-
-        Args:
-            c: An instance of a Molecule config.
-        """
-        super().__init__(c)
 
     @property
     def _log(self) -> logger.ScenarioLoggerAdapter:

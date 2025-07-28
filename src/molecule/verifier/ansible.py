@@ -32,7 +32,6 @@ from molecule.api import Verifier
 if TYPE_CHECKING:
     from collections.abc import MutableMapping
 
-    from molecule.config import Config
     from molecule.verifier.base import Schema
 
 
@@ -65,14 +64,6 @@ class Ansible(Verifier):
             FOO: bar
     ```
     """
-
-    def __init__(self, config: Config) -> None:
-        """Initialize Ansible verifier.
-
-        Args:
-            config: An instance of a Molecule config.
-        """
-        super().__init__(config)
 
     @property
     def _log(self) -> logger.ScenarioLoggerAdapter:

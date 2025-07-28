@@ -39,7 +39,6 @@ from molecule.provisioner import ansible_playbook, ansible_playbooks, base
 if TYPE_CHECKING:
     from typing import Any
 
-    from molecule.config import Config
     from molecule.types import Options
 
     Vivify = collections.defaultdict[str, Any | "Vivify"]
@@ -406,14 +405,6 @@ class Ansible(base.Base):
             - --limit=host1,host2
     ```
     """
-
-    def __init__(self, config: Config) -> None:
-        """Initialize Ansible provisioner.
-
-        Args:
-            config: An instance of a Molecule config.
-        """
-        super().__init__(config)
 
     @property
     def _log(self) -> logger.ScenarioLoggerAdapter:
