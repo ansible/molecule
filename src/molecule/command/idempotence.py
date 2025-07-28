@@ -52,7 +52,7 @@ class Idempotence(base.Base):
             c: An instance of a Molecule config.
         """
         super().__init__(c)
-        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
+        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name, "idempotence")
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to perform a `molecule idempotence`.

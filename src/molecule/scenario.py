@@ -67,7 +67,7 @@ class Scenario:
     def _remove_scenario_state_directory(self) -> None:
         """Remove scenario cached disk stored state."""
         directory = str(Path(self.ephemeral_directory).parent)
-        scenario_log = logger.get_scenario_logger(__name__, self.name)
+        scenario_log = logger.get_scenario_logger(__name__, self.name, "scenario")
         scenario_log.info("Removing %s", directory)
         shutil.rmtree(directory)
 
@@ -79,7 +79,7 @@ class Scenario:
         files declared as "safe_files" in the ``driver`` configuration
         declared in ``molecule.yml``.
         """
-        scenario_log = logger.get_scenario_logger(__name__, self.name)
+        scenario_log = logger.get_scenario_logger(__name__, self.name, "scenario")
         scenario_log.info("Pruning extra files from scenario ephemeral directory")
 
         safe_files = [
@@ -155,7 +155,7 @@ class Scenario:
                         break
                     except OSError:
                         delay = 30 * i
-                        scenario_log = logger.get_scenario_logger(__name__, self.name)
+                        scenario_log = logger.get_scenario_logger(__name__, self.name, "scenario")
                         scenario_log.warning(
                             "Retrying to acquire lock on %s, waiting for %s seconds",
                             path,
@@ -163,7 +163,7 @@ class Scenario:
                         )
                         sleep(delay)
                 else:
-                    scenario_log = logger.get_scenario_logger(__name__, self.name)
+                    scenario_log = logger.get_scenario_logger(__name__, self.name, "scenario")
                     scenario_log.warning("Timedout trying to acquire lock on %s", path)
                     raise MoleculeError(code=RC_TIMEOUT)
 

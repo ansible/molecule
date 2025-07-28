@@ -94,7 +94,7 @@ class Prepare(base.Base):
             c: An instance of a Molecule config.
         """
         super().__init__(c)
-        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
+        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name, "prepare")
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to prepare the instances.
