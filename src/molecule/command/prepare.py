@@ -23,7 +23,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from molecule import config, logger
 from molecule.click_cfg import click_command_ex, common_options
 from molecule.command import base
 
@@ -86,15 +85,6 @@ class Prepare(base.Base):
         Load an env file to read variables from when rendering
         molecule.yml.
     """
-
-    def __init__(self, c: config.Config) -> None:
-        """Initialize Prepare command.
-
-        Args:
-            c: An instance of a Molecule config.
-        """
-        super().__init__(c)
-        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to prepare the instances.

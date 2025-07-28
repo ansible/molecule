@@ -247,22 +247,20 @@ class ScenarioLoggerAdapter(logging.LoggerAdapter):  # type: ignore[type-arg]
 def get_scenario_logger(
     name: str,
     scenario_name: str,
-    step_name: str | None = None,
+    step_name: str,
 ) -> ScenarioLoggerAdapter:
     """Return a scenario-aware logger that includes scenario name in all messages.
 
     Args:
         name: Name of the child logger.
         scenario_name: Name of the scenario for context.
-        step_name: Optional step name (e.g., 'converge', 'create', 'destroy').
+        step_name: Step name (e.g., 'converge', 'create', 'destroy').
 
     Returns:
         A ScenarioLoggerAdapter that includes scenario context in all messages.
     """
     logger = get_logger(name)
-    extra = {"scenario_name": scenario_name}
-    if step_name:
-        extra["step_name"] = step_name
+    extra = {"scenario_name": scenario_name, "step_name": step_name}
     return ScenarioLoggerAdapter(logger, extra)
 
 

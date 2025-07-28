@@ -81,6 +81,16 @@ class Base(abc.ABC):
         for wrapper in logger.get_section_loggers():
             cls.execute = wrapper(cls.execute)  # type: ignore[method-assign,assignment]
 
+    @property
+    def _log(self) -> logger.ScenarioLoggerAdapter:
+        """Get a scenario logger with command-specific step context.
+
+        Returns:
+            A scenario logger adapter with current scenario and step context.
+        """
+        step_name = self.__class__.__name__.lower()
+        return logger.get_scenario_logger(__name__, self._config.scenario.name, step_name)
+
     @abc.abstractmethod
     def execute(
         self,
