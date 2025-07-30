@@ -13,6 +13,13 @@ community.molecule/plugins/filter/molecule_core.py
     DOC201: Function `get_docker_networks` does not have a return section in docstring
     DOC201: Method `FilterModule.filters` does not have a return section in docstring
 --------------------
+src/molecule/compatibility.py
+    DOC101: Method `StrEnum._generate_next_value_`: Docstring contains fewer arguments than in function signature.
+    DOC106: Method `StrEnum._generate_next_value_`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
+    DOC107: Method `StrEnum._generate_next_value_`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
+    DOC103: Method `StrEnum._generate_next_value_`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [count: , last_values: , name: , start: ].
+    DOC201: Method `StrEnum._generate_next_value_` does not have a return section in docstring
+--------------------
 tests/conftest.py
     DOC101: Function `app`: Docstring contains fewer arguments than in function signature.
     DOC103: Function `app`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [name: str].
@@ -99,6 +106,12 @@ tests/unit/conftest.py
 --------------------
 tests/unit/provisioner/test_ansible.py
     DOC201: Function `fixture_instance` does not have a return section in docstring
+--------------------
+tests/unit/test_compatibility.py
+    DOC601: Class `CompatEnum`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+    DOC603: Class `CompatEnum`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [BAR: , BAZ_QUX: , FOO: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+    DOC601: Class `AutoEnum`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+    DOC603: Class `AutoEnum`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [BLUE: , GREEN: , RED: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
 --------------------
 tests/unit/test_logger.py
     DOC101: Function `_patched_logger_env`: Docstring contains fewer arguments than in function signature.
