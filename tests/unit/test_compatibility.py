@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import sys
 
-import pytest
-
 from molecule.compatibility import StrEnum
 
 
@@ -25,6 +23,7 @@ class TestCompatEnum(StrEnum):  # noqa: DOC601, DOC603
 class TestAutoEnum(StrEnum):  # noqa: DOC601, DOC603
     """Test enum using auto() for compatibility testing."""
 
+    # Use version-specific approach since built-in StrEnum doesn't have _generate_next_value_
     RED = StrEnum._generate_next_value_("RED", 1, 0, []) if sys.version_info < (3, 11) else "red"
     GREEN = (
         StrEnum._generate_next_value_("GREEN", 1, 1, ["red"])
@@ -53,23 +52,15 @@ def test_str_enum_format_behavior() -> None:
 
     # Test __format__ behavior
     assert f"{TestCompatEnum.FOO}" == "foo"
-    assert f"{TestCompatEnum.FOO}" == "foo"
     assert f"{TestCompatEnum.FOO:>10}" == "       foo"
 
 
 def test_str_enum_auto_behavior() -> None:
     """Test that auto() produces lowercase member names."""
-    # Our custom implementation should produce lowercase names
-    if sys.version_info < (3, 11):
-        # Test our _generate_next_value_ directly
-        assert TestAutoEnum.RED == "red"
-        assert TestAutoEnum.GREEN == "green"
-        assert TestAutoEnum.BLUE == "blue"
-    else:
-        # On Python 3.11+, we use built-in StrEnum which also does lowercase auto()
-        assert TestAutoEnum.RED == "red"
-        assert TestAutoEnum.GREEN == "green"
-        assert TestAutoEnum.BLUE == "blue"
+    # Both implementations should produce lowercase names
+    assert TestAutoEnum.RED == "red"
+    assert TestAutoEnum.GREEN == "green"
+    assert TestAutoEnum.BLUE == "blue"
 
 
 def test_str_enum_repr() -> None:
@@ -84,39 +75,6 @@ def test_str_enum_repr() -> None:
         # Our custom _StrEnum should use standard enum repr
         assert "TestCompatEnum.FOO" in repr(TestCompatEnum.FOO)
         assert "foo" in repr(TestCompatEnum.FOO)
-
-
-def test_str_enum_list() -> None:
-    """Test StrEnum list method (custom implementation only)."""
-    if sys.version_info >= (3, 11):
-        # Built-in enum.StrEnum doesn't have list() method
-        pytest.skip("Built-in enum.StrEnum doesn't have custom list() method")
-
-    values = TestCompatEnum.list()
-    assert values == ["foo", "bar", "baz_qux"]
-    assert isinstance(values, list)
-    assert all(isinstance(v, str) for v in values)
-
-
-def test_str_enum_from_str() -> None:
-    """Test StrEnum from_str method (custom implementation only)."""
-    if sys.version_info >= (3, 11):
-        # Built-in enum.StrEnum doesn't have from_str() method
-        pytest.skip("Built-in enum.StrEnum doesn't have custom from_str() method")
-
-    assert TestCompatEnum.from_str("foo") == TestCompatEnum.FOO
-    assert TestCompatEnum.from_str("bar") == TestCompatEnum.BAR
-    assert TestCompatEnum.from_str("baz_qux") == TestCompatEnum.BAZ_QUX
-
-
-def test_str_enum_from_str_invalid() -> None:
-    """Test StrEnum from_str with invalid value (custom implementation only)."""
-    if sys.version_info >= (3, 11):
-        # Built-in enum.StrEnum doesn't have from_str() method
-        pytest.skip("Built-in enum.StrEnum doesn't have custom from_str() method")
-
-    with pytest.raises(ValueError, match="'invalid' is not a valid TestCompatEnum"):
-        TestCompatEnum.from_str("invalid")
 
 
 def test_str_enum_iteration() -> None:
@@ -142,15 +100,10 @@ def test_str_enum_python_version_compatibility() -> None:
     assert isinstance(test_enum, str)
     assert str(test_enum) == "foo"
 
-    # Check for version-specific methods
-    if sys.version_info >= (3, 11):
-        # Built-in enum.StrEnum - should NOT have custom methods
-        assert not hasattr(TestCompatEnum, "list")
-        assert not hasattr(TestCompatEnum, "from_str")
-    else:
-        # Custom _StrEnum - should have custom methods
-        assert hasattr(TestCompatEnum, "list")
-        assert hasattr(TestCompatEnum, "from_str")
+    # Both implementations should have the same interface now
+    # No custom methods should be present on either implementation
+    assert not hasattr(TestCompatEnum, "list")
+    assert not hasattr(TestCompatEnum, "from_str")
 
 
 def test_str_enum_hash_behavior() -> None:

@@ -23,11 +23,22 @@ class _StrEnum(str, enum.Enum):
     """
 
     def __str__(self) -> str:
-        """Use str.__str__ for compatibility with Python 3.11 StrEnum."""
+        """Use str.__str__ for compatibility with Python 3.11 StrEnum.
+
+        Returns:
+            str: String representation of the enum value.
+        """
         return str.__str__(self)
 
     def __format__(self, format_spec: str) -> str:
-        """Use str.__format__ for compatibility with Python 3.11 StrEnum."""
+        """Use str.__format__ for compatibility with Python 3.11 StrEnum.
+
+        Args:
+            format_spec (str): Format specification string.
+
+        Returns:
+            str: Formatted string representation of the enum value.
+        """
         return str.__format__(self, format_spec)
 
     @staticmethod
@@ -47,34 +58,6 @@ class _StrEnum(str, enum.Enum):
             The lowercase member name.
         """
         return name.lower()
-
-    @classmethod
-    def list(cls) -> list[str]:
-        """Return a list of all enum values.
-
-        Returns:
-            List of string values for all enum members.
-        """
-        return [c.value for c in cls]
-
-    @classmethod
-    def from_str(cls, value: str) -> _StrEnum:
-        """Get enum member from string value.
-
-        Args:
-            value: String value to convert to enum member.
-
-        Returns:
-            The matching enum member.
-
-        Raises:
-            ValueError: If value is not found in enum.
-        """
-        for member in cls:
-            if member.value == value:
-                return member
-        msg = f"{value!r} is not a valid {cls.__name__}"
-        raise ValueError(msg)
 
 
 if version_info >= (3, 11):
