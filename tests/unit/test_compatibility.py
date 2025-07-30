@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import sys
-
 from molecule.compatibility import StrEnum
 
 
@@ -23,18 +21,10 @@ class TestCompatEnum(StrEnum):  # noqa: DOC601, DOC603
 class TestAutoEnum(StrEnum):  # noqa: DOC601, DOC603
     """Test enum using auto() for compatibility testing."""
 
-    # Use version-specific approach since built-in StrEnum doesn't have _generate_next_value_
-    RED = StrEnum._generate_next_value_("RED", 1, 0, []) if sys.version_info < (3, 11) else "red"
-    GREEN = (
-        StrEnum._generate_next_value_("GREEN", 1, 1, ["red"])
-        if sys.version_info < (3, 11)
-        else "green"
-    )
-    BLUE = (
-        StrEnum._generate_next_value_("BLUE", 1, 2, ["red", "green"])
-        if sys.version_info < (3, 11)
-        else "blue"
-    )
+    # Use _generate_next_value_ directly to test auto() behavior
+    RED = StrEnum._generate_next_value_("RED", 1, 0, [])
+    GREEN = StrEnum._generate_next_value_("GREEN", 1, 1, ["red"])
+    BLUE = StrEnum._generate_next_value_("BLUE", 1, 2, ["red", "green"])
 
 
 def test_str_enum_string_behavior() -> None:
@@ -65,16 +55,9 @@ def test_str_enum_auto_behavior() -> None:
 
 def test_str_enum_repr() -> None:
     """Test StrEnum representation."""
-    # Different implementations have different repr formats
-    if sys.version_info >= (3, 11):
-        # Built-in enum.StrEnum format
-        assert repr(TestCompatEnum.FOO) == "<TestCompatEnum.FOO: 'foo'>"
-        assert repr(TestCompatEnum.BAR) == "<TestCompatEnum.BAR: 'bar'>"
-        assert repr(TestCompatEnum.BAZ_QUX) == "<TestCompatEnum.BAZ_QUX: 'baz_qux'>"
-    else:
-        # Our custom _StrEnum should use standard enum repr
-        assert "TestCompatEnum.FOO" in repr(TestCompatEnum.FOO)
-        assert "foo" in repr(TestCompatEnum.FOO)
+    # Consistent repr format with vendored implementation
+    assert "TestCompatEnum.FOO" in repr(TestCompatEnum.FOO)
+    assert "foo" in repr(TestCompatEnum.FOO)
 
 
 def test_str_enum_iteration() -> None:
@@ -93,15 +76,15 @@ def test_str_enum_comparison() -> None:
     assert TestCompatEnum.BAZ_QUX == "baz_qux"
 
 
-def test_str_enum_python_version_compatibility() -> None:
-    """Test that correct StrEnum implementation is used based on Python version."""
-    # Verify the enum works regardless of Python version
+def test_str_enum_compatibility() -> None:
+    """Test that StrEnum has consistent behavior."""
+    # Verify the enum works as expected
     test_enum = TestCompatEnum.FOO
     assert isinstance(test_enum, str)
+    assert isinstance(test_enum, TestCompatEnum)
     assert str(test_enum) == "foo"
 
-    # Both implementations should have the same interface now
-    # No custom methods should be present on either implementation
+    # No custom methods should be present
     assert not hasattr(TestCompatEnum, "list")
     assert not hasattr(TestCompatEnum, "from_str")
 
@@ -117,7 +100,7 @@ def test_str_enum_hash_behavior() -> None:
 
 
 def test_str_enum_basic_functionality() -> None:
-    """Test core StrEnum functionality that works on all Python versions."""
+    """Test core StrEnum functionality."""
     # Test that it's both a string and an enum
     assert isinstance(TestCompatEnum.FOO, str)
     assert isinstance(TestCompatEnum.FOO, TestCompatEnum)
@@ -142,3 +125,10 @@ def test_str_enum_string_methods() -> None:
     # Test string formatting
     assert f"prefix_{TestCompatEnum.FOO}_suffix" == "prefix_foo_suffix"
     assert TestCompatEnum.FOO.center(10, "*") == "***foo****"
+
+
+def test_str_enum_new_method() -> None:
+    """Test StrEnum.__new__ behavior."""
+    # Test that creating from string works correctly
+    assert TestCompatEnum("foo") == TestCompatEnum.FOO
+    assert TestCompatEnum("bar") == TestCompatEnum.BAR
