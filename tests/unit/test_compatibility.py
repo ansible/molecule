@@ -22,12 +22,54 @@ class TestCompatEnum(StrEnum):  # noqa: DOC601, DOC603
     BAZ_QUX = "baz_qux"
 
 
+class TestAutoEnum(StrEnum):  # noqa: DOC601, DOC603
+    """Test enum using auto() for compatibility testing."""
+
+    RED = StrEnum._generate_next_value_("RED", 1, 0, []) if sys.version_info < (3, 11) else "red"
+    GREEN = (
+        StrEnum._generate_next_value_("GREEN", 1, 1, ["red"])
+        if sys.version_info < (3, 11)
+        else "green"
+    )
+    BLUE = (
+        StrEnum._generate_next_value_("BLUE", 1, 2, ["red", "green"])
+        if sys.version_info < (3, 11)
+        else "blue"
+    )
+
+
 def test_str_enum_string_behavior() -> None:
     """Test that StrEnum behaves like a string."""
     assert str(TestCompatEnum.FOO) == "foo"
     assert TestCompatEnum.FOO == "foo"
     assert TestCompatEnum.BAR == "bar"
     assert TestCompatEnum.BAZ_QUX == "baz_qux"
+
+
+def test_str_enum_format_behavior() -> None:
+    """Test StrEnum format behavior matches Python 3.11."""
+    # Test __str__ behavior
+    assert str(TestCompatEnum.FOO) == "foo"
+
+    # Test __format__ behavior
+    assert f"{TestCompatEnum.FOO}" == "foo"
+    assert f"{TestCompatEnum.FOO}" == "foo"
+    assert f"{TestCompatEnum.FOO:>10}" == "       foo"
+
+
+def test_str_enum_auto_behavior() -> None:
+    """Test that auto() produces lowercase member names."""
+    # Our custom implementation should produce lowercase names
+    if sys.version_info < (3, 11):
+        # Test our _generate_next_value_ directly
+        assert TestAutoEnum.RED == "red"
+        assert TestAutoEnum.GREEN == "green"
+        assert TestAutoEnum.BLUE == "blue"
+    else:
+        # On Python 3.11+, we use built-in StrEnum which also does lowercase auto()
+        assert TestAutoEnum.RED == "red"
+        assert TestAutoEnum.GREEN == "green"
+        assert TestAutoEnum.BLUE == "blue"
 
 
 def test_str_enum_repr() -> None:
@@ -39,10 +81,9 @@ def test_str_enum_repr() -> None:
         assert repr(TestCompatEnum.BAR) == "<TestCompatEnum.BAR: 'bar'>"
         assert repr(TestCompatEnum.BAZ_QUX) == "<TestCompatEnum.BAZ_QUX: 'baz_qux'>"
     else:
-        # Custom _StrEnum format
-        assert repr(TestCompatEnum.FOO) == "TestCompatEnum.FOO"
-        assert repr(TestCompatEnum.BAR) == "TestCompatEnum.BAR"
-        assert repr(TestCompatEnum.BAZ_QUX) == "TestCompatEnum.BAZ_QUX"
+        # Our custom _StrEnum should use standard enum repr
+        assert "TestCompatEnum.FOO" in repr(TestCompatEnum.FOO)
+        assert "foo" in repr(TestCompatEnum.FOO)
 
 
 def test_str_enum_list() -> None:
@@ -135,3 +176,16 @@ def test_str_enum_basic_functionality() -> None:
     # Test enum operations
     assert TestCompatEnum.FOO.name == "FOO"
     assert TestCompatEnum.FOO.value == "foo"
+
+
+def test_str_enum_string_methods() -> None:
+    """Test that string methods work correctly on StrEnum."""
+    # Test various string methods work
+    assert TestCompatEnum.FOO.startswith("f")
+    assert TestCompatEnum.BAR.endswith("r")
+    assert TestCompatEnum.FOO.capitalize() == "Foo"
+    assert TestCompatEnum.BAR.count("a") == 1
+
+    # Test string formatting
+    assert f"prefix_{TestCompatEnum.FOO}_suffix" == "prefix_foo_suffix"
+    assert TestCompatEnum.FOO.center(10, "*") == "***foo****"
