@@ -1,3 +1,5 @@
+# ruff: noqa: ANN001, D102
+# pylint: disable=missing-function-docstring,missing-return-doc,missing-param-doc
 """Compatibility module for Python 3.10+."""
 
 from __future__ import annotations
