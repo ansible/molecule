@@ -1,5 +1,4 @@
 # mypy: ignore-errors
-# pydoclint: disable
 """Test the molecule compatibility module."""
 
 from __future__ import annotations
