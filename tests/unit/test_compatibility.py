@@ -1,7 +1,10 @@
 # mypy: ignore-errors
+# pydoclint: disable
 """Test the molecule compatibility module."""
 
 from __future__ import annotations
+
+from enum import auto
 
 from molecule.compatibility import StrEnum
 
@@ -22,10 +25,9 @@ class CompatEnum(StrEnum):  # noqa: DOC601, DOC603
 class AutoEnum(StrEnum):  # noqa: DOC601, DOC603
     """Test enum using auto() for compatibility testing."""
 
-    # Use _generate_next_value_ directly to test auto() behavior
-    RED = StrEnum._generate_next_value_("RED", 1, 0, [])
-    GREEN = StrEnum._generate_next_value_("GREEN", 1, 1, ["red"])
-    BLUE = StrEnum._generate_next_value_("BLUE", 1, 2, ["red", "green"])
+    RED = auto()
+    GREEN = auto()
+    BLUE = auto()
 
 
 def test_str_enum_string_behavior() -> None:
@@ -43,93 +45,99 @@ def test_str_enum_format_behavior() -> None:
 
     # Test __format__ behavior
     assert f"{CompatEnum.FOO}" == "foo"
+    assert f"{CompatEnum.BAR}" == "bar"
+    assert f"{CompatEnum.BAZ_QUX}" == "baz_qux"
+
+    # Test format with format spec
     assert f"{CompatEnum.FOO:>10}" == "       foo"
+    assert f"{CompatEnum.BAR:<10}" == "bar       "
 
 
 def test_str_enum_auto_behavior() -> None:
-    """Test that auto() produces lowercase member names."""
-    # Both implementations should produce lowercase names
+    """Test auto() behavior produces lowercase names."""
     assert AutoEnum.RED == "red"
     assert AutoEnum.GREEN == "green"
     assert AutoEnum.BLUE == "blue"
 
 
 def test_str_enum_repr() -> None:
-    """Test StrEnum representation."""
-    # Consistent repr format with vendored implementation
-    assert "CompatEnum.FOO" in repr(CompatEnum.FOO)
-    assert "foo" in repr(CompatEnum.FOO)
+    """Test StrEnum repr behavior."""
+    assert repr(CompatEnum.FOO) == "<CompatEnum.FOO: 'foo'>"
+    assert repr(AutoEnum.RED) == "<AutoEnum.RED: 'red'>"
 
 
 def test_str_enum_iteration() -> None:
-    """Test that StrEnum can be iterated."""
-    members = list(CompatEnum)
-    assert len(members) == EXPECTED_ENUM_COUNT
-    assert CompatEnum.FOO in members
-    assert CompatEnum.BAR in members
-    assert CompatEnum.BAZ_QUX in members
+    """Test StrEnum iteration."""
+    values = [item.value for item in CompatEnum]
+    assert len(values) == EXPECTED_ENUM_COUNT
+    assert "foo" in values
+    assert "bar" in values
+    assert "baz_qux" in values
 
 
 def test_str_enum_comparison() -> None:
-    """Test StrEnum string comparison."""
+    """Test StrEnum comparison with strings."""
     assert CompatEnum.FOO == "foo"
+    assert CompatEnum.FOO != "bar"
+    assert CompatEnum.BAR == "bar"
     assert CompatEnum.BAR != "foo"
-    assert CompatEnum.BAZ_QUX == "baz_qux"
+
+    # Test with auto values
+    assert AutoEnum.RED == "red"
+    assert AutoEnum.GREEN == "green"
 
 
-def test_str_enum_compatibility() -> None:
-    """Test that StrEnum has consistent behavior."""
-    # Verify the enum works as expected
-    test_enum = CompatEnum.FOO
-    assert isinstance(test_enum, str)
-    assert isinstance(test_enum, CompatEnum)
-    assert str(test_enum) == "foo"
+def test_str_enum_hash() -> None:
+    """Test StrEnum hash behavior."""
+    # Should be able to use as dict keys
+    d = {CompatEnum.FOO: "value1", CompatEnum.BAR: "value2"}
+    assert d[CompatEnum.FOO] == "value1"
+    assert d[CompatEnum.BAR] == "value2"
 
-    # No custom methods should be present
-    assert not hasattr(CompatEnum, "list")
-    assert not hasattr(CompatEnum, "from_str")
-
-
-def test_str_enum_hash_behavior() -> None:
-    """Test StrEnum hash behavior for use in sets/dicts."""
-    enum_set = {CompatEnum.FOO, CompatEnum.BAR, CompatEnum.FOO}
-    assert len(enum_set) == EXPECTED_UNIQUE_SET_SIZE  # Duplicates should be removed
-
-    enum_dict = {CompatEnum.FOO: "value1", CompatEnum.BAR: "value2"}
-    assert enum_dict[CompatEnum.FOO] == "value1"
-    assert enum_dict[CompatEnum.BAR] == "value2"
+    # Test uniqueness
+    s = {CompatEnum.FOO, CompatEnum.BAR, CompatEnum.FOO}
+    assert len(s) == EXPECTED_UNIQUE_SET_SIZE
 
 
-def test_str_enum_basic_functionality() -> None:
-    """Test core StrEnum functionality."""
-    # Test that it's both a string and an enum
-    assert isinstance(CompatEnum.FOO, str)
-    assert isinstance(CompatEnum.FOO, CompatEnum)
+def test_str_enum_basic_functionality() -> None:  # type: ignore
+    """Test basic StrEnum functionality."""
+    # Test membership
+    assert CompatEnum.FOO in CompatEnum
+    assert "random_value" not in [e.value for e in CompatEnum]
 
-    # Test string operations
-    assert CompatEnum.FOO.upper() == "FOO"
-    assert CompatEnum.FOO.replace("o", "x") == "fxx"
-
-    # Test enum operations
+    # Test name access
     assert CompatEnum.FOO.name == "FOO"
+    assert CompatEnum.BAR.name == "BAR"
+
+    # Test value access
     assert CompatEnum.FOO.value == "foo"
+    assert CompatEnum.BAR.value == "bar"
 
 
 def test_str_enum_string_methods() -> None:
-    """Test that string methods work correctly on StrEnum."""
-    # Test various string methods work
-    assert CompatEnum.FOO.startswith("f")
-    assert CompatEnum.BAR.endswith("r")
+    """Test that string methods work on StrEnum."""
+    assert CompatEnum.FOO.upper() == "FOO"
+    assert CompatEnum.BAR.lower() == "bar"
     assert CompatEnum.FOO.capitalize() == "Foo"
-    assert CompatEnum.BAR.count("a") == 1
-
-    # Test string formatting
-    assert f"prefix_{CompatEnum.FOO}_suffix" == "prefix_foo_suffix"
-    assert CompatEnum.FOO.center(10, "*") == "***foo****"
+    assert CompatEnum.BAZ_QUX.replace("_", "-") == "baz-qux"
 
 
-def test_str_enum_new_method() -> None:
-    """Test StrEnum.__new__ behavior."""
-    # Test that creating from string works correctly
-    assert CompatEnum("foo") == CompatEnum.FOO
-    assert CompatEnum("bar") == CompatEnum.BAR
+def test_str_enum_new_method() -> None:  # type: ignore
+    """Test StrEnum __new__ method behavior."""
+    # Test creating with string value
+    foo_enum = CompatEnum("foo")
+    assert foo_enum == CompatEnum.FOO
+    assert foo_enum is CompatEnum.FOO
+
+    # Test that StrEnum converts non-string values to strings during enum creation
+    class IntCompatEnum(StrEnum):
+        ONE = 1  # This will be converted to "1" by StrEnum.__new__
+        TWO = 2  # This will be converted to "2" by StrEnum.__new__
+
+    # The actual values stored are strings
+    assert IntCompatEnum.ONE.value == "1"
+    assert IntCompatEnum.TWO.value == "2"
+
+    # Lookup by the actual string value works
+    assert IntCompatEnum("1") == IntCompatEnum.ONE
+    assert IntCompatEnum("2") == IntCompatEnum.TWO
