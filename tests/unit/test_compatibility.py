@@ -1,5 +1,4 @@
 # mypy: ignore-errors
-# pydoclint: disable
 """Test the molecule compatibility module."""
 
 from __future__ import annotations
@@ -99,7 +98,7 @@ def test_str_enum_hash() -> None:
     assert len(s) == EXPECTED_UNIQUE_SET_SIZE
 
 
-def test_str_enum_basic_functionality() -> None:  # type: ignore
+def test_str_enum_basic_functionality() -> None:
     """Test basic StrEnum functionality."""
     # Test membership
     assert CompatEnum.FOO in CompatEnum
@@ -122,7 +121,7 @@ def test_str_enum_string_methods() -> None:
     assert CompatEnum.BAZ_QUX.replace("_", "-") == "baz-qux"
 
 
-def test_str_enum_new_method() -> None:  # type: ignore
+def test_str_enum_new_method() -> None:
     """Test StrEnum __new__ method behavior."""
     # Test creating with string value
     foo_enum = CompatEnum("foo")
