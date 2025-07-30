@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import logging
 import os
 
 from typing import TYPE_CHECKING
@@ -70,9 +71,17 @@ def test_cleanup_execute(  # noqa: D103
     util.write_file(pb, "")
 
     cu = cleanup.Cleanup(config_instance)
-    cu.execute()
 
-    assert "cleanup" in caplog.text
+    with caplog.at_level(logging.INFO, logger="molecule.molecule.logger"):
+        cu.execute()
+
+    # Check that we have log records with scenario and step information
+    assert any(
+        hasattr(record, "molecule_scenario")
+        and hasattr(record, "molecule_step")
+        and record.molecule_step == "cleanup"
+        for record in caplog.records
+    )
 
     _patched_ansible_cleanup.assert_called_once_with()
 

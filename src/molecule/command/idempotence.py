@@ -25,7 +25,6 @@ import re
 
 from typing import TYPE_CHECKING
 
-from molecule import config, logger
 from molecule.click_cfg import click_command_ex, common_options
 from molecule.command import base
 from molecule.exceptions import ScenarioFailureError
@@ -44,15 +43,6 @@ class Idempotence(base.Base):
     If no tasks will be marked as changed \
     the scenario will be considered idempotent.
     """
-
-    def __init__(self, c: config.Config) -> None:
-        """Initialize Idempotence command.
-
-        Args:
-            c: An instance of a Molecule config.
-        """
-        super().__init__(c)
-        self._log = logger.get_scenario_logger(__name__, self._config.scenario.name)
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to perform a `molecule idempotence`.

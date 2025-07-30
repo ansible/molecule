@@ -150,15 +150,15 @@ def test_scenario_logger_with_step(caplog):  # type: ignore[no-untyped-def]  # n
     assert record.molecule_scenario == "test_scenario"
     assert record.molecule_step == "converge"
 
-    # Test logger without step
+    # Test logger with step parameter
     caplog.clear()
-    logger_without_step = get_scenario_logger("test", "test_scenario")
+    logger_without_step = get_scenario_logger("test", "test_scenario", "test")
 
     with caplog.at_level(logging.INFO):
         logger_without_step.info("Test message")
 
-    # Check that the log record has scenario but no step information
+    # Check that the log record has both scenario and step information
     record = caplog.records[0]
     assert hasattr(record, "molecule_scenario")
-    assert not hasattr(record, "molecule_step")
+    assert record.molecule_step == "test"
     assert record.molecule_scenario == "test_scenario"

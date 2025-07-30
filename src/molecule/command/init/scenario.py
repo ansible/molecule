@@ -98,7 +98,7 @@ class Scenario(base.Base):
         self._command_args = command_args
         # For init scenario, use the scenario name from command args
         scenario_name = command_args.get("scenario_name", "unknown")
-        self._log = logger.get_scenario_logger(__name__, scenario_name)
+        self._log = logger.get_scenario_logger(__name__, scenario_name, "init")
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to perform a `molecule init scenario`.
