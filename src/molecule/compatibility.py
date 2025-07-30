@@ -1,5 +1,6 @@
-# ruff: noqa: ANN001, D102
-# pylint: disable=missing-function-docstring,missing-return-doc,missing-param-doc
+# ruff: noqa: ANN001, ANN204, ANN205, ARG004, D102, D105
+# pylint: disable=missing-return-doc,missing-param-doc,useless-suppression
+# mypy: ignore-errors
 """Compatibility module for Python 3.10+."""
 
 from __future__ import annotations
@@ -26,6 +27,7 @@ class StrEnum(str, enum.Enum):
         return str.__format__(self, format_spec)
 
     @staticmethod
+    # noqa: DOC101, DOC103, DOC106, DOC107, DOC201
     def _generate_next_value_(name, start, count, last_values):
         """Return the lower-cased version of the member name."""
         return name.lower()
