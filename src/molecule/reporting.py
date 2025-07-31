@@ -166,7 +166,6 @@ class ActionResult:
         ranks = ("failed", "missing", "skipped", "disabled", "successful")
         states = [state.state for state in self.states]
         notes = {state.note for state in self.states if state.note}
-        notes = {state.note for state in self.states if state.note}
         note = None if not notes else next(iter(notes)) if len(notes) == 1 else "See details above"
 
         for rank in ranks:

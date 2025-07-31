@@ -21,10 +21,6 @@ from molecule.reporting import (
 )
 
 
-# Test constants
-EXPECTED_MIN_WRITE_CALLS = 3
-
-
 def test_completion_state_info_init() -> None:
     """Test CompletionStateInfo initialization."""
     state_info = CompletionStateInfo(
