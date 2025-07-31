@@ -70,18 +70,16 @@ def test_cleanup_execute(  # noqa: D103
     pb = os.path.join(config_instance.scenario.directory, "cleanup.yml")  # noqa: PTH118
     util.write_file(pb, "")
 
+    config_instance.action = "cleanup"
     cu = cleanup.Cleanup(config_instance)
 
-    with caplog.at_level(logging.INFO, logger="molecule.molecule.logger"):
+    with caplog.at_level(logging.INFO):
         cu.execute()
 
-    # Check that we have log records with scenario and step information
-    assert any(
-        hasattr(record, "molecule_scenario")
-        and hasattr(record, "molecule_step")
-        and record.molecule_step == "cleanup"
-        for record in caplog.records
-    )
+    expected_record_count = 2
+    assert len(caplog.records) == expected_record_count
+    expected_message = "INFO     [default > cleanup] Completed: Successful"
+    assert caplog.records[1].getMessage() == expected_message
 
     _patched_ansible_cleanup.assert_called_once_with()
 
@@ -92,9 +90,15 @@ def test_cleanup_execute_skips_when_playbook_not_configured(  # noqa: D103
     config_instance: config.Config,
 ) -> None:
     cu = cleanup.Cleanup(config_instance)
-    cu.execute()
 
-    msg = "Skipping, cleanup playbook not configured."
-    assert msg in caplog.text
+    with caplog.at_level(logging.INFO):
+        cu.execute()
+
+    expected_record_count = 2
+    assert len(caplog.records) == expected_record_count
+    expected_message = (
+        "WARNING  [default] Completed: Missing playbook (Remove from test_sequence to suppress)"
+    )
+    assert caplog.records[1].getMessage() == expected_message
 
     assert not _patched_ansible_cleanup.called

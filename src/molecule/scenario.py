@@ -34,12 +34,12 @@ from typing import TYPE_CHECKING
 from molecule import logger, scenarios, util
 from molecule.constants import RC_TIMEOUT
 from molecule.exceptions import MoleculeError
+from molecule.reporting import ScenarioResults
 from molecule.text import checksum
 
 
 if TYPE_CHECKING:
     from molecule.config import Config
-    from molecule.types import ScenarioResult
 
 
 class Scenario:
@@ -53,7 +53,7 @@ class Scenario:
         """
         self._lock = None
         self.config = config
-        self.results: list[ScenarioResult] = []
+        self.results: ScenarioResults = ScenarioResults(name=self.name, actions=[])
         self._setup()
 
     def __repr__(self) -> str:

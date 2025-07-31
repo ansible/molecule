@@ -61,10 +61,7 @@ class Idempotence(base.Base):
             output = self._config.provisioner.converge()
 
             idempotent = self._is_idempotent(output)
-            if idempotent:
-                msg = "Idempotence completed successfully."
-                self._log.info(msg)
-            else:
+            if not idempotent:
                 details = "\n".join(self._non_idempotent_tasks(output))
                 msg = f"Idempotence test failed because of the following tasks:\n{details}"
                 raise ScenarioFailureError(message=msg)

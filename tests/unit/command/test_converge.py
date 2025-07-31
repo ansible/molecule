@@ -19,7 +19,11 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import logging
+
 from typing import TYPE_CHECKING, Any
+
+import pytest
 
 from click.testing import CliRunner
 
@@ -30,11 +34,14 @@ from molecule.shell import main
 if TYPE_CHECKING:
     from unittest.mock import Mock
 
-    import pytest
-
     from pytest_mock import MockerFixture
 
     from molecule import config
+
+
+@pytest.fixture
+def _patched_ansible_converge(mocker: MockerFixture) -> Mock:
+    return mocker.patch("molecule.provisioner.ansible.Ansible.converge")
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
@@ -47,11 +54,16 @@ def test_converge_execute(  # noqa: D103
     patched_config_validate: Any,  # noqa: ANN401
     config_instance: config.Config,
 ) -> None:
+    config_instance.action = "converge"
     c = converge.Converge(config_instance)
-    c.execute()
 
-    assert "default" in caplog.text
-    assert "converge" in caplog.text
+    with caplog.at_level(logging.INFO):
+        c.execute()
+
+    expected_record_count = 2
+    assert len(caplog.records) == expected_record_count
+    expected_message = "INFO     [default > converge] Completed: Successful"
+    assert caplog.records[1].getMessage() == expected_message
 
     patched_ansible_converge.assert_called_once_with()
 

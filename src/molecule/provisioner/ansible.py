@@ -34,6 +34,7 @@ from ansible_compat.ports import cached_property
 from molecule import logger, util
 from molecule.exceptions import MoleculeError
 from molecule.provisioner import ansible_playbook, ansible_playbooks, base
+from molecule.reporting import CompletionState
 
 
 if TYPE_CHECKING:
@@ -767,7 +768,11 @@ class Ansible(base.Base):
         elif self.playbooks.verify:
             playbooks = [self.playbooks.verify]
         if not playbooks:
-            self._log.warning("Skipping, verify playbook not configured.")
+            message = "Missing playbook"
+            note = f"Remove from {self._config.subcommand}_sequence to suppress"
+            self._config.scenario.results.add_completion(
+                CompletionState.missing(message=message, note=note),
+            )
             return
         for playbook in playbooks:
             # Get ansible playbooks for `verify` instead of `provision`

@@ -57,6 +57,7 @@ def _instance(  # type: ignore[no-untyped-def]  # noqa: ANN202
     patched_config_validate,
     config_instance: config.Config,
 ):
+    config_instance.scenario.results.add_action_result("dependency")
     return roles.Roles(config_instance)
 
 
@@ -182,8 +183,11 @@ def test_roles_execute_does_not_execute_when_disabled(  # type: ignore[no-untype
 
     assert not patched_run_command.called
 
-    msg = "Skipping, dependency is disabled."
-    assert msg in caplog.text
+    # Verify that the completion state was recorded as disabled
+    action_results = _instance._config.scenario.results.actions
+    dependency_result = next((ar for ar in action_results if ar.action == "dependency"), None)
+    assert dependency_result is not None
+    assert dependency_result.states[-1].state == "disabled"
 
 
 def test_roles_execute_does_not_execute_when_no_requirements_file(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
@@ -197,8 +201,7 @@ def test_roles_execute_does_not_execute_when_no_requirements_file(  # type: igno
 
     assert not patched_run_command.called
 
-    msg = "Skipping, missing the requirements file."
-    assert msg in caplog.text
+    assert "Missing roles requirements file" in caplog.text
 
 
 def test_roles_execute_bakes(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103

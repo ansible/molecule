@@ -22,6 +22,9 @@ import os
 import re
 import sys
 
+from molecule.constants import MARKUP_MAP
+from molecule.constants import ANSICodes as A
+
 
 def to_bool(a: object) -> bool:
     """Return a bool for the arg.
@@ -80,83 +83,18 @@ class AnsiOutput:
     color configuration and providing reusable formatting functionality.
     """
 
-    # ANSI Color Constants
-    RESET = "\033[0m"
-
-    # Basic Colors
-    BLACK = "\033[30m"
-    RED = "\033[31m"
-    GREEN = "\033[32m"
-    YELLOW = "\033[33m"
-    BLUE = "\033[34m"
-    MAGENTA = "\033[35m"
-    CYAN = "\033[36m"
-    WHITE = "\033[37m"
-
-    # Bright Colors
-    BRIGHT_BLACK = "\033[90m"
-    BRIGHT_RED = "\033[91m"
-    BRIGHT_GREEN = "\033[92m"
-    BRIGHT_YELLOW = "\033[93m"
-    BRIGHT_BLUE = "\033[94m"
-    BRIGHT_MAGENTA = "\033[95m"
-    BRIGHT_CYAN = "\033[96m"
-    BRIGHT_WHITE = "\033[97m"
-
-    # Text Styles
-    BOLD = "\033[1m"
-    DIM = "\033[2m"
-    ITALIC = "\033[3m"
-    UNDERLINE = "\033[4m"
-
-    # Symbols
-    RIGHT_ARROW = "\u279c"
-
     def __init__(self) -> None:
         """Initialize the ANSI output formatter."""
-        self.markup_enabled = should_do_markup()
+        # Remove caching - markup_enabled is now a property
 
-        # Rich-style markup to ANSI mapping (Ansible-aligned)
-        self.markup_map: dict[str, str] = {
-            # ─── Message Types ───────────────────────────────
-            "info": self.CYAN + self.DIM,  # Matches Ansible skip
-            "warning": self.MAGENTA + self.BOLD,  # Matches Ansible warn
-            "danger": self.RED + self.BOLD,  # Matches Ansible error
-            "scenario": self.GREEN,  # Matches Ansible OK
-            "action": self.YELLOW,  # Matches Ansible changed
-            "exec_phase": self.BRIGHT_CYAN,  # Execution phase indicator
-            "command": self.WHITE,
-            "section_title": self.CYAN + self.BOLD,  # Neutral and distinct
-            # ─── Logging Levels ──────────────────────────────
-            "logging.level.debug": self.DIM + self.BLUE,
-            "logging.level.info": self.CYAN + self.DIM,
-            "logging.level.success": self.GREEN + self.BOLD,
-            "logging.level.warning": self.MAGENTA + self.BOLD,
-            "logging.level.error": self.RED + self.BOLD,
-            "logging.level.critical": self.RED + self.BOLD + self.UNDERLINE,
-            # Basic color names
-            "red": self.RED,
-            "green": self.GREEN,
-            "blue": self.BLUE,
-            "yellow": self.YELLOW,
-            "magenta": self.MAGENTA,
-            "cyan": self.CYAN,
-            "white": self.WHITE,
-            "black": self.BLACK,
-            # Bright colors
-            "bright_red": self.BRIGHT_RED,
-            "bright_green": self.BRIGHT_GREEN,
-            "bright_blue": self.BRIGHT_BLUE,
-            "bright_yellow": self.BRIGHT_YELLOW,
-            "bright_magenta": self.BRIGHT_MAGENTA,
-            "bright_cyan": self.BRIGHT_CYAN,
-            "bright_white": self.BRIGHT_WHITE,
-            # Text styles
-            "bold": self.BOLD,
-            "dim": self.DIM,
-            "italic": self.ITALIC,
-            "underline": self.UNDERLINE,
-        }
+    @property
+    def markup_enabled(self) -> bool:
+        """Check if markup should be enabled, evaluated each time.
+
+        This ensures that environment variable changes (like NO_COLOR=1 in tests)
+        are immediately respected without needing to recreate the AnsiOutput instance.
+        """
+        return should_do_markup()
 
     def strip_markup(self, text: str) -> str:
         """Strip all Rich-style markup tags from text.
@@ -184,13 +122,19 @@ class AnsiOutput:
         # Process opening tags first to avoid conflicts with ANSI escape sequences
         def replace_tag(match: re.Match[str]) -> str:
             tag = match.group(1).lower()
-            return self.markup_map.get(tag, "")
+            try:
+                return MARKUP_MAP[tag]
+            except KeyError:
+                try:
+                    return str(getattr(A, tag.upper()))
+                except AttributeError:
+                    return ""
 
         # Match tags that don't start with /
         processed = re.sub(r"\[([^/\]]+)\]", replace_tag, text)
 
         # Process closing tags last (convert [/] to reset)
-        result = re.sub(r"\[/\]", self.RESET, processed)
+        result = re.sub(r"\[/\]", A.RESET, processed)
         return str(result)
 
     def format_log_level(self, level_name: str) -> tuple[str, str]:
@@ -229,10 +173,83 @@ class AnsiOutput:
             return plain, plain
 
         if step:
-            markup_text = rf"[scenario]{scenario_name}[/] {self.RIGHT_ARROW} [action]{step}[/]:"
+            markup_text = rf"[scenario]{scenario_name}[/] {A.RIGHT_ARROW} [action]{step}[/]:"
         else:
             markup_text = rf"[scenario]{scenario_name}[/]"
 
         colored = self.process_markup(markup_text)
         plain = self.strip_markup(markup_text)
         return colored, plain
+
+    def format_completion_message(self, message: str, color: str) -> str:
+        """Format completion message with conditional colors.
+
+        Low-level formatter for just the completion part.
+        Used by both logging and reporting systems.
+
+        Args:
+            message: The plain text completion message (e.g., "Completed: Successful")
+            color: The ANSI color code (e.g., A.GREEN, A.RED)
+
+        Returns:
+            Formatted message with or without ANSI codes based on markup_enabled setting.
+        """
+        if not self.markup_enabled:
+            return message
+        return f"{color}{message}{A.RESET}"
+
+    def format_completion_note(self, note: str) -> str:
+        """Format completion note with conditional dim styling.
+
+        Args:
+            note: The note text to format
+
+        Returns:
+            Formatted note with conditional styling based on markup_enabled setting.
+        """
+        if not self.markup_enabled:
+            return f" ({note})"
+        return f" {A.DIM}({note}){A.RESET}"
+
+    def format_full_completion_line(
+        self,
+        scenario_name: str,
+        action_name: str,
+        completion_message: str,
+        color: str | A,
+        note: str | None = None,
+    ) -> str:
+        """Format complete scenario → action: completion line.
+
+        High-level formatter that combines all parts.
+        Used by reporting system and can be used to verify logging output.
+
+        Args:
+            scenario_name: Name of the scenario (e.g., "default")
+            action_name: Name of the action (e.g., "converge", "cleanup")
+            completion_message: The completion message (e.g., "Completed: Successful")
+            color: The ANSI color code (string) or ANSICodes enum value
+            note: Optional note to append
+
+        Returns:
+            Complete formatted line with Rich markup for reporting system.
+        """
+        if self.markup_enabled:
+            # Use Rich markup for reporting system
+            scenario_part = (
+                f"[scenario]{scenario_name}[/] {A.RIGHT_ARROW} [action]{action_name}[/]:"
+            )
+            # Handle both string colors and ANSICodes objects
+            color_tag = color.tag if hasattr(color, "tag") else color
+            completion_part = f"[{color_tag}]{completion_message}[/]"
+            result = f"{scenario_part} {completion_part}"
+            if note:
+                result += f" [dim]({note})[/]"
+        else:
+            # Use plain text without brackets (brackets would be stripped by strip_markup)
+            scenario_part = f"{scenario_name} > {action_name}:"
+            result = f"{scenario_part} {completion_message}"
+            if note:
+                result += f" ({note})"
+
+        return result

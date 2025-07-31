@@ -19,6 +19,8 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import logging
+
 from typing import TYPE_CHECKING
 
 from molecule.command import verify
@@ -44,8 +46,15 @@ def test_verify_execute(  # noqa: D103
     patched_config_validate: Mock,
     config_instance: config.Config,
 ) -> None:
+    config_instance.action = "verify"
     v = verify.Verify(config_instance)
-    v.execute()
 
-    assert "default" in caplog.text
-    assert "verify" in caplog.text
+    with caplog.at_level(logging.INFO):
+        v.execute()
+
+    expected_record_count = 2
+    assert len(caplog.records) == expected_record_count
+    expected_message = "INFO     [default > verify] Completed: Successful"
+    assert caplog.records[1].getMessage() == expected_message
+
+    patched_default_verifier.assert_called_once_with(None)

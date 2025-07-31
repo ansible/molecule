@@ -38,16 +38,15 @@ import wcmatch.wcmatch
 from wcmatch import glob
 
 from molecule import config, logger, text, util
-from molecule.console import console
 from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME, MOLECULE_GLOB
 from molecule.exceptions import MoleculeError, ScenarioFailureError
+from molecule.reporting import ScenarioResults, report
 from molecule.scenarios import Scenarios
-from molecule.util import safe_dump
 
 
 if TYPE_CHECKING:
     from molecule.scenario import Scenario
-    from molecule.types import CommandArgs, MoleculeArgs, ScenariosResults
+    from molecule.types import CommandArgs, MoleculeArgs
 
 
 def _log(scenario_name: str, step: str, message: str, level: str = "info") -> None:
@@ -73,6 +72,7 @@ class Base(abc.ABC):
             c: An instance of a Molecule config.
         """
         self._config = c
+        self._config.scenario.results.add_action_result(self._config.action or "unknown")
         self._setup()
 
     def __init_subclass__(cls) -> None:
@@ -169,7 +169,7 @@ def execute_cmdline_scenarios(
         util.sysexit(code=exc.code)
     finally:
         if command_args.get("report"):
-            console.print(generate_report(scenarios.results))
+            report(scenarios.results)
 
 
 def _generate_scenarios(
@@ -246,7 +246,7 @@ def _run_scenarios(
             return
         try:
             execute_scenario(scenario)
-            scenarios.results.append({"name": scenario.name, "results": scenario.results})
+            scenarios.results.append(scenario.results)
         except ScenarioFailureError:
             # if the command has a 'destroy' arg, like test does,
             # handle that behavior here.
@@ -265,11 +265,11 @@ def _run_scenarios(
                 execute_subcommand(scenario.config, "cleanup")
                 destroy_results = execute_subcommand_default(default_config, "destroy")
                 if destroy_results is not None:
-                    scenarios.results.append({"name": scenario.name, "results": scenario.results})
+                    scenarios.results.append(scenario.results)
                     scenarios.results.append(destroy_results)
                 else:
                     execute_subcommand(scenario.config, "destroy")
-                    scenarios.results.append({"name": scenario.name, "results": scenario.results})
+                    scenarios.results.append(scenario.results)
 
                 # always prune ephemeral dir if destroying on failure
                 scenario.prune()
@@ -286,7 +286,7 @@ def _run_scenarios(
 def execute_subcommand_default(
     default_config: config.Config | None,
     subcommand: str,
-) -> ScenariosResults | None:
+) -> ScenarioResults | None:
     """Execute subcommand as in execute_subcommand, but do it from the default scenario if one exists.
 
     Args:
@@ -303,9 +303,9 @@ def execute_subcommand_default(
     default = default_config.scenario
     if subcommand in default.sequence:
         execute_subcommand(default_config, subcommand)
-        results: ScenariosResults = {"name": default.name, "results": copy.copy(default.results)}
+        results = copy.deepcopy(default.results)
         # clear results for later reuse
-        default.results = []
+        default.results = ScenarioResults(name=default.name, actions=[])
         return results
     _log(
         default.name,
@@ -338,7 +338,6 @@ def execute_subcommand(
     # particularly the setting of ansible options in create/destroy,
     # and is also used for reporting in execute_cmdline_scenarios
     current_config.action = subcommand
-
     return command(current_config).execute(args)
 
 
@@ -467,15 +466,3 @@ def _get_subcommand(string: str) -> str:
         A string representing the subcommand.
     """
     return string.split(".")[-1]
-
-
-def generate_report(results: list[ScenariosResults]) -> str:
-    """Print end-of-run report.
-
-    Args:
-        results: Dictionary containing results from each scenario.
-
-    Returns:
-        The formatted end-of-run report.
-    """
-    return safe_dump(results)

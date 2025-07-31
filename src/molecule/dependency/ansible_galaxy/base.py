@@ -30,6 +30,7 @@ from typing import TYPE_CHECKING
 
 from molecule import util
 from molecule.dependency import base
+from molecule.reporting import CompletionState
 
 
 if TYPE_CHECKING:
@@ -155,14 +156,20 @@ class AnsibleGalaxyBase(base.Base):
             action_args: Arguments for this dependency. Unused.
         """
         if not self.enabled:
-            msg = "Skipping, dependency is disabled."
-            self._log.warning(msg)
+            self._config.scenario.results.add_completion(CompletionState.disabled)
             return
         super().execute()
 
         if not self._has_requirements_file():
-            msg = "Skipping, missing the requirements file."
-            self._log.warning(msg)
+            class_name = self.__class__.__name__
+            requirements_file = Path(self.requirements_file).name
+            message = f"Missing {class_name.lower()} requirements file: {requirements_file}"
+            # keep this since dependency is looped for roles and collections
+            self._log.warning(message)
+            note = f"Remove from {self._config.subcommand}_sequence to suppress"
+            self._config.scenario.results.add_completion(
+                CompletionState.missing(message=message, note=note),
+            )
             return
 
         if not self._sh_command:
