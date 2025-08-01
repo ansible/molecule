@@ -27,6 +27,7 @@ from typing import TYPE_CHECKING, cast
 
 from molecule import logger, util
 from molecule.api import Verifier
+from molecule.reporting import CompletionState
 
 
 if TYPE_CHECKING:
@@ -117,16 +118,20 @@ class Ansible(Verifier):
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
             self._log.warning(msg)
+            self._config.scenario.results.add_completion(CompletionState.disabled)
             return
 
-        msg = "Running Ansible Verifier"
-        self._log.info(msg)
-
         if self._config.provisioner:
-            self._config.provisioner.verify(action_args)
+            # Check if verify playbook exists before calling provisioner
+            if not self._config.provisioner.playbooks.verify:
+                note = f"Remove from {self._config.subcommand}_sequence to suppress"
+                message = "Missing playbook"
+                self._config.scenario.results.add_completion(
+                    CompletionState.missing(message=message, note=note),
+                )
+                return
 
-            msg = "Verifier completed successfully."
-            self._log.info(msg)
+            self._config.provisioner.verify(action_args)
 
     def schema(self) -> Schema:
         """Return validation schema.

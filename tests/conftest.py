@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import logging
 import os
 import platform
 import shutil
@@ -30,10 +31,11 @@ from typing import TYPE_CHECKING, Any
 import pytest
 
 from molecule.app import App, get_app
+from molecule.logger import MoleculeConsoleHandler
 
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Generator
 
     from _pytest.nodes import Item
     from _pytest.runner import CallInfo
@@ -140,6 +142,56 @@ def reset_pytest_vars(monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN
             monkeypatch.delenv(var_name, raising=False)
 
 
+@pytest.fixture(autouse=True)
+def enable_molecule_debug() -> None:
+    """Enable DEBUG level logging for all molecule loggers during tests.
+
+    This fixture automatically runs for every test and ensures that the molecule
+    logger hierarchy is set to DEBUG level, which allows pytest's caplog fixture
+    to capture DEBUG messages from any molecule logger without requiring explicit
+    logger targeting in individual tests.
+
+    """
+    logging.getLogger("molecule").setLevel(logging.DEBUG)
+
+
+@pytest.fixture(autouse=True)
+def inject_molecule_handler() -> Generator[None, None, None]:
+    """Inject MoleculeConsoleHandler at index 0 and remove after test.
+
+    This fixture ensures that caplog captures the full formatted messages
+    including scenario and step context by injecting Molecule's custom
+    handler at the highest priority position.
+
+    The handler processes log records first, adding the complete formatting
+    (scenario > step: message) that users see, which caplog then captures.
+
+    This allows tests to assert against realistic output like:
+        assert "[default > idempotence] Completed: Successful" in caplog.text
+
+    Instead of just:
+        assert "Completed: Successful" in caplog.text
+
+    Yields:
+        None: This fixture provides setup/teardown behavior only.
+    """
+    logger = logging.getLogger()
+
+    # Remove any existing MoleculeConsoleHandlers to avoid duplicates
+    logger.handlers = [h for h in logger.handlers if not isinstance(h, MoleculeConsoleHandler)]
+
+    # Add Molecule handler at index 0 for highest priority
+    handler = MoleculeConsoleHandler(show_time=False, show_path=False)
+    formatter = logging.Formatter("%(message)s")
+    handler.setFormatter(formatter)
+    logger.handlers.insert(0, handler)
+
+    yield
+
+    # Clean up after the test: remove MoleculeConsoleHandler
+    logger.handlers = [h for h in logger.handlers if not isinstance(h, MoleculeConsoleHandler)]
+
+
 @pytest.fixture
 def test_fixture_dir(request: pytest.FixtureRequest) -> Path:
     """Provide the fixture directory for a given test.
@@ -188,7 +240,7 @@ def git_root() -> Path:
 def fixture_test_cache_path(
     monkeypatch: pytest.MonkeyPatch,
     request: pytest.FixtureRequest,
-) -> Iterable[Path]:
+) -> Generator[Path, None, None]:
     """Provide a test specific cache path.
 
     The assumption here is that the tests are always run after being checkout out from git.
@@ -233,7 +285,8 @@ def fixture_test_cache_path(
     yield test_dir
 
     item = request.node
-    if item.rep_call.failed:
+    rep_call = getattr(item, "rep_call", None)
+    if rep_call and rep_call.failed:
         # if the test failed, keep the ephemeral directory for debugging
         return
 

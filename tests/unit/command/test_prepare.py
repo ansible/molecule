@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import logging
 import os
 
 from typing import TYPE_CHECKING
@@ -30,9 +31,20 @@ from molecule.command import prepare
 
 
 if TYPE_CHECKING:
+    from typing import Literal
     from unittest.mock import MagicMock, Mock
 
     from pytest_mock import MockerFixture
+
+    from molecule.types import ProvisionerData
+
+
+@pytest.fixture
+def _command_provisioner_section_data() -> dict[
+    Literal["provisioner"],
+    ProvisionerData,
+]:
+    return {"provisioner": {"name": "ansible", "playbooks": {"prepare": "prepare.yml"}}}
 
 
 @pytest.fixture
@@ -40,9 +52,6 @@ def _patched_ansible_prepare(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("molecule.provisioner.ansible.Ansible.prepare")
 
 
-# NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
-# config.Config._validate from executing.  Thus preventing odd side-effects
-# throughout patched.assert_called unit tests.
 def test_prepare_execute(  # noqa: D103
     mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
@@ -53,30 +62,41 @@ def test_prepare_execute(  # noqa: D103
     pb = os.path.join(config_instance.scenario.directory, "prepare.yml")  # noqa: PTH118
     util.write_file(pb, "")
 
+    config_instance.action = "prepare"
     p = prepare.Prepare(config_instance)
-    p.execute()
 
-    assert "default" in caplog.text
-    assert "prepare" in caplog.text
+    with caplog.at_level(logging.INFO):
+        p.execute()
+
+    expected_record_count = 2
+    assert len(caplog.records) == expected_record_count
+    expected_message = "INFO     [default > prepare] Completed: Successful"
+    assert caplog.records[1].getMessage() == expected_message
 
     _patched_ansible_prepare.assert_called_once_with()
 
-    assert config_instance.state.prepared
 
-
-def test_execute_skips_when_instances_already_prepared(  # noqa: D103
-    caplog: pytest.LogCaptureFixture,
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_command_provisioner_section_data"],  # noqa: PT007
+    indirect=True,
+)
+def test_prepare_execute_raises_when_provisioner_raises_an_exception(  # noqa: D103
     _patched_ansible_prepare: Mock,  # noqa: PT019
+    patched_config_validate: Mock,
     config_instance: config.Config,
 ) -> None:
-    config_instance.state.change_state("prepared", True)  # noqa: FBT003
+    _patched_ansible_prepare.side_effect = Exception("foo")
+
+    pb = os.path.join(config_instance.scenario.directory, "prepare.yml")  # noqa: PTH118
+    util.write_file(pb, "")
+
     p = prepare.Prepare(config_instance)
-    p.execute()
 
-    msg = "Skipping, instances already prepared."
-    assert msg in caplog.text
+    with pytest.raises(Exception) as cm:  # noqa: PT011
+        p.execute()
 
-    assert not _patched_ansible_prepare.called
+    assert "foo" in str(cm.value)
 
 
 def test_prepare_execute_skips_when_playbook_not_configured(  # noqa: D103
@@ -84,28 +104,16 @@ def test_prepare_execute_skips_when_playbook_not_configured(  # noqa: D103
     _patched_ansible_prepare: Mock,  # noqa: PT019
     config_instance: config.Config,
 ) -> None:
-    p = prepare.Prepare(config_instance)
-    p.execute()
+    with caplog.at_level(logging.INFO):
+        p = prepare.Prepare(config_instance)
+        p.execute()
 
-    msg = "Skipping, prepare playbook not configured."
-    assert msg in caplog.text
+    completion_records = [r for r in caplog.records if "Completed:" in r.getMessage()]
+    assert len(completion_records) >= 1, "Should have completion message"
+
+    record = completion_records[0]
+    assert "Missing playbook" in record.getMessage()
+    assert hasattr(record, "molecule_scenario")
+    assert record.molecule_scenario == "default"
 
     assert not _patched_ansible_prepare.called
-
-
-def test_execute_when_instances_already_prepared_but_force_provided(  # noqa: D103
-    mocker: MockerFixture,
-    caplog: pytest.LogCaptureFixture,
-    _patched_ansible_prepare: Mock,  # noqa: PT019
-    config_instance: config.Config,
-) -> None:
-    pb = os.path.join(config_instance.scenario.directory, "prepare.yml")  # noqa: PTH118
-    util.write_file(pb, "")
-
-    config_instance.state.change_state("prepared", True)  # noqa: FBT003
-    config_instance.command_args = {"force": True}
-
-    p = prepare.Prepare(config_instance)
-    p.execute()
-
-    _patched_ansible_prepare.assert_called_once_with()

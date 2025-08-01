@@ -29,6 +29,7 @@ from typing import TYPE_CHECKING, cast
 
 from molecule import logger, util
 from molecule.api import Verifier
+from molecule.reporting import CompletionState
 
 
 if TYPE_CHECKING:
@@ -215,6 +216,7 @@ class Testinfra(Verifier):
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
             self._log.warning(msg)
+            self._config.scenario.results.add_completion(CompletionState.disabled)
             return
 
         if self._config:

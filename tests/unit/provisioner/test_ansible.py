@@ -106,6 +106,7 @@ def fixture_instance(
         _provisioner_section_data: A dictionary containing the provisioner section data.
         config_instance: An instance of a Molecule config.
     """
+    config_instance.scenario.results.add_action_result("verify")
     return ansible.Ansible(config_instance)
 
 

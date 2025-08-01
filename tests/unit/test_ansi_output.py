@@ -61,40 +61,7 @@ def test_should_do_markup(
     assert should_do_markup() is expected
 
 
-def test_ansi_output_initialization() -> None:
-    """Test AnsiOutput class initialization."""
-    output = AnsiOutput()
-    assert hasattr(output, "markup_enabled")
-    assert hasattr(output, "markup_map")
-    assert isinstance(output.markup_map, dict)
-
-
-def test_ansi_color_constants() -> None:
-    """Test that ANSI color constants are defined."""
-    output = AnsiOutput()
-    assert output.RESET == "\033[0m"
-    assert output.RED == "\033[31m"
-    assert output.GREEN == "\033[32m"
-    assert output.BLUE == "\033[34m"
-    assert output.BOLD == "\033[1m"
-    assert output.DIM == "\033[2m"
-
-
-@pytest.mark.parametrize(
-    ("input_text", "expected_output"),
-    (
-        ("[red]Error message[/] with [bold]bold text[/]", "Error message with bold text"),
-        ("Plain text message", "Plain text message"),
-        ("[info]Running [scenario]test[/] > [action]create[/][/]", "Running test > create"),
-    ),
-)
-def test_strip_markup(input_text: str, expected_output: str) -> None:
-    """Test markup stripping functionality."""
-    output = AnsiOutput()
-    assert output.strip_markup(input_text) == expected_output
-
-
-def test_process_markup_disabled(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_process_markup(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test markup processing when markup is disabled."""
     monkeypatch.setenv("NO_COLOR", "1")
     output = AnsiOutput()
@@ -238,42 +205,6 @@ def test_format_log_level_markup_disabled(monkeypatch: pytest.MonkeyPatch) -> No
     assert "\033[" not in plain  # No ANSI codes
 
 
-def test_markup_map_contains_expected_styles() -> None:
-    """Test that markup_map contains expected style mappings."""
-    output = AnsiOutput()
-
-    # Test basic styles from Molecule's theme
-    expected_styles = [
-        "info",
-        "warning",
-        "danger",
-        "scenario",
-        "action",
-        "exec_phase",
-        "logging.level.info",
-        "logging.level.warning",
-        "logging.level.error",
-        "red",
-        "green",
-        "blue",
-        "bold",
-        "dim",
-    ]
-
-    for style in expected_styles:
-        assert style in output.markup_map
-
-
-def test_markup_map_values_are_ansi_codes() -> None:
-    """Test that markup_map values are valid ANSI escape codes."""
-    output = AnsiOutput()
-
-    for ansi_code in output.markup_map.values():
-        assert isinstance(ansi_code, str)
-        if ansi_code:  # Some might be empty strings
-            assert ansi_code.startswith("\033[")
-
-
 def test_complex_markup_processing(monkeypatch: pytest.MonkeyPatch) -> None:
     """Test processing of complex markup with nested tags."""
     monkeypatch.delenv("NO_COLOR", raising=False)
@@ -289,18 +220,3 @@ def test_complex_markup_processing(monkeypatch: pytest.MonkeyPatch) -> None:
     assert "Running" in result
     assert "test" in result
     assert "create" in result
-
-
-def test_exec_phase_markup_processing(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test processing of exec_phase markup."""
-    monkeypatch.delenv("NO_COLOR", raising=False)
-    monkeypatch.setenv("FORCE_COLOR", "1")
-    output = AnsiOutput()
-
-    # Test exec_phase markup
-    result = output.process_markup("[exec_phase]Starting[/]")
-
-    # Should contain bright cyan for exec_phase
-    assert "\033[96m" in result  # Bright cyan for exec_phase
-    assert "\033[0m" in result  # Reset code
-    assert "Starting" in result

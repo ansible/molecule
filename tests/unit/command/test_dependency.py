@@ -19,6 +19,8 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import logging
+
 from typing import TYPE_CHECKING
 
 from molecule.command import dependency
@@ -44,10 +46,15 @@ def test_dependency_execute(  # noqa: D103
     patched_config_validate: Mock,
     config_instance: config.Config,
 ) -> None:
+    config_instance.action = "dependency"
     d = dependency.Dependency(config_instance)
-    d.execute()
+
+    with caplog.at_level(logging.INFO):
+        d.execute()
 
     patched_ansible_galaxy.assert_called_once_with()
 
-    assert "default" in caplog.text
-    assert "dependency" in caplog.text
+    expected_record_count = 2
+    assert len(caplog.records) == expected_record_count
+    expected_message = "INFO     [default > dependency] Completed: Successful"
+    assert caplog.records[1].getMessage() == expected_message

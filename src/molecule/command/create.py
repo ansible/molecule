@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING
 
 from molecule.click_cfg import click_command_ex, common_options
 from molecule.command import base
+from molecule.reporting import CompletionState
 
 
 if TYPE_CHECKING:
@@ -47,6 +48,7 @@ class Create(base.Base):
         if self._config.state.created:
             msg = "Skipping, instances already created."
             self._log.warning(msg)
+            self._config.scenario.results.add_completion(CompletionState.skipped(note=msg))
             return
 
         if self._config.provisioner:

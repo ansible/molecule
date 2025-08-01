@@ -33,13 +33,12 @@ import pytest
 from pytest import FixtureRequest  # noqa: PT013
 
 from molecule.command import base
-from molecule.util import safe_load
+from molecule.text import strip_ansi_escape
 from tests.conftest import mac_on_gh  # pylint:disable=C0411
 
 
 if TYPE_CHECKING:
     from molecule.app import App
-    from molecule.types import ScenariosResults
 
 
 def run(cmd: list[str], env: dict[str, str] | None = None) -> subprocess.CompletedProcess[Any]:
@@ -197,51 +196,6 @@ def test_command(
         assert "converge.yml" in result.stdout
     else:
         assert "PLAY RECAP" in result.stdout
-
-
-def test_command_report(
-    test_ephemeral_dir_env: dict[str, str],
-) -> None:
-    """Test the output of the --report flag.
-
-    Args:
-        test_ephemeral_dir_env: The ephemeral directory env.
-    """
-    cmd = ["molecule", "test", "--report"]
-    result = run(cmd=cmd, env=test_ephemeral_dir_env)
-    assert result.returncode == 0
-
-    scenario_result: ScenariosResults = {
-        "name": "default",
-        "results": [
-            {
-                "state": "PASSED",
-                "subcommand": "destroy",
-            },
-            {
-                "state": "PASSED",
-                "subcommand": "syntax",
-            },
-            {
-                "state": "PASSED",
-                "subcommand": "create",
-            },
-            {
-                "state": "PASSED",
-                "subcommand": "converge",
-            },
-            {
-                "state": "PASSED",
-                "subcommand": "idempotence",
-            },
-            {
-                "state": "PASSED",
-                "subcommand": "destroy",
-            },
-        ],
-    }
-    report = base.generate_report([scenario_result])
-    assert result.stdout.strip().endswith(report.strip())
 
 
 @pytest.mark.extensive
@@ -546,6 +500,15 @@ def test_shared_actions(
         test_fixture_dir: Path to the test fixture directory.
     """
     monkeypatch.chdir(test_fixture_dir)
+
+    # Ensure consistent output format by removing GitHub-specific environment variables
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    monkeypatch.delenv("CI", raising=False)
+
+    # Override the autouse _no_color fixture to enable markup for this test
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    monkeypatch.setenv("FORCE_COLOR", "1")
+
     cmd = [
         "molecule",
         "test",
@@ -558,10 +521,157 @@ def test_shared_actions(
     ]
     result = run(cmd=cmd)
     assert result.returncode == 0, result
-    out = result.stdout
-    # If we redesign --report, this needs to be updated
-    run_report = safe_load(out[out.rindex("---") :])
-    assert run_report[0]["name"] == "default"
-    assert run_report[1]["name"] == "test-scenario"
-    assert run_report[2]["name"] == "smoke"
-    assert run_report[3]["name"] == "default"
+
+    # Capture both stdout and stderr - this is what users actually see
+    stdout_output = result.stdout
+    stderr_output = result.stderr
+
+    # Strip ANSI escape codes for assertions
+    clean_stdout = strip_ansi_escape(stdout_output)
+    clean_stderr = strip_ansi_escape(stderr_output)
+
+    # Verify proper shared-state behavior - test scenarios should not create/destroy
+    assert "test-scenario ➜ create" not in clean_stdout, (
+        "test-scenario should not create (shared-state)"
+    )
+    assert "test-scenario ➜ destroy" not in clean_stdout, (
+        "test-scenario should not destroy (shared-state)"
+    )
+    assert "smoke ➜ create" not in clean_stdout, "smoke should not create (shared-state)"
+    assert "smoke ➜ destroy" not in clean_stdout, "smoke should not destroy (shared-state)"
+
+    # === VALIDATE REPORT OUTPUT (what users see at the end) ===
+
+    # Extract the Summary section (everything after "Summary") and strip ANSI codes
+    summary_start = clean_stderr.find("Summary")
+    summary_section = clean_stderr[summary_start:] if summary_start != -1 else ""
+
+    # Expected report format - exact match what users see
+    expected_report = """Summary
+default ➜ create: Completed: Successful
+
+test-scenario ➜ dependency: Completed: 2 missing (Remove from test_sequence to suppress)
+test-scenario ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
+test-scenario ➜ syntax: Completed: Successful
+test-scenario ➜ prepare: Completed: Missing playbook (Remove from test_sequence to suppress)
+test-scenario ➜ converge: Completed: Successful
+test-scenario ➜ idempotence: Completed: Successful
+test-scenario ➜ side_effect: Completed: Missing playbook (Remove from test_sequence to suppress)
+test-scenario ➜ verify: Completed: Missing playbook (Remove from test_sequence to suppress)
+test-scenario ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
+
+smoke ➜ dependency: Completed: 2 missing (Remove from test_sequence to suppress)
+smoke ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ syntax: Completed: Successful
+smoke ➜ prepare: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ converge: Completed: Successful
+smoke ➜ idempotence: Completed: Successful
+smoke ➜ side_effect: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ verify: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
+
+default ➜ destroy: Completed: Successful
+
+"""
+
+    # Direct string comparison - exact match
+    assert summary_section == expected_report, (
+        f"Report content mismatch:\nExpected:\n{expected_report!r}\n\nActual:\n{summary_section!r}"
+    )
+
+
+def test_ui_formatting(
+    monkeypatch: pytest.MonkeyPatch,
+    test_fixture_dir: Path,
+) -> None:
+    """Test that UI formatting shows clear starting and completion messages.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        test_fixture_dir: Path to the test fixture directory.
+    """
+    monkeypatch.chdir(test_fixture_dir)
+
+    # Ensure consistent output format by removing GitHub-specific environment variables
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    monkeypatch.delenv("CI", raising=False)
+
+    # Override the autouse _no_color fixture to enable markup for this test
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    monkeypatch.setenv("FORCE_COLOR", "1")
+
+    cmd = [
+        "molecule",
+        "test",
+        "-s",
+        "smoke",
+        "--report",
+    ]
+    result = run(cmd=cmd)
+    assert result.returncode == 0, result
+
+    _stdout_output = result.stdout
+    stderr_output = result.stderr
+
+    # Strip ANSI escape codes for assertions
+    clean_stderr = strip_ansi_escape(stderr_output)
+
+    # === VALIDATE STARTING MESSAGES ===
+
+    # Check for clear starting indicators that users see (in stderr)
+    assert "INFO     smoke ➜ dependency: Starting" in clean_stderr, (
+        "Should show dependency starting message"
+    )
+    assert "INFO     smoke ➜ create: Starting" in clean_stderr, (
+        "Should show create starting message"
+    )
+    assert "INFO     smoke ➜ prepare: Starting" in clean_stderr, (
+        "Should show prepare starting message"
+    )
+    assert "INFO     smoke ➜ converge: Starting" in clean_stderr, (
+        "Should show converge starting message"
+    )
+    assert "INFO     smoke ➜ verify: Starting" in clean_stderr, (
+        "Should show verify starting message"
+    )
+    assert "INFO     smoke ➜ destroy: Starting" in clean_stderr, (
+        "Should show destroy starting message"
+    )
+
+    # === VALIDATE COMPLETION MESSAGES ===
+
+    # Check for completion messages that users see during execution (in stderr)
+    assert "smoke ➜ dependency: Completed:" in clean_stderr, "Should show dependency completion"
+    assert "smoke ➜ create: Completed:" in clean_stderr, "Should show create completion"
+    assert "smoke ➜ prepare: Completed:" in clean_stderr, "Should show prepare completion"
+    assert "smoke ➜ converge: Completed:" in clean_stderr, "Should show converge completion"
+    assert "smoke ➜ verify: Completed:" in clean_stderr, "Should show verify completion"
+    assert "smoke ➜ destroy: Completed:" in clean_stderr, "Should show destroy completion"
+
+    # === VALIDATE REPORT SUMMARY ===
+
+    # Extract the Summary section from stderr and strip ANSI codes
+    summary_start = clean_stderr.find("Summary")
+    summary_section = clean_stderr[summary_start:] if summary_start != -1 else ""
+
+    # Expected report shows final status
+    expected_report = """Summary
+smoke ➜ dependency: Completed: 2 missing (Remove from test_sequence to suppress)
+smoke ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ destroy: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ syntax: Completed: Successful
+smoke ➜ create: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ prepare: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ converge: Completed: Successful
+smoke ➜ idempotence: Completed: Successful
+smoke ➜ side_effect: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ verify: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ destroy: Completed: Missing playbook (Remove from test_sequence to suppress)
+
+"""
+
+    # Validate final report matches execution
+    assert summary_section == expected_report, (
+        f"Report summary mismatch:\nExpected:\n{expected_report!r}\n\nActual:\n{summary_section!r}"
+    )
