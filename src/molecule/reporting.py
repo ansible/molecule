@@ -22,6 +22,8 @@ def report(results: ScenariosResults) -> None:
     original_stderr.write(ao.process_markup(report_header))
     original_stderr.write("\n")
     for scenario_result in results:
+        if not scenario_result.actions:
+            continue
         for action_result in scenario_result.actions:
             line = ao.format_full_completion_line(
                 scenario_name=scenario_result.name,
