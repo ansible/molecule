@@ -611,7 +611,7 @@ default                   : actions=1  successful=1  disabled=0  skipped=0  miss
                 fromfile="expected",
                 tofile="actual",
                 lineterm="",
-            )
+            ),
         )
         diff_text = "".join(diff_lines)
 
@@ -620,7 +620,7 @@ default                   : actions=1  successful=1  disabled=0  skipped=0  miss
             f"=== UNIFIED DIFF ===\n{diff_text}\n\n"
             f"=== RAW COMPARISON ===\n"
             f"Expected ({len(normalized_expected)} chars):\n{normalized_expected!r}\n\n"
-            f"Actual ({len(normalized_details)} chars):\n{normalized_details!r}"
+            f"Actual ({len(normalized_details)} chars):\n{normalized_details!r}",
         )
 
 
@@ -731,7 +731,7 @@ smoke                     : actions=12  successful=3  disabled=0  skipped=0  mis
                 fromfile="expected",
                 tofile="actual",
                 lineterm="",
-            )
+            ),
         )
         diff_text = "".join(diff_lines)
 
@@ -740,5 +740,5 @@ smoke                     : actions=12  successful=3  disabled=0  skipped=0  mis
             f"=== UNIFIED DIFF ===\n{diff_text}\n\n"
             f"=== RAW COMPARISON ===\n"
             f"Expected ({len(normalized_expected)} chars):\n{normalized_expected!r}\n\n"
-            f"Actual ({len(normalized_details)} chars):\n{normalized_details!r}"
+            f"Actual ({len(normalized_details)} chars):\n{normalized_details!r}",
         )
