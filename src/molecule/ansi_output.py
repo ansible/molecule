@@ -285,6 +285,9 @@ class AnsiOutput:
 
         # Process each scenario
         for scenario_result in results:
+            if not scenario_result.actions:
+                continue
+
             scenario_name = scenario_result.name
 
             # Count completion states across all actions
@@ -292,13 +295,12 @@ class AnsiOutput:
             total_actions = 0
 
             for action_result in scenario_result.actions:
-                total_actions += 1  # One action regardless of how many states it has
-
                 if action_result.states:
                     # Count all individual states for this action
                     for state in action_result.states:
                         if state.state in state_counts:
                             state_counts[state.state] += 1
+                total_actions += 1  # One action regardless of how many states it has
 
             # Create plain text version for length calculations
             scenario_plain = scenario_name
