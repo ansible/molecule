@@ -1,15 +1,13 @@
-"""Tests for molecule.reporting module."""
+"""Unit tests for reporting module."""
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-
-if TYPE_CHECKING:
-    import pytest
+import re
 
 from io import StringIO
+from typing import TYPE_CHECKING
 
+from molecule.ansi_output import AnsiOutput
 from molecule.constants import ANSICodes as A
 from molecule.reporting import (
     ActionResult,
@@ -19,6 +17,10 @@ from molecule.reporting import (
     ScenariosResults,
     report,
 )
+
+
+if TYPE_CHECKING:
+    import pytest
 
 
 def test_completion_state_info_init() -> None:
@@ -363,12 +365,16 @@ def test_report_comprehensive_no_color(monkeypatch: pytest.MonkeyPatch) -> None:
     report(results)
 
     expected_output = (
-        "\nSummary\n"
+        "\nDETAILS                                                                        \n"
         "default > create: Completed: Successful\n"
         "default > converge: Completed: Failed (Task failed)\n"
         "default > verify: Completed: Missing (Playbook not found)\n"
         "\n"
         "docker > destroy: Completed: Skipped\n"
+        "\n"
+        "SCENARIO RECAP                                                                 \n"
+        "default                   : actions=3  successful=1  disabled=0  skipped=0  missing=1  failed=1\n"
+        "docker                    : actions=1  successful=0  disabled=0  skipped=1  missing=0  failed=0\n"
         "\n"
     )
 
@@ -396,12 +402,16 @@ def test_report_comprehensive_with_color(monkeypatch: pytest.MonkeyPatch) -> Non
 
     # Expected output with ANSI escape codes using ANSICodes constants
     expected_output = (
-        f"\n{A.BOLD}{A.UNDERLINE}Summary{A.RESET}{A.RESET}\n"
+        f"\n{A.BOLD}{A.UNDERLINE}DETAILS                                                                        {A.RESET}\n"
         f"{A.GREEN}default{A.RESET} ➜ {A.YELLOW}create{A.RESET}: {A.GREEN}Completed: Successful{A.RESET}\n"
         f"{A.GREEN}default{A.RESET} ➜ {A.YELLOW}converge{A.RESET}: {A.RED}Completed: Failed{A.RESET} {A.DIM}(Task failed){A.RESET}\n"
         f"{A.GREEN}default{A.RESET} ➜ {A.YELLOW}verify{A.RESET}: {A.MAGENTA}Completed: Missing{A.RESET} {A.DIM}(Playbook not found){A.RESET}\n"
         "\n"
         f"{A.GREEN}docker{A.RESET} ➜ {A.YELLOW}destroy{A.RESET}: {A.CYAN}Completed: Skipped{A.RESET}\n"
+        "\n"
+        f"{A.BOLD}{A.UNDERLINE}SCENARIO RECAP                                                                 {A.RESET}\n"
+        f"{A.GREEN}default                   {A.RESET}: {A.YELLOW}actions=3{A.RESET}  {A.GREEN}successful=1{A.RESET}  disabled=0  skipped=0  {A.MAGENTA}missing=1{A.RESET}  {A.RED}failed=1{A.RESET}\n"
+        f"{A.GREEN}docker                    {A.RESET}: {A.YELLOW}actions=1{A.RESET}  successful=0  disabled=0  {A.CYAN}skipped=1{A.RESET}  missing=0  failed=0\n"
         "\n"
     )
 
@@ -435,3 +445,473 @@ def test_action_result_summary_priority_order() -> None:
     result.append(CompletionState.failed)
     summary = result.summary
     assert summary.state == "failed"
+
+
+# New tests for scenario recap functionality
+
+
+def test_format_scenario_recap_empty() -> None:
+    """Test recap with no scenarios."""
+    results = ScenariosResults([])
+    ansi_output = AnsiOutput()
+
+    recap = ansi_output.format_scenario_recap(results)
+    assert recap == ""
+
+
+def test_format_scenario_recap_single_scenario() -> None:
+    """Test recap with single successful scenario."""
+    action1 = ActionResult(action="create")
+    action1.append(CompletionState.successful)
+    action2 = ActionResult(action="converge")
+    action2.append(CompletionState.successful)
+
+    scenario = ScenarioResults(name="default", actions=[action1, action2])
+    results = ScenariosResults([scenario])
+    ansi_output = AnsiOutput()
+
+    recap = ansi_output.format_scenario_recap(results)
+
+    assert "SCENARIO RECAP" in recap
+    assert "default" in recap
+    assert "actions=2" in recap
+    assert "successful=2" in recap
+    assert "disabled=0" in recap
+    assert "skipped=0" in recap
+    assert "missing=0" in recap
+    assert "failed=0" in recap
+
+
+def test_format_scenario_recap_mixed_states() -> None:
+    """Test recap with mixed completion states."""
+    action1 = ActionResult(action="create")
+    action1.append(CompletionState.successful)
+
+    action2 = ActionResult(action="prepare")
+    action2.append(CompletionState.missing)
+
+    action3 = ActionResult(action="converge")
+    action3.append(CompletionState.failed)
+
+    action4 = ActionResult(action="cleanup")
+    action4.append(CompletionState.skipped)
+
+    scenario = ScenarioResults(name="test-scenario", actions=[action1, action2, action3, action4])
+    results = ScenariosResults([scenario])
+    ansi_output = AnsiOutput()
+
+    recap = ansi_output.format_scenario_recap(results)
+
+    assert "test-scenario" in recap
+    assert "actions=4" in recap
+    assert "successful=1" in recap
+    assert "missing=1" in recap
+    assert "failed=1" in recap
+    assert "skipped=1" in recap
+    assert "disabled=0" in recap
+
+
+def test_format_scenario_recap_line_format() -> None:
+    """Test recap line formatting matches expected pattern."""
+    action = ActionResult(action="create")
+    action.append(CompletionState.successful)
+
+    scenario = ScenarioResults(name="default", actions=[action])
+    results = ScenariosResults([scenario])
+    ansi_output = AnsiOutput()
+
+    recap = ansi_output.format_scenario_recap(results)
+    lines = recap.split("\n")
+
+    # Find the scenario line (skip header and separator)
+    scenario_line = None
+    for line in lines:
+        if "default" in line and "actions=" in line:
+            scenario_line = line
+            break
+
+    assert scenario_line is not None
+    assert "default                   :" in scenario_line
+    assert "actions=1" in scenario_line
+    assert "successful=1" in scenario_line
+
+
+def test_format_scenario_recap_colors_enabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that colors are applied when enabled and counts > 0.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    # Force enable colors for this test by removing NO_COLOR if present
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    monkeypatch.setenv("FORCE_COLOR", "1")
+
+    # Create scenario with mixed results (some zero, some non-zero)
+    action1 = ActionResult(action="create")
+    action1.append(CompletionState.successful)
+    action2 = ActionResult(action="verify")
+    action2.append(CompletionState.successful)
+    action2.append(CompletionState.failed)
+    action2.append(CompletionState.missing)
+
+    scenario = ScenarioResults(name="default", actions=[action1, action2])
+    results = ScenariosResults([scenario])
+
+    # Create a new AnsiOutput after setting environment variables
+    ansi_output = AnsiOutput()
+
+    # Verify that markup is enabled
+    assert ansi_output.markup_enabled, "Colors should be enabled for this test"
+
+    recap = ansi_output.format_scenario_recap(results)
+
+    # Should contain ANSI color codes for non-zero values only
+    assert "\x1b[32m" in recap  # GREEN for successful=2 should be colored
+    assert "\x1b[31m" in recap  # RED for failed=1 should be colored
+    assert "\x1b[35m" in recap  # MAGENTA for missing=1 should be colored
+    assert "\x1b[33m" in recap  # YELLOW for actions=2 should be colored
+
+    # Verify that zero values are not colored (check the pattern)
+    # Look for disabled=0 - should not have ANSI codes before it
+    disabled_pattern = r"(\x1b\[[0-9;]*m)?disabled=0"
+    disabled_match = re.search(disabled_pattern, recap)
+    assert disabled_match is not None
+    assert disabled_match.group(1) is None, "disabled=0 should not be colored"
+
+    # Look for skipped=0 - should not have ANSI codes before it
+    skipped_pattern = r"(\x1b\[[0-9;]*m)?skipped=0"
+    skipped_match = re.search(skipped_pattern, recap)
+    assert skipped_match is not None
+    assert skipped_match.group(1) is None, "skipped=0 should not be colored"
+
+
+def test_format_scenario_recap_colors_disabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test recap without colors when disabled.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    # Force disable colors
+    monkeypatch.setenv("NO_COLOR", "1")
+
+    # Create scenario with non-zero counts (but colors should still be disabled)
+    action1 = ActionResult(action="create")
+    action1.append(CompletionState.successful)
+    action2 = ActionResult(action="verify")
+    action2.append(CompletionState.failed)
+    action2.append(CompletionState.missing)
+
+    scenario = ScenarioResults(name="default", actions=[action1, action2])
+    results = ScenariosResults([scenario])
+    ansi_output = AnsiOutput()
+
+    recap = ansi_output.format_scenario_recap(results)
+
+    # Should not contain ANSI color codes even for non-zero values
+    assert "\x1b[32m" not in recap  # No GREEN
+    assert "\x1b[31m" not in recap  # No RED
+    assert "\x1b[35m" not in recap  # No MAGENTA
+    assert "\x1b[33m" not in recap  # No YELLOW
+
+    # Should still contain the content
+    assert "default" in recap
+    assert "actions=2" in recap
+    assert "successful=1" in recap
+    assert "failed=1" in recap
+    assert "missing=1" in recap
+    assert "disabled=0" in recap
+    assert "skipped=0" in recap
+
+
+def test_format_scenario_recap_multiple_scenarios() -> None:
+    """Test recap with multiple scenarios shows all correctly."""
+    expected_lines_with_header_and_scenarios = 4
+
+    # Scenario 1: All successful
+    action1 = ActionResult(action="create")
+    action1.append(CompletionState.successful)
+    scenario1 = ScenarioResults(name="default", actions=[action1])
+
+    # Scenario 2: Mixed results
+    action2a = ActionResult(action="create")
+    action2a.append(CompletionState.successful)
+    action2b = ActionResult(action="prepare")
+    action2b.append(CompletionState.missing)
+    scenario2 = ScenarioResults(name="test-scenario", actions=[action2a, action2b])
+
+    # Scenario 3: Longer name
+    action3 = ActionResult(action="converge")
+    action3.append(CompletionState.failed)
+    scenario3 = ScenarioResults(name="very-long-scenario-name", actions=[action3])
+
+    results = ScenariosResults([scenario1, scenario2, scenario3])
+    ansi_output = AnsiOutput()
+
+    recap = ansi_output.format_scenario_recap(results)
+
+    # Check all scenarios present
+    assert "default" in recap
+    assert "test-scenario" in recap
+    assert "very-long-scenario-name" in recap
+
+    # Check action counts
+    assert "actions=1" in recap  # default scenario
+    assert "actions=2" in recap  # test-scenario
+    # very-long-scenario-name has actions=1 too, so appears twice total
+
+    # Verify line count (header + 3 scenarios, no separator line)
+    lines = [line for line in recap.split("\n") if line.strip()]
+    assert len(lines) == expected_lines_with_header_and_scenarios
+
+
+def test_format_scenario_recap_separator_length() -> None:
+    """Test that recap header has proper width without separator line."""
+    min_lines_for_header_and_scenario = 2
+
+    action = ActionResult(action="create")
+    action.append(CompletionState.successful)
+    scenario = ScenarioResults(name="default", actions=[action])
+    results = ScenariosResults([scenario])
+    ansi_output = AnsiOutput()
+
+    recap = ansi_output.format_scenario_recap(results)
+    lines = recap.split("\n")
+
+    # First line should be the header (with ANSI codes for bold/underline)
+    header_line = lines[0]
+    assert "SCENARIO RECAP" in header_line
+
+    # Should not have a separate separator line
+    assert len(lines) >= min_lines_for_header_and_scenario, (
+        "Should have header and at least one scenario line"
+    )
+    second_line = lines[1]
+    assert "default" in second_line, "Second line should be scenario data, not separator"
+
+
+def test_format_scenario_recap_action_result_summary() -> None:
+    """Test recap counts all individual states, not just summary."""
+    # Create action with multiple states - should count all states
+    action = ActionResult(action="verify")
+    action.append(CompletionState.successful)
+    action.append(CompletionState.failed)  # Both should be counted
+
+    scenario = ScenarioResults(name="default", actions=[action])
+    results = ScenariosResults([scenario])
+    ansi_output = AnsiOutput()
+
+    recap = ansi_output.format_scenario_recap(results)
+
+    # Should count both states (not just the summary)
+    assert "successful=1" in recap
+    assert "failed=1" in recap
+    assert "actions=1" in recap  # Still one action
+
+
+def test_format_scenario_recap_multiple_states_per_action() -> None:
+    """Test recap correctly counts multiple states within single actions."""
+    # Create action with multiple verify results (like running multiple tests)
+    verify_action = ActionResult(action="verify")
+    verify_action.append(CompletionState.successful)  # Test 1 passed
+    verify_action.append(CompletionState.successful)  # Test 2 passed
+    verify_action.append(CompletionState.failed)  # Test 3 failed
+    verify_action.append(CompletionState.missing)  # Test 4 missing
+
+    # Create another action with single state
+    create_action = ActionResult(action="create")
+    create_action.append(CompletionState.successful)
+
+    scenario = ScenarioResults(name="test-scenario", actions=[verify_action, create_action])
+    results = ScenariosResults([scenario])
+    ansi_output = AnsiOutput()
+
+    recap = ansi_output.format_scenario_recap(results)
+
+    # Should count all individual states across both actions
+    assert "actions=2" in recap  # Two actions (verify + create)
+    assert "successful=3" in recap  # 2 from verify + 1 from create
+    assert "failed=1" in recap  # 1 from verify
+    assert "missing=1" in recap  # 1 from verify
+    assert "disabled=0" in recap  # None
+    assert "skipped=0" in recap  # None
+
+
+def test_format_scenario_recap_alignment_multi_digit() -> None:
+    """Test that multi-digit counts maintain proper alignment."""
+    # Constants for this test
+    total_action_count = 42
+    successful_action_count = 23
+    scenario_field_width = 26
+
+    # Create a scenario with many actions to generate multi-digit counts
+    actions = []
+    for i in range(total_action_count):  # 42 actions total
+        action = ActionResult(action=f"action_{i}")
+        if i < successful_action_count:
+            action.append(CompletionState.successful)
+        elif i < total_action_count:
+            action.append(CompletionState.missing)
+        actions.append(action)
+
+    scenario = ScenarioResults(name="test-scenario-long-name", actions=actions)
+    results = ScenariosResults([scenario])
+    ansi_output = AnsiOutput()
+
+    recap = ansi_output.format_scenario_recap(results)
+
+    # Should handle multi-digit counts properly
+    assert "actions=42" in recap
+    assert "successful=23" in recap
+    assert "missing=19" in recap
+
+    # Find the scenario line (not the header)
+    lines = recap.split("\n")
+    scenario_line = None
+    for line in lines:
+        if "test-scenario-long-name" in line:
+            scenario_line = line
+            break
+
+    assert scenario_line is not None, "Should find scenario line"
+
+    # Check alignment positions
+    colon_pos = scenario_line.find(":")
+    actions_pos = scenario_line.find("actions=")
+    successful_pos = scenario_line.find("successful=")
+
+    # Consistent positioning regardless of digit count
+    assert colon_pos == scenario_field_width  # Scenario field width
+    assert actions_pos > colon_pos + 1
+    assert successful_pos > actions_pos + 10  # Field + spacing
+
+
+def test_report_includes_scenario_recap(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that report() function includes scenario recap.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    # Ensure predictable output without ANSI codes
+    monkeypatch.setenv("NO_COLOR", "1")
+
+    # Mock original_stderr with StringIO
+    mock_stderr = StringIO()
+    monkeypatch.setattr("molecule.reporting.original_stderr", mock_stderr)
+
+    # Create test results
+    action = ActionResult(action="create")
+    action.append(CompletionState.successful)
+    scenario = ScenarioResults(name="default", actions=[action])
+    results = ScenariosResults([scenario])
+
+    # Call report
+    report(results)
+
+    # Verify recap is included in output
+    output = mock_stderr.getvalue()
+    assert "DETAILS" in output  # Changed to all caps
+    assert "SCENARIO RECAP" in output  # New recap in all caps
+    assert "default" in output
+    assert "actions=1" in output
+
+
+def test_report_details_format_updated(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that Details section has proper formatting.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    # Ensure predictable output without ANSI codes
+    monkeypatch.setenv("NO_COLOR", "1")
+
+    # Mock original_stderr with StringIO
+    mock_stderr = StringIO()
+    monkeypatch.setattr("molecule.reporting.original_stderr", mock_stderr)
+
+    # Create test results
+    action = ActionResult(action="create")
+    action.append(CompletionState.successful)
+    scenario = ScenarioResults(name="default", actions=[action])
+    results = ScenariosResults([scenario])
+
+    # Call report
+    report(results)
+
+    # Verify Details formatting
+    output = mock_stderr.getvalue()
+
+    # Should contain "DETAILS" (not "Summary")
+    assert "DETAILS" in output
+    assert "Summary" not in output
+
+    # Should NOT contain separator line after Details
+    lines = output.split("\n")
+    details_line_idx = None
+    for i, line in enumerate(lines):
+        if "DETAILS" in line:
+            details_line_idx = i
+            break
+
+    assert details_line_idx is not None
+    # Next line should NOT be separator (should be empty or content)
+    next_line = lines[details_line_idx + 1] if details_line_idx + 1 < len(lines) else ""
+    assert next_line != "─" * 79, "Separator line should be removed"
+
+
+def test_report_recap_after_details(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that scenario recap appears after details section.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    # Ensure predictable output without ANSI codes
+    monkeypatch.setenv("NO_COLOR", "1")
+
+    # Mock original_stderr with StringIO
+    mock_stderr = StringIO()
+    monkeypatch.setattr("molecule.reporting.original_stderr", mock_stderr)
+
+    # Create test results with multiple scenarios for clear output
+    action1 = ActionResult(action="create")
+    action1.append(CompletionState.successful)
+    scenario1 = ScenarioResults(name="default", actions=[action1])
+
+    action2 = ActionResult(action="converge")
+    action2.append(CompletionState.missing)
+    scenario2 = ScenarioResults(name="test-scenario", actions=[action2])
+
+    results = ScenariosResults([scenario1, scenario2])
+
+    # Call report
+    report(results)
+
+    # Verify order: Details appears before Scenario recap
+    output = mock_stderr.getvalue()
+    details_pos = output.find("DETAILS")
+    recap_pos = output.find("SCENARIO RECAP")
+
+    assert details_pos != -1, "DETAILS section not found"
+    assert recap_pos != -1, "SCENARIO RECAP section not found"
+    assert details_pos < recap_pos, "SCENARIO RECAP should appear after DETAILS"
+
+
+def test_report_no_recap_for_empty_results(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that no recap is shown for empty results.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    # Ensure predictable output without ANSI codes
+    monkeypatch.setenv("NO_COLOR", "1")
+
+    # Mock original_stderr with StringIO
+    mock_stderr = StringIO()
+    monkeypatch.setattr("molecule.reporting.original_stderr", mock_stderr)
+
+    # Call report with empty results
+    results = ScenariosResults([])
+    report(results)
+
+    # Should not contain recap
+    output = mock_stderr.getvalue()
+    assert "SCENARIO RECAP" not in output

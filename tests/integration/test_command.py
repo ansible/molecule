@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import difflib
 import os
 import shutil
 import subprocess
@@ -156,6 +157,23 @@ PARAMS_DEFAULT: ParamDefault = {
     "ids": "0",
     "indirect": ("scenario_to_test", "scenario_name"),
 }
+
+
+def normalize_report_whitespace(text: str) -> str:
+    """Normalize whitespace in report text for comparison.
+
+    Strips trailing whitespace from each line while preserving line structure.
+    This handles the 79-character padding in headers like 'DETAILS' and 'SCENARIO RECAP'.
+
+    Args:
+        text: Text to normalize.
+
+    Returns:
+        Text with trailing whitespace stripped from each line.
+    """
+    return "\n".join(line.rstrip() for line in text.splitlines()) + (
+        "\n" if text.endswith("\n") else ""
+    )
 
 
 @pytest.mark.extensive
@@ -542,12 +560,12 @@ def test_shared_actions(
 
     # === VALIDATE REPORT OUTPUT (what users see at the end) ===
 
-    # Extract the Summary section (everything after "Summary") and strip ANSI codes
-    summary_start = clean_stderr.find("Summary")
-    summary_section = clean_stderr[summary_start:] if summary_start != -1 else ""
+    # Extract the Details section (everything after "DETAILS") and strip ANSI codes
+    details_start = clean_stderr.find("DETAILS")
+    details_section = clean_stderr[details_start:] if details_start != -1 else ""
 
     # Expected report format - exact match what users see
-    expected_report = """Summary
+    expected_report = """DETAILS
 default ➜ create: Completed: Successful
 
 test-scenario ➜ dependency: Completed: 2 missing (Remove from test_sequence to suppress)
@@ -572,12 +590,38 @@ smoke ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to sup
 
 default ➜ destroy: Completed: Successful
 
+SCENARIO RECAP
+default                   : actions=1  successful=1  disabled=0  skipped=0  missing=0  failed=0
+test-scenario             : actions=9  successful=3  disabled=0  skipped=0  missing=7  failed=0
+smoke                     : actions=9  successful=3  disabled=0  skipped=0  missing=7  failed=0
+default                   : actions=1  successful=1  disabled=0  skipped=0  missing=0  failed=0
+
 """
 
     # Direct string comparison - exact match
-    assert summary_section == expected_report, (
-        f"Report content mismatch:\nExpected:\n{expected_report!r}\n\nActual:\n{summary_section!r}"
-    )
+    normalized_details = normalize_report_whitespace(details_section)
+    normalized_expected = normalize_report_whitespace(expected_report)
+
+    if normalized_details != normalized_expected:
+        # Provide detailed diff for easier debugging
+        diff_lines = list(
+            difflib.unified_diff(
+                normalized_expected.splitlines(keepends=True),
+                normalized_details.splitlines(keepends=True),
+                fromfile="expected",
+                tofile="actual",
+                lineterm="",
+            )
+        )
+        diff_text = "".join(diff_lines)
+
+        pytest.fail(
+            f"Report content mismatch:\n\n"
+            f"=== UNIFIED DIFF ===\n{diff_text}\n\n"
+            f"=== RAW COMPARISON ===\n"
+            f"Expected ({len(normalized_expected)} chars):\n{normalized_expected!r}\n\n"
+            f"Actual ({len(normalized_details)} chars):\n{normalized_details!r}"
+        )
 
 
 def test_ui_formatting(
@@ -650,12 +694,12 @@ def test_ui_formatting(
 
     # === VALIDATE REPORT SUMMARY ===
 
-    # Extract the Summary section from stderr and strip ANSI codes
-    summary_start = clean_stderr.find("Summary")
-    summary_section = clean_stderr[summary_start:] if summary_start != -1 else ""
+    # Extract the Details section from stderr and strip ANSI codes
+    details_start = clean_stderr.find("DETAILS")
+    details_section = clean_stderr[details_start:] if details_start != -1 else ""
 
     # Expected report shows final status
-    expected_report = """Summary
+    expected_report = """DETAILS
 smoke ➜ dependency: Completed: 2 missing (Remove from test_sequence to suppress)
 smoke ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
 smoke ➜ destroy: Completed: Missing playbook (Remove from test_sequence to suppress)
@@ -669,9 +713,32 @@ smoke ➜ verify: Completed: Missing playbook (Remove from test_sequence to supp
 smoke ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
 smoke ➜ destroy: Completed: Missing playbook (Remove from test_sequence to suppress)
 
+SCENARIO RECAP
+smoke                     : actions=12  successful=3  disabled=0  skipped=0  missing=10  failed=0
+
 """
 
     # Validate final report matches execution
-    assert summary_section == expected_report, (
-        f"Report summary mismatch:\nExpected:\n{expected_report!r}\n\nActual:\n{summary_section!r}"
-    )
+    normalized_details = normalize_report_whitespace(details_section)
+    normalized_expected = normalize_report_whitespace(expected_report)
+
+    if normalized_details != normalized_expected:
+        # Provide detailed diff for easier debugging
+        diff_lines = list(
+            difflib.unified_diff(
+                normalized_expected.splitlines(keepends=True),
+                normalized_details.splitlines(keepends=True),
+                fromfile="expected",
+                tofile="actual",
+                lineterm="",
+            )
+        )
+        diff_text = "".join(diff_lines)
+
+        pytest.fail(
+            f"Report summary mismatch:\n\n"
+            f"=== UNIFIED DIFF ===\n{diff_text}\n\n"
+            f"=== RAW COMPARISON ===\n"
+            f"Expected ({len(normalized_expected)} chars):\n{normalized_expected!r}\n\n"
+            f"Actual ({len(normalized_details)} chars):\n{normalized_details!r}"
+        )
