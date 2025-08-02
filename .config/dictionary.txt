@@ -117,6 +117,7 @@ testrole
 testvar
 timedout
 tmpfs
+tofile
 topdown
 tryfirst
 ttofile
