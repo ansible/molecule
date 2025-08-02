@@ -8,6 +8,7 @@ from typing import cast
 
 from molecule.ansi_output import AnsiOutput
 from molecule.console import original_stderr
+from molecule.constants import COMPLETION_STATE_COLORS, COMPLETION_STATE_PRIORITY_ORDER
 from molecule.constants import ANSICodes as A
 
 
@@ -18,9 +19,15 @@ def report(results: ScenariosResults) -> None:
         results: The results of the scenario.
     """
     ao = AnsiOutput()
-    report_header = "\n[bold][underline]Summary[/][/]"
-    original_stderr.write(ao.process_markup(report_header))
+
+    # Details section header (bold and underlined), padded to 79 characters
+    details_text = "DETAILS"
+    details_padded = f"{details_text:<79}"
+    details_header = f"\n[bold][underline]{details_padded}[/]"
+    original_stderr.write(ao.process_markup(details_header))
     original_stderr.write("\n")
+
+    # Details section content - show completion status for each action
     for scenario_result in results:
         if not scenario_result.actions:
             continue
@@ -35,6 +42,12 @@ def report(results: ScenariosResults) -> None:
             original_stderr.write(ao.process_markup(line))
             original_stderr.write("\n")
         original_stderr.write("\n")
+
+    # Scenario recap section - dynamically generated from CompletionState
+    recap = ao.format_scenario_recap(results)
+    if recap:
+        original_stderr.write(recap)
+        original_stderr.write("\n\n")
 
 
 class CompletionStateInfo:
@@ -114,12 +127,36 @@ class CompletionState:
         successful: Successful state.
     """
 
-    disabled = CompletionStateInfo(state="disabled", log_level="info", color=A.CYAN)
-    failed = CompletionStateInfo(state="failed", log_level="error", color=A.RED)
-    missing = CompletionStateInfo(state="missing", log_level="warning", color=A.MAGENTA)
-    partial = CompletionStateInfo(state="partial", log_level="info", color=A.GREEN)
-    skipped = CompletionStateInfo(state="skipped", log_level="info", color=A.CYAN)
-    successful = CompletionStateInfo(state="successful", log_level="info", color=A.GREEN)
+    disabled = CompletionStateInfo(
+        state="disabled",
+        log_level="info",
+        color=COMPLETION_STATE_COLORS["disabled"],
+    )
+    failed = CompletionStateInfo(
+        state="failed",
+        log_level="error",
+        color=COMPLETION_STATE_COLORS["failed"],
+    )
+    missing = CompletionStateInfo(
+        state="missing",
+        log_level="warning",
+        color=COMPLETION_STATE_COLORS["missing"],
+    )
+    partial = CompletionStateInfo(
+        state="partial",
+        log_level="info",
+        color=COMPLETION_STATE_COLORS["partial"],
+    )
+    skipped = CompletionStateInfo(
+        state="skipped",
+        log_level="info",
+        color=COMPLETION_STATE_COLORS["skipped"],
+    )
+    successful = CompletionStateInfo(
+        state="successful",
+        log_level="info",
+        color=COMPLETION_STATE_COLORS["successful"],
+    )
 
 
 @dataclass
@@ -165,12 +202,11 @@ class ActionResult:
         parts = [f"{number} {name}" for name, number in counts.items()]
         partial_message = f"{', '.join(parts)}"
 
-        ranks = ("failed", "missing", "skipped", "disabled", "successful")
         states = [state.state for state in self.states]
         notes = {state.note for state in self.states if state.note}
         note = None if not notes else next(iter(notes)) if len(notes) == 1 else "See details above"
 
-        for rank in ranks:
+        for rank in COMPLETION_STATE_PRIORITY_ORDER:
             if rank in states:
                 return cast("CompletionStateInfo", getattr(CompletionState, rank))(
                     message=partial_message,

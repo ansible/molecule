@@ -93,6 +93,23 @@ class ANSICodes(StrEnum):
         return self.name.lower()
 
 
+# Scenario recap display order (reverse rank order - lowest to highest priority)
+SCENARIO_RECAP_STATE_ORDER = ("successful", "disabled", "skipped", "missing", "failed")
+
+# Completion state priority order (highest to lowest priority) - used for ActionResult.summary
+COMPLETION_STATE_PRIORITY_ORDER = ("failed", "missing", "skipped", "disabled", "successful")
+
+# Mapping of completion state names to their color tags for scenario recap
+COMPLETION_STATE_COLORS = {
+    "successful": ANSICodes.GREEN,
+    "disabled": ANSICodes.CYAN,
+    "skipped": ANSICodes.CYAN,
+    "missing": ANSICodes.MAGENTA,
+    "failed": ANSICodes.RED,
+    "partial": ANSICodes.GREEN,
+}
+
+
 # Rich markup to ANSI mapping
 MARKUP_MAP: dict[str, str] = {
     "logging.level.debug": ANSICodes.DIM,

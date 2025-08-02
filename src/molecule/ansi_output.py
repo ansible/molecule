@@ -22,8 +22,14 @@ import os
 import re
 import sys
 
-from molecule.constants import MARKUP_MAP
+from typing import TYPE_CHECKING
+
+from molecule.constants import MARKUP_MAP, SCENARIO_RECAP_STATE_ORDER
 from molecule.constants import ANSICodes as A
+
+
+if TYPE_CHECKING:
+    from molecule.reporting import ScenariosResults
 
 
 def to_bool(a: object) -> bool:
@@ -189,7 +195,7 @@ class AnsiOutput:
 
         Args:
             message: The plain text completion message (e.g., "Completed: Successful")
-            color: The ANSI color code (e.g., A.GREEN, A.RED)
+            color: The ANSI color code (e.g., ANSICodes.GREEN, ANSICodes.RED)
 
         Returns:
             Formatted message with or without ANSI codes based on markup_enabled setting.
@@ -253,3 +259,84 @@ class AnsiOutput:
                 result += f" ({note})"
 
         return result
+
+    def format_scenario_recap(self, results: ScenariosResults) -> str:
+        """Format scenario recap similar to Ansible play recap.
+
+        Args:
+            results: The scenario results to format.
+
+        Returns:
+            Formatted recap string with ANSI colors if enabled.
+        """
+        # Import here to avoid circular imports
+        from molecule.reporting import CompletionState  # noqa: PLC0415
+
+        if not results:
+            return ""
+
+        lines = []
+
+        # Header with bold and underline styling, padded to 79 characters
+        header_text = "SCENARIO RECAP"
+        header_padded = f"{header_text:<79}"
+        header = self.process_markup(f"[bold][underline]{header_padded}[/]")
+        lines.append(header)
+
+        # Process each scenario
+        for scenario_result in results:
+            if not scenario_result.actions:
+                continue
+
+            scenario_name = scenario_result.name
+
+            # Count completion states across all actions
+            state_counts = dict.fromkeys(SCENARIO_RECAP_STATE_ORDER, 0)
+            total_actions = 0
+
+            for action_result in scenario_result.actions:
+                if action_result.states:
+                    # Count all individual states for this action
+                    for state in action_result.states:
+                        if state.state in state_counts:
+                            state_counts[state.state] += 1
+                total_actions += 1  # One action regardless of how many states it has
+
+            # Create plain text version for length calculations
+            scenario_plain = scenario_name
+
+            # Pad scenario name to 26 characters (like Ansible's host field)
+            scenario_padded_plain = f"{scenario_plain:<26}"
+
+            # Apply colors to the padded plain text
+            scenario_colored = self.process_markup(f"[scenario]{scenario_padded_plain}[/]")
+
+            # Format counts with fixed field widths to ensure alignment
+            # Only apply colors if count > 0 (matching Ansible behavior)
+            actions_part = (
+                self.process_markup(f"[action]actions={total_actions}[/]")
+                if total_actions > 0
+                else f"actions={total_actions}"
+            )
+
+            # Generate state parts dynamically using CompletionState colors
+            state_parts = []
+            for state_name in SCENARIO_RECAP_STATE_ORDER:
+                count = state_counts[state_name]
+
+                # Get the color tag from the CompletionState
+                state_obj = getattr(CompletionState, state_name)
+                color_tag = state_obj.color.tag
+
+                if count > 0:
+                    state_part = self.process_markup(f"[{color_tag}]{state_name}={count}[/]")
+                else:
+                    state_part = f"{state_name}={count}"
+
+                state_parts.append(state_part)
+
+            # Build line with consistent spacing to match expected format
+            line = f"{scenario_colored}: {actions_part}  " + "  ".join(state_parts)
+            lines.append(line)
+
+        return "\n".join(lines)
