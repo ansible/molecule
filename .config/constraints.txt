@@ -3,13 +3,13 @@
 ansi2html==1.9.2          # via molecule (pyproject.toml)
 ansible-builder==3.1.0    # via ansible-navigator
 ansible-compat==25.6.0    # via ansible-lint, molecule (pyproject.toml)
-ansible-lint==25.6.1      # via ansible-navigator, molecule (pyproject.toml)
+ansible-lint==25.7.0      # via ansible-navigator, molecule (pyproject.toml)
 ansible-navigator==25.5.0  # via molecule (pyproject.toml)
 ansible-runner==2.4.1     # via ansible-navigator
 astroid==3.3.11           # via pylint
 attrs==25.3.0             # via jsonschema, referencing
 babel==2.17.0             # via mkdocs-material
-backrefs==5.9             # via mkdocs-material
+backrefs==6.0.1             # via mkdocs-material
 beautifulsoup4==4.13.4    # via linkchecker, mkdocs-htmlproofer-plugin
 bindep==2.13.0            # via ansible-builder
 black==25.1.0             # via ansible-lint
@@ -17,7 +17,7 @@ bracex==2.6               # via wcmatch
 cachetools==6.1.0         # via tox
 cairocffi==1.7.1          # via cairosvg
 cairosvg==2.7.1           # via mkdocs-ansible
-certifi==2025.7.14        # via requests
+certifi==2025.8.3        # via requests
 cffi==1.17.1              # via cairocffi, cryptography, onigurumacffi
 cfgv==3.4.0               # via pre-commit
 chardet==5.2.0            # via tox
@@ -25,7 +25,7 @@ charset-normalizer==3.4.2  # via requests
 click==8.2.1              # via black, click-help-colors, mkdocs, pydoclint, molecule (pyproject.toml)
 click-help-colors==0.9.4  # via molecule (pyproject.toml)
 colorama==0.4.6           # via griffe, mkdocs-material, tox
-coverage==7.10.0          # via molecule (pyproject.toml)
+coverage==7.10.1          # via molecule (pyproject.toml)
 cryptography==45.0.5      # via ansible-core
 csscompressor==0.9.5      # via mkdocs-minify-plugin
 cssselect2==0.8.0         # via cairosvg
@@ -41,7 +41,7 @@ exceptiongroup==1.3.0     # via pytest
 execnet==2.1.1            # via pytest-xdist
 filelock==3.18.0          # via ansible-lint, tox, virtualenv, molecule (pyproject.toml)
 ghp-import==2.1.0         # via mkdocs
-griffe==1.8.0             # via mkdocstrings-python
+griffe==1.9.0             # via mkdocstrings-python
 hjson==3.1.0              # via mkdocs-macros-plugin, super-collections
 htmlmin2==0.1.13          # via mkdocs-minify-plugin
 identify==2.6.12          # via pre-commit
@@ -53,7 +53,7 @@ jinja2==3.1.6             # via ansible-core, ansible-navigator, mkdocs, mkdocs-
 jsmin==3.0.1              # via mkdocs-minify-plugin
 jsonschema==4.25.0        # via ansible-builder, ansible-compat, ansible-lint, ansible-navigator, molecule (pyproject.toml)
 jsonschema-specifications==2025.4.1  # via jsonschema
-linkchecker==10.5.0       # via mkdocs-ansible, molecule (pyproject.toml)
+linkchecker==10.6.0       # via mkdocs-ansible, molecule (pyproject.toml)
 lockfile==0.12.2          # via python-daemon
 markdown==3.8.2           # via markdown-include, mkdocs, mkdocs-autorefs, mkdocs-htmlproofer-plugin, mkdocs-material, mkdocstrings, pymdown-extensions
 markdown-exec==1.11.0     # via mkdocs-ansible
@@ -75,7 +75,7 @@ mkdocs-material-extensions==1.3.1  # via mkdocs-ansible, mkdocs-material
 mkdocs-minify-plugin==0.8.0  # via mkdocs-ansible
 mkdocstrings==0.30.0      # via mkdocs-ansible, mkdocstrings-python
 mkdocstrings-python==1.16.12  # via mkdocs-ansible
-mypy==1.17.0              # via molecule (pyproject.toml)
+mypy==1.17.1              # via molecule (pyproject.toml)
 mypy-extensions==1.1.0    # via black, mypy
 nodeenv==1.9.1            # via pre-commit
 onigurumacffi==1.4.1      # via ansible-navigator
@@ -94,7 +94,7 @@ pycparser==2.22           # via cffi
 pydoclint==0.6.6          # via molecule (pyproject.toml)
 pygments==2.19.2          # via mkdocs-material, pytest, rich
 pylint==3.3.7             # via molecule (pyproject.toml)
-pymdown-extensions==10.16  # via markdown-exec, mkdocs-ansible, mkdocs-material, mkdocstrings
+pymdown-extensions==10.16.1  # via markdown-exec, mkdocs-ansible, mkdocs-material, mkdocstrings
 pyproject-api==1.9.1      # via tox
 pytest==8.4.1             # via pytest-instafail, pytest-mock, pytest-plus, pytest-testinfra, pytest-xdist, molecule (pyproject.toml)
 pytest-instafail==0.5.0   # via molecule (pyproject.toml)
@@ -111,7 +111,7 @@ requests==2.32.4          # via docker, linkchecker, mkdocs-htmlproofer-plugin, 
 rich==14.1.0              # via enrich, molecule (pyproject.toml)
 rpds-py==0.26.0           # via jsonschema, referencing
 ruamel-yaml==0.18.14      # via ansible-lint
-ruff==0.12.5              # via molecule (pyproject.toml)
+ruff==0.12.7              # via molecule (pyproject.toml)
 setuptools==80.9.0        # via pbr
 six==1.17.0               # via python-dateutil
 soupsieve==2.7            # via beautifulsoup4
@@ -122,7 +122,7 @@ tinycss2==1.4.0           # via cairosvg, cssselect2
 toml-sort==0.24.2         # via molecule (pyproject.toml)
 tomli==2.2.1              # via black, coverage, mypy, pydoclint, pylint, pyproject-api, pytest, tox
 tomlkit==0.13.3           # via pylint, toml-sort
-tox==4.28.3               # via molecule (pyproject.toml)
+tox==4.28.4               # via molecule (pyproject.toml)
 types-jsonschema==4.25.0.20250720  # via molecule (pyproject.toml)
 types-pexpect==4.9.0.20250516  # via molecule (pyproject.toml)
 types-pyyaml==6.0.12.20250516  # via molecule (pyproject.toml)
