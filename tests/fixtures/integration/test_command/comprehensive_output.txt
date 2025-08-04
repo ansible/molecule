@@ -21,7 +21,7 @@ INFO     default ➜ create: Starting
   │ PLAY RECAP *********************************************************************
   │ localhost                  : ok=0    changed=0    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0
   │
-  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+  └─ Return code: 0 ─────────────────────────────────────────────────────────────────
 INFO     default ➜ create: Completed: Successful
 INFO     test-scenario ➜ prerun: Performing prerun with role_name_check=0...
 INFO     test-scenario ➜ dependency: Starting
@@ -34,7 +34,7 @@ INFO     test-scenario ➜ syntax: Starting
   │
   │
   │ playbook: REDACTED
-  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+  └─ Return code: 0 ─────────────────────────────────────────────────────────────────
 INFO     test-scenario ➜ syntax: Completed: Successful
 INFO     test-scenario ➜ prepare: Starting
 INFO     test-scenario ➜ converge: Starting
@@ -54,7 +54,7 @@ INFO     test-scenario ➜ converge: Starting
   │ PLAY RECAP *********************************************************************
   │ localhost                  : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
   │
-  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+  └─ Return code: 0 ─────────────────────────────────────────────────────────────────
 INFO     test-scenario ➜ converge: Completed: Successful
 INFO     test-scenario ➜ idempotence: Starting
   ┌──────────────────────────────────────────────────────────────────────────────────
@@ -73,7 +73,7 @@ INFO     test-scenario ➜ idempotence: Starting
   │ PLAY RECAP *********************************************************************
   │ localhost                  : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
   │
-  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+  └─ Return code: 0 ─────────────────────────────────────────────────────────────────
 INFO     test-scenario ➜ idempotence: Completed: Successful
 INFO     test-scenario ➜ side_effect: Starting
 INFO     test-scenario ➜ verify: Starting
@@ -89,7 +89,7 @@ INFO     smoke ➜ syntax: Starting
   │
   │
   │ playbook: REDACTED
-  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+  └─ Return code: 0 ─────────────────────────────────────────────────────────────────
 INFO     smoke ➜ syntax: Completed: Successful
 INFO     smoke ➜ prepare: Starting
 INFO     smoke ➜ converge: Starting
@@ -113,7 +113,7 @@ INFO     smoke ➜ converge: Starting
   │ PLAY RECAP *********************************************************************
   │ localhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
   │
-  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+  └─ Return code: 0 ─────────────────────────────────────────────────────────────────
 INFO     smoke ➜ converge: Completed: Successful
 INFO     smoke ➜ idempotence: Starting
   ┌──────────────────────────────────────────────────────────────────────────────────
@@ -136,7 +136,7 @@ INFO     smoke ➜ idempotence: Starting
   │ PLAY RECAP *********************************************************************
   │ localhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
   │
-  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+  └─ Return code: 0 ─────────────────────────────────────────────────────────────────
 INFO     smoke ➜ idempotence: Completed: Successful
 INFO     smoke ➜ side_effect: Starting
 INFO     smoke ➜ verify: Starting
@@ -159,7 +159,7 @@ INFO     default ➜ destroy: Starting
   │ PLAY RECAP *********************************************************************
   │ localhost                  : ok=1    changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
   │
-  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+  └─ Return code: 0 ─────────────────────────────────────────────────────────────────
 INFO     default ➜ destroy: Completed: Successful
 
 DETAILS
