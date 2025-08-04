@@ -126,7 +126,7 @@ class AnsiblePlaybook:
                         text=True,
                         check=True,
                     )
-                    self._log.info("%s version: %s", backend, result.stdout.strip())
+                    self._log.debug("%s version: %s", backend, result.stdout.strip())
                 except subprocess.CalledProcessError as exc:
                     msg = f"{backend} is not available. Please ensure that it is installed."
                     raise RuntimeError(msg) from exc
@@ -187,10 +187,11 @@ class AnsiblePlaybook:
                 env=self._env,
                 debug=self._config.debug,
                 cwd=cwd,
+                command_borders=self._config.command_borders,
             )
 
         if result.returncode != 0:
-            err = f"Ansible return code was {result.returncode}, command was: [dim]{escape(shlex.join(result.args))}[/]"
+            err = f"Ansible return code was {result.returncode}, command was: {escape(shlex.join(result.args))}"
             self._config.scenario.results.add_completion(CompletionState.failed(note=err))
 
             raise ScenarioFailureError(

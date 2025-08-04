@@ -135,7 +135,12 @@ class Scenario(base.Base):
         # it to use colors.
         env["ANSIBLE_FORCE_COLOR"] = "1"
         env["ANSIBLE_PYTHON_INTERPRETER"] = sys.executable
-        self._config.app.run_command(cmd, env=env, check=True)
+        self._config.app.run_command(
+            cmd,
+            env=env,
+            check=True,
+            command_borders=self._config.command_borders,
+        )
 
         msg = f"Initialized scenario in {scenario_directory} successfully."
         self._log.info(msg)

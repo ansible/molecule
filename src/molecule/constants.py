@@ -48,6 +48,17 @@ class ANSICodes(StrEnum):
         DIM: Dim text.
         ITALIC: Italic text.
         UNDERLINE: Underline text.
+        NOT_DIM: Turn off bold and dim without affecting colors.
+        BOX_TOP_LEFT: Top-left corner box drawing character.
+        BOX_TOP_RIGHT: Top-right corner box drawing character.
+        BOX_BOTTOM_LEFT: Bottom-left corner box drawing character.
+        BOX_BOTTOM_RIGHT: Bottom-right corner box drawing character.
+        BOX_HORIZONTAL: Horizontal line box drawing character.
+        BOX_VERTICAL: Vertical line box drawing character.
+        BOX_TOP_MIDDLE: Top middle junction box drawing character.
+        BOX_BOTTOM_MIDDLE: Bottom middle junction box drawing character.
+        BOX_LEFT_MIDDLE: Left middle junction box drawing character.
+        BOX_RIGHT_MIDDLE: Right middle junction box drawing character.
         RIGHT_ARROW: Right arrow.
     """
 
@@ -79,6 +90,21 @@ class ANSICodes(StrEnum):
     DIM = "\033[2m"
     ITALIC = "\033[3m"
     UNDERLINE = "\033[4m"
+
+    # Text Style Resets (specific, not full reset)
+    NOT_DIM = "\033[22m"  # Turns off bold and dim without affecting colors
+
+    # Box Drawing Constants
+    BOX_TOP_LEFT = "\u250c"
+    BOX_TOP_RIGHT = "\u2510"
+    BOX_BOTTOM_LEFT = "\u2514"
+    BOX_BOTTOM_RIGHT = "\u2518"
+    BOX_HORIZONTAL = "\u2500"
+    BOX_VERTICAL = "\u2502"
+    BOX_TOP_MIDDLE = "\u252c"
+    BOX_BOTTOM_MIDDLE = "\u2534"
+    BOX_LEFT_MIDDLE = "\u251c"
+    BOX_RIGHT_MIDDLE = "\u2524"
 
     # Molecule-specific symbols
     RIGHT_ARROW = "➜"
@@ -122,3 +148,6 @@ MARKUP_MAP: dict[str, str] = {
     "scenario": ANSICodes.GREEN,
     "action": ANSICodes.YELLOW,
 }
+
+# Border width constant
+DEFAULT_BORDER_WIDTH = 83

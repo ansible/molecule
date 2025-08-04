@@ -280,6 +280,7 @@ class CommandArgs(TypedDict, total=False):
         shared_inventory: Whether inventory should be shared between scenarios.
         shared_state: Whether (some) state should be shared between scenarios.
         subcommand: Name of subcommand being run.
+        command_borders: Whether to enable borders around command output.
     """
 
     destroy: Literal["always", "never"]
@@ -294,3 +295,4 @@ class CommandArgs(TypedDict, total=False):
     shared_inventory: bool
     shared_state: bool
     subcommand: str
+    command_borders: bool

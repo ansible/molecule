@@ -128,6 +128,7 @@ def test_shell_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
             "patched-command",
             debug=False,
             check=True,
+            command_borders=False,
         )
 
         # Check for scenario-aware log records instead of text

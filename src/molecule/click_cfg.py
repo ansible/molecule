@@ -39,6 +39,7 @@ COMMON_OPTIONS = [
     "scenario_name_with_default",
     "shared_inventory",
     "shared_state",
+    "command_borders",
 ]
 
 
@@ -371,6 +372,17 @@ class CliOptions:
         return CliOption(
             name="shared-state",
             help="Enable or disable sharing (some) state between scenarios.",
+            is_flag=True,
+            default=False,
+            experimental=True,
+        )
+
+    @property
+    def command_borders(self) -> CliOption:
+        """Command borders option."""
+        return CliOption(
+            name="command-borders",
+            help="Enable or disable borders around command output.",
             is_flag=True,
             default=False,
             experimental=True,

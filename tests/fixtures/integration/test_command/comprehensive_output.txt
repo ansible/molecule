@@ -1,0 +1,194 @@
+INFO     test-scenario ➜ discovery: scenario test matrix: dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy
+INFO     smoke ➜ discovery: scenario test matrix: dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy
+INFO     default ➜ create: Starting
+  ┌──────────────────────────────────────────────────────────────────────────────────
+  │ ansible-playbook --inventory REDACTED
+  │   --skip-tags molecule-notest,notest
+  │   REDACTED
+  │
+  │
+  │ PLAY [Create] ******************************************************************
+  │
+  │ TASK [Populate instance config dict] *******************************************
+  │ skipping: [localhost]
+  │
+  │ TASK [Convert instance config dict to a list] **********************************
+  │ skipping: [localhost]
+  │
+  │ TASK [Dump instance config] ****************************************************
+  │ skipping: [localhost]
+  │
+  │ PLAY RECAP *********************************************************************
+  │ localhost                  : ok=0    changed=0    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0
+  │
+  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+INFO     default ➜ create: Completed: Successful
+INFO     test-scenario ➜ prerun: Performing prerun with role_name_check=0...
+INFO     test-scenario ➜ dependency: Starting
+INFO     test-scenario ➜ cleanup: Starting
+INFO     test-scenario ➜ syntax: Starting
+  ┌──────────────────────────────────────────────────────────────────────────────────
+  │ ansible-playbook --inventory REDACTED
+  │   --skip-tags molecule-notest,notest
+  │   --syntax-check REDACTED
+  │
+  │
+  │ playbook: REDACTED
+  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+INFO     test-scenario ➜ syntax: Completed: Successful
+INFO     test-scenario ➜ prepare: Starting
+INFO     test-scenario ➜ converge: Starting
+  ┌──────────────────────────────────────────────────────────────────────────────────
+  │ ansible-playbook --inventory REDACTED
+  │   --skip-tags molecule-notest,notest
+  │   REDACTED
+  │
+  │
+  │ PLAY [Converge] ****************************************************************
+  │
+  │ TASK [Replace this task with one that validates your content] ******************
+  │ ok: [localhost] => {
+  │     "msg": "This is the effective test"
+  │ }
+  │
+  │ PLAY RECAP *********************************************************************
+  │ localhost                  : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+  │
+  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+INFO     test-scenario ➜ converge: Completed: Successful
+INFO     test-scenario ➜ idempotence: Starting
+  ┌──────────────────────────────────────────────────────────────────────────────────
+  │ ansible-playbook --inventory REDACTED
+  │   --skip-tags molecule-notest,notest,molecule-idempotence-notest
+  │   REDACTED
+  │
+  │
+  │ PLAY [Converge] ****************************************************************
+  │
+  │ TASK [Replace this task with one that validates your content] ******************
+  │ ok: [localhost] => {
+  │     "msg": "This is the effective test"
+  │ }
+  │
+  │ PLAY RECAP *********************************************************************
+  │ localhost                  : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+  │
+  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+INFO     test-scenario ➜ idempotence: Completed: Successful
+INFO     test-scenario ➜ side_effect: Starting
+INFO     test-scenario ➜ verify: Starting
+INFO     test-scenario ➜ cleanup: Starting
+INFO     smoke ➜ prerun: Performing prerun with role_name_check=0...
+INFO     smoke ➜ dependency: Starting
+INFO     smoke ➜ cleanup: Starting
+INFO     smoke ➜ syntax: Starting
+  ┌──────────────────────────────────────────────────────────────────────────────────
+  │ ansible-playbook --inventory REDACTED
+  │   --skip-tags molecule-notest,notest
+  │   --syntax-check REDACTED
+  │
+  │
+  │ playbook: REDACTED
+  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+INFO     smoke ➜ syntax: Completed: Successful
+INFO     smoke ➜ prepare: Starting
+INFO     smoke ➜ converge: Starting
+  ┌──────────────────────────────────────────────────────────────────────────────────
+  │ ansible-playbook --inventory REDACTED
+  │   --skip-tags molecule-notest,notest
+  │   REDACTED
+  │
+  │
+  │ PLAY [Converge] ****************************************************************
+  │
+  │ TASK [Gathering Facts] *********************************************************
+  │ ok: [localhost]
+  │
+  │ TASK [Assert CWD is the same as playbook_dir] **********************************
+  │ ok: [localhost] => {
+  │     "changed": false,
+  │     "msg": "All assertions passed"
+  │ }
+  │
+  │ PLAY RECAP *********************************************************************
+  │ localhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+  │
+  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+INFO     smoke ➜ converge: Completed: Successful
+INFO     smoke ➜ idempotence: Starting
+  ┌──────────────────────────────────────────────────────────────────────────────────
+  │ ansible-playbook --inventory REDACTED
+  │   --skip-tags molecule-notest,notest,molecule-idempotence-notest
+  │   REDACTED
+  │
+  │
+  │ PLAY [Converge] ****************************************************************
+  │
+  │ TASK [Gathering Facts] *********************************************************
+  │ ok: [localhost]
+  │
+  │ TASK [Assert CWD is the same as playbook_dir] **********************************
+  │ ok: [localhost] => {
+  │     "changed": false,
+  │     "msg": "All assertions passed"
+  │ }
+  │
+  │ PLAY RECAP *********************************************************************
+  │ localhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+  │
+  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+INFO     smoke ➜ idempotence: Completed: Successful
+INFO     smoke ➜ side_effect: Starting
+INFO     smoke ➜ verify: Starting
+INFO     smoke ➜ cleanup: Starting
+INFO     default ➜ destroy: Starting
+  ┌──────────────────────────────────────────────────────────────────────────────────
+  │ ansible-playbook --inventory REDACTED
+  │   --skip-tags molecule-notest,notest
+  │   REDACTED
+  │
+  │
+  │ PLAY [Destroy] *****************************************************************
+  │
+  │ TASK [Populate instance config] ************************************************
+  │ ok: [localhost]
+  │
+  │ TASK [Dump instance config] ****************************************************
+  │ skipping: [localhost]
+  │
+  │ PLAY RECAP *********************************************************************
+  │ localhost                  : ok=1    changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+  │
+  │─ Return code: 0 ─────────────────────────────────────────────────────────────────
+INFO     default ➜ destroy: Completed: Successful
+
+DETAILS
+default ➜ create: Completed: Successful
+
+test-scenario ➜ dependency: Completed: 2 missing (Remove from test_sequence to suppress)
+test-scenario ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
+test-scenario ➜ syntax: Completed: Successful
+test-scenario ➜ prepare: Completed: Missing playbook (Remove from test_sequence to suppress)
+test-scenario ➜ converge: Completed: Successful
+test-scenario ➜ idempotence: Completed: Successful
+test-scenario ➜ side_effect: Completed: Missing playbook (Remove from test_sequence to suppress)
+test-scenario ➜ verify: Completed: Missing playbook (Remove from test_sequence to suppress)
+test-scenario ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
+
+smoke ➜ dependency: Completed: 2 missing (Remove from test_sequence to suppress)
+smoke ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ syntax: Completed: Successful
+smoke ➜ prepare: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ converge: Completed: Successful
+smoke ➜ idempotence: Completed: Successful
+smoke ➜ side_effect: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ verify: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
+
+default ➜ destroy: Completed: Successful
+
+SCENARIO RECAP
+default                   : actions=1  successful=1  disabled=0  skipped=0  missing=0  failed=0
+test-scenario             : actions=9  successful=3  disabled=0  skipped=0  missing=7  failed=0
+smoke                     : actions=9  successful=3  disabled=0  skipped=0  missing=7  failed=0
+default                   : actions=1  successful=1  disabled=0  skipped=0  missing=0  failed=0

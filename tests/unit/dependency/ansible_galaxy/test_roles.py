@@ -167,6 +167,7 @@ def test_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
         "patched-command",
         debug=False,
         check=True,
+        command_borders=False,
     )
 
     msg = "Dependency completed successfully."

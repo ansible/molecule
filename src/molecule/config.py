@@ -174,6 +174,11 @@ class Config:
         return self.command_args.get("shared_state", False)
 
     @property
+    def command_borders(self) -> bool:
+        """Return if command borders are enabled."""
+        return self.command_args.get("command_borders", False)
+
+    @property
     def platform_name(self) -> str | None:
         """Configured platform.
 
