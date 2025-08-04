@@ -129,11 +129,13 @@ def get_line_style(line: str) -> str:
             color_match = re.search(r"(3[0-7])m", escape_seq)
             if color_match:
                 color_code = color_match.group(1)
-                prefix = "\x1b[" if escape_seq.startswith("\x1b") else "\033["
-                return f"{prefix}{color_code}m"
+                # Use \x1b prefix consistently (most common format)
+                return f"\x1b[{color_code}m"
 
         # Skip other reset sequences (ending with 0m but not just 0m)
-        if escape_seq.endswith("0m") and len(escape_seq) > 5:
+        # Length 5 is minimum for reset+color (\x1b[0m = 5 chars)
+        min_reset_color_length = 5
+        if escape_seq.endswith("0m") and len(escape_seq) > min_reset_color_length:
             return ""
 
         return escape_seq
