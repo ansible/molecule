@@ -57,17 +57,17 @@ repos:
       - id: toml-sort-fix
 
   - repo: https://github.com/tox-dev/tox-ini-fmt
-    rev: 1.5.0
+    rev: 1.6.0
     hooks:
       - id: tox-ini-fmt
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.2
+    rev: v0.12.7
     hooks:
       - id: ruff
         entry: sh -c 'ruff check --fix --force-exclude && ruff format --force-exclude'
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v9.1.0
+    rev: v9.2.0
     hooks:
       - id: cspell
         name: Spell check with cspell
@@ -99,7 +99,7 @@ repos:
           - wcmatch
 
   - repo: https://github.com/pre-commit/mirrors-mypy.git
-    rev: v1.16.1
+    rev: v1.17.1
     hooks:
       - id: mypy
         additional_dependencies:
@@ -144,7 +144,7 @@ repos:
         additional_dependencies:
           - uv>=0.5.21
   - repo: https://github.com/ansible/ansible-lint
-    rev: v25.6.1
+    rev: v25.7.0
     hooks:
       - id: ansible-lint
         stages: [manual]
