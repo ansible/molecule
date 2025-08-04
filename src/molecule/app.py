@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING
 
 from ansible_compat.runtime import Runtime
 
+from molecule.ansi_output import CommandBorders
+from molecule.console import original_stderr
 from molecule.util import print_environment_vars
 
 
@@ -37,6 +39,7 @@ class App:
         echo: bool = False,  # noqa: ARG002
         quiet: bool = False,  # noqa: ARG002
         check: bool = False,
+        command_borders: bool = False,
     ) -> CompletedProcess[str]:
         """Execute the given command and returns None.
 
@@ -48,6 +51,7 @@ class App:
             echo: An optional bool to toggle command echo.
             quiet: An optional bool to toggle command output.
             check: An optional bool to toggle command error checking.
+            command_borders: An optional bool to enable borders around command output.
 
         Returns:
             A completed process object.
@@ -58,6 +62,13 @@ class App:
         if debug:
             print_environment_vars(env)
 
+        borders = None
+        if command_borders:
+            borders = CommandBorders(
+                cmd=cmd,
+                original_stderr=original_stderr,
+            )
+
         result = self.runtime.run(
             args=cmd,
             env=env,
@@ -65,6 +76,10 @@ class App:
             tee=True,
             set_acp=False,
         )
+
+        if borders:
+            borders.finalize(result.returncode)
+
         if result.returncode != 0 and check:
             raise CalledProcessError(
                 returncode=result.returncode,

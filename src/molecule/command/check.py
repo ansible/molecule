@@ -59,6 +59,7 @@ def check(ctx: click.Context) -> None:  # pragma: no cover
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     parallel = ctx.params["parallel"]
     command_args: CommandArgs = {
+        "command_borders": ctx.params["command_borders"],
         "parallel": parallel,
         "report": ctx.params["report"],
         "shared_inventory": ctx.params["shared_inventory"],

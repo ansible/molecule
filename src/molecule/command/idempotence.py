@@ -127,6 +127,7 @@ def idempotence(ctx: click.Context) -> None:  # pragma: no cover
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
+        "command_borders": ctx.params["command_borders"],
         "report": ctx.params["report"],
         "shared_inventory": ctx.params["shared_inventory"],
         "shared_state": ctx.params["shared_state"],

@@ -238,6 +238,7 @@ class Testinfra(Verifier):
             env=self.env,
             debug=self._config.debug,
             cwd=Path(self._config.scenario.directory),
+            command_borders=self._config.command_borders,
         )
         if result.returncode == 0:
             msg = "Verifier completed successfully."
