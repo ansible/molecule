@@ -562,8 +562,9 @@ def test_full_output(
     monkeypatch.setenv("TERM", "xterm-256color")
     monkeypatch.setenv("ANSIBLE_FORCE_COLOR", "1")
     monkeypatch.setenv("ANSIBLE_STDOUT_CALLBACK", "default")
-    monkeypatch.setenv("ANSIBLE_DISABLE_WARNINGS", "True")
     monkeypatch.setenv("ANSIBLE_DEPRECATION_WARNINGS", "false")
+    monkeypatch.setenv("ANSIBLE_COMMAND_WARNINGS", "false")
+    monkeypatch.setenv("ANSIBLE_ACTION_WARNINGS", "false")
 
     # Run comprehensive molecule test with command borders and shared state
     # First reset all scenarios to ensure clean state and avoid warning messages about modified scenario config files
