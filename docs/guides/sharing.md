@@ -68,7 +68,7 @@ The `molecule_shared_inventory_dir` variable is available in playbooks to access
       {% raw %}{% for platform in molecule_yml.platforms %}
       {{ platform.name }}{% for key, value in platform.get('host_vars', {}).items() %} {{ key }}={{ value }}{% endfor %}
       {% endfor %}{% endraw %}
-      
+
       [molecule:vars]
       ansible_user=root
       ansible_connection=docker
