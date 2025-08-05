@@ -1,0 +1,14 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: default
+platforms:
+  - name: instance
+    image: ${TEST_BASE_IMAGE}
+    command: /sbin/init
+    privileged: true
+provisioner:
+  name: ansible
+verifier:
+  name: ansible

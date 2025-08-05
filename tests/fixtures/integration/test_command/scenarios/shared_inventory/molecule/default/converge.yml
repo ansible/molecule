@@ -1,0 +1,40 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Test molecule_shared_inventory_dir variable is available
+      ansible.builtin.debug:
+        msg: "molecule_shared_inventory_dir: {{ molecule_shared_inventory_dir }}"
+
+    - name: Verify molecule_shared_inventory_dir is a string
+      ansible.builtin.assert:
+        that:
+          - molecule_shared_inventory_dir is defined
+          - molecule_shared_inventory_dir is string
+        fail_msg: "molecule_shared_inventory_dir should be defined and be a string"
+        success_msg: "molecule_shared_inventory_dir is properly defined"
+
+    - name: Create shared inventory file (if available)
+      ansible.builtin.copy:
+        content: "{{ inventory_ini }}"
+        dest: "{{ molecule_shared_inventory_dir }}/shared_inventory.ini"
+        mode: "0600"
+      when: molecule_shared_inventory_dir != ""
+      vars:
+        inventory_ini: |
+          [molecule]
+          {% for platform in molecule_yml.platforms %}
+          {{ platform.name }} ansible_connection=delegated
+          {% endfor %}
+
+          [molecule:vars]
+          ansible_user=root
+      delegate_to: localhost
+
+    - name: Test that shared inventory directory is empty in normal mode
+      ansible.builtin.assert:
+        that:
+          - molecule_shared_inventory_dir == ""
+        fail_msg: "molecule_shared_inventory_dir should be empty in normal mode"
+        success_msg: "molecule_shared_inventory_dir is correctly empty in normal mode"

@@ -26,6 +26,7 @@ dind
 docsite
 dotglob
 emptydisk
+endfor
 endgroup
 endraw
 enoent

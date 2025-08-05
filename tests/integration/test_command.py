@@ -733,3 +733,28 @@ smoke                     : actions=12  successful=3  disabled=0  skipped=0  mis
             f"Expected ({len(normalized_expected)} chars):\n{normalized_expected!r}\n\n"
             f"Actual ({len(normalized_details)} chars):\n{normalized_details!r}",
         )
+
+
+@pytest.mark.parametrize(
+    ("scenario_to_test", "scenario_name"),
+    (("shared_inventory", "default"),),
+)
+@pytest.mark.usefixtures("with_scenario")
+def test_command_shared_inventory(
+    test_ephemeral_dir_env: dict[str, str],
+    scenario_name: str,
+) -> None:
+    """Test shared inventory scenario functionality.
+
+    Args:
+        test_ephemeral_dir_env: The ephemeral directory env.
+        scenario_name: The scenario name.
+    """
+    # Test converge to verify our molecule_shared_inventory_dir variable works
+    cmd = ["molecule", "converge", "--scenario-name", scenario_name]
+    result = run(cmd=cmd, env=test_ephemeral_dir_env)
+    assert result.returncode == 0
+    assert "PLAY RECAP" in result.stdout
+
+    # Verify that our variable assertions passed
+    assert "molecule_shared_inventory_dir is properly defined" in result.stdout
