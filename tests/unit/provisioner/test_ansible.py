@@ -794,3 +794,21 @@ def test_absolute_path_for_raises_with_missing_key(instance):  # type: ignore[no
 
     with pytest.raises(KeyError):
         instance._absolute_path_for(env, "invalid")
+
+
+def test_inventory_contains_molecule_shared_inventory_dir_variable(instance: Ansible) -> None:
+    """Test that molecule_shared_inventory_dir is included in inventory vars.
+
+    Args:
+        instance: Ansible provisioner instance fixture.
+    """
+    inventory = instance.inventory
+
+    # Check that all groups have the molecule_shared_inventory_dir variable
+    assert "all" in inventory
+    assert "vars" in inventory["all"]
+    assert "molecule_shared_inventory_dir" in inventory["all"]["vars"]
+    assert (
+        inventory["all"]["vars"]["molecule_shared_inventory_dir"]
+        == "{{ lookup('env', 'MOLECULE_SHARED_INVENTORY_DIR') }}"
+    )

@@ -573,7 +573,7 @@ class Ansible(base.Base):
         return self._config.config["provisioner"]["inventory"]["links"]
 
     @property
-    def inventory(self) -> dict[str, str]:
+    def inventory(self) -> dict[str, Any]:
         """Create an inventory structure and returns a dict.
 
         ``` yaml
@@ -605,6 +605,7 @@ class Ansible(base.Base):
                     "molecule_file": "{{ lookup('env', 'MOLECULE_FILE') }}",
                     "molecule_ephemeral_directory": "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
                     "molecule_scenario_directory": "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
+                    "molecule_shared_inventory_dir": "{{ lookup('env', 'MOLECULE_SHARED_INVENTORY_DIR') }}",
                     "molecule_yml": "{{ lookup('file', molecule_file) | from_yaml }}",
                     "molecule_instance_config": "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                     "molecule_no_log": "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
