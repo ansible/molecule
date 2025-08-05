@@ -58,21 +58,21 @@ The `molecule_shared_inventory_dir` variable is available in playbooks to access
 ```yaml
 - name: Build shared inventory with INI template
   ansible.builtin.copy:
-    content: "{{ inventory_ini }}"
-    dest: "{{ molecule_shared_inventory_dir }}/shared_inventory.ini"
+    content: "{% raw %}{{ inventory_ini }}{% endraw %}"
+    dest: "{% raw %}{{ molecule_shared_inventory_dir }}{% endraw %}/shared_inventory.ini"
     mode: "0600"
   when: molecule_shared_inventory_dir != ""
   vars:
     inventory_ini: |
       [molecule]
-      {% for platform in molecule_yml.platforms %}
+      {% raw %}{% for platform in molecule_yml.platforms %}
       {{ platform.name }}{% for key, value in platform.get('host_vars', {}).items() %} {{ key }}={{ value }}{% endfor %}
-      {% endfor %}
-
+      {% endfor %}{% endraw %}
+      
       [molecule:vars]
       ansible_user=root
       ansible_connection=docker
-     delegate_to: localhost
+   delegate_to: localhost
 
 - name: Force inventory refresh
   ansible.builtin.meta: refresh_inventory
