@@ -66,6 +66,9 @@ def list_(ctx: click.Context) -> None:  # pragma: no cover
 
     Args:
         ctx: Click context object holding commandline arguments.
+
+    Raises:
+        ImmediateExit: If scenario configuration fails.
     """
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
@@ -81,7 +84,7 @@ def list_(ctx: click.Context) -> None:  # pragma: no cover
     try:
         configs = base.get_configs(args, command_args)
     except ScenarioFailureError as exc:
-        raise ImmediateExit(exc.code)
+        raise ImmediateExit(str(exc), exc.code) from exc
 
     s = scenarios.Scenarios(
         configs,
