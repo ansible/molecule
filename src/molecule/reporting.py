@@ -18,6 +18,9 @@ def report(results: ScenariosResults) -> None:
     Args:
         results: The results of the scenario.
     """
+    if not results:
+        return
+
     ao = AnsiOutput()
 
     # Details section header (bold and underlined), padded to 79 characters

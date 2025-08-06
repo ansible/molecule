@@ -39,7 +39,7 @@ from wcmatch import glob
 
 from molecule import config, logger, text, util
 from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME, MOLECULE_GLOB
-from molecule.exceptions import MoleculeError, ScenarioFailureError
+from molecule.exceptions import ImmediateExit, MoleculeError, ScenarioFailureError
 from molecule.reporting import ScenarioResults, report
 from molecule.scenarios import Scenarios
 
@@ -131,6 +131,9 @@ def execute_cmdline_scenarios(
         command_args: dict of command arguments, including the target
         ansible_args: Optional tuple of arguments to pass to the `ansible-playbook` command
         excludes: Name of scenarios to not run.
+
+    Raises:
+        ImmediateExit: When scenario configuration fails.
     """
     if excludes is None:
         excludes = []
@@ -144,7 +147,8 @@ def execute_cmdline_scenarios(
                 if config.scenario.name not in excludes
             ]
         except ScenarioFailureError as exc:
-            util.sysexit(code=exc.code)
+            msg = "Scenario configuration failed"
+            raise ImmediateExit(msg, code=exc.code) from exc
     else:
         try:
             # filter out excludes
@@ -153,7 +157,8 @@ def execute_cmdline_scenarios(
                 glob_str = MOLECULE_GLOB.replace("*", scenario_name)
                 configs.extend(get_configs(args, command_args, ansible_args, glob_str))
         except ScenarioFailureError as exc:
-            util.sysexit(code=exc.code)
+            msg = "Scenario configuration failed"
+            raise ImmediateExit(msg, code=exc.code) from exc
 
     default_glob = MOLECULE_GLOB.replace("*", MOLECULE_DEFAULT_SCENARIO_NAME)
     default_config = None
@@ -169,7 +174,8 @@ def execute_cmdline_scenarios(
         _run_scenarios(scenarios, command_args, default_config)
 
     except ScenarioFailureError as exc:
-        util.sysexit(code=exc.code)
+        msg = "Scenario execution failed"
+        raise ImmediateExit(msg, code=exc.code) from exc
     finally:
         if command_args.get("report"):
             report(scenarios.results)

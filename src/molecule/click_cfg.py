@@ -8,9 +8,10 @@ It also contains Click-specific decorators and utilities.
 from __future__ import annotations
 
 import functools
+import logging
 
 from dataclasses import dataclass, replace
-from typing import TYPE_CHECKING, Any, NoReturn
+from typing import TYPE_CHECKING, Any
 
 import click
 
@@ -21,6 +22,7 @@ from molecule.ansi_output import should_do_markup
 from molecule.api import drivers
 from molecule.config import MOLECULE_PARALLEL
 from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME, MOLECULE_PLATFORM_NAME
+from molecule.exceptions import ImmediateExit
 
 
 if TYPE_CHECKING:
@@ -573,37 +575,52 @@ def click_group_ex() -> ClickGroup:
             "reset": "blue",
             "test": "bright_yellow",
         },
-        result_callback=result_callback,
     )
 
 
-def click_command_ex(name: str | None = None) -> ClickCommand:
-    """Return extended version of click.command().
+def click_command_ex(name: str | None = None) -> Callable[[Callable[..., Any]], click.Command]:
+    """Return extended version of click.command() with immediate exit exception handling.
 
     Args:
         name: A replacement name in the case the automatic one is insufficient.
 
     Returns:
-        Click command group.
+        Click command decorator with exception handling.
     """
-    return click.command(
-        cls=FirstLineHelpCommand,
-        name=name,
-        help_headers_color="yellow",
-        help_options_color="green",
-    )
 
+    def decorator(func: Callable[..., Any]) -> click.Command:
+        @functools.wraps(func)
+        def wrapper(*args: object, **kwargs: object) -> object:
+            try:
+                return func(*args, **kwargs)
+            except ImmediateExit as exc:
+                logger = logging.getLogger(__name__)
 
-def result_callback(
-    *args: object,  # noqa: ARG001
-    **kwargs: object,  # noqa: ARG001
-) -> NoReturn:
-    """Click natural exit callback.
+                # Check if debug mode is enabled
+                ctx = click.get_current_context(silent=True)
+                debug_mode = False
+                if ctx and ctx.obj and isinstance(ctx.obj, dict):
+                    debug_mode = ctx.obj.get("args", {}).get("debug", False)
 
-    Args:
-        *args: Unused.
-        **kwargs: Unused.
-    """
-    # We want to be used we run out custom exit code, regardless if run was
-    # a success or failure.
-    util.sysexit(0)
+                # For success (code 0), always use info logging
+                # For failures (code != 0), use debug-aware logging
+                if exc.code == 0:
+                    logger.info(exc.message)
+                elif debug_mode:
+                    # Show full traceback in debug mode for failures
+                    logger.exception(exc.message)
+                else:
+                    # Show only the error message in normal mode for failures
+                    logger.error(exc.message)  # noqa: TRY400
+
+                util.sysexit(code=exc.code)
+
+        # Apply the click.command decorator to the wrapper
+        return click.command(
+            cls=FirstLineHelpCommand,
+            name=name,
+            help_headers_color="yellow",
+            help_options_color="green",
+        )(wrapper)
+
+    return decorator
