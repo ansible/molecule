@@ -37,7 +37,13 @@ from ansible_compat.ports import cache
 from rich.syntax import Syntax
 
 from molecule.console import console
-from molecule.constants import MOLECULE_HEADER
+from molecule.constants import (
+    MOLECULE_COLLECTION_GLOB,
+    MOLECULE_COLLECTION_ROOT,
+    MOLECULE_GLOB,
+    MOLECULE_HEADER,
+    MOLECULE_ROOT,
+)
 from molecule.exceptions import MoleculeError
 
 
@@ -47,7 +53,7 @@ if TYPE_CHECKING:
     from typing import Any, AnyStr, NoReturn, TypeVar
     from warnings import WarningMessage
 
-    from molecule.types import CommandArgs, ConfigData, Options, PlatformData
+    from molecule.types import CollectionData, CommandArgs, ConfigData, Options, PlatformData
 
     NestedDict = MutableMapping[str, Any]
     _T = TypeVar("_T", bound=NestedDict)
@@ -459,16 +465,26 @@ def lookup_config_file(filename: str) -> str | None:
     """Return config file PATH.
 
     Args:
-        filename: Config file name to find.and
+        filename: Config file name to find.
 
     Returns:
         Path to config file or None if not found.
     """
-    for path in [find_vcs_root(default="~"), "~"]:
-        f = (Path(path) / filename).expanduser()
-        if f.is_file():
-            LOG.info("Found config file %s", f)
-            return str(f)
+    # project root
+    search_paths = [Path(find_vcs_root(default="~")) / filename]
+
+    # collection path
+    collection_dir, _ = get_collection_metadata()
+    if collection_dir:
+        search_paths.append(Path(collection_dir / MOLECULE_COLLECTION_ROOT / Path(filename).name))
+
+    # home directory
+    search_paths.append(Path.home() / filename)
+
+    for path in search_paths:
+        if path.is_file():
+            LOG.info("Found config file %s", path)
+            return str(path)
     return None
 
 
@@ -573,3 +589,74 @@ def oxford_comma(listed: Iterable[bool | str | Path], condition: str = "and") ->
             return f"{', '.join(s for s in front)}, {condition} {back}"
         case _:
             return ""
+
+
+@cache
+def get_collection_metadata() -> tuple[Path, CollectionData] | tuple[None, None]:
+    """Get collection directory and metadata.
+
+    Returns:
+        Tuple of (collection_directory, collection_data) if in a valid collection,
+        or (None, None) if not in collection or galaxy.yml is invalid.
+        Collection data dict contains at least 'name' and 'namespace' keys.
+        Only returns collection info when galaxy.yml is valid.
+    """
+    cwd = Path.cwd()
+    galaxy_file = cwd / "galaxy.yml"
+
+    try:
+        galaxy_data: CollectionData = safe_load_file(galaxy_file)
+        important_keys = {"name", "namespace"}
+
+        if not isinstance(galaxy_data, dict):
+            LOG.warning("Invalid galaxy.yml format at %s", galaxy_file)
+            return None, None
+
+        if missing_keys := important_keys.difference(galaxy_data.keys()):
+            LOG.warning(
+                "galaxy.yml at %s is missing required fields: %s",
+                galaxy_file,
+                oxford_comma(missing_keys),
+            )
+            return None, None
+    except FileNotFoundError:
+        LOG.warning("No galaxy.yml found at %s", galaxy_file)
+        return None, None
+    except (OSError, yaml.YAMLError, MoleculeError) as exc:
+        LOG.warning("Failed to load galaxy.yml at %s: %s", galaxy_file, exc)
+        return None, None
+    else:
+        LOG.debug("Found galaxy.yml at %s", galaxy_file)
+        return cwd, galaxy_data
+
+
+@cache
+def get_effective_molecule_glob() -> str:
+    """Get the appropriate glob pattern.
+
+    Returns:
+        Glob pattern string for finding molecule.yml files.
+        Returns MOLECULE_COLLECTION_GLOB if in collection,
+        otherwise returns MOLECULE_GLOB.
+    """
+    # User provided
+    if "MOLECULE_GLOB" in os.environ:
+        return os.environ["MOLECULE_GLOB"]
+
+    # No collection detected
+    collection_dir, collection_data = get_collection_metadata()
+    if not collection_dir or not collection_data:
+        return MOLECULE_GLOB
+
+    # Molecule found in root of collection
+    if (Path.cwd() / MOLECULE_ROOT).exists():
+        msg = f"Molecule scenarios should migrate to '{MOLECULE_COLLECTION_ROOT}'"
+        LOG.warning(msg)
+        return MOLECULE_GLOB
+
+    # Molecule not found in collection use extensions
+    msg = f"Collection '{collection_data['name']}.{collection_data['namespace']}' detected."
+    LOG.info(msg)
+    msg = f"Scenarios will be used from '{MOLECULE_COLLECTION_ROOT}'"
+    LOG.info(msg)
+    return MOLECULE_COLLECTION_GLOB

@@ -38,6 +38,7 @@ from molecule.app import get_app
 from molecule.click_cfg import click_group_ex
 from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY
 from molecule.console import console
+from molecule.constants import MOLECULE_COLLECTION_ROOT
 from molecule.util import do_report, lookup_config_file
 
 
@@ -121,7 +122,8 @@ def print_version(
         " and deep merge each scenario's "
         "molecule.yml on top. By default Molecule is looking for "
         f"'{LOCAL_CONFIG_SEARCH}' "
-        "in current VCS repository and if not found it will look "
+        "in current VCS repository, in collections at "
+        f"'{MOLECULE_COLLECTION_ROOT}/config.yml', and if not found it will look "
         f"in user home. ({LOCAL_CONFIG})."
     ),
 )

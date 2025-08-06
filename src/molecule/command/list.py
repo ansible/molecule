@@ -31,7 +31,7 @@ from molecule import scenarios, text, util
 from molecule.click_cfg import click_command_ex, options
 from molecule.command import base
 from molecule.console import console
-from molecule.constants import MOLECULE_GLOB
+from molecule.exceptions import ScenarioFailureError
 from molecule.status import Status
 
 
@@ -78,8 +78,13 @@ def list_(ctx: click.Context) -> None:  # pragma: no cover
     scenario_name = ctx.params["scenario_name"]
 
     statuses = []
+    try:
+        configs = base.get_configs(args, command_args)
+    except ScenarioFailureError as exc:
+        util.sysexit(code=exc.code)
+
     s = scenarios.Scenarios(
-        base.get_configs(args, command_args, glob_str=MOLECULE_GLOB),
+        configs,
         None if scenario_name is None else [scenario_name],
     )
     for scenario in s:

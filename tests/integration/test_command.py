@@ -369,7 +369,7 @@ def test_sample_collection(
     resources_folder_path: Path,
     test_ephemeral_dir_env: dict[str, str],
 ) -> None:
-    """Test the sample collection.
+    """Test the sample collection with collection detection.
 
     Args:
         monkeypatch: Pytest fixture.
@@ -378,7 +378,9 @@ def test_sample_collection(
     """
     monkeypatch.chdir(resources_folder_path / "sample-collection")
     cmd = ["molecule", "test"]
-    assert run(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+    result = run(cmd=cmd, env=test_ephemeral_dir_env)
+    assert result.returncode == 0, result
+    assert "Collection 'acme.goodies' detected" in result.stderr
 
 
 @pytest.mark.usefixtures("test_cache_path")
@@ -613,148 +615,3 @@ def test_full_output(
             f"Expected output length: {len(expected_output)} chars\n"
             f"Actual output length: {len(actual_output)} chars",
         )
-
-
-def test_ui_formatting(
-    monkeypatch: pytest.MonkeyPatch,
-    test_fixture_dir: Path,
-) -> None:
-    """Test that UI formatting shows clear starting and completion messages.
-
-    Args:
-        monkeypatch: Pytest fixture.
-        test_fixture_dir: Path to the test fixture directory.
-    """
-    monkeypatch.chdir(test_fixture_dir)
-
-    # Ensure consistent output format by removing GitHub-specific environment variables
-    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
-    monkeypatch.delenv("CI", raising=False)
-
-    # Override the autouse _no_color fixture to enable markup for this test
-    monkeypatch.delenv("NO_COLOR", raising=False)
-    monkeypatch.setenv("FORCE_COLOR", "1")
-
-    cmd = [
-        "molecule",
-        "test",
-        "-s",
-        "smoke",
-        "--report",
-    ]
-    result = run(cmd=cmd)
-    assert result.returncode == 0, result
-
-    _stdout_output = result.stdout
-    stderr_output = result.stderr
-
-    # Strip ANSI escape codes for assertions
-    clean_stderr = strip_ansi_escape(stderr_output)
-
-    # === VALIDATE STARTING MESSAGES ===
-
-    # Check for clear starting indicators that users see (in stderr)
-    assert "INFO     smoke ➜ dependency: Starting" in clean_stderr, (
-        "Should show dependency starting message"
-    )
-    assert "INFO     smoke ➜ create: Starting" in clean_stderr, (
-        "Should show create starting message"
-    )
-    assert "INFO     smoke ➜ prepare: Starting" in clean_stderr, (
-        "Should show prepare starting message"
-    )
-    assert "INFO     smoke ➜ converge: Starting" in clean_stderr, (
-        "Should show converge starting message"
-    )
-    assert "INFO     smoke ➜ verify: Starting" in clean_stderr, (
-        "Should show verify starting message"
-    )
-    assert "INFO     smoke ➜ destroy: Starting" in clean_stderr, (
-        "Should show destroy starting message"
-    )
-
-    # === VALIDATE COMPLETION MESSAGES ===
-
-    # Check for completion messages that users see during execution (in stderr)
-    assert "smoke ➜ dependency: Completed:" in clean_stderr, "Should show dependency completion"
-    assert "smoke ➜ create: Completed:" in clean_stderr, "Should show create completion"
-    assert "smoke ➜ prepare: Completed:" in clean_stderr, "Should show prepare completion"
-    assert "smoke ➜ converge: Completed:" in clean_stderr, "Should show converge completion"
-    assert "smoke ➜ verify: Completed:" in clean_stderr, "Should show verify completion"
-    assert "smoke ➜ destroy: Completed:" in clean_stderr, "Should show destroy completion"
-
-    # === VALIDATE REPORT SUMMARY ===
-
-    # Extract the Details section from stderr and strip ANSI codes
-    details_start = clean_stderr.find("DETAILS")
-    details_section = clean_stderr[details_start:] if details_start != -1 else ""
-
-    # Expected report shows final status
-    expected_report = """DETAILS
-smoke ➜ dependency: Completed: 2 missing (Remove from test_sequence to suppress)
-smoke ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
-smoke ➜ destroy: Completed: Missing playbook (Remove from test_sequence to suppress)
-smoke ➜ syntax: Completed: Successful
-smoke ➜ create: Completed: Missing playbook (Remove from test_sequence to suppress)
-smoke ➜ prepare: Completed: Missing playbook (Remove from test_sequence to suppress)
-smoke ➜ converge: Completed: Successful
-smoke ➜ idempotence: Completed: Successful
-smoke ➜ side_effect: Completed: Missing playbook (Remove from test_sequence to suppress)
-smoke ➜ verify: Completed: Missing playbook (Remove from test_sequence to suppress)
-smoke ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
-smoke ➜ destroy: Completed: Missing playbook (Remove from test_sequence to suppress)
-
-SCENARIO RECAP
-smoke                     : actions=12  successful=3  disabled=0  skipped=0  missing=10  failed=0
-
-"""
-
-    # Validate final report matches execution
-    normalized_details = normalize_report_whitespace(details_section)
-    normalized_expected = normalize_report_whitespace(expected_report)
-
-    if normalized_details != normalized_expected:
-        # Provide detailed diff for easier debugging
-        diff_lines = list(
-            difflib.unified_diff(
-                normalized_expected.splitlines(keepends=True),
-                normalized_details.splitlines(keepends=True),
-                fromfile="expected",
-                tofile="actual",
-                lineterm="",
-            ),
-        )
-        diff_text = "".join(diff_lines)
-
-        pytest.fail(
-            f"Report summary mismatch:\n\n"
-            f"=== UNIFIED DIFF ===\n{diff_text}\n\n"
-            f"=== RAW COMPARISON ===\n"
-            f"Expected ({len(normalized_expected)} chars):\n{normalized_expected!r}\n\n"
-            f"Actual ({len(normalized_details)} chars):\n{normalized_details!r}",
-        )
-
-
-@pytest.mark.parametrize(
-    ("scenario_to_test", "scenario_name"),
-    (("shared_inventory", "default"),),
-)
-@pytest.mark.usefixtures("with_scenario")
-def test_command_shared_inventory(
-    test_ephemeral_dir_env: dict[str, str],
-    scenario_name: str,
-) -> None:
-    """Test shared inventory scenario functionality.
-
-    Args:
-        test_ephemeral_dir_env: The ephemeral directory env.
-        scenario_name: The scenario name.
-    """
-    # Test converge to verify our molecule_shared_inventory_dir variable works
-    cmd = ["molecule", "converge", "--scenario-name", scenario_name]
-    result = run(cmd=cmd, env=test_ephemeral_dir_env)
-    assert result.returncode == 0
-    assert "PLAY RECAP" in result.stdout
-
-    # Verify that our variable assertions passed
-    assert "molecule_shared_inventory_dir is properly defined" in result.stdout

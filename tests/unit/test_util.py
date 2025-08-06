@@ -24,9 +24,10 @@ import os
 import tempfile
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import pytest
+import yaml
 
 from molecule import util
 from molecule.console import console
@@ -362,3 +363,296 @@ def test_oxford_comma(sequence: list[str], output: str) -> None:
         output: expected output string.
     """
     assert util.oxford_comma(sequence) == output
+
+
+def test_get_collection_metadata_valid_collection(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Test get_collection_metadata with valid collection.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+    """
+    # Create a valid galaxy.yml
+    galaxy_content = {"name": "test_collection", "namespace": "test_namespace", "version": "1.0.0"}
+    galaxy_file = tmp_path / "galaxy.yml"
+    galaxy_file.write_text(yaml.dump(galaxy_content))
+
+    # Change to the collection directory
+    monkeypatch.chdir(tmp_path)
+
+    # Clear cache to ensure fresh detection
+    util.get_collection_metadata.cache_clear()
+
+    collection_dir, collection_data = util.get_collection_metadata()
+
+    assert collection_dir == tmp_path
+    assert collection_data is not None
+    assert collection_data["name"] == "test_collection"
+    assert collection_data["namespace"] == "test_namespace"
+
+
+def test_get_collection_metadata_missing_galaxy_file(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test get_collection_metadata with missing galaxy.yml.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+        caplog: pytest fixture for log capture.
+    """
+    # Change to directory without galaxy.yml
+    monkeypatch.chdir(tmp_path)
+
+    # Clear cache to ensure fresh detection
+    util.get_collection_metadata.cache_clear()
+
+    collection_dir, collection_data = util.get_collection_metadata()
+
+    assert collection_dir is None
+    assert collection_data is None
+    assert "No galaxy.yml found" in caplog.text
+
+
+def test_get_collection_metadata_missing_required_fields(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test get_collection_metadata with galaxy.yml missing required fields.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+        caplog: pytest fixture for log capture.
+    """
+    # Create galaxy.yml missing namespace
+    galaxy_content = {"name": "test_collection", "version": "1.0.0"}
+    galaxy_file = tmp_path / "galaxy.yml"
+    galaxy_file.write_text(yaml.dump(galaxy_content))
+
+    # Change to the collection directory
+    monkeypatch.chdir(tmp_path)
+
+    # Clear cache to ensure fresh detection
+    util.get_collection_metadata.cache_clear()
+
+    collection_dir, collection_data = util.get_collection_metadata()
+
+    assert collection_dir is None
+    assert collection_data is None
+    assert "is missing required fields: 'namespace'" in caplog.text
+
+
+def test_get_collection_metadata_invalid_yaml(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test get_collection_metadata with invalid YAML.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+        caplog: pytest fixture for log capture.
+    """
+    # Create invalid galaxy.yml
+    galaxy_file = tmp_path / "galaxy.yml"
+    galaxy_file.write_text("invalid: yaml: content: [")
+
+    # Change to the collection directory
+    monkeypatch.chdir(tmp_path)
+
+    # Clear cache to ensure fresh detection
+    util.get_collection_metadata.cache_clear()
+
+    collection_dir, collection_data = util.get_collection_metadata()
+
+    assert collection_dir is None
+    assert collection_data is None
+    assert "Failed to load galaxy.yml" in caplog.text
+
+
+def test_get_collection_metadata_invalid_format(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test get_collection_metadata with non-dict galaxy.yml.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+        caplog: pytest fixture for log capture.
+    """
+    # Create galaxy.yml with non-dict content
+    galaxy_file = tmp_path / "galaxy.yml"
+    galaxy_file.write_text("- item1\n- item2")
+
+    # Change to the collection directory
+    monkeypatch.chdir(tmp_path)
+
+    # Clear cache to ensure fresh detection
+    util.get_collection_metadata.cache_clear()
+
+    collection_dir, collection_data = util.get_collection_metadata()
+
+    assert collection_dir is None
+    assert collection_data is None
+    assert "Invalid galaxy.yml format" in caplog.text
+
+
+def test_get_effective_molecule_glob_collection_detected(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test get_effective_molecule_glob with collection detected.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+        caplog: pytest fixture for log capture.
+    """
+    # Create valid collection
+    galaxy_content = {"name": "test_collection", "namespace": "test_namespace"}
+    galaxy_file = tmp_path / "galaxy.yml"
+    galaxy_file.write_text(yaml.dump(galaxy_content))
+
+    # Change to collection directory
+    monkeypatch.chdir(tmp_path)
+
+    # Clear caches
+    util.get_collection_metadata.cache_clear()
+    util.get_effective_molecule_glob.cache_clear()
+
+    result = util.get_effective_molecule_glob()
+
+    assert result == "extensions/molecule/*/molecule.yml"
+    assert "Collection 'test_collection.test_namespace' detected" in caplog.text
+
+
+def test_get_effective_molecule_glob_collection_without_extensions_dir(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Test get_effective_molecule_glob with collection but no extensions/molecule directory.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+    """
+    # Create valid collection but no extensions/molecule directory
+    galaxy_content = {"name": "test_collection", "namespace": "test_namespace"}
+    galaxy_file = tmp_path / "galaxy.yml"
+    galaxy_file.write_text(yaml.dump(galaxy_content))
+
+    # Change to collection directory
+    monkeypatch.chdir(tmp_path)
+
+    # Clear caches
+    util.get_collection_metadata.cache_clear()
+    util.get_effective_molecule_glob.cache_clear()
+
+    result = util.get_effective_molecule_glob()
+
+    # Should fall back to standard glob since extensions/molecule doesn't exist
+    assert result == os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
+
+
+def test_get_effective_molecule_glob_no_collection(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Test get_effective_molecule_glob with no collection detected.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+    """
+    # Change to directory without galaxy.yml
+    monkeypatch.chdir(tmp_path)
+
+    # Clear caches
+    util.get_collection_metadata.cache_clear()
+    util.get_effective_molecule_glob.cache_clear()
+
+    # Mock click context to enable collection detection
+    class MockContext:
+        params: ClassVar[dict[str, Any]] = {"collection_root_detection": True}
+
+    def mock_get_context() -> MockContext:
+        return MockContext()
+
+    monkeypatch.setattr("click.get_current_context", mock_get_context)
+
+    result = util.get_effective_molecule_glob()
+
+    assert result == os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
+
+
+def test_get_effective_molecule_glob_no_click_context(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test get_effective_molecule_glob with no active click context.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+        caplog: pytest fixture for log capture.
+    """
+    # Create valid collection
+    galaxy_content = {"name": "test_collection", "namespace": "test_namespace"}
+    galaxy_file = tmp_path / "galaxy.yml"
+    galaxy_file.write_text(yaml.dump(galaxy_content))
+
+    # Create the extensions/molecule directory structure
+    extensions_molecule_dir = tmp_path / "extensions" / "molecule"
+    extensions_molecule_dir.mkdir(parents=True)
+
+    # Change to collection directory
+    monkeypatch.chdir(tmp_path)
+
+    # Clear caches
+    util.get_collection_metadata.cache_clear()
+    util.get_effective_molecule_glob.cache_clear()
+
+    result = util.get_effective_molecule_glob()
+
+    # Should detect collection since it's always enabled now
+    assert result == "extensions/molecule/*/molecule.yml"
+    assert "Collection 'test_namespace.test_collection' detected" in caplog.text
+
+
+def test_get_effective_molecule_glob_respects_env_var(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Test get_effective_molecule_glob respects MOLECULE_GLOB environment variable.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+    """
+    # Set custom MOLECULE_GLOB
+    custom_glob = "custom/*/molecule.yml"
+    monkeypatch.setenv("MOLECULE_GLOB", custom_glob)
+
+    # Change to directory without galaxy.yml
+    monkeypatch.chdir(tmp_path)
+
+    # Clear caches
+    util.get_collection_metadata.cache_clear()
+    util.get_effective_molecule_glob.cache_clear()
+
+    # Test that default MOLECULE_GLOB is returned since no collection
+    result = util.get_effective_molecule_glob()
+
+    assert result == custom_glob
