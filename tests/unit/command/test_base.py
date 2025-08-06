@@ -548,3 +548,32 @@ def test_command_completion(shell: str) -> None:
     else:
         assert result.returncode == 0
         assert "Found config file" not in result.stdout
+
+
+def test_execute_cmdline_scenarios_handles_scenario_failure_error_when_all_scenarios(
+    mocker: MockerFixture,
+) -> None:
+    """Test that ScenarioFailureError is handled gracefully when scenario_names is None.
+
+    This tests the fix for the issue where running 'molecule test' with missing
+    platforms would cause an unhandled exception instead of a clean exit.
+
+    Args:
+        mocker: Pytest mocker fixture.
+    """
+    # Mock get_configs to raise ScenarioFailureError
+    mock_get_configs = mocker.patch("molecule.command.base.get_configs")
+    mock_get_configs.side_effect = ScenarioFailureError("Test error", 1)
+
+    # Mock util.sysexit to verify it gets called
+    mock_sysexit = mocker.patch("molecule.util.sysexit")
+
+    scenario_names = None  # This triggers the "run all scenarios" path
+    args: MoleculeArgs = {}
+    command_args: CommandArgs = {"subcommand": "test"}
+
+    # This should not raise an exception, but should call sysexit
+    base.execute_cmdline_scenarios(scenario_names, args, command_args)
+
+    # Verify that sysexit was called with the correct error code
+    mock_sysexit.assert_called_once_with(code=1)
