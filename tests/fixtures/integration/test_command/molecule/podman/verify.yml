@@ -10,9 +10,9 @@
 
     - name: Validate file content
       ansible.builtin.assert:
-        that: "{{ file.content | b64decode | trim == 'Hello from converge' }}" 
+        that: "{{ file.content | b64decode | trim == 'Hello from converge' }}"
         fail_msg: "File content validation failed"
-    
+
     - name: Confirm custom_host_var from provisioner
       ansible.builtin.assert:
         that:

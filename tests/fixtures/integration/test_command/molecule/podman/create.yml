@@ -1,7 +1,7 @@
 ---
 - name: Create
   hosts: localhost
-  gather_facts: true    
+  gather_facts: true
   tasks:
     - name: Create a container
       containers.podman.podman_container:
@@ -19,7 +19,7 @@
       loop: "{{ molecule_yml.platforms }}"
       loop_control:
         label: "{{ item.name }}"
-    
+
     - name: Display container log and fail
       ansible.builtin.fail:
         msg: |
@@ -33,4 +33,3 @@
       loop: "{{ result.results }}"
       loop_control:
         label: "{{ item.container.Name }}"
-

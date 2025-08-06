@@ -8,4 +8,4 @@
         content: "Hello from converge"
         dest: /tmp/converge.txt
         force: false
-        mode: '0644'
+        mode: "0644"
