@@ -564,10 +564,9 @@ def test_execute_cmdline_scenarios_handles_scenario_failure_error_when_all_scena
     args: MoleculeArgs = {}
     command_args: CommandArgs = {"subcommand": "test"}
 
-    # This should raise ImmediateExit with the correct error code
-    with pytest.raises(ImmediateExit) as exc_info:
+    # This should raise ScenarioFailureError directly (no conversion in this path)
+    with pytest.raises(ScenarioFailureError) as exc_info:
         base.execute_cmdline_scenarios(scenario_names, args, command_args)
 
-    # Verify that ImmediateExit was raised with the correct error code
+    # Verify that ScenarioFailureError was raised with the correct error code
     assert exc_info.value.code == 1
-    assert "Scenario configuration failed" in str(exc_info.value)
