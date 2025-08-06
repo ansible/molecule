@@ -597,3 +597,337 @@ def test_get_effective_molecule_glob_respects_env_var(
     result = util.get_effective_molecule_glob()
 
     assert result == custom_glob
+
+
+def test_lookup_config_file_found_in_vcs_root(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test lookup_config_file finds config in VCS root.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+        caplog: pytest fixture for log capture.
+    """
+    # Create a git repository structure
+    vcs_root = tmp_path / "vcs_root"
+    vcs_root.mkdir()
+    (vcs_root / ".git").mkdir()
+
+    # Create config file in VCS root
+    config_file = vcs_root / "molecule.yml"
+    config_file.write_text("config: vcs_root")
+
+    # Mock find_vcs_root to return our test directory
+    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: str(vcs_root))
+
+    # Change to a subdirectory
+    subdir = vcs_root / "subdir"
+    subdir.mkdir()
+    monkeypatch.chdir(subdir)
+
+    # Clear collection cache to avoid interference
+    util.get_collection_metadata.cache_clear()
+
+    result = util.lookup_config_file("molecule.yml")
+
+    assert result == str(config_file)
+    assert "Found config file" in caplog.text
+
+
+def test_lookup_config_file_found_in_collection_extensions(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test lookup_config_file finds config in collection extensions directory.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+        caplog: pytest fixture for log capture.
+    """
+    # Create collection structure
+    collection_root = tmp_path / "collection"
+    collection_root.mkdir()
+
+    # Create galaxy.yml
+    galaxy_content = {"name": "test_collection", "namespace": "test_namespace"}
+    galaxy_file = collection_root / "galaxy.yml"
+    galaxy_file.write_text(yaml.dump(galaxy_content))
+
+    # Create config in extensions/molecule/
+    extensions_dir = collection_root / "extensions" / "molecule"
+    extensions_dir.mkdir(parents=True)
+    config_file = extensions_dir / "molecule.yml"
+    config_file.write_text("config: collection_extensions")
+
+    # Change to collection directory
+    monkeypatch.chdir(collection_root)
+
+    # Mock find_vcs_root to return empty (no VCS root)
+    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: "~")
+
+    # Clear caches
+    util.get_collection_metadata.cache_clear()
+
+    result = util.lookup_config_file("molecule.yml")
+
+    assert result == str(config_file)
+    assert "Found config file" in caplog.text
+
+
+def test_lookup_config_file_found_in_home_directory(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test lookup_config_file finds config in home directory.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+        caplog: pytest fixture for log capture.
+    """
+    # Create a fake home directory
+    fake_home = tmp_path / "home"
+    fake_home.mkdir()
+
+    # Create config file in home directory
+    config_file = fake_home / ".molecule.yml"
+    config_file.write_text("config: home")
+
+    # Mock Path.home() to return our fake home
+    monkeypatch.setattr("molecule.util.Path.home", lambda: fake_home)
+
+    # Mock find_vcs_root to return empty (no VCS root)
+    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: "~")
+
+    # Change to a different directory (not a collection)
+    work_dir = tmp_path / "workdir"
+    work_dir.mkdir()
+    monkeypatch.chdir(work_dir)
+
+    # Clear collection cache
+    util.get_collection_metadata.cache_clear()
+
+    result = util.lookup_config_file(".molecule.yml")
+
+    assert result == str(config_file)
+    assert "Found config file" in caplog.text
+
+
+def test_lookup_config_file_search_priority_vcs_root_wins(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test lookup_config_file search priority - VCS root has highest priority.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+        caplog: pytest fixture for log capture.
+    """
+    # Create VCS root with config
+    vcs_root = tmp_path / "vcs_root"
+    vcs_root.mkdir()
+    (vcs_root / ".git").mkdir()
+    vcs_config = vcs_root / "molecule.yml"
+    vcs_config.write_text("config: vcs_root")
+
+    # Create fake home with config
+    fake_home = tmp_path / "home"
+    fake_home.mkdir()
+    home_config = fake_home / "molecule.yml"
+    home_config.write_text("config: home")
+
+    # Create collection with config
+    collection_root = vcs_root / "collection"
+    collection_root.mkdir()
+    galaxy_content = {"name": "test", "namespace": "test"}
+    galaxy_file = collection_root / "galaxy.yml"
+    galaxy_file.write_text(yaml.dump(galaxy_content))
+    extensions_dir = collection_root / "extensions" / "molecule"
+    extensions_dir.mkdir(parents=True)
+    collection_config = extensions_dir / "molecule.yml"
+    collection_config.write_text("config: collection")
+
+    # Set up mocks
+    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: str(vcs_root))
+    monkeypatch.setattr("molecule.util.Path.home", lambda: fake_home)
+
+    # Change to collection directory
+    monkeypatch.chdir(collection_root)
+
+    # Clear caches
+    util.get_collection_metadata.cache_clear()
+
+    result = util.lookup_config_file("molecule.yml")
+
+    # Should find VCS root config first (highest priority)
+    assert result == str(vcs_config)
+    assert "Found config file" in caplog.text
+
+
+def test_lookup_config_file_search_priority_collection_over_home(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test lookup_config_file search priority - collection over home directory.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+        caplog: pytest fixture for log capture.
+    """
+    # Create fake home with config
+    fake_home = tmp_path / "home"
+    fake_home.mkdir()
+    home_config = fake_home / "molecule.yml"
+    home_config.write_text("config: home")
+
+    # Create collection with config
+    collection_root = tmp_path / "collection"
+    collection_root.mkdir()
+    galaxy_content = {"name": "test", "namespace": "test"}
+    galaxy_file = collection_root / "galaxy.yml"
+    galaxy_file.write_text(yaml.dump(galaxy_content))
+    extensions_dir = collection_root / "extensions" / "molecule"
+    extensions_dir.mkdir(parents=True)
+    collection_config = extensions_dir / "molecule.yml"
+    collection_config.write_text("config: collection")
+
+    # Set up mocks - no VCS root found
+    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: "~")
+    monkeypatch.setattr("molecule.util.Path.home", lambda: fake_home)
+
+    # Change to collection directory
+    monkeypatch.chdir(collection_root)
+
+    # Clear caches
+    util.get_collection_metadata.cache_clear()
+
+    result = util.lookup_config_file("molecule.yml")
+
+    # Should find collection config (higher priority than home)
+    assert result == str(collection_config)
+    assert "Found config file" in caplog.text
+
+
+def test_lookup_config_file_not_found(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Test lookup_config_file returns None when config file not found.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+    """
+    # Create empty directories
+    fake_home = tmp_path / "home"
+    fake_home.mkdir()
+    work_dir = tmp_path / "workdir"
+    work_dir.mkdir()
+
+    # Set up mocks - no VCS root, no collection
+    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: "~")
+    monkeypatch.setattr("molecule.util.Path.home", lambda: fake_home)
+
+    # Change to work directory
+    monkeypatch.chdir(work_dir)
+
+    # Clear caches
+    util.get_collection_metadata.cache_clear()
+
+    result = util.lookup_config_file("nonexistent.yml")
+
+    assert result is None
+
+
+def test_lookup_config_file_handles_path_filename_extraction(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test lookup_config_file correctly extracts filename from path.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+        caplog: pytest fixture for log capture.
+    """
+    # Create collection structure
+    collection_root = tmp_path / "collection"
+    collection_root.mkdir()
+
+    # Create galaxy.yml
+    galaxy_content = {"name": "test", "namespace": "test"}
+    galaxy_file = collection_root / "galaxy.yml"
+    galaxy_file.write_text(yaml.dump(galaxy_content))
+
+    # Create config in extensions/molecule/ with just the filename
+    extensions_dir = collection_root / "extensions" / "molecule"
+    extensions_dir.mkdir(parents=True)
+    config_file = extensions_dir / "config.yml"
+    config_file.write_text("config: test")
+
+    # Change to collection directory
+    monkeypatch.chdir(collection_root)
+
+    # Mock find_vcs_root to return empty
+    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: "~")
+
+    # Clear caches
+    util.get_collection_metadata.cache_clear()
+
+    # Test with a full path - should extract just the filename
+    result = util.lookup_config_file("/some/path/config.yml")
+
+    assert result == str(config_file)
+    assert "Found config file" in caplog.text
+
+
+def test_lookup_config_file_collection_no_extensions_dir(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Test lookup_config_file when collection exists but no extensions directory.
+
+    Args:
+        monkeypatch: pytest fixture for patching.
+        tmp_path: pytest fixture for temporary directory.
+    """
+    # Create collection without extensions directory
+    collection_root = tmp_path / "collection"
+    collection_root.mkdir()
+
+    # Create galaxy.yml
+    galaxy_content = {"name": "test", "namespace": "test"}
+    galaxy_file = collection_root / "galaxy.yml"
+    galaxy_file.write_text(yaml.dump(galaxy_content))
+
+    # Create home config as fallback
+    fake_home = tmp_path / "home"
+    fake_home.mkdir()
+    home_config = fake_home / "molecule.yml"
+    home_config.write_text("config: home")
+
+    # Set up mocks
+    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: "~")
+    monkeypatch.setattr("molecule.util.Path.home", lambda: fake_home)
+
+    # Change to collection directory
+    monkeypatch.chdir(collection_root)
+
+    # Clear caches
+    util.get_collection_metadata.cache_clear()
+
+    result = util.lookup_config_file("molecule.yml")
+
+    # Should fall back to home directory since collection extensions dir doesn't exist
+    assert result == str(home_config)
