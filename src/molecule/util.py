@@ -655,7 +655,7 @@ def get_effective_molecule_glob() -> str:
         return MOLECULE_GLOB
 
     # Molecule not found in collection use extensions
-    msg = f"Collection '{collection_data['name']}.{collection_data['namespace']}' detected."
+    msg = f"Collection '{collection_data['namespace']}.{collection_data['name']}' detected."
     LOG.info(msg)
     msg = f"Scenarios will be used from '{MOLECULE_COLLECTION_ROOT}'"
     LOG.info(msg)

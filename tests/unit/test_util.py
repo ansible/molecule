@@ -24,14 +24,14 @@ import os
 import tempfile
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any
 
 import pytest
 import yaml
 
 from molecule import util
 from molecule.console import console
-from molecule.constants import MOLECULE_HEADER
+from molecule.constants import MOLECULE_COLLECTION_GLOB, MOLECULE_HEADER
 from molecule.exceptions import MoleculeError
 from molecule.text import strip_ansi_escape
 
@@ -507,45 +507,17 @@ def test_get_collection_metadata_invalid_format(
     assert "Invalid galaxy.yml format" in caplog.text
 
 
-def test_get_effective_molecule_glob_collection_detected(
+def test_get_effective_molecule_glob_collection_without_molecule_dir(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    """Test get_effective_molecule_glob with collection detected.
+    """Test get_effective_molecule_glob with collection but no molecule directories.
 
     Args:
         monkeypatch: pytest fixture for patching.
         tmp_path: pytest fixture for temporary directory.
         caplog: pytest fixture for log capture.
-    """
-    # Create valid collection
-    galaxy_content = {"name": "test_collection", "namespace": "test_namespace"}
-    galaxy_file = tmp_path / "galaxy.yml"
-    galaxy_file.write_text(yaml.dump(galaxy_content))
-
-    # Change to collection directory
-    monkeypatch.chdir(tmp_path)
-
-    # Clear caches
-    util.get_collection_metadata.cache_clear()
-    util.get_effective_molecule_glob.cache_clear()
-
-    result = util.get_effective_molecule_glob()
-
-    assert result == "extensions/molecule/*/molecule.yml"
-    assert "Collection 'test_collection.test_namespace' detected" in caplog.text
-
-
-def test_get_effective_molecule_glob_collection_without_extensions_dir(
-    monkeypatch: pytest.MonkeyPatch,
-    tmp_path: Path,
-) -> None:
-    """Test get_effective_molecule_glob with collection but no extensions/molecule directory.
-
-    Args:
-        monkeypatch: pytest fixture for patching.
-        tmp_path: pytest fixture for temporary directory.
     """
     # Create valid collection but no extensions/molecule directory
     galaxy_content = {"name": "test_collection", "namespace": "test_namespace"}
@@ -561,47 +533,16 @@ def test_get_effective_molecule_glob_collection_without_extensions_dir(
 
     result = util.get_effective_molecule_glob()
 
-    # Should fall back to standard glob since extensions/molecule doesn't exist
-    assert result == os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
+    assert result == MOLECULE_COLLECTION_GLOB
+    assert "Collection 'test_namespace.test_collection' detected" in caplog.text
 
 
-def test_get_effective_molecule_glob_no_collection(
-    monkeypatch: pytest.MonkeyPatch,
-    tmp_path: Path,
-) -> None:
-    """Test get_effective_molecule_glob with no collection detected.
-
-    Args:
-        monkeypatch: pytest fixture for patching.
-        tmp_path: pytest fixture for temporary directory.
-    """
-    # Change to directory without galaxy.yml
-    monkeypatch.chdir(tmp_path)
-
-    # Clear caches
-    util.get_collection_metadata.cache_clear()
-    util.get_effective_molecule_glob.cache_clear()
-
-    # Mock click context to enable collection detection
-    class MockContext:
-        params: ClassVar[dict[str, Any]] = {"collection_root_detection": True}
-
-    def mock_get_context() -> MockContext:
-        return MockContext()
-
-    monkeypatch.setattr("click.get_current_context", mock_get_context)
-
-    result = util.get_effective_molecule_glob()
-
-    assert result == os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
-
-
-def test_get_effective_molecule_glob_no_click_context(
+def test_get_effective_molecule_glob_extensions_dir_exists(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    """Test get_effective_molecule_glob with no active click context.
+    """Test get_effective_molecule_glob with extensions/molecule directory.
 
     Args:
         monkeypatch: pytest fixture for patching.
@@ -627,7 +568,7 @@ def test_get_effective_molecule_glob_no_click_context(
     result = util.get_effective_molecule_glob()
 
     # Should detect collection since it's always enabled now
-    assert result == "extensions/molecule/*/molecule.yml"
+    assert result == MOLECULE_COLLECTION_GLOB
     assert "Collection 'test_namespace.test_collection' detected" in caplog.text
 
 
