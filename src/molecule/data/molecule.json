@@ -86,7 +86,8 @@
                 "digitalocean",
                 "gce",
                 "libvirt",
-                "lxd"
+                "lxd",
+                "kubevirt"
               ]
             },
             {
