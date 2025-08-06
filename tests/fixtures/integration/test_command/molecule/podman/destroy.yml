@@ -13,12 +13,3 @@
       ansible.builtin.command:
         cmd: podman container rm --ignore {{ inventory_hostname }}
       changed_when: false
-
-- name: Remove dynamic molecule inventory
-  hosts: localhost
-  gather_facts: false
-  tasks:
-    - name: Remove dynamic inventory file
-      ansible.builtin.file:
-        path: "{{ molecule_ephemeral_directory }}/inventory/molecule_inventory.yml"
-        state: absent

@@ -1,41 +1,274 @@
-# Using podman containers
+# Using Podman Containers with Default Driver
 
-Below you can see a scenario that is using podman containers as test hosts.
-When you run `molecule test --scenario-name podman` the `create`, `converge` and
-`destroy` steps will be run one after another.
+This example demonstrates the default driver with managed inventory for custom Podman container testing. This approach combines user-controlled infrastructure provisioning with automatic Ansible inventory generation.
 
-This example is using Ansible playbooks and it does not need any molecule
-plugins to run. You can fully control which test requirements you need to be
-installed.
+## Configuration overview
 
-## Config playbook
+The configuration shows:
 
+- User-defined container creation via Ansible playbooks
+
+- Automatic inventory structure generation from platform definitions
+
+- Provisioner-controlled variable management
+
+- Full integration with Ansible's inventory and variable systems
+
+
+## Configuration structure
+
+### molecule.yml
 ```yaml title="molecule.yml"
 {!tests/fixtures/integration/test_command/molecule/podman/molecule.yml!}
 ```
 
+### requirements.yml
 ```yaml title="requirements.yml"
 {!tests/fixtures/integration/test_command/molecule/podman/requirements.yml!}
 ```
 
-## Create playbook
+## Component responsibilities
 
+### Driver configuration
+```yaml
+driver:
+  name: default
+  options:
+    managed: false
+    login_cmd_template: "podman exec -ti {instance} bash"
+```
+
+**Login Command Template**: The `login_cmd_template` defines how `molecule login` connects to instances. Template variables like `{instance}`, `{address}`, `{user}`, `{port}`, `{identity_file}` are populated from `instance_config.yml` when `managed: true`, or from static driver options when `managed: false`. For Podman containers, `{instance}` resolves to the container name for direct exec access. There is no per-host variant of this configuration.
+
+#### Effect of `managed: true` vs `managed: false`
+
+**With `managed: true` (default):**
+
+- `test-container: {}` becomes `test-container: {ansible_host: "172.17.0.2", ansible_user: "root", ...}`
+
+- Connection details read from `instance_config.yml` is required to be created by the create playbook
+
+**With `managed: false`:**
+
+- `test-container: {}` becomes `test-container: {ansible_connection: "local"}` (or whatever is in `driver.options.ansible_connection_options`)
+
+- Connection details from static driver configuration
+
+- Can also be defined as a `host_var` or `group_var` in the provisioner for per host or per group configuration.
+
+
+### Platform definition - inventory structure generation
+```yaml
+platforms:
+  - name: test-container
+    image: ghcr.io/ansible/community-ansible-dev-tools:latest
+    env:
+      MOLECULE_TEST_CONTAINER: "true"
+    groups:
+      - molecule
+```
+
+**Platform definition responsibilities:**
+
+For the **Ansible provisioner** (used in this example), platform definitions are **data structures only**:
+
+- **No direct infrastructure creation**: Platforms don't automatically create containers or VMs
+
+- **Available in all playbooks**: Platform data accessible via `molecule_yml.platforms` variable
+
+- **Inventory structure source**: `name` becomes host entries, `groups` creates inventory groups
+
+- **User playbook responsibility**: Create/destroy playbooks must implement infrastructure logic using platform data
+
+For **community-supported Molecule plugins**, platforms can **directly influence infrastructure**:
+
+- **Automatic provisioning**: Plugin reads platform definitions to create actual infrastructure
+
+- **Driver-specific parameters**: Platform keys like `image`, `networks`, `volumes` directly configure infrastructure
+
+- **Managed lifecycle**: Plugin handles create/destroy without requiring user playbooks
+
+**Key insight**: The same platform definition serves as either a data source (Ansible provisioner) or infrastructure specification (community plugins), depending on the driver's capabilities.
+
+
+### Provisioner definition
+```yaml
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      deprecation_warnings: false
+  inventory:
+    group_vars:
+      molecule:
+        ansible_connection: containers.podman.podman
+    host_vars:
+      test-container:
+        custom_host_var: set_by_provisioner
+```
+
+**Ansible provisioner responsibilities:**
+- **Playbook execution**: Runs playbooks with the `executor` either `ansible-playbook` or `ansible-navigator`
+
+- **Configuration management**: Processes `config_options` to generate `ansible.cfg` with custom settings
+
+- **Inventory group definition**: Using the `groups` key from each `platforms` instance, create groups with membership in the inventory
+
+- **Inventory var file creation**: Processes `inventory.group_vars` and `inventory.host_vars` into per group and per host files
+
+**Command-to-provisioner delegation:**
+
+For historical reasons, commands delegate playbook execution to the provisioner and therefor use the `ansible.cfg` file and inventory generated by the provisioner.
+
+**Generated variable files from provisioner:**
+```
+inventory/
+├── group_vars/
+│   └── molecule              # ansible_connection: containers.podman.podman
+└── host_vars/
+    └── test-container        # custom_host_var: set_by_provisioner
+```
+
+## Complete inventory generation process
+
+Molecule creates the following Ansible inventory structure through two distinct phases:
+
+**Phase 1 - Structure Generation (provisioner reads platforms):**
+```
+inventory/
+└── ansible_inventory.yml          # Host/group hierarchy from platform definitions
+```
+
+**Phase 2 - Variable Generation (provisioner reads own config):**
+```
+inventory/
+├── group_vars/
+│   └── molecule                   # From provisioner.inventory.group_vars.molecule
+└── host_vars/
+    └── test-container             # From provisioner.inventory.host_vars.test-container
+```
+
+### Final ansible_inventory.yml structure
+```yaml
+# Generated by provisioner.inventory property - processes platforms regardless of driver.managed
+all:
+  hosts:
+    test-container: {}              # platform.name → host key
+  vars:                             # molecule_vars dict automatically added
+    # ... molecule_* variables
+  children:
+    molecule:                       # platform.groups[0] → group key
+      hosts:
+        test-container: {}          # Host referenced in group with connection options
+      vars:                         # Same molecule_vars dict copied to all groups
+        # ... (identical to all.vars)
+    ungrouped:                      # Default group for platforms without groups
+      vars: {}
+```
+
+
+
+## Ansible test lifecycle
+
+### Infrastructure playbooks
+
+#### create.yml
 ```yaml title="create.yml"
 {!tests/fixtures/integration/test_command/molecule/podman/create.yml!}
 ```
 
-```yaml title="tasks/create-fail.yml"
-{!tests/fixtures/integration/test_command/molecule/podman/tasks/create-fail.yml!}
+The create playbook provisions test infrastructure using standard Ansible modules. Container specifications from `molecule_yml.platforms` are accessed via Ansible variables.
+
+#### destroy.yml
+```yaml title="destroy.yml"
+{!tests/fixtures/integration/test_command/molecule/podman/destroy.yml!}
 ```
 
-## Converge playbook
+### Test execution playbooks
 
+#### converge.yml
 ```yaml title="converge.yml"
 {!tests/fixtures/integration/test_command/molecule/podman/converge.yml!}
 ```
 
-## Destroy playbook
-
-```yaml title="destroy.yml"
-{!tests/fixtures/integration/test_command/molecule/podman/destroy.yml!}
+#### verify.yml
+```yaml title="verify.yml"
+{!tests/fixtures/integration/test_command/molecule/podman/verify.yml!}
 ```
+
+#### cleanup.yml
+```yaml title="cleanup.yml"
+{!tests/fixtures/integration/test_command/molecule/podman/cleanup.yml!}
+```
+
+All test playbooks execute against the generated inventory using standard Ansible patterns. The `molecule` group contains all test instances, while individual hosts can be targeted using platform names.
+
+## Advanced patterns
+
+### Multi-host scenarios
+```yaml
+platforms:
+  - name: web-server
+    image: nginx:latest
+    groups: [webservers, molecule]
+  - name: database
+    image: postgres:latest
+    groups: [databases, molecule]
+
+provisioner:
+  inventory:
+    group_vars:
+      webservers:
+        nginx_port: 80
+      databases:
+        postgres_version: "13"
+```
+
+### Custom container configuration
+```yaml
+# In create.yml
+- name: Create containers with advanced configuration
+  containers.podman.podman_container:
+    name: "{% raw %}{{ item.name }}{% endraw %}"
+    image: "{% raw %}{{ item.image }}{% endraw %}"
+    networks:
+      - name: molecule-test-network
+    volumes:
+      - "{% raw %}{{ molecule_ephemeral_directory }}{% endraw %}/data:/data:Z"
+    capabilities: "{% raw %}{{ item.capabilities | default([]) }}{% endraw %}"
+    systemd: "{% raw %}{{ item.systemd | default(false) }}{% endraw %}"
+  loop: "{% raw %}{{ molecule_yml.platforms }}{% endraw %}"
+```
+
+## Integration points
+
+### Ansible inventory access
+All playbooks have access to the complete generated inventory structure through standard Ansible mechanisms:
+- `groups['molecule']` - List of all test instances
+- `hostvars[inventory_hostname]` - Host-specific variables
+- `group_vars` and `host_vars` - Standard Ansible variable precedence
+
+### Variable precedence
+Variables follow standard Ansible precedence with Molecule additions:
+1. Platform metadata (accessible via `molecule_yml.platforms`)
+2. Provisioner-defined `group_vars` and `host_vars`
+3. Playbook and task-level variables
+
+## Use cases
+
+This configuration pattern is appropriate for:
+- Complex container networking requirements
+- Custom volume and capability configurations  
+- Multi-container testing scenarios
+- Integration with existing Ansible inventory patterns
+- Scenarios requiring both infrastructure control and inventory automation
+
+## Common issues
+
+**Login command failures**: Verify `login_cmd_template` syntax matches your container runtime and that container names match platform definitions exactly.
+
+**Groups are empty, no hosts found**: Ensure `platform` entries have their group membership defined.
+
+**Variable application failures**: Variables must be defined in the provisioner `inventory` section, not in platform `host_vars`.
+
+**Connection failures during converge**: Container names in create playbooks must exactly match platform `name` values.

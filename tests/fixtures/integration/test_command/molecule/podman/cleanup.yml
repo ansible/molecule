@@ -1,0 +1,9 @@
+---
+- name: Cleanup
+  hosts: molecule
+  gather_facts: false
+  tasks:
+    - name: Cleanup converge test file
+      ansible.builtin.file:
+        path: /tmp/converge.txt
+        state: absent

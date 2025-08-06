@@ -1,13 +1,39 @@
+---
 dependency:
   name: galaxy
   options:
     requirements-file: requirements.yml
 platforms:
-  - name: molecule-ubuntu
-    image: ubuntu:18.04
+  - name: test-container
+    image: ghcr.io/ansible/community-ansible-dev-tools:latest
+    env:
+      MOLECULE_TEST_CONTAINER: "true"
+    groups:
+      - molecule
 driver:
+  name: default
   options:
     managed: false
     login_cmd_template: "podman exec -ti {instance} bash"
-    ansible_connection_options:
-      ansible_connection: podman
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      deprecation_warnings: false
+  inventory:
+    group_vars:
+      molecule:
+        ansible_connection: containers.podman.podman
+    host_vars:
+      test-container:
+        custom_host_var: set_by_provisioner
+verifier:
+  name: ansible
+scenario:
+  test_sequence:
+    - create
+    - converge
+    - idempotence
+    - verify
+    - cleanup
+    - destroy
