@@ -31,7 +31,7 @@ from molecule import scenarios, text, util
 from molecule.click_cfg import click_command_ex, options
 from molecule.command import base
 from molecule.console import console
-from molecule.exceptions import ScenarioFailureError
+from molecule.exceptions import ImmediateExit, ScenarioFailureError
 from molecule.status import Status
 
 
@@ -81,7 +81,7 @@ def list_(ctx: click.Context) -> None:  # pragma: no cover
     try:
         configs = base.get_configs(args, command_args)
     except ScenarioFailureError as exc:
-        util.sysexit(code=exc.code)
+        raise ImmediateExit(exc.code)
 
     s = scenarios.Scenarios(
         configs,
