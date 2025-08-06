@@ -32,7 +32,8 @@ from typing import TYPE_CHECKING
 from ansible_compat.ports import cached_property
 
 from molecule import logger, util
-from molecule.exceptions import MoleculeError
+from molecule.constants import RC_SETUP_ERROR
+from molecule.exceptions import ImmediateExit, MoleculeError
 from molecule.provisioner import ansible_playbook, ansible_playbooks, base
 from molecule.reporting import CompletionState
 
@@ -904,11 +905,11 @@ class Ansible(base.Base):
         """Verify the inventory is valid and returns None.
 
         Raises:
-            MoleculeError: if inventory is missing.
+            ImmediateExit: if inventory is missing.
         """
         if not self.inventory:
             msg = "Instances missing from the 'platform' section of molecule.yml."
-            raise MoleculeError(msg)
+            raise ImmediateExit(msg, code=RC_SETUP_ERROR)
 
     def _get_config_template(self) -> str:
         """Return a config template string.

@@ -28,7 +28,8 @@ from typing import TYPE_CHECKING, Any
 import pytest
 
 from molecule import config, util
-from molecule.exceptions import MoleculeError
+from molecule.constants import RC_SETUP_ERROR
+from molecule.exceptions import ImmediateExit, MoleculeError
 from molecule.provisioner import ansible, ansible_playbooks
 from tests.unit.conftest import os_split  # pylint:disable=C0411
 
@@ -746,13 +747,10 @@ def test_verify_inventory_raises_when_missing_hosts(  # type: ignore[no-untyped-
     instance,
 ):
     instance._config.config["platforms"] = []
-    with pytest.raises(MoleculeError) as e:
+    with pytest.raises(ImmediateExit) as e:
         instance._verify_inventory()
-
-    assert e.value.code == 1
-
-    msg = "Instances missing from the 'platform' section of molecule.yml."
-    assert msg in caplog.text
+    assert "Instances missing from the 'platform' section of molecule.yml." in str(e.value)
+    assert e.value.code == RC_SETUP_ERROR
 
 
 def test_vivify(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
