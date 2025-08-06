@@ -140,15 +140,11 @@ def execute_cmdline_scenarios(
 
     configs: list[config.Config] = []
     if scenario_names is None:
-        try:
-            configs = [
-                config
-                for config in get_configs(args, command_args, ansible_args, MOLECULE_GLOB)
-                if config.scenario.name not in excludes
-            ]
-        except ScenarioFailureError as exc:
-            msg = "Scenario configuration failed"
-            raise ImmediateExit(msg, code=exc.code) from exc
+        configs = [
+            config
+            for config in get_configs(args, command_args, ansible_args, MOLECULE_GLOB)
+            if config.scenario.name not in excludes
+        ]
     else:
         try:
             # filter out excludes
