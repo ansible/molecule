@@ -189,7 +189,10 @@ def test_bake_has_ansible_args(_inventory_directory, _instance):  # type: ignore
     assert _instance._ansible_command == args
 
 
-def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+def test_bake_does_not_have_ansible_args(_inventory_directory, _instance, monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+    # Set strict mode to ensure old behavior
+    monkeypatch.setenv("MOLECULE_ANSIBLE_ARGS_STRICT_MODE", "true")
+
     for action in ["create", "destroy"]:
         _instance._config.ansible_args = ("foo", "bar")
         _instance._config.action = action
@@ -205,6 +208,51 @@ def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):  # ty
         ]
 
         assert _instance._ansible_command == args
+
+
+def test_bake_create_destroy_smart_mode_user_provided(_inventory_directory, _instance, monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+    # Mock _should_provide_args to simulate user-provided playbook behavior
+    monkeypatch.setattr(_instance, "_should_provide_args", lambda _: True)
+
+    _instance._config.ansible_args = ("foo", "bar")
+    _instance._config.config["provisioner"]["ansible_args"] = ("frob", "nitz")
+    _instance._config.action = "create"
+    _instance.bake()
+
+    args = [
+        "ansible-playbook",
+        "--inventory",
+        _inventory_directory,
+        "--skip-tags",
+        "molecule-notest,notest",
+        "frob",
+        "nitz",
+        "foo",
+        "bar",
+        "playbook",
+    ]
+
+    assert _instance._ansible_command == args
+
+
+def test_bake_strict_mode_none_action(_inventory_directory, _instance, monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+    # Test that strict mode with None action is conservative (no args)
+    monkeypatch.setenv("MOLECULE_ANSIBLE_ARGS_STRICT_MODE", "true")
+
+    _instance._config.ansible_args = ("foo", "bar")
+    _instance._config.action = None
+    _instance.bake()
+
+    args = [
+        "ansible-playbook",
+        "--inventory",
+        _inventory_directory,
+        "--skip-tags",
+        "molecule-notest,notest",
+        "playbook",
+    ]
+
+    assert _instance._ansible_command == args
 
 
 def test_bake_idem_does_have_skip_tag(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
