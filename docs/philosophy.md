@@ -100,17 +100,17 @@ Rather than wrapping Ansible as an external tool, Molecule integrates directly w
 **Testing phase to action mapping**
 Molecule implements the core testing phases through a comprehensive action system that maps directly to testing workflow fundamentals:
 
-| Testing Phase | Molecule Action | Purpose |
-|---------------|-----------------|---------|
-| Environment provisioning | `create` | Provisions test infrastructure and environments |
-| Dependency resolution | `dependency` | Installs required roles, collections, and dependencies |
-| Environment preparation | `prepare` | Configures environments before applying automation logic |
-| Change application | `converge` | Executes the automation being tested |
-| Idempotence verification | `idempotence` | Re-runs automation to verify no unintended changes |
-| Side effect detection | `side_effect` | Executes additional automation to test for unintended consequences |
-| Functional verification | `verify` | Validates that desired outcomes were achieved |
-| Resource cleanup | `cleanup` | Removes temporary files and intermediate artifacts |
-| Resource destruction | `destroy` | Cleans up all provisioned resources |
+| Testing Phase            | Molecule Action | Purpose                                                            |
+| ------------------------ | --------------- | ------------------------------------------------------------------ |
+| Environment provisioning | `create`        | Provisions test infrastructure and environments                    |
+| Dependency resolution    | `dependency`    | Installs required roles, collections, and dependencies             |
+| Environment preparation  | `prepare`       | Configures environments before applying automation logic           |
+| Change application       | `converge`      | Executes the automation being tested                               |
+| Idempotence verification | `idempotence`   | Re-runs automation to verify no unintended changes                 |
+| Side effect detection    | `side_effect`   | Executes additional automation to test for unintended consequences |
+| Functional verification  | `verify`        | Validates that desired outcomes were achieved                      |
+| Resource cleanup         | `cleanup`       | Removes temporary files and intermediate artifacts                 |
+| Resource destruction     | `destroy`       | Cleans up all provisioned resources                                |
 
 **Configurable test sequences**
 Molecule's sequence system provides fine-grained control over test execution flow by allowing teams to define custom sequences that match their specific testing requirements. Since its inception in 2015, Molecule's default sequences have been optimized through real-world usage at scale to satisfy most users' testing workflows. However, enterprise environments often have specific workflow requirements that differ from these defaults. Molecule addresses this by allowing sequences to be modified, committed as part of the codebase, and shared between team members, ensuring consistent testing approaches across development teams. Actions can be reordered, removed, or repeated based on testing needs:
@@ -153,18 +153,18 @@ scenario:
 **Command-line subcommand mapping**
 Each action in a test sequence corresponds to a specific `molecule` subcommand, allowing developers to execute individual phases during development while ensuring complete automated testing in CI/CD pipelines:
 
-| Command | Action | Usage |
-|---------|---------|-------|
-| `molecule dependency` | Installs roles and collections | Development setup and CI/CD preparation |
-| `molecule create` | Provisions test environments | Environment setup for all testing phases |
-| `molecule prepare` | Configures test environments | Custom environment preparation |
-| `molecule converge` | Applies automation being tested | Core development and validation workflow |
-| `molecule idempotence` | Verifies idempotent behavior | Quality assurance and CI/CD validation |
-| `molecule side_effect` | Tests for unintended effects | Comprehensive testing and regression detection |
-| `molecule verify` | Validates expected outcomes | Functional testing and acceptance criteria |
-| `molecule cleanup` | Removes temporary artifacts | Resource management and cost optimization |
-| `molecule destroy` | Cleans up all resources | Environment teardown and reset |
-| `molecule test` | Runs complete sequence | Full automated testing workflow |
+| Command                | Action                          | Usage                                          |
+| ---------------------- | ------------------------------- | ---------------------------------------------- |
+| `molecule dependency`  | Installs roles and collections  | Development setup and CI/CD preparation        |
+| `molecule create`      | Provisions test environments    | Environment setup for all testing phases       |
+| `molecule prepare`     | Configures test environments    | Custom environment preparation                 |
+| `molecule converge`    | Applies automation being tested | Core development and validation workflow       |
+| `molecule idempotence` | Verifies idempotent behavior    | Quality assurance and CI/CD validation         |
+| `molecule side_effect` | Tests for unintended effects    | Comprehensive testing and regression detection |
+| `molecule verify`      | Validates expected outcomes     | Functional testing and acceptance criteria     |
+| `molecule cleanup`     | Removes temporary artifacts     | Resource management and cost optimization      |
+| `molecule destroy`     | Cleans up all resources         | Environment teardown and reset                 |
+| `molecule test`        | Runs complete sequence          | Full automated testing workflow                |
 
 **Selective execution and debugging**
 Developers can execute any subset of the test sequence, enabling rapid iteration during development and focused debugging when tests fail. This flexibility supports both quick feedback loops (testing playbook logic changes) and comprehensive validation (full deployment workflows):
@@ -193,16 +193,19 @@ molecule test      # Run complete sequence
 Molecule's `--shared-state` functionality enables complex testing scenarios where multiple test runs share environments by automatically leveraging the `default` scenario for infrastructure management. When shared state is enabled, Molecule automatically runs `create` from the `default` scenario before executing any other scenarios, and `destroy` from the `default` scenario after all scenarios complete. Individual scenarios skip their own `create` and `destroy` actions and share the infrastructure created by the `default` scenario. When combined with `--shared-inventory`, scenarios access the same resources through shared inventory that contains connection details written by the `default` scenario. This approach provides significant benefits for cost optimization and execution speed:
 
 **Cost optimization scenarios:**
+
 - **Cloud infrastructure sharing**: Automatic `default` scenario provisioning creates expensive cloud resources (VMs, databases, load balancers) once, shared across all test scenarios
 - **Licensed software environments**: Shared expensive licensed software installations managed automatically by the `default` scenario
 - **Complex multi-tier environments**: The `default` scenario provisions elaborate application stacks once, reused by all scenarios
 
 **Speed optimization scenarios:**
+
 - **Long provisioning times**: Automatic `default` scenario handling provisions time-intensive environments (complex application deployments, large databases, multi-service architectures) once for all scenarios
 - **Baseline establishment**: The `default` scenario automatically creates common baseline environments for all test scenarios
 - **Integration testing pipelines**: All scenarios share infrastructure without manual coordination or duplicate provisioning
 
 **Shared state workflow examples:**
+
 ```bash
 # Single scenario with shared state - default scenario handles create/destroy automatically
 molecule test --scenario-name app-test --shared-state
@@ -221,6 +224,7 @@ molecule test --scenario-name isolated-test  # Handles own create/destroy
 The `--shared-inventory` feature is the essential mechanism that enables multiple scenarios to access the same resources by centralizing inventory in a common location. When combined with `--shared-state`, this creates a powerful pattern: the `default` scenario automatically manages infrastructure and writes connection details to the shared inventory location, while all other scenarios read from this same shared inventory to access the resources. This centralized inventory coordination enables testing workflows that span multiple automation domains:
 
 **Cross-scenario coordination patterns:**
+
 - **Infrastructure + application deployment**: `default` scenario provisions infrastructure and writes connection details to shared inventory, application scenarios read from shared inventory to deploy and test services on the same resources
 - **Network + security configuration**: `default` scenario configures networking and writes access details to shared inventory, other scenarios read shared inventory to apply policies and test access on the same infrastructure
 - **Multi-service integration**: `default` scenario provisions base infrastructure with shared inventory containing all connection details, each scenario reads shared inventory to manage different service components on the same resources
@@ -228,12 +232,14 @@ The `--shared-inventory` feature is the essential mechanism that enables multipl
 
 **How shared inventory enables resource sharing:**
 When `--shared-inventory` is used, Molecule centralizes the inventory directory so all scenarios read and write to the same location. This means:
+
 - The `default` scenario writes resource connection details (host IPs, credentials, ports) to the shared inventory
 - All other scenarios read from this same shared inventory to access the exact same resources
 - Variables, group memberships, and connection options are shared across all scenarios
 - Each scenario sees identical infrastructure without needing separate provisioning
 
 **Shared inventory workflow examples:**
+
 ```bash
 # Multiple scenarios automatically share resources through centralized inventory
 molecule test --all --shared-inventory --shared-state
@@ -250,6 +256,7 @@ molecule test --scenario-name integration-test --shared-inventory --shared-state
 While shared state provides cost and speed benefits, isolation ensures test reliability and independence. Teams must choose appropriate strategies based on their specific requirements:
 
 **Complete isolation scenarios (recommended for):**
+
 - **Independent feature testing**: Each feature test needs clean environments to avoid interference
 - **Unit testing**: Fast, focused tests that validate specific automation logic
 - **Regression testing**: Ensuring new changes don't break existing functionality
@@ -257,6 +264,7 @@ While shared state provides cost and speed benefits, isolation ensures test reli
 - **Development workflows**: Individual developers need isolated environments for experimentation
 
 **Shared state scenarios (recommended for):**
+
 - **Integration testing**: Testing interactions between multiple components
 - **Performance testing**: Establishing baselines and measuring changes over time
 - **Cost-sensitive environments**: Cloud testing where resource costs are significant
@@ -341,4 +349,4 @@ Automatic detection and configuration of Ansible collections, roles, and depende
 
 Molecule's roadmap focuses on becoming the definitive testing solution for Ansible automation rather than a generic testing framework. This specialization enables deeper integration, more intuitive workflows, and better alignment with Ansible ecosystem patterns while ensuring that teams can leverage their existing Ansible expertise throughout their entire testing lifecycle.
 
-The framework's evolution maintains backward compatibility with existing workflows while progressively enhancing the Ansible-native experience, ensuring that teams can adopt new capabilities at their own pace without disrupting established testing practices. 
+The framework's evolution maintains backward compatibility with existing workflows while progressively enhancing the Ansible-native experience, ensuring that teams can adopt new capabilities at their own pace without disrupting established testing practices.
