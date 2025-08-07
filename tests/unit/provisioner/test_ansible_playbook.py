@@ -225,7 +225,7 @@ def test_bake_create_destroy_smart_mode_user_provided(
     # Mock _should_provide_args to simulate user-provided playbook behavior
     monkeypatch.setattr(_instance, "_should_provide_args", lambda _: True)
 
-    _instance._config.ansible_args = ["foo", "bar"]
+    _instance._config.ansible_args = ("foo", "bar")
     _instance._config.config["provisioner"]["ansible_args"] = ["frob", "nitz"]
     _instance._config.action = "create"
     _instance.bake()
@@ -260,8 +260,8 @@ def test_bake_strict_mode_none_action(
     """
     monkeypatch.setenv("MOLECULE_ANSIBLE_ARGS_STRICT_MODE", "true")
 
-    _instance._config.ansible_args = ["foo", "bar"]
-    _instance._config.action = None
+    _instance._config.ansible_args = ("foo", "bar")
+    _instance._config.action = None  # type: ignore[assignment]
     _instance.bake()
 
     args = [
