@@ -45,6 +45,44 @@ Reliable cleanup prevents resource leaks and ensures consistent test environment
 **Observability and debugging**
 When automation tests fail, teams need comprehensive visibility into what happened across all system layers. This includes detailed logging from infrastructure provisioning, application deployment logs, API interaction traces, configuration change tracking, and performance metrics. The framework must support artifact collection (logs, configurations, state dumps), state snapshots at multiple levels, and integration with debugging tools. It should make it easy to reproduce failures locally and provide enough context to quickly identify root causes whether they stem from infrastructure issues, application configuration problems, external service failures, or automation logic errors.
 
+## Testing workflow fundamentals
+
+Effective automation testing follows a structured workflow that ensures comprehensive validation while maintaining efficiency and reliability. This workflow applies across all automation domains, from infrastructure provisioning to application deployment to external service integration.
+
+### Core testing phases
+
+**Environment provisioning**
+The testing process begins with creating clean, isolated environments that accurately represent production conditions. This includes provisioning infrastructure resources (compute, networking, storage), deploying application dependencies (databases, message queues, caching layers), and configuring external service connections (APIs, monitoring endpoints, third-party integrations). The provisioning phase must be fast enough for developer workflows while being comprehensive enough to catch environment-specific issues.
+
+**Dependency resolution**
+Before executing automation logic, the testing framework must ensure all required dependencies are available. This includes Ansible roles and collections, external libraries, configuration files, secrets, and any prerequisite services. Dependency resolution must handle version constraints, conflict detection, and both public and private repositories while supporting offline development scenarios.
+
+**Change application and convergence**
+The core testing phase applies the automation logic being tested. This involves executing playbooks, roles, or tasks against the test environment and ensuring they complete successfully. The framework must capture detailed execution logs, handle failures gracefully, and provide mechanisms for incremental development and debugging. This phase validates that the automation logic works correctly in realistic conditions.
+
+**Idempotence verification**
+A critical aspect of automation testing involves verifying that operations can be run multiple times without causing unintended changes. The framework must re-execute the same automation logic and confirm that no changes occur on subsequent runs. This validates that the automation properly detects existing states and only makes necessary modifications, preventing configuration drift and ensuring predictable behavior.
+
+**Functional verification**
+After applying changes, the testing framework must validate that the desired outcomes were achieved. This includes verifying infrastructure states (resources created, configurations applied), application behavior (services running, endpoints responding), integration functionality (APIs accessible, data flowing correctly), and business process outcomes (workflows completing, notifications sent). Verification must be comprehensive enough to catch subtle issues while being fast enough for rapid iteration.
+
+**Side effect detection**
+Automation changes can have unintended consequences beyond their primary objectives. The testing framework must detect side effects such as unexpected resource modifications, service disruptions, security policy changes, performance impacts, or external system effects. This phase helps identify potential issues before they impact production environments.
+
+**Resource cleanup and destruction**
+The final phase involves cleaning up all resources created during testing. This includes infrastructure resources, application instances, database entries, temporary files, external service configurations, and any other artifacts created during the test process. Proper cleanup prevents resource leaks, controls costs, and ensures clean states for subsequent test runs.
+
+### Testing strategy considerations
+
+**Isolation vs. efficiency trade-offs**
+Testing frameworks must balance complete isolation (which ensures clean tests but increases resource usage and execution time) with resource sharing (which improves efficiency but introduces potential cross-test dependencies). The optimal strategy depends on the specific automation being tested, available resources, and team workflows.
+
+**Incremental vs. comprehensive testing**
+During development, teams need fast feedback loops that validate changes quickly. In CI/CD pipelines, comprehensive testing ensures production readiness. The framework must support both incremental testing (validating specific changes) and comprehensive testing (full end-to-end validation) while allowing teams to choose appropriate strategies for different contexts.
+
+**State preservation vs. fresh environments**
+Some testing scenarios benefit from preserving state between test phases (performance testing, migration validation, integration testing), while others require completely fresh environments (unit testing, isolation verification). The framework must support both approaches and allow teams to choose based on their specific testing requirements.
+
 ## How Molecule addresses testing suite requirements
 
 Molecule specifically addresses the unique challenges of testing Ansible automation across all domains while providing the comprehensive testing suite capabilities outlined above. The framework's design reflects deep understanding of both general testing principles and the specific needs of modern automation, whether targeting infrastructure, applications, deployments, integrations, or business processes.
@@ -59,51 +97,188 @@ Rather than wrapping Ansible as an external tool, Molecule integrates directly w
 
 ### Sequence configuration and workflow control
 
+**Testing phase to action mapping**
+Molecule implements the core testing phases through a comprehensive action system that maps directly to testing workflow fundamentals:
+
+| Testing Phase | Molecule Action | Purpose |
+|---------------|-----------------|---------|
+| Environment provisioning | `create` | Provisions test infrastructure and environments |
+| Dependency resolution | `dependency` | Installs required roles, collections, and dependencies |
+| Environment preparation | `prepare` | Configures environments before applying automation logic |
+| Change application | `converge` | Executes the automation being tested |
+| Idempotence verification | `idempotence` | Re-runs automation to verify no unintended changes |
+| Side effect detection | `side_effect` | Executes additional automation to test for unintended consequences |
+| Functional verification | `verify` | Validates that desired outcomes were achieved |
+| Resource cleanup | `cleanup` | Removes temporary files and intermediate artifacts |
+| Resource destruction | `destroy` | Cleans up all provisioned resources |
+
 **Configurable test sequences**
-Molecule's sequence system provides fine-grained control over test execution flow across all automation domains. Teams can define custom sequences that match their specific testing requirements: syntax validation for playbook development, infrastructure provisioning followed by application deployment testing, multi-stage integration testing with external services, or end-to-end scenarios combining infrastructure, applications, and business processes.
+Molecule's sequence system provides fine-grained control over test execution flow by allowing teams to define custom sequences that match their specific testing requirements. Actions can be reordered, removed, or repeated based on testing needs:
 
 ```yaml
+# Full comprehensive testing sequence
+scenario:
+  test_sequence:
+    - dependency      # Install requirements
+    - create         # Provision environment
+    - prepare        # Configure environment
+    - converge       # Apply automation
+    - idempotence    # Verify idempotence
+    - side_effect    # Test side effects
+    - verify         # Functional verification
+    - cleanup        # Clean temporary artifacts
+    - destroy        # Remove all resources
+
+# Rapid development sequence (skips verification phases)
+scenario:
+  test_sequence:
+    - dependency
+    - create
+    - converge
+    - destroy
+
+# Integration testing sequence (preserves state between phases)
 scenario:
   test_sequence:
     - dependency
     - create
     - prepare
     - converge
-    - idempotence
+    - verify
     - side_effect
     - verify
-    - cleanup
-    - destroy
+    # Note: cleanup and destroy omitted for state preservation
 ```
 
 **Command-line subcommand mapping**
-Each step in a test sequence corresponds to a specific `molecule` subcommand, allowing developers to execute individual phases during development while ensuring complete automated testing in CI/CD pipelines.
+Each action in a test sequence corresponds to a specific `molecule` subcommand, allowing developers to execute individual phases during development while ensuring complete automated testing in CI/CD pipelines:
 
-- `molecule create` - Provisions test environments (infrastructure, applications, services)
-- `molecule converge` - Applies Ansible automation (configuration, deployment, integration)
-- `molecule verify` - Validates expected outcomes (infrastructure state, application behavior, service integration)
-- `molecule destroy` - Cleans up test resources (all domains and dependencies)
+| Command | Action | Usage |
+|---------|---------|-------|
+| `molecule dependency` | Installs roles and collections | Development setup and CI/CD preparation |
+| `molecule create` | Provisions test environments | Environment setup for all testing phases |
+| `molecule prepare` | Configures test environments | Custom environment preparation |
+| `molecule converge` | Applies automation being tested | Core development and validation workflow |
+| `molecule idempotence` | Verifies idempotent behavior | Quality assurance and CI/CD validation |
+| `molecule side_effect` | Tests for unintended effects | Comprehensive testing and regression detection |
+| `molecule verify` | Validates expected outcomes | Functional testing and acceptance criteria |
+| `molecule cleanup` | Removes temporary artifacts | Resource management and cost optimization |
+| `molecule destroy` | Cleans up all resources | Environment teardown and reset |
+| `molecule test` | Runs complete sequence | Full automated testing workflow |
 
 **Selective execution and debugging**
-Developers can execute any subset of the test sequence, enabling rapid iteration during development and focused debugging when tests fail. This flexibility supports both quick feedback loops (testing playbook logic changes) and comprehensive validation (full deployment workflows). Whether debugging infrastructure provisioning, application configuration, or external service integration, developers can focus on specific test phases while maintaining the ability to run complete end-to-end scenarios.
+Developers can execute any subset of the test sequence, enabling rapid iteration during development and focused debugging when tests fail. This flexibility supports both quick feedback loops (testing playbook logic changes) and comprehensive validation (full deployment workflows):
+
+```bash
+# Quick development iteration
+molecule converge  # Apply changes
+molecule verify    # Check outcomes
+
+# Debug environment issues
+molecule create    # Set up environment
+molecule prepare   # Configure environment
+# Manually investigate environment state
+
+# Test idempotence specifically
+molecule converge  # Apply automation
+molecule idempotence  # Verify no changes on re-run
+
+# Full comprehensive testing
+molecule test      # Run complete sequence
+```
 
 ### Shared state and inventory management
 
-**Shared state capabilities**
-Molecule's `--shared-state` functionality enables complex testing scenarios where multiple test runs share environments across all automation domains. This supports workflows like:
+**Shared state for cost and speed optimization**
+Molecule's `--shared-state` functionality enables complex testing scenarios where multiple test runs share environments across all automation domains. This approach provides significant benefits for cost optimization and execution speed:
 
-- Testing configuration changes against existing infrastructure
-- Multi-stage application deployments with state preservation
-- Performance testing with baseline establishment across infrastructure and applications
-- Blue-green deployment validation for complete application stacks
-- API integration testing with persistent external service configurations
-- Database migration testing with preserved data states
+**Cost optimization scenarios:**
+- **Cloud infrastructure sharing**: Multiple scenarios share expensive cloud resources (VMs, databases, load balancers) rather than provisioning separate instances for each test
+- **Licensed software environments**: Share expensive licensed software installations across multiple test scenarios
+- **Complex multi-tier environments**: Reuse elaborate application stacks that are expensive to provision repeatedly
+
+**Speed optimization scenarios:**
+- **Long provisioning times**: Share environments that take significant time to provision (complex application deployments, large databases, multi-service architectures)
+- **Baseline establishment**: Create common baseline environments once and run multiple test variations against them
+- **Integration testing pipelines**: Chain multiple test scenarios against the same infrastructure without teardown/recreation overhead
+
+**Shared state workflow examples:**
+```bash
+# Scenario 1: Provision shared infrastructure
+molecule create --scenario-name infrastructure
+molecule converge --scenario-name infrastructure
+
+# Scenario 2: Test application A against shared infrastructure
+molecule test --scenario-name app-a --shared-state
+
+# Scenario 3: Test application B against same infrastructure
+molecule test --scenario-name app-b --shared-state
+
+# Cleanup: Only destroy when all testing is complete
+molecule destroy --scenario-name infrastructure
+```
 
 **Shared inventory coordination**
-The `--shared-inventory` feature allows multiple scenarios to coordinate through a common inventory structure. This enables testing scenarios that span multiple automation domains: coordinating infrastructure provisioning with application deployment, testing network configuration alongside application services, validating API integrations across multiple service components, or orchestrating complex business process automation that involves multiple systems and external services.
+The `--shared-inventory` feature allows multiple scenarios to coordinate through a common inventory structure, enabling testing workflows that span multiple automation domains:
+
+**Cross-scenario coordination patterns:**
+- **Infrastructure + application deployment**: Infrastructure scenario provisions resources, application scenarios deploy and test services
+- **Network + security configuration**: Network scenario configures connectivity, security scenario applies policies and tests access
+- **Multi-service integration**: Each scenario manages different service components while coordinating through shared inventory
+- **Progressive deployment testing**: Sequential scenarios test different deployment stages while maintaining environment continuity
+
+**Shared inventory workflow examples:**
+```bash
+# Multiple scenarios sharing inventory coordination
+molecule create --scenario-name base-infra --shared-inventory
+molecule converge --scenario-name base-infra --shared-inventory
+
+molecule test --scenario-name web-services --shared-inventory --shared-state
+molecule test --scenario-name database-config --shared-inventory --shared-state
+molecule test --scenario-name monitoring-setup --shared-inventory --shared-state
+```
+
+**Isolation vs. sharing trade-offs**
+While shared state provides cost and speed benefits, isolation ensures test reliability and independence. Teams must choose appropriate strategies based on their specific requirements:
+
+**Complete isolation scenarios (recommended for):**
+- **Independent feature testing**: Each feature test needs clean environments to avoid interference
+- **Unit testing**: Fast, focused tests that validate specific automation logic
+- **Regression testing**: Ensuring new changes don't break existing functionality
+- **CI/CD pipelines**: Parallel test execution where isolation prevents race conditions
+- **Development workflows**: Individual developers need isolated environments for experimentation
+
+**Shared state scenarios (recommended for):**
+- **Integration testing**: Testing interactions between multiple components
+- **Performance testing**: Establishing baselines and measuring changes over time
+- **Cost-sensitive environments**: Cloud testing where resource costs are significant
+- **Long-running test suites**: Complex scenarios where provisioning time exceeds test execution time
+- **Staging environment simulation**: Testing deployment procedures against persistent environments
 
 **State isolation controls**
-While supporting shared state, Molecule maintains clear boundaries between test scenarios when needed. Teams can choose appropriate isolation levels based on their specific testing requirements: complete isolation for independent feature testing, partial sharing for integration scenarios, or full sharing for performance and load testing. This flexibility works across all automation domains, from infrastructure and applications to external service integrations.
+Molecule provides flexible controls for managing isolation levels:
+
+```yaml
+# Complete isolation (default)
+# Each test run gets fresh environment
+molecule test --scenario-name feature-test
+
+# Shared state only
+# Share infrastructure but maintain separate inventories
+molecule test --scenario-name integration-test --shared-state
+
+# Full sharing
+# Share both infrastructure and inventory coordination
+molecule test --scenario-name performance-test --shared-state --shared-inventory
+
+# Custom isolation
+# Share specific resources while isolating others
+molecule create --scenario-name shared-infra
+molecule test --scenario-name app-test --shared-state
+# Only shared infrastructure, separate application state
+```
+
+This flexibility allows teams to optimize their testing strategies based on resource constraints, execution time requirements, and test isolation needs while maintaining the reliability and reproducibility essential for effective automation testing.
 
 ### Configuration flexibility and extensibility
 
