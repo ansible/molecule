@@ -1,0 +1,10 @@
+---
+- name: Converge containers
+  hosts: containers # Uses the constructed group
+  gather_facts: false
+  tasks:
+    - name: Create test file
+      ansible.builtin.copy:
+        content: "Hello from {{ inventory_hostname }} in containers group"
+        dest: /tmp/converge.txt
+        mode: "0644"

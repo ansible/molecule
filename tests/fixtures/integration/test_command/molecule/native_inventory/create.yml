@@ -1,0 +1,37 @@
+---
+- name: Create containers from inventory
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Validate containers group exists and has hosts
+      ansible.builtin.assert:
+        that:
+          - groups['containers'] | length > 0
+        fail_msg: "No hosts found in containers group - constructed plugin may not be working"
+
+    - name: Create containers for container hosts
+      containers.podman.podman_container:
+        name: "{{ item }}"
+        image: "{{ hostvars[item]['container_image'] }}"
+        state: started
+        command: sleep 1d
+        log_driver: json-file
+        env: "{{ hostvars[item]['container_env'] | default(omit) }}"
+      register: result
+      loop: "{{ groups['containers'] }}"
+      loop_control:
+        label: "{{ item }}"
+
+    - name: Display container log and fail
+      ansible.builtin.fail:
+        msg: |
+          Container failed to start. Logs:
+          {{ container_logs | default('Unable to retrieve logs') }}
+      vars:
+        container_logs: "{{ lookup('pipe', 'podman logs ' + item.container.Name | quote, errors='ignore') }}"
+        exit_code: "{{ item.container.State.ExitCode }}"
+        running: "{{ item.container.State.Running }}"
+      when: (exit_code | int) != 0 or not (running | bool)
+      loop: "{{ result.results }}"
+      loop_control:
+        label: "{{ item.container.Name }}"

@@ -1,0 +1,27 @@
+---
+- name: Verify native inventory sources
+  hosts: containers
+  gather_facts: true
+  tasks:
+    - name: Validate environment variable from host_vars
+      ansible.builtin.assert:
+        that:
+          - ansible_env.TEST_HOST_VAR == "from_host_vars"
+        fail_msg: "Environment variable from host_vars not set correctly"
+
+    - name: Validate Molecule environment variable
+      ansible.builtin.assert:
+        that:
+          - ansible_env.MOLECULE_TEST_CONTAINER == "true"
+        fail_msg: "MOLECULE_TEST_CONTAINER environment variable not set"
+
+    - name: Read test file
+      ansible.builtin.slurp:
+        src: /tmp/converge.txt
+      register: file
+
+    - name: Validate file content
+      ansible.builtin.assert:
+        that:
+          - (file.content | b64decode | trim) is search("containers group")
+        fail_msg: "File content validation failed"

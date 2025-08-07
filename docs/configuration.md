@@ -93,6 +93,13 @@ MOLECULE_INSTANCE_CONFIG
 connection, user, port, etc. (populated from driver). Usually
 `~/.cache/molecule/<role-name>/<scenario-name>/instance_config.yml`
 
+MOLECULE_ANSIBLE_ARGS_STRICT_MODE
+
+: When set to any non-empty value, reverts to legacy behavior where `ansible_args`
+are excluded from create and destroy actions regardless of playbook source.
+By default (unset), `ansible_args` are included for user-provided create/destroy
+playbooks but excluded for bundled playbooks for safety.
+
 MOLECULE_DEPENDENCY_NAME
 
 : Dependency type name, usually 'galaxy'
