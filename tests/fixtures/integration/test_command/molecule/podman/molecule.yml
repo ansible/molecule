@@ -31,8 +31,8 @@ verifier:
   name: ansible
 scenario:
   test_sequence:
-    - destroy
     - dependency
+    - destroy
     - create
     - converge
     - idempotence
