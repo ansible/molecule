@@ -57,6 +57,7 @@ extra:
 
 nav:
   - Home: index.md
+  - philosophy.md
   - installation.md
   - Using:
       - getting-started.md
