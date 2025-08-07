@@ -113,7 +113,7 @@ Molecule implements the core testing phases through a comprehensive action syste
 | Resource destruction | `destroy` | Cleans up all provisioned resources |
 
 **Configurable test sequences**
-Molecule's sequence system provides fine-grained control over test execution flow by allowing teams to define custom sequences that match their specific testing requirements. Actions can be reordered, removed, or repeated based on testing needs:
+Molecule's sequence system provides fine-grained control over test execution flow by allowing teams to define custom sequences that match their specific testing requirements. Since its inception in 2015, Molecule's default sequences have been optimized through real-world usage at scale to satisfy most users' testing workflows. However, enterprise environments often have specific workflow requirements that differ from these defaults. Molecule addresses this by allowing sequences to be modified, committed as part of the codebase, and shared between team members, ensuring consistent testing approaches across development teams. Actions can be reordered, removed, or repeated based on testing needs:
 
 ```yaml
 # Full comprehensive testing sequence
