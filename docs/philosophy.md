@@ -190,7 +190,7 @@ molecule test      # Run complete sequence
 ### Shared state and inventory management
 
 **Shared state for cost and speed optimization**
-Molecule's `--shared-state` functionality enables complex testing scenarios where multiple test runs share environments by automatically leveraging the `default` scenario for infrastructure management. When shared state is enabled, Molecule automatically runs `create` from the `default` scenario before executing any other scenarios, and `destroy` from the `default` scenario after all scenarios complete. Individual scenarios skip their own `create` and `destroy` actions and share the infrastructure created by the `default` scenario. This approach provides significant benefits for cost optimization and execution speed:
+Molecule's `--shared-state` functionality enables complex testing scenarios where multiple test runs share environments by automatically leveraging the `default` scenario for infrastructure management. When shared state is enabled, Molecule automatically runs `create` from the `default` scenario before executing any other scenarios, and `destroy` from the `default` scenario after all scenarios complete. Individual scenarios skip their own `create` and `destroy` actions and share the infrastructure created by the `default` scenario. When combined with `--shared-inventory`, scenarios access the same resources through shared inventory that contains connection details written by the `default` scenario. This approach provides significant benefits for cost optimization and execution speed:
 
 **Cost optimization scenarios:**
 - **Cloud infrastructure sharing**: Automatic `default` scenario provisioning creates expensive cloud resources (VMs, databases, load balancers) once, shared across all test scenarios
@@ -218,25 +218,32 @@ molecule test --scenario-name isolated-test  # Handles own create/destroy
 ```
 
 **Shared inventory coordination**
-The `--shared-inventory` feature allows multiple scenarios to coordinate through a common inventory structure, enabling testing workflows that span multiple automation domains. When combined with `--shared-state`, Molecule automatically uses the `default` scenario to manage infrastructure while other scenarios coordinate through shared inventory:
+The `--shared-inventory` feature is the essential mechanism that enables multiple scenarios to access the same resources by centralizing inventory in a common location. When combined with `--shared-state`, this creates a powerful pattern: the `default` scenario automatically manages infrastructure and writes connection details to the shared inventory location, while all other scenarios read from this same shared inventory to access the resources. This centralized inventory coordination enables testing workflows that span multiple automation domains:
 
 **Cross-scenario coordination patterns:**
-- **Infrastructure + application deployment**: Automatic `default` scenario infrastructure provisioning, application scenarios deploy and test services using shared inventory
-- **Network + security configuration**: Automatic `default` scenario networking setup, other scenarios apply policies and test access through shared inventory
-- **Multi-service integration**: Automatic `default` scenario base infrastructure, each scenario manages different service components while coordinating through shared inventory
-- **Progressive deployment testing**: Automatic `default` scenario baseline infrastructure, sequential scenarios test different deployment stages using shared inventory
+- **Infrastructure + application deployment**: `default` scenario provisions infrastructure and writes connection details to shared inventory, application scenarios read from shared inventory to deploy and test services on the same resources
+- **Network + security configuration**: `default` scenario configures networking and writes access details to shared inventory, other scenarios read shared inventory to apply policies and test access on the same infrastructure
+- **Multi-service integration**: `default` scenario provisions base infrastructure with shared inventory containing all connection details, each scenario reads shared inventory to manage different service components on the same resources
+- **Progressive deployment testing**: `default` scenario establishes baseline infrastructure with shared inventory, sequential scenarios read shared inventory to test different deployment stages on the same resources
+
+**How shared inventory enables resource sharing:**
+When `--shared-inventory` is used, Molecule centralizes the inventory directory so all scenarios read and write to the same location. This means:
+- The `default` scenario writes resource connection details (host IPs, credentials, ports) to the shared inventory
+- All other scenarios read from this same shared inventory to access the exact same resources
+- Variables, group memberships, and connection options are shared across all scenarios
+- Each scenario sees identical infrastructure without needing separate provisioning
 
 **Shared inventory workflow examples:**
 ```bash
-# Multiple scenarios automatically coordinate through shared infrastructure and inventory
+# Multiple scenarios automatically share resources through centralized inventory
 molecule test --all --shared-inventory --shared-state
-# Molecule automatically: default create → scenarios coordinate through shared inventory → default destroy
+# Flow: default creates infrastructure → writes to shared inventory → all scenarios read shared inventory → default destroys
 
-# Progressive testing with shared coordination
+# Progressive testing accessing the same resources
 molecule test --scenario-name web-tier --shared-inventory --shared-state
 molecule test --scenario-name database-tier --shared-inventory --shared-state
 molecule test --scenario-name integration-test --shared-inventory --shared-state
-# All scenarios automatically share infrastructure and coordinate through inventory
+# Each scenario reads the same shared inventory to access identical resources
 ```
 
 **Isolation vs. sharing trade-offs**
