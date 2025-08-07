@@ -314,4 +314,31 @@ The framework provides multiple cleanup strategies, from complete teardown to se
 **Integration with automation as code**
 Molecule's approach aligns naturally with automation as code principles, treating test environments as versioned, repeatable, and auditable across all domains. Whether managing infrastructure, applications, integrations, or business processes, this alignment ensures that testing practices support broader automation maturity goals and DevOps transformation initiatives.
 
-Through this comprehensive approach, Molecule transforms Ansible testing from an ad-hoc activity into a structured, repeatable practice that scales from individual development through enterprise deployment pipelines. The framework's design acknowledges that effective testing must balance thoroughness with practicality across all automation domains, providing the tools teams need to implement testing strategies that actually get used regardless of whether they're automating infrastructure, applications, integrations, or complex business processes. 
+Through this comprehensive approach, Molecule transforms Ansible testing from an ad-hoc activity into a structured, repeatable practice that scales from individual development through enterprise deployment pipelines. The framework's design acknowledges that effective testing must balance thoroughness with practicality across all automation domains, providing the tools teams need to implement testing strategies that actually get used regardless of whether they're automating infrastructure, applications, integrations, or complex business processes.
+
+## Molecule's evolution with Ansible
+
+As Ansible has emerged as the de facto DSL for automation, Molecule's development continues with deeper Ansible integration as the primary focus. Rather than broadening tool support, Molecule's evolution prioritizes making the Molecule + Ansible experience seamless, intuitive, and powerful while maintaining backward compatibility for existing workflows.
+
+### Current and planned integration enhancements
+
+**Enhanced collection testing support**
+Molecule's shared state and shared inventory capabilities are being extended specifically for Ansible collection testing scenarios. This includes automatic collection detection to streamline testing workflows, improved collection dependency resolution, and optimized testing patterns that reflect how collections are developed and deployed in enterprise environments.
+
+**Unified user experience**
+Visual and functional alignment with Ansible's output patterns ensures that teams experience consistent interfaces across their automation toolkit. This includes UI changes that better integrate Molecule's test output with standard Ansible playbook output, making the transition between development, testing, and deployment workflows more natural and reducing cognitive overhead for automation practitioners.
+
+**Deeper inventory integration**
+More obvious and tighter integration with Ansible's inventory systems eliminates friction between test and production inventory patterns. This includes enhanced inventory sharing mechanisms, improved inventory validation during testing, and clearer mapping between test inventory structures and production deployment patterns.
+
+**Extended executor support**
+Support for modern Ansible execution environments through tools like ansible-navigator enables testing within the same containerized environments used for production automation. This ensures test environments more accurately reflect production execution contexts while supporting the shift toward standardized, reproducible automation execution environments.
+
+**Streamlined automation workflows**
+Automatic detection and configuration of Ansible collections, roles, and dependencies reduces manual configuration overhead while ensuring that testing workflows automatically adapt to evolving automation codebases. This includes intelligent detection of collection structures, automatic dependency resolution, and seamless integration with Ansible Galaxy workflows.
+
+### Strategic direction
+
+Molecule's roadmap focuses on becoming the definitive testing solution for Ansible automation rather than a generic testing framework. This specialization enables deeper integration, more intuitive workflows, and better alignment with Ansible ecosystem patterns while ensuring that teams can leverage their existing Ansible expertise throughout their entire testing lifecycle.
+
+The framework's evolution maintains backward compatibility with existing workflows while progressively enhancing the Ansible-native experience, ensuring that teams can adopt new capabilities at their own pace without disrupting established testing practices. 
