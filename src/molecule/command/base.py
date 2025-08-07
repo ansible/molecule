@@ -248,7 +248,7 @@ def _run_scenarios(
                 f"Removing {scenario.ephemeral_directory}",
             )
             shutil.rmtree(scenario.ephemeral_directory)
-            return
+            continue
         try:
             execute_scenario(scenario)
             scenarios.results.append(scenario.results)

@@ -172,6 +172,16 @@ class CliOptions:
         )
 
     @property
+    def all_scenarios_reset(self) -> CliOption:
+        """Target all scenarios option for reset command with shared directory info."""
+        return CliOption(
+            name="all",
+            help="Target all scenarios and shared directories. Overrides scenario-name.",
+            is_flag=True,
+            default=False,
+        )
+
+    @property
     def ansible_args(self) -> CliOption:
         """Ansible arguments."""
         return CliOption(

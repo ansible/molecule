@@ -17,15 +17,19 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
-"""Lint Command Module."""
+"""Reset Command Module."""
 
 from __future__ import annotations
 
+import shutil
+
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from molecule.api import drivers
 from molecule.click_cfg import click_command_ex, options
 from molecule.command import base
+from molecule.command.base import _log
 
 
 if TYPE_CHECKING:
@@ -35,7 +39,15 @@ if TYPE_CHECKING:
 
 
 @click_command_ex()
-@options(["scenario_name_single_with_default"])
+@options(
+    [
+        "all_scenarios_reset",
+        "exclude",
+        "report",
+        "scenario_name_with_default",
+        "command_borders",
+    ],
+)
 def reset(ctx: click.Context) -> None:  # pragma: no cover
     """Reset molecule temporary folders.
 
@@ -44,10 +56,32 @@ def reset(ctx: click.Context) -> None:  # pragma: no cover
     """
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
-    command_args: CommandArgs = {"subcommand": subcommand}
+    command_args: CommandArgs = {
+        "subcommand": subcommand,
+    }
 
+    all_flag = ctx.params["all"]
+    exclude = ctx.params["exclude"]
     scenario_name = ctx.params["scenario_name"]
 
-    base.execute_cmdline_scenarios([scenario_name], args, command_args)
+    if all_flag:
+        scenario_name = None
+
+    base.execute_cmdline_scenarios(scenario_name, args, command_args, excludes=exclude)
+
+    # If --all was used, also clean shared directory after individual scenarios
+    if all_flag and scenario_name is None:  # scenario_name is None when --all is used
+        # Get configs to access shared directory
+        configs = base.get_configs(args, command_args)
+        if configs:
+            shared_dir = configs[0].scenario.shared_ephemeral_directory
+            if Path(shared_dir).exists():
+                _log(
+                    "shared",
+                    "reset",
+                    f"Removing shared directory {shared_dir}",
+                )
+
+                shutil.rmtree(shared_dir)
     for driver in drivers().values():
         driver.reset()
