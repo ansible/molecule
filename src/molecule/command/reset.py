@@ -70,7 +70,7 @@ def reset(ctx: click.Context) -> None:  # pragma: no cover
     base.execute_cmdline_scenarios(scenario_name, args, command_args, excludes=exclude)
 
     # If --all was used, also clean shared directory after individual scenarios
-    if all_flag and scenario_name is None:  # scenario_name is None when --all is used
+    if all_flag:
         # Get configs to access shared directory
         configs = base.get_configs(args, command_args)
         if configs:
