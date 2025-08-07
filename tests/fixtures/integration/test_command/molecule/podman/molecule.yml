@@ -1,6 +1,8 @@
 ---
 dependency:
   name: galaxy
+  options:
+  requirements-file: requirements.yml
 platforms:
   - name: test-container
     image: ghcr.io/ansible/community-ansible-dev-tools:latest
