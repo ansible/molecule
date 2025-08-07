@@ -300,8 +300,8 @@ Molecule leverages Ansible as its default driver, providing significant benefits
 **Dependency management integration**
 Molecule integrates with Ansible Galaxy for dependency resolution, ensuring that test environments include all required roles and collections regardless of their domain focus. Whether testing infrastructure automation, application deployment, network configuration, or external service integration, this integration supports both public and private repositories while handling version constraints and conflict resolution across all types of Ansible content.
 
-**Provisioner and verifier plugins**
-The framework's plugin architecture allows customization of both the automation execution (provisioner) and validation logic (verifier). This extensibility ensures that Molecule can adapt to diverse testing requirements across all automation domains while maintaining core consistency. Whether validating infrastructure states, application behavior, API responses, database changes, or business process outcomes, the plugin system provides appropriate hooks for domain-specific testing needs.
+**Using Ansible as provisioner and verifier**
+Molecule uses Ansible as both the provisioner and verifier, providing unified automation execution and validation logic across all testing scenarios. This approach ensures that teams use the same Ansible skills, modules, and patterns for both test execution and validation that they use in production automation. Whether provisioning infrastructure, deploying applications, configuring services, or validating outcomes, Ansible's extensive module ecosystem provides consistent interfaces for all automation domains. This unified approach reduces complexity, leverages existing team expertise, and ensures that test validation logic can be easily understood and maintained by any team member familiar with Ansible.
 
 ### Resource lifecycle optimization
 
