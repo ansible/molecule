@@ -11,6 +11,7 @@ capsys
 cfmpr
 cgroupfs
 cgroupns
+checkpointing
 clicolor
 cloudinitdisk
 connopts
@@ -95,6 +96,7 @@ rolebinding
 rrequirements
 runcmd
 saez
+sandboxed
 Sbarnea
 schemafile
 seccomp
