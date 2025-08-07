@@ -26,7 +26,7 @@
           Container failed to start. Logs:
           {{ container_logs | default('Unable to retrieve logs') }}
       vars:
-        container_logs: "{{ lookup('pipe', 'podman logs ' + item.container.Name, errors='ignore') }}"
+        container_logs: "{{ lookup('pipe', 'podman logs ' + item.container.Name | quote, errors='ignore') }}"
         exit_code: "{{ item.container.State.ExitCode }}"
         running: "{{ item.container.State.Running }}"
       when: (exit_code | int) != 0 or not (running | bool)
