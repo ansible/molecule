@@ -294,8 +294,8 @@ This flexibility allows teams to optimize their testing strategies based on reso
 
 ### Configuration flexibility and extensibility
 
-**Driver architecture**
-Molecule's pluggable driver system supports diverse platforms and environments while maintaining consistent interfaces. The architecture separates platform-specific provisioning logic from test orchestration, enabling teams to test across multiple environments with minimal configuration changes. This works for infrastructure platforms (Docker, Podman, cloud providers), application platforms (Kubernetes, OpenShift), and even external service simulation environments, ensuring consistent testing approaches regardless of the target domain.
+**Using Ansible as the default driver**
+Molecule leverages Ansible as its default driver, providing significant benefits for automation testing across all domains. This approach enables teams to use the same Ansible knowledge, playbooks, and patterns for both test environment management and production automation. By using Ansible's declarative syntax for infrastructure provisioning, application deployment, and service configuration, teams maintain consistency between test environments and production patterns. This reduces learning curves, improves test reliability through familiar constructs, and ensures that test scenarios closely mirror real-world automation usage regardless of the target domain.
 
 **Dependency management integration**
 Molecule integrates with Ansible Galaxy for dependency resolution, ensuring that test environments include all required roles and collections regardless of their domain focus. Whether testing infrastructure automation, application deployment, network configuration, or external service integration, this integration supports both public and private repositories while handling version constraints and conflict resolution across all types of Ansible content.
