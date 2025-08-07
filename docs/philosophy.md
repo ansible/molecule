@@ -190,49 +190,48 @@ molecule test      # Run complete sequence
 ### Shared state and inventory management
 
 **Shared state for cost and speed optimization**
-Molecule's `--shared-state` functionality enables complex testing scenarios where multiple test runs share environments across all automation domains. This approach provides significant benefits for cost optimization and execution speed:
+Molecule's `--shared-state` functionality enables complex testing scenarios where multiple test runs share environments by leveraging the `default` scenario for infrastructure management. When shared state is enabled, non-default scenarios skip their own `create` and `destroy` actions, instead relying on the `default` scenario to handle infrastructure lifecycle. This approach provides significant benefits for cost optimization and execution speed:
 
 **Cost optimization scenarios:**
-- **Cloud infrastructure sharing**: Multiple scenarios share expensive cloud resources (VMs, databases, load balancers) rather than provisioning separate instances for each test
-- **Licensed software environments**: Share expensive licensed software installations across multiple test scenarios
-- **Complex multi-tier environments**: Reuse elaborate application stacks that are expensive to provision repeatedly
+- **Cloud infrastructure sharing**: The `default` scenario provisions expensive cloud resources (VMs, databases, load balancers) that multiple test scenarios share rather than each provisioning separate instances
+- **Licensed software environments**: Share expensive licensed software installations managed by the `default` scenario across multiple test scenarios
+- **Complex multi-tier environments**: The `default` scenario provisions elaborate application stacks that multiple scenarios reuse
 
 **Speed optimization scenarios:**
-- **Long provisioning times**: Share environments that take significant time to provision (complex application deployments, large databases, multi-service architectures)
-- **Baseline establishment**: Create common baseline environments once and run multiple test variations against them
-- **Integration testing pipelines**: Chain multiple test scenarios against the same infrastructure without teardown/recreation overhead
+- **Long provisioning times**: The `default` scenario handles environments that take significant time to provision (complex application deployments, large databases, multi-service architectures) once for all scenarios
+- **Baseline establishment**: The `default` scenario creates common baseline environments that multiple test scenarios use
+- **Integration testing pipelines**: Chain multiple test scenarios against the same infrastructure provisioned by the `default` scenario
 
 **Shared state workflow examples:**
 ```bash
-# Scenario 1: Provision shared infrastructure
-molecule create --scenario-name infrastructure
-molecule converge --scenario-name infrastructure
+# Default scenario provisions and manages shared infrastructure
+molecule create --scenario-name default
+molecule converge --scenario-name default
 
-# Scenario 2: Test application A against shared infrastructure
-molecule test --scenario-name app-a --shared-state
+# Test scenarios skip create/destroy, use shared infrastructure
+molecule test --scenario-name app-a --shared-state  # Skips create/destroy
+molecule test --scenario-name app-b --shared-state  # Skips create/destroy
 
-# Scenario 3: Test application B against same infrastructure
-molecule test --scenario-name app-b --shared-state
-
-# Cleanup: Only destroy when all testing is complete
-molecule destroy --scenario-name infrastructure
+# Default scenario cleans up shared infrastructure when all testing is complete
+molecule destroy --scenario-name default
 ```
 
 **Shared inventory coordination**
-The `--shared-inventory` feature allows multiple scenarios to coordinate through a common inventory structure, enabling testing workflows that span multiple automation domains:
+The `--shared-inventory` feature allows multiple scenarios to coordinate through a common inventory structure, enabling testing workflows that span multiple automation domains. When combined with `--shared-state`, the `default` scenario manages infrastructure while other scenarios coordinate through shared inventory:
 
 **Cross-scenario coordination patterns:**
-- **Infrastructure + application deployment**: Infrastructure scenario provisions resources, application scenarios deploy and test services
-- **Network + security configuration**: Network scenario configures connectivity, security scenario applies policies and tests access
-- **Multi-service integration**: Each scenario manages different service components while coordinating through shared inventory
-- **Progressive deployment testing**: Sequential scenarios test different deployment stages while maintaining environment continuity
+- **Infrastructure + application deployment**: The `default` scenario provisions infrastructure, application scenarios deploy and test services using shared inventory
+- **Network + security configuration**: The `default` scenario configures networking, other scenarios apply policies and test access through shared inventory
+- **Multi-service integration**: The `default` scenario provisions base infrastructure, each scenario manages different service components while coordinating through shared inventory
+- **Progressive deployment testing**: The `default` scenario establishes baseline infrastructure, sequential scenarios test different deployment stages using shared inventory
 
 **Shared inventory workflow examples:**
 ```bash
-# Multiple scenarios sharing inventory coordination
-molecule create --scenario-name base-infra --shared-inventory
-molecule converge --scenario-name base-infra --shared-inventory
+# Default scenario manages infrastructure, shared inventory coordinates access
+molecule create --scenario-name default --shared-inventory
+molecule converge --scenario-name default --shared-inventory
 
+# Other scenarios use shared infrastructure and coordinate through shared inventory
 molecule test --scenario-name web-services --shared-inventory --shared-state
 molecule test --scenario-name database-config --shared-inventory --shared-state
 molecule test --scenario-name monitoring-setup --shared-inventory --shared-state
@@ -256,26 +255,31 @@ While shared state provides cost and speed benefits, isolation ensures test reli
 - **Staging environment simulation**: Testing deployment procedures against persistent environments
 
 **State isolation controls**
-Molecule provides flexible controls for managing isolation levels:
+Molecule provides flexible controls for managing isolation levels, with the `default` scenario serving as the infrastructure manager when sharing is enabled:
 
-```yaml
+```bash
 # Complete isolation (default)
-# Each test run gets fresh environment
+# Each test run gets fresh environment, handles own create/destroy
 molecule test --scenario-name feature-test
 
 # Shared state only
-# Share infrastructure but maintain separate inventories
-molecule test --scenario-name integration-test --shared-state
+# Default scenario manages infrastructure, other scenarios skip create/destroy
+molecule create --scenario-name default
+molecule test --scenario-name integration-test --shared-state  # Skips create/destroy
+molecule destroy --scenario-name default
 
 # Full sharing
-# Share both infrastructure and inventory coordination
+# Default scenario manages infrastructure, all scenarios coordinate through shared inventory
+molecule create --scenario-name default --shared-inventory
 molecule test --scenario-name performance-test --shared-state --shared-inventory
+molecule destroy --scenario-name default
 
-# Custom isolation
-# Share specific resources while isolating others
-molecule create --scenario-name shared-infra
-molecule test --scenario-name app-test --shared-state
-# Only shared infrastructure, separate application state
+# Mixed approach
+# Some scenarios use shared state, others remain isolated
+molecule create --scenario-name default
+molecule test --scenario-name shared-test --shared-state      # Uses default's infrastructure
+molecule test --scenario-name isolated-test                  # Creates own infrastructure
+molecule destroy --scenario-name default
 ```
 
 This flexibility allows teams to optimize their testing strategies based on resource constraints, execution time requirements, and test isolation needs while maintaining the reliability and reproducibility essential for effective automation testing.
