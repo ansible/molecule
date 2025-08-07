@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import shutil
 
-from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -20,6 +19,7 @@ LOG = logger.get_scenario_logger(__name__, "reset", "test")
 
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from molecule.config import Config
     from molecule.types import CommandArgs, MoleculeArgs
 
