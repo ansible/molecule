@@ -210,12 +210,23 @@ def test_bake_does_not_have_ansible_args(_inventory_directory, _instance, monkey
         assert _instance._ansible_command == args
 
 
-def test_bake_create_destroy_smart_mode_user_provided(_inventory_directory, _instance, monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+def test_bake_create_destroy_smart_mode_user_provided(
+    _inventory_directory: str,  # noqa: PT019
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that ansible_args are passed for user-provided create/destroy playbooks in smart mode.
+
+    Args:
+        _inventory_directory: Temporary inventory directory fixture.
+        _instance: AnsiblePlaybook instance fixture.
+        monkeypatch: Pytest monkeypatch fixture for mocking.
+    """
     # Mock _should_provide_args to simulate user-provided playbook behavior
     monkeypatch.setattr(_instance, "_should_provide_args", lambda _: True)
 
-    _instance._config.ansible_args = ("foo", "bar")
-    _instance._config.config["provisioner"]["ansible_args"] = ("frob", "nitz")
+    _instance._config.ansible_args = ["foo", "bar"]
+    _instance._config.config["provisioner"]["ansible_args"] = ["frob", "nitz"]
     _instance._config.action = "create"
     _instance.bake()
 
@@ -235,11 +246,21 @@ def test_bake_create_destroy_smart_mode_user_provided(_inventory_directory, _ins
     assert _instance._ansible_command == args
 
 
-def test_bake_strict_mode_none_action(_inventory_directory, _instance, monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
-    # Test that strict mode with None action is conservative (no args)
+def test_bake_strict_mode_none_action(
+    _inventory_directory: str,  # noqa: PT019
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that strict mode with None action is conservative (no args).
+
+    Args:
+        _inventory_directory: Temporary inventory directory fixture.
+        _instance: AnsiblePlaybook instance fixture.
+        monkeypatch: Pytest monkeypatch fixture for mocking.
+    """
     monkeypatch.setenv("MOLECULE_ANSIBLE_ARGS_STRICT_MODE", "true")
 
-    _instance._config.ansible_args = ("foo", "bar")
+    _instance._config.ansible_args = ["foo", "bar"]
     _instance._config.action = None
     _instance.bake()
 
