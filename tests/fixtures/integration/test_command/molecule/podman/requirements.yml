@@ -1,2 +1,2 @@
-# Ansible role requirements
-# Add any required roles here
+collections:
+  - containers.podman
