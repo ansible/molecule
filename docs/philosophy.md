@@ -414,7 +414,7 @@ When using native inventory patterns, teams often need to share host-specific da
         mode: "0755"
 
     - name: Capture build details
-      ansible.builtin.command: echo "Initializing host {{ item }} at {{ ansible_date_time.iso8601 }}"
+      ansible.builtin.command: echo "Initializing host {% raw %}{{ item }}{% endraw %} at {% raw %}{{ ansible_date_time.iso8601 }}{% endraw %}"
       loop: "{% raw %}{{ groups['molecule'] }}{% endraw %}"
       register: results
 
