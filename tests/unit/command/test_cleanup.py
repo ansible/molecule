@@ -78,7 +78,7 @@ def test_cleanup_execute(  # noqa: D103
 
     expected_record_count = 2
     assert len(caplog.records) == expected_record_count
-    expected_message = "INFO     [default > cleanup] Completed: Successful"
+    expected_message = "INFO     [default > cleanup] Executed: Successful"
     assert caplog.records[1].getMessage() == expected_message
 
     _patched_ansible_cleanup.assert_called_once_with()
@@ -97,7 +97,7 @@ def test_cleanup_execute_skips_when_playbook_not_configured(  # noqa: D103
     expected_record_count = 2
     assert len(caplog.records) == expected_record_count
     expected_message = (
-        "WARNING  [default] Completed: Missing playbook (Remove from test_sequence to suppress)"
+        "WARNING  [default] Executed: Missing playbook (Remove from test_sequence to suppress)"
     )
     assert caplog.records[1].getMessage() == expected_message
 

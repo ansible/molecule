@@ -147,7 +147,7 @@ MARKUP_MAP: dict[str, str] = {
     "logging.level.error": ANSICodes.RED,
     "logging.level.critical": ANSICodes.RED + ANSICodes.BOLD,
     "logging.level.success": ANSICodes.GREEN,
-    "exec_starting": ANSICodes.CYAN,
+    "exec_executing": ANSICodes.CYAN,
     "scenario": ANSICodes.GREEN,
     "action": ANSICodes.YELLOW,
 }

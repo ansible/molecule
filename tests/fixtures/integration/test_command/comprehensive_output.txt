@@ -1,6 +1,6 @@
 INFO     test-scenario ➜ discovery: scenario test matrix: dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy
 INFO     smoke ➜ discovery: scenario test matrix: dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy
-INFO     default ➜ create: Starting
+INFO     default ➜ create: Executing
   ┌──────────────────────────────────────────────────────────────────────────────────
   │ ansible-playbook --inventory REDACTED
   │   --skip-tags molecule-notest,notest
@@ -22,11 +22,11 @@ INFO     default ➜ create: Starting
   │ localhost                  : ok=0    changed=0    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0
   │
   └─ Return code: 0 ─────────────────────────────────────────────────────────────────
-INFO     default ➜ create: Completed: Successful
+INFO     default ➜ create: Executed: Successful
 INFO     test-scenario ➜ prerun: Performing prerun with role_name_check=0...
-INFO     test-scenario ➜ dependency: Starting
-INFO     test-scenario ➜ cleanup: Starting
-INFO     test-scenario ➜ syntax: Starting
+INFO     test-scenario ➜ dependency: Executing
+INFO     test-scenario ➜ cleanup: Executing
+INFO     test-scenario ➜ syntax: Executing
   ┌──────────────────────────────────────────────────────────────────────────────────
   │ ansible-playbook --inventory REDACTED
   │   --skip-tags molecule-notest,notest
@@ -35,9 +35,9 @@ INFO     test-scenario ➜ syntax: Starting
   │
   │ playbook: REDACTED
   └─ Return code: 0 ─────────────────────────────────────────────────────────────────
-INFO     test-scenario ➜ syntax: Completed: Successful
-INFO     test-scenario ➜ prepare: Starting
-INFO     test-scenario ➜ converge: Starting
+INFO     test-scenario ➜ syntax: Executed: Successful
+INFO     test-scenario ➜ prepare: Executing
+INFO     test-scenario ➜ converge: Executing
   ┌──────────────────────────────────────────────────────────────────────────────────
   │ ansible-playbook --inventory REDACTED
   │   --skip-tags molecule-notest,notest
@@ -55,8 +55,8 @@ INFO     test-scenario ➜ converge: Starting
   │ localhost                  : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
   │
   └─ Return code: 0 ─────────────────────────────────────────────────────────────────
-INFO     test-scenario ➜ converge: Completed: Successful
-INFO     test-scenario ➜ idempotence: Starting
+INFO     test-scenario ➜ converge: Executed: Successful
+INFO     test-scenario ➜ idempotence: Executing
   ┌──────────────────────────────────────────────────────────────────────────────────
   │ ansible-playbook --inventory REDACTED
   │   --skip-tags molecule-notest,notest,molecule-idempotence-notest
@@ -74,14 +74,14 @@ INFO     test-scenario ➜ idempotence: Starting
   │ localhost                  : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
   │
   └─ Return code: 0 ─────────────────────────────────────────────────────────────────
-INFO     test-scenario ➜ idempotence: Completed: Successful
-INFO     test-scenario ➜ side_effect: Starting
-INFO     test-scenario ➜ verify: Starting
-INFO     test-scenario ➜ cleanup: Starting
+INFO     test-scenario ➜ idempotence: Executed: Successful
+INFO     test-scenario ➜ side_effect: Executing
+INFO     test-scenario ➜ verify: Executing
+INFO     test-scenario ➜ cleanup: Executing
 INFO     smoke ➜ prerun: Performing prerun with role_name_check=0...
-INFO     smoke ➜ dependency: Starting
-INFO     smoke ➜ cleanup: Starting
-INFO     smoke ➜ syntax: Starting
+INFO     smoke ➜ dependency: Executing
+INFO     smoke ➜ cleanup: Executing
+INFO     smoke ➜ syntax: Executing
   ┌──────────────────────────────────────────────────────────────────────────────────
   │ ansible-playbook --inventory REDACTED
   │   --skip-tags molecule-notest,notest
@@ -90,9 +90,9 @@ INFO     smoke ➜ syntax: Starting
   │
   │ playbook: REDACTED
   └─ Return code: 0 ─────────────────────────────────────────────────────────────────
-INFO     smoke ➜ syntax: Completed: Successful
-INFO     smoke ➜ prepare: Starting
-INFO     smoke ➜ converge: Starting
+INFO     smoke ➜ syntax: Executed: Successful
+INFO     smoke ➜ prepare: Executing
+INFO     smoke ➜ converge: Executing
   ┌──────────────────────────────────────────────────────────────────────────────────
   │ ansible-playbook --inventory REDACTED
   │   --skip-tags molecule-notest,notest
@@ -114,8 +114,8 @@ INFO     smoke ➜ converge: Starting
   │ localhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
   │
   └─ Return code: 0 ─────────────────────────────────────────────────────────────────
-INFO     smoke ➜ converge: Completed: Successful
-INFO     smoke ➜ idempotence: Starting
+INFO     smoke ➜ converge: Executed: Successful
+INFO     smoke ➜ idempotence: Executing
   ┌──────────────────────────────────────────────────────────────────────────────────
   │ ansible-playbook --inventory REDACTED
   │   --skip-tags molecule-notest,notest,molecule-idempotence-notest
@@ -137,11 +137,11 @@ INFO     smoke ➜ idempotence: Starting
   │ localhost                  : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
   │
   └─ Return code: 0 ─────────────────────────────────────────────────────────────────
-INFO     smoke ➜ idempotence: Completed: Successful
-INFO     smoke ➜ side_effect: Starting
-INFO     smoke ➜ verify: Starting
-INFO     smoke ➜ cleanup: Starting
-INFO     default ➜ destroy: Starting
+INFO     smoke ➜ idempotence: Executed: Successful
+INFO     smoke ➜ side_effect: Executing
+INFO     smoke ➜ verify: Executing
+INFO     smoke ➜ cleanup: Executing
+INFO     default ➜ destroy: Executing
   ┌──────────────────────────────────────────────────────────────────────────────────
   │ ansible-playbook --inventory REDACTED
   │   --skip-tags molecule-notest,notest
@@ -160,32 +160,32 @@ INFO     default ➜ destroy: Starting
   │ localhost                  : ok=1    changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
   │
   └─ Return code: 0 ─────────────────────────────────────────────────────────────────
-INFO     default ➜ destroy: Completed: Successful
+INFO     default ➜ destroy: Executed: Successful
 
 DETAILS
-default ➜ create: Completed: Successful
+default ➜ create: Executed: Successful
 
-test-scenario ➜ dependency: Completed: 2 missing (Remove from test_sequence to suppress)
-test-scenario ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
-test-scenario ➜ syntax: Completed: Successful
-test-scenario ➜ prepare: Completed: Missing playbook (Remove from test_sequence to suppress)
-test-scenario ➜ converge: Completed: Successful
-test-scenario ➜ idempotence: Completed: Successful
-test-scenario ➜ side_effect: Completed: Missing playbook (Remove from test_sequence to suppress)
-test-scenario ➜ verify: Completed: Missing playbook (Remove from test_sequence to suppress)
-test-scenario ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
+test-scenario ➜ dependency: Executed: 2 missing (Remove from test_sequence to suppress)
+test-scenario ➜ cleanup: Executed: Missing playbook (Remove from test_sequence to suppress)
+test-scenario ➜ syntax: Executed: Successful
+test-scenario ➜ prepare: Executed: Missing playbook (Remove from test_sequence to suppress)
+test-scenario ➜ converge: Executed: Successful
+test-scenario ➜ idempotence: Executed: Successful
+test-scenario ➜ side_effect: Executed: Missing playbook (Remove from test_sequence to suppress)
+test-scenario ➜ verify: Executed: Missing playbook (Remove from test_sequence to suppress)
+test-scenario ➜ cleanup: Executed: Missing playbook (Remove from test_sequence to suppress)
 
-smoke ➜ dependency: Completed: 2 missing (Remove from test_sequence to suppress)
-smoke ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
-smoke ➜ syntax: Completed: Successful
-smoke ➜ prepare: Completed: Missing playbook (Remove from test_sequence to suppress)
-smoke ➜ converge: Completed: Successful
-smoke ➜ idempotence: Completed: Successful
-smoke ➜ side_effect: Completed: Missing playbook (Remove from test_sequence to suppress)
-smoke ➜ verify: Completed: Missing playbook (Remove from test_sequence to suppress)
-smoke ➜ cleanup: Completed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ dependency: Executed: 2 missing (Remove from test_sequence to suppress)
+smoke ➜ cleanup: Executed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ syntax: Executed: Successful
+smoke ➜ prepare: Executed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ converge: Executed: Successful
+smoke ➜ idempotence: Executed: Successful
+smoke ➜ side_effect: Executed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ verify: Executed: Missing playbook (Remove from test_sequence to suppress)
+smoke ➜ cleanup: Executed: Missing playbook (Remove from test_sequence to suppress)
 
-default ➜ destroy: Completed: Successful
+default ➜ destroy: Executed: Successful
 
 SCENARIO RECAP
 default                   : actions=1  successful=1  disabled=0  skipped=0  missing=0  failed=0
