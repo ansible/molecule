@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
-import copy
 import logging
 import os
 
@@ -89,22 +88,31 @@ def test_init_calls_validate(  # noqa: D103
 
 
 def test_collection_directory_property(
+    monkeypatch: pytest.MonkeyPatch,
     config_instance: config.Config,
     resources_folder_path: Path,
 ) -> None:
     """Test collection_directory property.
 
     Args:
+        monkeypatch: Pytest fixture.
         config_instance: Instance of Config.
         resources_folder_path: Path to resources directory holding a valid collection.
     """
     # default path is not in a collection
     assert config_instance.collection_directory is None
 
-    # Alter config_instance to start at path of a collection
-    config_instance = copy.copy(config_instance)
+    # Change directory to collection root to test collection detection
     collection_path = resources_folder_path / "sample-collection"
-    config_instance.project_directory = str(collection_path)
+    monkeypatch.chdir(collection_path)
+
+    # Clear the cache so detection runs again with new cwd
+    util.get_collection_metadata.cache_clear()
+
+    # Clear cached property so it will be re-evaluated in new directory
+    if "collection_directory" in config_instance.__dict__:
+        delattr(config_instance, "collection_directory")
+
     assert config_instance.collection_directory == collection_path
 
 
@@ -119,29 +127,45 @@ def test_molecule_directory_property(config_instance: config.Config) -> None:  #
 
 
 def test_collection_property(
+    monkeypatch: pytest.MonkeyPatch,
     config_instance: config.Config,
     resources_folder_path: Path,
 ) -> None:
     """Test collection property.
 
     Args:
+        monkeypatch: Pytest fixture.
         config_instance: Instance of Config.
         resources_folder_path: Path to resources directory holding a valid collection.
     """
-    modified_instance = copy.copy(config_instance)
+    # Clear any cached collection detection from previous tests
+    util.get_collection_metadata.cache_clear()
+
+    # Clear cached property on config instance if it exists
+    if "collection" in config_instance.__dict__:
+        delattr(config_instance, "collection")
+
     # default path is not in a collection
     assert config_instance.collection is None
 
-    # Alter config_instance to start at path of a collection
+    # Change directory to collection root to test collection detection
     collection_path = resources_folder_path / "sample-collection"
-    modified_instance.project_directory = str(collection_path)
+    monkeypatch.chdir(collection_path)
 
-    assert modified_instance.collection is not None
-    assert modified_instance.collection["name"] == "goodies"
-    assert modified_instance.collection["namespace"] == "acme"
+    # Clear the cache so detection runs again with new cwd
+    util.get_collection_metadata.cache_clear()
+
+    # Clear cached property so it will be re-evaluated in new directory
+    if "collection" in config_instance.__dict__:
+        delattr(config_instance, "collection")
+
+    assert config_instance.collection is not None
+    assert config_instance.collection["name"] == "goodies"
+    assert config_instance.collection["namespace"] == "acme"
 
 
 def test_collection_property_broken_collection(
+    monkeypatch: pytest.MonkeyPatch,
     caplog: pytest.LogCaptureFixture,
     config_instance: config.Config,
     resources_folder_path: Path,
@@ -149,19 +173,25 @@ def test_collection_property_broken_collection(
     """Test collection property with a malformed galaxy.yml.
 
     Args:
+        monkeypatch: Pytest fixture.
         caplog: pytest log capture fixture.
         config_instance: Instance of Config.
         resources_folder_path: Path to resources directory holding a valid collection.
     """
-    modified_instance = copy.copy(config_instance)
-
-    # Alter config_instance to start at path of a collection
+    # Change directory to broken collection root to test collection detection
     collection_path = resources_folder_path / "broken-collection"
-    modified_instance.project_directory = str(collection_path)
+    monkeypatch.chdir(collection_path)
 
-    assert modified_instance.collection is None
+    # Clear the cache so detection runs again with new cwd
+    util.get_collection_metadata.cache_clear()
 
-    msg = "missing mandatory field 'namespace'"
+    # Clear cached property so it will be re-evaluated in new directory
+    if "collection" in config_instance.__dict__:
+        delattr(config_instance, "collection")
+
+    assert config_instance.collection is None
+
+    msg = "is missing required fields: 'namespace'"
     assert msg in caplog.text
 
 

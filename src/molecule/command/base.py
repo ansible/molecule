@@ -38,7 +38,7 @@ import wcmatch.wcmatch
 from wcmatch import glob
 
 from molecule import config, logger, text, util
-from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME, MOLECULE_GLOB
+from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME
 from molecule.exceptions import ImmediateExit, MoleculeError, ScenarioFailureError
 from molecule.reporting import ScenarioResults, report
 from molecule.scenarios import Scenarios
@@ -138,11 +138,13 @@ def execute_cmdline_scenarios(
     if excludes is None:
         excludes = []
 
+    effective_base_glob = util.get_effective_molecule_glob()
+
     configs: list[config.Config] = []
     if scenario_names is None:
         configs = [
             config
-            for config in get_configs(args, command_args, ansible_args, MOLECULE_GLOB)
+            for config in get_configs(args, command_args, ansible_args)
             if config.scenario.name not in excludes
         ]
     else:
@@ -150,13 +152,13 @@ def execute_cmdline_scenarios(
             # filter out excludes
             scenario_names = [name for name in scenario_names if name not in excludes]
             for scenario_name in scenario_names:
-                glob_str = MOLECULE_GLOB.replace("*", scenario_name)
+                glob_str = effective_base_glob.replace("*", scenario_name)
                 configs.extend(get_configs(args, command_args, ansible_args, glob_str))
         except ScenarioFailureError as exc:
             msg = "Scenario configuration failed"
             raise ImmediateExit(msg, code=exc.code) from exc
 
-    default_glob = MOLECULE_GLOB.replace("*", MOLECULE_DEFAULT_SCENARIO_NAME)
+    default_glob = effective_base_glob.replace("*", MOLECULE_DEFAULT_SCENARIO_NAME)
     default_config = None
     try:
         default_config = get_configs(args, command_args, ansible_args, default_glob)[0]
@@ -404,7 +406,7 @@ def get_configs(
     args: MoleculeArgs,
     command_args: CommandArgs,
     ansible_args: tuple[str, ...] = (),
-    glob_str: str = MOLECULE_GLOB,
+    glob_str: str | None = None,
 ) -> list[config.Config]:
     """Glob the current directory for Molecule config files.
 
@@ -415,10 +417,14 @@ def get_configs(
         command_args: A dict of options passed to the subcommand from the CLI.
         ansible_args: An optional tuple of arguments provided to the `ansible-playbook` command.
         glob_str: A string representing the glob used to find Molecule config files.
+                 If None, uses util.get_effective_molecule_glob().
 
     Returns:
         A list of Config objects.
     """
+    if glob_str is None:
+        glob_str = util.get_effective_molecule_glob()
+
     scenario_paths = glob.glob(
         glob_str,
         flags=wcmatch.pathlib.GLOBSTAR | wcmatch.pathlib.BRACE | wcmatch.pathlib.DOTGLOB,
@@ -439,16 +445,20 @@ def get_configs(
     return configs
 
 
-def _verify_configs(configs: list[config.Config], glob_str: str = MOLECULE_GLOB) -> None:
+def _verify_configs(configs: list[config.Config], glob_str: str | None = None) -> None:
     """Verify a Molecule config was found and returns None.
 
     Args:
         configs: A list containing absolute paths to Molecule config files.
         glob_str: A string representing the glob used to find Molecule config files.
+                 If None, uses util.get_effective_molecule_glob().
 
     Raises:
         ScenarioFailureError: When scenario configs cannot be verified.
     """
+    if glob_str is None:
+        glob_str = util.get_effective_molecule_glob()
+
     if configs:
         scenario_names = [c.scenario.name for c in configs]
         for scenario_name, n in collections.Counter(scenario_names).items():

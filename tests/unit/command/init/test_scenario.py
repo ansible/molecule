@@ -25,13 +25,16 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from molecule.command.init import scenario
+from molecule import util
+from molecule.command.init.scenario import Scenario
 from molecule.config import Config
 from molecule.exceptions import MoleculeError
 
 
 if TYPE_CHECKING:
     from pathlib import Path
+
+    from molecule.command.init.scenario import CommandArgs
 
 
 @pytest.fixture(name="command_args")
@@ -47,18 +50,18 @@ def fixture_command_args() -> dict[str, str]:
 
 
 @pytest.fixture(name="instance")
-def fixture_instance(command_args: scenario.CommandArgs) -> scenario.Scenario:
+def fixture_instance(command_args: CommandArgs) -> Scenario:
     """Provide a scenario instance.
 
     Args:
         command_args: A dictionary of command arguments.
     """
-    return scenario.Scenario(Config(""), command_args)
+    return Scenario(Config(""), command_args)
 
 
 def test_scenario_execute(
     monkeypatch: pytest.MonkeyPatch,
-    instance: scenario.Scenario,
+    instance: Scenario,
     caplog: pytest.LogCaptureFixture,
     tmp_path: Path,
 ) -> None:
@@ -96,7 +99,7 @@ def test_scenario_execute(
 
 def test_execute_scenario_exists(
     monkeypatch: pytest.MonkeyPatch,
-    instance: scenario.Scenario,
+    instance: Scenario,
     caplog: pytest.LogCaptureFixture,
     test_cache_path: Path,
 ) -> None:
@@ -118,3 +121,188 @@ def test_execute_scenario_exists(
 
     msg = "The directory molecule/test-scenario exists. Cannot create new scenario."
     assert msg in caplog.text
+
+
+def test_scenario_execute_collection_mode(
+    monkeypatch: pytest.MonkeyPatch,
+    instance: Scenario,
+    caplog: pytest.LogCaptureFixture,
+    tmp_path: Path,
+) -> None:
+    """Test that the scenario is initialized in collection mode.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        instance: A scenario instance.
+        caplog: Pytest log capture fixture.
+        tmp_path: Pytest temporary directory fixture.
+    """
+    monkeypatch.chdir(tmp_path)
+
+    # Create a galaxy.yml file to simulate collection context
+    galaxy_yml = tmp_path / "galaxy.yml"
+    galaxy_yml.write_text("""
+namespace: test_ns
+name: test_collection
+version: 1.0.0
+""")
+
+    # Clear cache to ensure fresh detection
+    util.get_collection_metadata.cache_clear()
+
+    # Mock the run_command to avoid ansible execution and create the directory structure
+    def mock_run_command(*args: object, **kwargs: object) -> None:
+        # Create the extensions/molecule/test-scenario directory like ansible-playbook would
+        scenario_dir = tmp_path / "extensions" / "molecule" / "test-scenario"
+        scenario_dir.mkdir(parents=True, exist_ok=True)
+
+    with monkeypatch.context() as m:
+        m.setattr("molecule.app.App.run_command", mock_run_command)
+
+        with caplog.at_level(logging.INFO):
+            instance.execute()
+
+    msg = "Initializing new scenario test-scenario..."
+    assert any(msg in record.message for record in caplog.records)
+
+    # Should create in extensions/molecule instead of molecule/
+    assert (tmp_path / "extensions" / "molecule" / "test-scenario").is_dir()
+    assert not (tmp_path / "molecule" / "test-scenario").is_dir()
+
+    scenario_directory = tmp_path / "extensions" / "molecule" / "test-scenario"
+    msg = f"Initialized scenario in {scenario_directory} successfully."
+    assert any(msg in record.message for record in caplog.records)
+
+
+def test_scenario_execute_standard_mode(
+    monkeypatch: pytest.MonkeyPatch,
+    instance: Scenario,
+    caplog: pytest.LogCaptureFixture,
+    tmp_path: Path,
+) -> None:
+    """Test that the scenario is initialized in standard mode when no collection detected.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        instance: A scenario instance.
+        caplog: Pytest log capture fixture.
+        tmp_path: Pytest temporary directory fixture.
+    """
+    monkeypatch.chdir(tmp_path)
+
+    # Ensure no galaxy.yml exists
+    # Clear cache to ensure fresh detection
+    util.get_collection_metadata.cache_clear()
+
+    # Mock the run_command to avoid ansible execution and create the directory structure
+    def mock_run_command(*args: object, **kwargs: object) -> None:
+        # Create the molecule/test-scenario directory like ansible-playbook would
+        scenario_dir = tmp_path / "molecule" / "test-scenario"
+        scenario_dir.mkdir(parents=True, exist_ok=True)
+
+    with monkeypatch.context() as m:
+        m.setattr("molecule.app.App.run_command", mock_run_command)
+
+        with caplog.at_level(logging.INFO):
+            instance.execute()
+
+    msg = "Initializing new scenario test-scenario..."
+    assert any(msg in record.message for record in caplog.records)
+
+    # Should create in molecule/ (standard mode)
+    assert (tmp_path / "molecule" / "test-scenario").is_dir()
+    assert not (tmp_path / "extensions" / "molecule" / "test-scenario").is_dir()
+
+    scenario_directory = tmp_path / "molecule" / "test-scenario"
+    msg = f"Initialized scenario in {scenario_directory} successfully."
+    assert any(msg in record.message for record in caplog.records)
+
+
+def test_execute_scenario_exists_collection_mode(
+    monkeypatch: pytest.MonkeyPatch,
+    instance: Scenario,
+    caplog: pytest.LogCaptureFixture,
+    tmp_path: Path,
+) -> None:
+    """Test error when scenario already exists in collection mode.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        instance: A scenario instance.
+        caplog: Pytest log capture fixture.
+        tmp_path: Pytest temporary directory fixture.
+    """
+    monkeypatch.chdir(tmp_path)
+
+    # Create a galaxy.yml file to simulate collection context
+    galaxy_yml = tmp_path / "galaxy.yml"
+    galaxy_yml.write_text("""
+namespace: test_ns
+name: test_collection
+version: 1.0.0
+""")
+
+    # Create existing scenario directory
+    existing_dir = tmp_path / "extensions" / "molecule" / "test-scenario"
+    existing_dir.mkdir(parents=True, exist_ok=True)
+
+    # Clear cache to ensure fresh detection
+    util.get_collection_metadata.cache_clear()
+
+    with pytest.raises(MoleculeError) as e:
+        instance.execute()
+
+    assert e.value.code == 1
+
+    msg = "The directory extensions/molecule/test-scenario exists. Cannot create new scenario."
+    assert msg in caplog.text
+
+
+def test_scenario_execute_invalid_collection(
+    monkeypatch: pytest.MonkeyPatch,
+    instance: Scenario,
+    caplog: pytest.LogCaptureFixture,
+    tmp_path: Path,
+) -> None:
+    """Test that scenario falls back to standard mode with invalid galaxy.yml.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        instance: A scenario instance.
+        caplog: Pytest log capture fixture.
+        tmp_path: Pytest temporary directory fixture.
+    """
+    monkeypatch.chdir(tmp_path)
+
+    # Create an invalid galaxy.yml file (missing required fields)
+    galaxy_yml = tmp_path / "galaxy.yml"
+    galaxy_yml.write_text("""
+# Missing namespace and name
+version: 1.0.0
+""")
+
+    # Clear cache to ensure fresh detection
+    util.get_collection_metadata.cache_clear()
+
+    # Mock the run_command to avoid ansible execution and create the directory structure
+    def mock_run_command(*args: object, **kwargs: object) -> None:
+        # Create the molecule/test-scenario directory like ansible-playbook would
+        scenario_dir = tmp_path / "molecule" / "test-scenario"
+        scenario_dir.mkdir(parents=True, exist_ok=True)
+
+    with monkeypatch.context() as m:
+        m.setattr("molecule.app.App.run_command", mock_run_command)
+
+        with caplog.at_level(logging.INFO):
+            instance.execute()
+
+    msg = "Initializing new scenario test-scenario..."
+    assert any(msg in record.message for record in caplog.records)
+
+    # Should fall back to standard mode due to invalid galaxy.yml
+    assert (tmp_path / "molecule" / "test-scenario").is_dir()
+    assert not (tmp_path / "extensions" / "molecule" / "test-scenario").is_dir()
+
+    scenario_directory = tmp_path / "molecule" / "test-scenario"
+    msg = f"Initialized scenario in {scenario_directory} successfully."
+    assert any(msg in record.message for record in caplog.records)

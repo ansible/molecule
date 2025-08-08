@@ -27,14 +27,14 @@ import sys
 
 from typing import TYPE_CHECKING
 
-from typing_extensions import Self
-
 from molecule.constants import DEFAULT_BORDER_WIDTH, MARKUP_MAP, SCENARIO_RECAP_STATE_ORDER
 from molecule.constants import ANSICodes as A
 
 
 if TYPE_CHECKING:
     from typing import TextIO
+
+    from typing_extensions import Self
 
     from molecule.reporting import ScenariosResults
 
