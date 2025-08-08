@@ -248,22 +248,10 @@ class Config:
         """Location of collection containing the molecule files.
 
         Returns:
-            Root of the collection containing the molecule files.
+            Root of the collection containing the molecule files, only if galaxy.yml is valid.
         """
-        test_paths = [Path.cwd(), Path(self.project_directory)]
-
-        for path in test_paths:
-            if (path / "galaxy.yml").exists():
-                return path
-
-        # Last resort, try to find git root
-        show_toplevel = self.app.run_command("git rev-parse --show-toplevel")
-        if show_toplevel.returncode == 0:
-            path = Path(show_toplevel.stdout.strip())
-            if (path / "galaxy.yml").exists():
-                return path
-
-        return None
+        collection_dir, collection_data = util.get_collection_metadata()
+        return collection_dir if collection_data else None
 
     @property
     def molecule_directory(self) -> str:
@@ -280,24 +268,10 @@ class Config:
 
         Returns:
             A dictionary of information about the collection molecule is running inside, if any.
+            Only returns collection data when galaxy.yml is valid with required fields.
         """
-        collection_directory = self.collection_directory
-        if not collection_directory:
-            return None
-
-        galaxy_file = collection_directory / "galaxy.yml"
-        galaxy_data: CollectionData = util.safe_load_file(galaxy_file)
-
-        important_keys = {"name", "namespace"}
-        if missing_keys := important_keys.difference(galaxy_data.keys()):
-            self._log.warning(
-                "The detected galaxy.yml file (%s) is invalid, missing mandatory field %s",
-                galaxy_file,
-                util.oxford_comma(missing_keys),
-            )
-            return None  # pragma: no cover
-
-        return galaxy_data
+        _collection_directory, collection_data = util.get_collection_metadata()
+        return collection_data
 
     @cached_property
     def dependency(self) -> Dependency | None:

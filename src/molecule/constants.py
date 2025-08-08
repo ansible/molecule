@@ -15,7 +15,10 @@ RC_UNKNOWN_ERROR = 5  # Unexpected errors for which we do not have more specific
 
 # File and directory patterns
 MOLECULE_HEADER = "# Molecule managed"
-MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
+MOLECULE_ROOT = "molecule"
+MOLECULE_GLOB = f"{MOLECULE_ROOT}/*/molecule.yml"
+MOLECULE_COLLECTION_ROOT = "extensions/molecule"
+MOLECULE_COLLECTION_GLOB = f"{MOLECULE_COLLECTION_ROOT}/*/molecule.yml"
 
 # Default values
 MOLECULE_DEFAULT_SCENARIO_NAME = "default"

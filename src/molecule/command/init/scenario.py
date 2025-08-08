@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING
 
 import click
 
-from molecule import api, logger
+from molecule import api, logger, util
 from molecule.click_cfg import click_command_ex
 from molecule.command.init import base
 from molecule.config import (
@@ -39,7 +39,11 @@ from molecule.config import (
     Config,
     molecule_directory,
 )
-from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME
+from molecule.constants import (
+    MOLECULE_COLLECTION_ROOT,
+    MOLECULE_DEFAULT_SCENARIO_NAME,
+    MOLECULE_ROOT,
+)
 from molecule.exceptions import MoleculeError
 
 
@@ -113,12 +117,27 @@ class Scenario(base.Base):
 
         msg = f"Initializing new scenario {scenario_name}..."
         self._log.info(msg)
-        molecule_path = Path(molecule_directory(Path.cwd()))
+
+        # Use collection-aware molecule directory
+        collection_dir, _ = util.get_collection_metadata()
+
+        if collection_dir:
+            # We're in collection mode, use extensions/molecule
+            molecule_path = collection_dir / MOLECULE_COLLECTION_ROOT
+            relative_path = f"{MOLECULE_COLLECTION_ROOT}/{scenario_name}"
+        else:
+            # Standard mode, use molecule/
+            molecule_path = Path(molecule_directory(Path.cwd()))
+            relative_path = f"{MOLECULE_ROOT}/{scenario_name}"
+
         scenario_directory = molecule_path / scenario_name
 
         if scenario_directory.is_dir():
-            msg = f"The directory molecule/{scenario_name} exists. Cannot create new scenario."
+            msg = f"The directory {relative_path} exists. Cannot create new scenario."
             raise MoleculeError(msg)
+
+        # Ensure parent directory exists
+        molecule_path.mkdir(parents=True, exist_ok=True)
 
         extra_vars = json.dumps(self._command_args)
         cmd = [
