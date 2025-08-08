@@ -420,7 +420,7 @@ When using native inventory patterns, teams often need to share host-specific da
 
     - name: Write host-specific data files for each molecule host
       ansible.builtin.copy:
-        dest: "{% raw %}{{ execution_vars }}{% endraw %}host_{{ item.item }}.yml"
+        dest: "{% raw %}{{ execution_vars }}{% endraw %}host_{% raw %}{{ item.item }}{% endraw %}.yml"
         content: "{% raw %}{{ data | to_yaml }}{% endraw %}"
         mode: "0644"
       vars:
@@ -436,7 +436,7 @@ When using native inventory patterns, teams often need to share host-specific da
   vars:
     execution_vars: "{% raw %}{{ molecule_ephemeral_directory }}{% endraw %}/execution_vars/"
   vars_files:
-    - "{% raw %}{{ execution_vars }}{% endraw %}host_{{ inventory_hostname }}.yml"
+    - "{% raw %}{{ execution_vars }}{% endraw %}host_{% raw %}{{ inventory_hostname }}{% endraw %}.yml"
   tasks:
     - name: Display host-specific data unique to this host
       ansible.builtin.debug:
