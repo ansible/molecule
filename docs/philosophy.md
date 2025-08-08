@@ -390,7 +390,7 @@ This multi-source approach provides:
 This pattern directly demonstrates several [testing framework requirements](#essential-functionality-requirements):
 
 - **Configuration adaptability**: Supporting diverse infrastructure patterns and enterprise integration requirements
-- **Variable and secret management**: Secure handling of enterprise credentials while maintaining test-specific configurations  
+- **Variable and secret management**: Secure handling of enterprise credentials while maintaining test-specific configurations
 - **Multi-platform support**: Abstract enterprise infrastructure complexity while enabling test-specific instance definitions
 - **Extensibility and integration**: Clean integration with existing enterprise toolchains and governance policies
 
@@ -411,7 +411,7 @@ When using native inventory patterns, teams often need to share host-specific da
       ansible.builtin.file:
         path: "{% raw %}{{ execution_vars }}{% endraw %}"
         state: directory
-        mode: '0755'
+        mode: "0755"
 
     - name: Capture build details
       ansible.builtin.command: echo "Initializing host {{ item }} at {{ ansible_date_time.iso8601 }}"
@@ -422,7 +422,7 @@ When using native inventory patterns, teams often need to share host-specific da
       ansible.builtin.copy:
         dest: "{% raw %}{{ execution_vars }}{% endraw %}host_{{ item.item }}.yml"
         content: "{% raw %}{{ data | to_yaml }}{% endraw %}"
-        mode: '0644'
+        mode: "0644"
       vars:
         data:
           host_specific_value: "{% raw %}{{ item.stdout }}{% endraw %}"
