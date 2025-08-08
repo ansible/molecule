@@ -34,13 +34,7 @@ from molecule.constants import ANSICodes as A
 if TYPE_CHECKING:
     from typing import TextIO
 
-<<<<<<< HEAD
-    from typing_extensions import Self
-
-    from molecule.reporting import ScenariosResults
-=======
     from molecule.reporting.definitions import ScenariosResults
->>>>>>> f7432737 (Add always-on one-line execution summary with improved formatting)
 
 
 def to_bool(a: object) -> bool:
