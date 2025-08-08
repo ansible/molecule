@@ -55,6 +55,7 @@ jsonfile
 keepends
 keypair
 kubevirt
+levelname
 libcloud
 libera
 libpod

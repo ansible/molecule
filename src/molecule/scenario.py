@@ -34,7 +34,7 @@ from typing import TYPE_CHECKING
 from molecule import logger, scenarios, util
 from molecule.constants import RC_TIMEOUT
 from molecule.exceptions import MoleculeError
-from molecule.reporting import ScenarioResults
+from molecule.reporting.definitions import ScenarioResults
 from molecule.text import checksum
 
 
