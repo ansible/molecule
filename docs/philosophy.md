@@ -363,109 +363,17 @@ provisioner:
 # aws_infrastructure.yml (enterprise infrastructure configuration)
 all:
   vars:
-    # AWS Account and Authentication
-    aws_profile: molecule-testing
-    aws_access_key_id: "{% raw %}{{ vault_aws_access_key_id }}{% endraw %}"
-    aws_secret_access_key: "{% raw %}{{ vault_aws_secret_access_key }}{% endraw %}"
-    aws_session_token: "{% raw %}{{ vault_aws_session_token | default(omit) }}{% endraw %}"
-    aws_account_id: "123456789012"
-
-    # Enterprise Infrastructure Configuration
-    vpc_id: "vpc-0abcd1234efgh5678"
-    subnet_ids:
-      us-east-1a: "subnet-0abc123def456789a"
-      us-east-1b: "subnet-0def456ghi789012b"
-      us-west-2a: "subnet-0ghi789jkl012345c"
-    security_group_ids:
-      molecule_testing: "sg-0abc123def456789"
-      web_tier: "sg-0def456ghi789012"
-      database_tier: "sg-0ghi789jkl012345"
-
-    # Required Tags for New Instances
-    required_instance_tags:
-      Environment: "molecule-test"
-      Project: "ansible-automation"
-      Owner: "{% raw %}{{ ansible_user | default('molecule') }}{% endraw %}"
-      CostCenter: "engineering-testing"
-      Compliance: "test-workload"
-      AutoShutdown: "true"
-      CreatedBy: "molecule"
-
-    # Instance Configuration
-    key_pair_name: "molecule-testing-keypair"
-    instance_profile: "EC2MoleculeTestingRole"
-
-    # Enterprise Networking
-    dns_zone: "molecule-test.company.internal"
-    proxy_settings:
-      http_proxy: "http://proxy.company.com:8080"
-      https_proxy: "http://proxy.company.com:8080"
-      no_proxy: "169.254.169.254,.company.com,localhost"
+    aws_secret: "{% raw %}{{ vault_aws_secret }}{% endraw %}"
 
 # molecule_config.yml (molecule-specific test instances and configuration)
 all:
   vars:
     ansible_user: ubuntu
-    ansible_ssh_private_key_file: "{% raw %}{{ molecule_ephemeral_directory }}/{{ key_pair_name }}.pem{% endraw %}"
-    ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
-    molecule_test_runner: true
   children:
-    # Define instances that Molecule should create for testing
     web_servers:
       hosts:
         web-test-01:
           instance_type: t3.small
-          ami_id: ami-0c02fb55956c7d316  # Ubuntu 20.04 LTS
-          subnet_id: "{% raw %}{{ subnet_ids['us-east-1a'] }}{% endraw %}"
-          security_groups: 
-            - "{% raw %}{{ security_group_ids['molecule_testing'] }}{% endraw %}"
-            - "{% raw %}{{ security_group_ids['web_tier'] }}{% endraw %}"
-          instance_tags: "{% raw %}{{ required_instance_tags | combine({'Name': 'molecule-web-test-01', 'Role': 'web'}) }}{% endraw %}"
-        web-test-02:
-          instance_type: t3.small
-          ami_id: ami-0c02fb55956c7d316
-          subnet_id: "{% raw %}{{ subnet_ids['us-east-1b'] }}{% endraw %}"
-          security_groups:
-            - "{% raw %}{{ security_group_ids['molecule_testing'] }}{% endraw %}"
-            - "{% raw %}{{ security_group_ids['web_tier'] }}{% endraw %}"
-          instance_tags: "{% raw %}{{ required_instance_tags | combine({'Name': 'molecule-web-test-02', 'Role': 'web'}) }}{% endraw %}"
-    database_servers:
-      hosts:
-        db-test-01:
-          instance_type: t3.medium
-          ami_id: ami-0c02fb55956c7d316
-          subnet_id: "{% raw %}{{ subnet_ids['us-west-2a'] }}{% endraw %}"
-          security_groups:
-            - "{% raw %}{{ security_group_ids['molecule_testing'] }}{% endraw %}"
-            - "{% raw %}{{ security_group_ids['database_tier'] }}{% endraw %}"
-          instance_tags: "{% raw %}{{ required_instance_tags | combine({'Name': 'molecule-db-test-01', 'Role': 'database'}) }}{% endraw %}"
-          ebs_volumes:
-            - device_name: /dev/sdf
-              volume_size: 20
-              volume_type: gp3
-              encrypted: true
-      vars:
-        test_database_url: "postgresql://{% raw %}{{ vault_test_db_host }}{% endraw %}:5432/molecule_test"
-        test_database_password: "{% raw %}{{ vault_test_db_password }}{% endraw %}"
-```
-
-```yaml
-# Example vault file structure (group_vars/all/vault.yml)
-vault_molecule_aws_access_key: !vault |
-  $ANSIBLE_VAULT;1.1;AES256
-  66386439653762643031313...
-vault_molecule_aws_secret_key: !vault |
-  $ANSIBLE_VAULT;1.1;AES256
-  38346235396136373...
-vault_test_db_host: !vault |
-  $ANSIBLE_VAULT;1.1;AES256
-  64326539653762643...
-vault_test_db_password: !vault |
-  $ANSIBLE_VAULT;1.1;AES256
-  39653762643031313...
-vault_test_api_key: !vault |
-  $ANSIBLE_VAULT;1.1;AES256
-  63031313663843623...
 ```
 
 This multi-source approach provides:
@@ -478,6 +386,13 @@ This multi-source approach provides:
 - **Consistent provisioning**: All test instances follow enterprise standards and governance policies
 - **Reduced maintenance**: Infrastructure team manages enterprise config, testing team manages test instances
 - **Environment flexibility**: Same enterprise configuration works across different testing scenarios and regions
+
+This pattern directly demonstrates several [testing framework requirements](#essential-functionality-requirements):
+
+- **Configuration adaptability**: Supporting diverse infrastructure patterns and enterprise integration requirements
+- **Variable and secret management**: Secure handling of enterprise credentials while maintaining test-specific configurations  
+- **Multi-platform support**: Abstract enterprise infrastructure complexity while enabling test-specific instance definitions
+- **Extensibility and integration**: Clean integration with existing enterprise toolchains and governance policies
 
 **Multi-scenario/multi-action data sharing**
 When using native inventory patterns, teams often need to share host-specific data between different Molecule actions (create, converge, verify, destroy). This is especially valuable when using `--shared-state`, where the `default` scenario's create action provisions infrastructure and other scenarios need access to resource-specific data captured during that initial provisioning. A simple and effective approach uses temporary files to pass data from one action to subsequent actions:
