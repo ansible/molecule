@@ -1,0 +1,1 @@
+ansible_connection: containers.podman.podman

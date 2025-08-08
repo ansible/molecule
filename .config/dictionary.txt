@@ -13,6 +13,7 @@ cgroupfs
 cgroupns
 clicolor
 cloudinitdisk
+cmdb
 connopts
 containerdisk
 credssp
@@ -132,5 +133,6 @@ virt
 virt's
 virtenv
 virtualmachines
+webservers
 xdist
 zzyzx

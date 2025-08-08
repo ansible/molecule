@@ -70,6 +70,7 @@ nav:
       - examples/docker.md
       - examples/podman.md
       - examples/kubevirt.md
+      - examples/ansible_native_inventory.md
   - Guides:
       - guides/custom-image.md
       - guides/docker-rootless.md

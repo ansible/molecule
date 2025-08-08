@@ -1,0 +1,6 @@
+plugin: ansible.builtin.constructed
+strict: false
+
+groups:
+  # Create containers group for hosts starting with 'container'
+  containers: inventory_hostname.startswith('container')
