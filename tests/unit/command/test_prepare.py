@@ -70,7 +70,7 @@ def test_prepare_execute(  # noqa: D103
 
     expected_record_count = 2
     assert len(caplog.records) == expected_record_count
-    expected_message = "INFO     [default > prepare] Completed: Successful"
+    expected_message = "INFO     [default > prepare] Executed: Successful"
     assert caplog.records[1].getMessage() == expected_message
 
     _patched_ansible_prepare.assert_called_once_with()
@@ -108,7 +108,7 @@ def test_prepare_execute_skips_when_playbook_not_configured(  # noqa: D103
         p = prepare.Prepare(config_instance)
         p.execute()
 
-    completion_records = [r for r in caplog.records if "Completed:" in r.getMessage()]
+    completion_records = [r for r in caplog.records if "Executed:" in r.getMessage()]
     assert len(completion_records) >= 1, "Should have completion message"
 
     record = completion_records[0]

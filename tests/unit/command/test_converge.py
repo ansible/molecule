@@ -62,7 +62,7 @@ def test_converge_execute(  # noqa: D103
 
     expected_record_count = 2
     assert len(caplog.records) == expected_record_count
-    expected_message = "INFO     [default > converge] Completed: Successful"
+    expected_message = "INFO     [default > converge] Executed: Successful"
     assert caplog.records[1].getMessage() == expected_message
 
     patched_ansible_converge.assert_called_once_with()

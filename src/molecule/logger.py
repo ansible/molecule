@@ -408,7 +408,7 @@ def section_logger(func: Callable[P, R]) -> Callable[P, R]:
             step_name,
         )
 
-        scenario_log.info("[exec_starting]Starting[/]")
+        scenario_log.info("[exec_executing]Executing[/]")
 
         try:
             rt = func(*args, **kwargs)
