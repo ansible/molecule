@@ -166,17 +166,7 @@ class CliOptions:
         """Target all scenarios option."""
         return CliOption(
             name="all",
-            help="Target all scenarios. Overrides scenario-name.",
-            is_flag=True,
-            default=False,
-        )
-
-    @property
-    def all_scenarios_reset(self) -> CliOption:
-        """Target all scenarios option for reset command with shared directory info."""
-        return CliOption(
-            name="all",
-            help="Target all scenarios and shared directories. Overrides scenario-name.",
+            help="Target all scenarios. Overrides scenario-name. For 'reset', this includes shared state and inventory.",
             is_flag=True,
             default=False,
         )

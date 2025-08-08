@@ -41,7 +41,7 @@ if TYPE_CHECKING:
 @click_command_ex()
 @options(
     [
-        "all_scenarios_reset",
+        "all_scenarios",
         "exclude",
         "report",
         "scenario_name_with_default",
