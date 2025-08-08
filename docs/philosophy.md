@@ -211,7 +211,7 @@ Teams can configure Molecule to use external inventory sources by leveraging the
 provisioner:
   name: ansible
   ansible_args:
-    - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/inventory/
+    - --inventory=${% raw %}{MOLECULE_SCENARIO_DIRECTORY}{% endraw %}/inventory/
 
 # Using cloud inventory plugin
 provisioner:
@@ -239,7 +239,7 @@ provisioner:
   name: ansible
   ansible_args:
     - --inventory=aws_ec2.yml              # Cloud provider dynamic inventory
-    - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/molecule_config.yml  # Molecule-specific config
+    - --inventory=${% raw %}{MOLECULE_SCENARIO_DIRECTORY}{% endraw %}/molecule_config.yml  # Molecule-specific config
 
 # Using inventory from parent directory (shared across scenarios)
 provisioner:
@@ -358,16 +358,16 @@ provisioner:
   name: ansible
   ansible_args:
     - --inventory=aws_infrastructure.yml         # Enterprise AWS infrastructure config
-    - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/molecule_config.yml  # Test instances to create
+    - --inventory=${% raw %}{MOLECULE_SCENARIO_DIRECTORY}{% endraw %}/molecule_config.yml  # Test instances to create
 
 # aws_infrastructure.yml (enterprise infrastructure configuration)
 all:
   vars:
     # AWS Account and Authentication
     aws_profile: molecule-testing
-    aws_access_key_id: "{{ vault_aws_access_key_id }}"
-    aws_secret_access_key: "{{ vault_aws_secret_access_key }}"
-    aws_session_token: "{{ vault_aws_session_token | default(omit) }}"
+    aws_access_key_id: "{% raw %}{{ vault_aws_access_key_id }}{% endraw %}"
+    aws_secret_access_key: "{% raw %}{{ vault_aws_secret_access_key }}{% endraw %}"
+    aws_session_token: "{% raw %}{{ vault_aws_session_token | default(omit) }}{% endraw %}"
     aws_account_id: "123456789012"
 
     # Enterprise Infrastructure Configuration
@@ -385,7 +385,7 @@ all:
     required_instance_tags:
       Environment: "molecule-test"
       Project: "ansible-automation"
-      Owner: "{{ ansible_user | default('molecule') }}"
+      Owner: "{% raw %}{{ ansible_user | default('molecule') }}{% endraw %}"
       CostCenter: "engineering-testing"
       Compliance: "test-workload"
       AutoShutdown: "true"
@@ -406,7 +406,7 @@ all:
 all:
   vars:
     ansible_user: ubuntu
-    ansible_ssh_private_key_file: "{{ molecule_ephemeral_directory }}/{{ key_pair_name }}.pem"
+    ansible_ssh_private_key_file: "{% raw %}{{ molecule_ephemeral_directory }}/{{ key_pair_name }}.pem{% endraw %}"
     ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
     molecule_test_runner: true
   children:
@@ -416,37 +416,37 @@ all:
         web-test-01:
           instance_type: t3.small
           ami_id: ami-0c02fb55956c7d316  # Ubuntu 20.04 LTS
-          subnet_id: "{{ subnet_ids['us-east-1a'] }}"
-          security_groups:
-            - "{{ security_group_ids['molecule_testing'] }}"
-            - "{{ security_group_ids['web_tier'] }}"
-          instance_tags: "{{ required_instance_tags | combine({'Name': 'molecule-web-test-01', 'Role': 'web'}) }}"
+          subnet_id: "{% raw %}{{ subnet_ids['us-east-1a'] }}{% endraw %}"
+          security_groups: 
+            - "{% raw %}{{ security_group_ids['molecule_testing'] }}{% endraw %}"
+            - "{% raw %}{{ security_group_ids['web_tier'] }}{% endraw %}"
+          instance_tags: "{% raw %}{{ required_instance_tags | combine({'Name': 'molecule-web-test-01', 'Role': 'web'}) }}{% endraw %}"
         web-test-02:
           instance_type: t3.small
           ami_id: ami-0c02fb55956c7d316
-          subnet_id: "{{ subnet_ids['us-east-1b'] }}"
+          subnet_id: "{% raw %}{{ subnet_ids['us-east-1b'] }}{% endraw %}"
           security_groups:
-            - "{{ security_group_ids['molecule_testing'] }}"
-            - "{{ security_group_ids['web_tier'] }}"
-          instance_tags: "{{ required_instance_tags | combine({'Name': 'molecule-web-test-02', 'Role': 'web'}) }}"
+            - "{% raw %}{{ security_group_ids['molecule_testing'] }}{% endraw %}"
+            - "{% raw %}{{ security_group_ids['web_tier'] }}{% endraw %}"
+          instance_tags: "{% raw %}{{ required_instance_tags | combine({'Name': 'molecule-web-test-02', 'Role': 'web'}) }}{% endraw %}"
     database_servers:
       hosts:
         db-test-01:
           instance_type: t3.medium
           ami_id: ami-0c02fb55956c7d316
-          subnet_id: "{{ subnet_ids['us-west-2a'] }}"
+          subnet_id: "{% raw %}{{ subnet_ids['us-west-2a'] }}{% endraw %}"
           security_groups:
-            - "{{ security_group_ids['molecule_testing'] }}"
-            - "{{ security_group_ids['database_tier'] }}"
-          instance_tags: "{{ required_instance_tags | combine({'Name': 'molecule-db-test-01', 'Role': 'database'}) }}"
+            - "{% raw %}{{ security_group_ids['molecule_testing'] }}{% endraw %}"
+            - "{% raw %}{{ security_group_ids['database_tier'] }}{% endraw %}"
+          instance_tags: "{% raw %}{{ required_instance_tags | combine({'Name': 'molecule-db-test-01', 'Role': 'database'}) }}{% endraw %}"
           ebs_volumes:
             - device_name: /dev/sdf
               volume_size: 20
               volume_type: gp3
               encrypted: true
       vars:
-        test_database_url: "postgresql://{{ vault_test_db_host }}:5432/molecule_test"
-        test_database_password: "{{ vault_test_db_password }}"
+        test_database_url: "postgresql://{% raw %}{{ vault_test_db_host }}{% endraw %}:5432/molecule_test"
+        test_database_password: "{% raw %}{{ vault_test_db_password }}{% endraw %}"
 ```
 
 ```yaml
@@ -488,7 +488,7 @@ When using native inventory patterns, teams often need to share dynamically gene
 plugin: advanced_host_list
 compose:
   # Load cached data from previous actions
-  cached_data: "{{ lookup('file', molecule_ephemeral_directory + '/resource_cache.json') | from_json | default({}) }}"
+  cached_data: "{% raw %}{{ lookup('file', molecule_ephemeral_directory + '/resource_cache.json') | from_json | default({}) }}{% endraw %}"
 
 # create.yml - Store created resource information
 ---
@@ -499,17 +499,18 @@ compose:
     - name: Create test instances
       amazon.aws.ec2_instance:
         # ... instance creation configuration using enterprise infrastructure vars
-        vpc_subnet_id: "{{ subnet_ids['us-east-1a'] }}"
-        security_groups: "{{ security_group_ids['molecule_testing'] }}"
-        tags: "{{ required_instance_tags | combine({'Name': inventory_hostname}) }}"
+        vpc_subnet_id: "{% raw %}{{ subnet_ids['us-east-1a'] }}{% endraw %}"
+        security_groups: "{% raw %}{{ security_group_ids['molecule_testing'] }}{% endraw %}"
+        tags: "{% raw %}{{ required_instance_tags | combine({'Name': inventory_hostname}) }}{% endraw %}"
       register: created_instances
-      loop: "{{ groups['web_servers'] }}"
+      loop: "{% raw %}{{ groups['web_servers'] }}{% endraw %}"
       loop_control:
         loop_var: inventory_hostname
 
     - name: Cache created instance data for other actions
       ansible.builtin.copy:
         content: |
+          {% raw %}
           {
             "created_instances": {{ created_instances.results | to_nice_json }},
             "creation_timestamp": "{{ ansible_date_time.iso8601 }}",
@@ -520,7 +521,8 @@ compose:
               {% endfor %}
             }
           }
-        dest: "{{ molecule_ephemeral_directory }}/resource_cache.json"
+          {% endraw %}
+        dest: "{% raw %}{{ molecule_ephemeral_directory }}{% endraw %}/resource_cache.json"
         mode: '0644'
 
 # verify.yml - Use cached data for validation
@@ -529,14 +531,14 @@ compose:
   hosts: localhost
   gather_facts: false
   vars:
-    cached_data: "{{ lookup('file', molecule_ephemeral_directory + '/resource_cache.json') | from_json }}"
+    cached_data: "{% raw %}{{ lookup('file', molecule_ephemeral_directory + '/resource_cache.json') | from_json }}{% endraw %}"
   tasks:
     - name: Validate all test endpoints are responding
       ansible.builtin.uri:
-        url: "{{ endpoint }}"
+        url: "{% raw %}{{ endpoint }}{% endraw %}"
         method: GET
         status_code: 200
-      loop: "{{ cached_data.test_endpoints.values() | list }}"
+      loop: "{% raw %}{{ cached_data.test_endpoints.values() | list }}{% endraw %}"
       loop_control:
         loop_var: endpoint
 
@@ -546,9 +548,9 @@ compose:
           - creation_time_diff | int < 300  # 5 minutes
         fail_msg: "Instance creation took too long"
       vars:
-        creation_timestamp: "{{ cached_data.creation_timestamp }}"
-        current_timestamp: "{{ ansible_date_time.iso8601 }}"
-        creation_time_diff: "{{ (current_timestamp | to_datetime) - (creation_timestamp | to_datetime) }}"
+        creation_timestamp: "{% raw %}{{ cached_data.creation_timestamp }}{% endraw %}"
+        current_timestamp: "{% raw %}{{ ansible_date_time.iso8601 }}{% endraw %}"
+        creation_time_diff: "{% raw %}{{ (current_timestamp | to_datetime) - (creation_timestamp | to_datetime) }}{% endraw %}"
 
 # destroy.yml - Clean up using cached instance IDs
 ---
@@ -556,19 +558,19 @@ compose:
   hosts: localhost
   gather_facts: false
   vars:
-    cached_data: "{{ lookup('file', molecule_ephemeral_directory + '/resource_cache.json') | from_json | default({}) }}"
+    cached_data: "{% raw %}{{ lookup('file', molecule_ephemeral_directory + '/resource_cache.json') | from_json | default({}) }}{% endraw %}"
   tasks:
     - name: Terminate instances using cached instance IDs
       amazon.aws.ec2_instance:
-        instance_ids: "{{ item.instance_id }}"
+        instance_ids: "{% raw %}{{ item.instance_id }}{% endraw %}"
         state: absent
-      loop: "{{ cached_data.created_instances | default([]) }}"
+      loop: "{% raw %}{{ cached_data.created_instances | default([]) }}{% endraw %}"
       when: cached_data.created_instances is defined
       ignore_errors: true
 
     - name: Clean up cache file
       ansible.builtin.file:
-        path: "{{ molecule_ephemeral_directory }}/resource_cache.json"
+        path: "{% raw %}{{ molecule_ephemeral_directory }}{% endraw %}/resource_cache.json"
         state: absent
 ```
 
@@ -605,7 +607,7 @@ groups:
 provisioner:
   name: ansible
   ansible_args:
-    - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/inventory/
+    - --inventory=${% raw %}{MOLECULE_SCENARIO_DIRECTORY}{% endraw %}/inventory/
 ```
 
 **Cross-scenario inventory coordination**
