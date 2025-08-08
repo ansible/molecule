@@ -93,7 +93,7 @@ Molecule specifically addresses the unique challenges of testing Ansible automat
 Molecule leverages Ansible's declarative nature by using playbooks to manage the entire test lifecycle across all automation domains. Whether testing infrastructure provisioning, application deployment, configuration management, or external service integration, this approach ensures consistency between test environments and production patterns while providing familiar syntax for Ansible practitioners. The same playbook constructs used for production automation can be used for test environment setup, making tests more representative of real-world usage.
 
 **Native integration with Ansible constructs**
-Rather than wrapping Ansible as an external tool, Molecule integrates directly with Ansible's inventory system, variable hierarchy, and module ecosystem. This tight integration works seamlessly whether you're testing infrastructure modules (cloud resources, networking), application modules (services, configurations), integration modules (APIs, databases), or custom modules. The framework eliminates impedance mismatches and ensures that test environments accurately reflect production Ansible usage patterns regardless of the automation domain.
+Rather than wrapping Ansible as an external tool, Molecule integrates directly with Ansible's inventory system, variable hierarchy, and module ecosystem. This tight integration includes native support for external inventory sources, allowing teams to test using existing inventory patterns, dynamic inventory scripts, and inventory plugins. The framework works seamlessly whether you're testing infrastructure modules (cloud resources, networking), application modules (services, configurations), integration modules (APIs, databases), or custom modules. This eliminates impedance mismatches and ensures that test environments accurately reflect production Ansible usage patterns regardless of the automation domain.
 
 ### Sequence configuration and workflow control
 
@@ -187,118 +187,401 @@ molecule idempotence  # Verify no changes on re-run
 molecule test      # Run complete sequence
 ```
 
-### Shared state and inventory management
+### Native inventory integration and management
 
-**Shared state for cost and speed optimization**
-Molecule's `--shared-state` functionality enables complex testing scenarios where multiple test runs share environments by automatically leveraging the `default` scenario for infrastructure management. When shared state is enabled, Molecule automatically runs `create` from the `default` scenario before executing any other scenarios, and `destroy` from the `default` scenario after all scenarios complete. Individual scenarios skip their own `create` and `destroy` actions and share the infrastructure created by the `default` scenario. When combined with `--shared-inventory`, scenarios access the same resources through shared inventory that contains connection details written by the `default` scenario. This approach provides significant benefits for cost optimization and execution speed:
+**Direct integration with Ansible inventory systems**
+Molecule provides comprehensive support for native Ansible inventory integration, enabling teams to test automation against existing inventory sources rather than relying solely on Molecule-generated inventory from platform configurations. This native inventory capability allows testing automation against the same inventory systems and patterns used in production environments, ensuring true production parity while testing against appropriate lab, staging, or test systems.
 
-**Cost optimization scenarios:**
+**External inventory sources**
+Molecule supports the full spectrum of Ansible inventory sources through direct integration with the `ansible-playbook` command:
 
-- **Cloud infrastructure sharing**: Automatic `default` scenario provisioning creates expensive cloud resources (VMs, databases, load balancers) once, shared across all test scenarios
-- **Licensed software environments**: Shared expensive licensed software installations managed automatically by the `default` scenario
-- **Complex multi-tier environments**: The `default` scenario provisions elaborate application stacks once, reused by all scenarios
+- **Static inventory files**: Use existing YAML or INI inventory files that define lab, staging, or test resources
+- **Dynamic inventory scripts**: Leverage cloud provider inventories, CMDB systems, or custom inventory scripts
+- **Inventory plugins**: Integration with Ansible's inventory plugin ecosystem (AWS, Azure, GCP, Kubernetes, etc.)
+- **Constructed inventories**: Dynamic grouping and variable assignment based on existing inventory data
+- **Mixed inventory sources**: Combine multiple inventory types within the same testing scenario
+- **Multi-source patterns**: Separate infrastructure provider inventory from molecule-specific configuration inventory
 
-**Speed optimization scenarios:**
+**Native inventory workflow patterns**
+Teams can configure Molecule to use external inventory sources by leveraging the `ansible_args` provisioner option to pass inventory parameters directly to `ansible-playbook`. Targeting can be achieved either through `--limit` flags at the molecule level or through `hosts:` directives at the individual playbook level:
 
-- **Long provisioning times**: Automatic `default` scenario handling provisions time-intensive environments (complex application deployments, large databases, multi-service architectures) once for all scenarios
-- **Baseline establishment**: The `default` scenario automatically creates common baseline environments for all test scenarios
-- **Integration testing pipelines**: All scenarios share infrastructure without manual coordination or duplicate provisioning
+```yaml
+# Using external static inventory directory
+provisioner:
+  name: ansible
+  ansible_args:
+    - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/inventory/
 
-**Shared state workflow examples:**
+# Using cloud inventory plugin
+provisioner:
+  name: ansible
+  ansible_args:
+    - --inventory=aws_ec2.yml
 
-```bash
-# Single scenario with shared state - default scenario handles create/destroy automatically
-molecule test --scenario-name app-test --shared-state
-# Molecule automatically: default create → app-test (no create/destroy) → default destroy
+# Using existing enterprise inventory with selective targeting
+provisioner:
+  name: ansible
+  ansible_args:
+    - --inventory=/path/to/enterprise/inventory/
+    - --limit=staging_environment
 
-# Multiple scenarios with shared state - infrastructure shared across all
-molecule test --all --shared-state
-# Molecule automatically: default create → scenario1 → scenario2 → scenario3 → default destroy
+# Using multiple inventory sources
+provisioner:
+  name: ansible
+  ansible_args:
+    - --inventory=static_hosts.yml
+    - --inventory=dynamic_script.py
+    - --inventory=constructed_groups.yml
 
-# Mix of shared and isolated scenarios
-molecule test --scenario-name shared-test --shared-state
-molecule test --scenario-name isolated-test  # Handles own create/destroy
+# Combining infrastructure provider inventory with molecule-specific configuration
+provisioner:
+  name: ansible
+  ansible_args:
+    - --inventory=aws_ec2.yml              # Cloud provider dynamic inventory
+    - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/molecule_config.yml  # Molecule-specific config
+
+# Using inventory from parent directory (shared across scenarios)
+provisioner:
+  name: ansible
+  ansible_args:
+    - --inventory=../shared_inventory/
 ```
 
-**Shared inventory coordination**
-The `--shared-inventory` feature is the essential mechanism that enables multiple scenarios to access the same resources by centralizing inventory in a common location. When combined with `--shared-state`, this creates a powerful pattern: the `default` scenario automatically manages infrastructure and writes connection details to the shared inventory location, while all other scenarios read from this same shared inventory to access the resources. This centralized inventory coordination enables testing workflows that span multiple automation domains:
+**Benefits of native inventory integration**
 
-**Cross-scenario coordination patterns:**
+- **Single source of truth**: Reuse existing inventory definitions that contain both production and lab/staging/test systems, eliminating inventory duplication and ensuring consistency across environments
+- **Production parity**: Test using the same inventory systems and patterns as production deployments while targeting appropriate lab or staging systems, ensuring that test environments accurately reflect real-world usage patterns
+- **Selective targeting**: Use Ansible's `--limit` functionality with existing inventory to target specific environments (lab, staging) without duplicating inventory definitions
+- **Existing resource utilization**: Leverage already-provisioned infrastructure for testing without requiring Molecule to manage resource lifecycles
+- **Inventory validation**: Test inventory plugins, dynamic scripts, and constructed configurations as part of the automation testing process
+- **Enterprise integration**: Use existing CMDB, monitoring, or asset management systems as inventory sources for comprehensive testing
+- **Multi-source flexibility**: Combine infrastructure provider inventory (cloud/hyperscaler) with molecule-specific configuration inventory for separation of concerns
+- **Multi-environment testing**: Test automation against development, lab, and staging systems from the same inventory source using different targeting strategies
+- **Reduced complexity**: Eliminate the need for complex inventory generation and focus on testing automation logic against realistic inventory structures
 
-- **Infrastructure + application deployment**: `default` scenario provisions infrastructure and writes connection details to shared inventory, application scenarios read from shared inventory to deploy and test services on the same resources
-- **Network + security configuration**: `default` scenario configures networking and writes access details to shared inventory, other scenarios read shared inventory to apply policies and test access on the same infrastructure
-- **Multi-service integration**: `default` scenario provisions base infrastructure with shared inventory containing all connection details, each scenario reads shared inventory to manage different service components on the same resources
-- **Progressive deployment testing**: `default` scenario establishes baseline infrastructure with shared inventory, sequential scenarios read shared inventory to test different deployment stages on the same resources
+**Single source of truth patterns**
+A key advantage of native inventory integration is the ability to reuse existing inventory definitions that already contain multiple environments, eliminating the need to duplicate or manage inventory within the testing suite:
 
-**How shared inventory enables resource sharing:**
-When `--shared-inventory` is used, Molecule centralizes the inventory directory so all scenarios read and write to the same location. This means:
+```yaml
+# Example: Existing enterprise inventory structure
+# /opt/ansible/inventory/hosts.yml
+all:
+  children:
+    web_servers:
+      children:
+        web_production:
+          hosts:
+            web-prod-01: { environment: production }
+            web-prod-02: { environment: production }
+        web_staging:
+          hosts:
+            web-stage-01: { environment: staging }
+            web-stage-02: { environment: staging }
+        web_lab:
+          hosts:
+            web-lab-01: { environment: lab }
+            web-lab-02: { environment: lab }
 
-- The `default` scenario writes resource connection details (host IPs, credentials, ports) to the shared inventory
-- All other scenarios read from this same shared inventory to access the exact same resources
-- Variables, group memberships, and connection options are shared across all scenarios
-- Each scenario sees identical infrastructure without needing separate provisioning
+# Molecule scenarios using the same inventory with selective targeting
+# scenario1/molecule.yml - Test against staging systems
+provisioner:
+  name: ansible
+  ansible_args:
+    - --inventory=/opt/ansible/inventory/
+    - --limit=web_staging
 
-**Shared inventory workflow examples:**
+# scenario2/molecule.yml - Test against lab systems  
+provisioner:
+  name: ansible
+  ansible_args:
+    - --inventory=/opt/ansible/inventory/
+    - --limit=web_lab
 
-```bash
-# Multiple scenarios automatically share resources through centralized inventory
-molecule test --all --shared-inventory --shared-state
-# Flow: default creates infrastructure → writes to shared inventory → all scenarios read shared inventory → default destroys
-
-# Progressive testing accessing the same resources
-molecule test --scenario-name web-tier --shared-inventory --shared-state
-molecule test --scenario-name database-tier --shared-inventory --shared-state
-molecule test --scenario-name integration-test --shared-inventory --shared-state
-# Each scenario reads the same shared inventory to access identical resources
+# scenario3/molecule.yml - Test against specific environment
+provisioner:
+  name: ansible
+  ansible_args:
+    - --inventory=/opt/ansible/inventory/
+    - --limit=environment_staging
 ```
 
-**Isolation vs. sharing trade-offs**
-While shared state provides cost and speed benefits, isolation ensures test reliability and independence. Teams must choose appropriate strategies based on their specific requirements:
+**Alternative targeting approaches**
+Beyond using `--limit` at the molecule level, teams can also target specific groups directly in playbooks using Ansible's `hosts:` directive:
+
+```yaml
+# create.yml - Target only staging web servers
+---
+- name: Create staging web infrastructure
+  hosts: web_staging
+  gather_facts: false
+  tasks:
+    - name: Provision staging web servers
+      # provisioning tasks here
+
+# converge.yml - Target lab database servers
+---
+- name: Configure lab databases
+  hosts: database_lab
+  gather_facts: false
+  tasks:
+    - name: Configure database settings
+      # configuration tasks here
+
+# verify.yml - Target specific environment group
+---
+- name: Verify test environment
+  hosts: environment_test
+  gather_facts: false
+  tasks:
+    - name: Run verification tests
+      # verification tasks here
+```
+
+This approach ensures:
+- **Consistency**: Same inventory structure across all environments
+- **No duplication**: Single inventory source maintained by operations teams
+- **Selective targeting**: Choose between `--limit` flags or playbook `hosts:` directives
+- **Flexible targeting**: Mix and match targeting approaches within the same scenario
+- **Action-level control**: Different playbooks can target different groups from the same inventory
+- **Production alignment**: Test scenarios use identical inventory patterns as production deployments
+
+**Multi-source inventory patterns**
+A powerful approach involves combining enterprise infrastructure configuration inventory with molecule-specific test instance definitions. This pattern separates concerns: the infrastructure inventory provides enterprise-level AWS configuration (VPCs, subnets, security groups, required tags), while the molecule inventory defines the specific test instances to be created using that infrastructure:
+
+```yaml
+# Example: AWS enterprise infrastructure + Molecule test instances
+# molecule.yml
+provisioner:
+  name: ansible
+  ansible_args:
+    - --inventory=aws_infrastructure.yml         # Enterprise AWS infrastructure config
+    - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/molecule_config.yml  # Test instances to create
+
+# aws_infrastructure.yml (enterprise infrastructure configuration)
+all:
+  vars:
+    # AWS Account and Authentication
+    aws_profile: molecule-testing
+    aws_access_key_id: "{{ vault_aws_access_key_id }}"
+    aws_secret_access_key: "{{ vault_aws_secret_access_key }}"
+    aws_session_token: "{{ vault_aws_session_token | default(omit) }}"
+    aws_account_id: "123456789012"
+    
+    # Enterprise Infrastructure Configuration
+    vpc_id: "vpc-0abcd1234efgh5678"
+    subnet_ids:
+      us-east-1a: "subnet-0abc123def456789a"
+      us-east-1b: "subnet-0def456ghi789012b"
+      us-west-2a: "subnet-0ghi789jkl012345c"
+    security_group_ids:
+      molecule_testing: "sg-0abc123def456789"
+      web_tier: "sg-0def456ghi789012"
+      database_tier: "sg-0ghi789jkl012345"
+    
+    # Required Tags for New Instances
+    required_instance_tags:
+      Environment: "molecule-test"
+      Project: "ansible-automation"
+      Owner: "{{ ansible_user | default('molecule') }}"
+      CostCenter: "engineering-testing"
+      Compliance: "test-workload"
+      AutoShutdown: "true"
+      CreatedBy: "molecule"
+      
+    # Instance Configuration
+    key_pair_name: "molecule-testing-keypair"
+    instance_profile: "EC2MoleculeTestingRole"
+    
+    # Enterprise Networking
+    dns_zone: "molecule-test.company.internal"
+    proxy_settings:
+      http_proxy: "http://proxy.company.com:8080"
+      https_proxy: "http://proxy.company.com:8080"
+      no_proxy: "169.254.169.254,.company.com,localhost"
+
+# molecule_config.yml (molecule-specific test instances and configuration)
+all:
+  vars:
+    ansible_user: ubuntu
+    ansible_ssh_private_key_file: "{{ molecule_ephemeral_directory }}/{{ key_pair_name }}.pem"
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+    molecule_test_runner: true
+  children:
+    # Define instances that Molecule should create for testing
+    web_servers:
+      hosts:
+        web-test-01:
+          instance_type: t3.small
+          ami_id: ami-0c02fb55956c7d316  # Ubuntu 20.04 LTS
+          subnet_id: "{{ subnet_ids['us-east-1a'] }}"
+          security_groups: 
+            - "{{ security_group_ids['molecule_testing'] }}"
+            - "{{ security_group_ids['web_tier'] }}"
+          instance_tags: "{{ required_instance_tags | combine({'Name': 'molecule-web-test-01', 'Role': 'web'}) }}"
+        web-test-02:
+          instance_type: t3.small
+          ami_id: ami-0c02fb55956c7d316
+          subnet_id: "{{ subnet_ids['us-east-1b'] }}"
+          security_groups:
+            - "{{ security_group_ids['molecule_testing'] }}"
+            - "{{ security_group_ids['web_tier'] }}"
+          instance_tags: "{{ required_instance_tags | combine({'Name': 'molecule-web-test-02', 'Role': 'web'}) }}"
+    database_servers:
+      hosts:
+        db-test-01:
+          instance_type: t3.medium
+          ami_id: ami-0c02fb55956c7d316
+          subnet_id: "{{ subnet_ids['us-west-2a'] }}"
+          security_groups:
+            - "{{ security_group_ids['molecule_testing'] }}"
+            - "{{ security_group_ids['database_tier'] }}"
+          instance_tags: "{{ required_instance_tags | combine({'Name': 'molecule-db-test-01', 'Role': 'database'}) }}"
+          ebs_volumes:
+            - device_name: /dev/sdf
+              volume_size: 20
+              volume_type: gp3
+              encrypted: true
+      vars:
+        test_database_url: "postgresql://{{ vault_test_db_host }}:5432/molecule_test"
+        test_database_password: "{{ vault_test_db_password }}"
+```
+
+```yaml
+# Example vault file structure (group_vars/all/vault.yml)
+vault_molecule_aws_access_key: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          66386439653762643031313...
+vault_molecule_aws_secret_key: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          38346235396136373...
+vault_test_db_host: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          64326539653762643...
+vault_test_db_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          39653762643031313...
+vault_test_api_key: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          63031313663843623...
+```
+
+This multi-source approach provides:
+
+- **Separation of concerns**: Enterprise infrastructure configuration vs. test instance definitions
+- **Secure credential management**: Use Ansible Vault for sensitive AWS credentials and test secrets  
+- **Enterprise compliance**: Ensure all test instances use required tags, security groups, and compliance settings
+- **Infrastructure reuse**: Leverage existing enterprise VPCs, subnets, and security configurations for testing
+- **Provider agnostic**: Works with any cloud provider or infrastructure management system
+- **Consistent provisioning**: All test instances follow enterprise standards and governance policies
+- **Reduced maintenance**: Infrastructure team manages enterprise config, testing team manages test instances
+- **Environment flexibility**: Same enterprise configuration works across different testing scenarios and regions
+
+**Advanced inventory patterns**
+Native inventory support enables sophisticated testing patterns that mirror production deployment workflows:
+
+```yaml
+# Testing with constructed inventory for dynamic grouping
+# inventory/01-static.yml
+all:
+  hosts:
+    web-01: { role: web, environment: lab }
+    web-02: { role: web, environment: staging }
+    db-01: { role: database, environment: lab }
+
+# inventory/02-constructed.yml
+plugin: ansible.builtin.constructed
+strict: false
+groups:
+  web_servers: role == 'web'
+  databases: role == 'database'
+  lab: environment == 'lab'
+  staging: environment == 'staging'
+
+# Molecule configuration using this inventory
+provisioner:
+  name: ansible
+  ansible_args:
+    - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/inventory/
+```
+
+**Cross-scenario inventory coordination**
+For testing scenarios that require coordination between multiple test runs, teams can use shared inventory directories that multiple scenarios reference:
+
+```bash
+project/
+├── inventory/                    # Shared inventory directory
+│   ├── hosts.yml
+│   ├── constructed.yml
+│   └── group_vars/
+├── scenarios/
+│   ├── infrastructure/
+│   │   └── molecule.yml         # Points to ../inventory/
+│   ├── application/
+│   │   └── molecule.yml         # Points to ../inventory/
+│   └── integration/
+│       └── molecule.yml         # Points to ../inventory/
+```
+
+This approach provides inventory coordination benefits while maintaining standard Ansible inventory patterns and eliminating dependency on Molecule-specific inventory management features.
+
+**Testing strategy considerations**
+Teams must balance isolation, resource efficiency, and test reliability when designing their testing approach. Native inventory support enables flexible strategies that can be tailored to specific requirements:
 
 **Complete isolation scenarios (recommended for):**
 
-- **Independent feature testing**: Each feature test needs clean environments to avoid interference
-- **Unit testing**: Fast, focused tests that validate specific automation logic
-- **Regression testing**: Ensuring new changes don't break existing functionality
-- **CI/CD pipelines**: Parallel test execution where isolation prevents race conditions
-- **Development workflows**: Individual developers need isolated environments for experimentation
+- **Independent feature testing**: Each test scenario uses separate inventory and infrastructure to avoid interference
+- **Unit testing**: Fast, focused tests that validate specific automation logic against isolated resources
+- **Regression testing**: Ensuring new changes don't break existing functionality in clean environments
+- **CI/CD pipelines**: Parallel test execution where isolation prevents race conditions and resource conflicts
+- **Development workflows**: Individual developers use isolated environments for experimentation and iteration
 
-**Shared state scenarios (recommended for):**
+**Resource sharing scenarios (recommended for):**
 
-- **Integration testing**: Testing interactions between multiple components
-- **Performance testing**: Establishing baselines and measuring changes over time
-- **Cost-sensitive environments**: Cloud testing where resource costs are significant
-- **Long-running test suites**: Complex scenarios where provisioning time exceeds test execution time
-- **Staging environment simulation**: Testing deployment procedures against persistent environments
+- **Integration testing**: Multiple scenarios test against the same infrastructure using shared inventory sources
+- **Performance testing**: Establishing baselines and measuring changes over time against consistent environments
+- **Cost-sensitive environments**: Cloud testing where infrastructure costs are significant and resource reuse is beneficial
+- **Long-running test suites**: Complex scenarios where infrastructure setup time exceeds test execution time
+- **Production parity testing**: Testing against existing lab or staging inventory sources that mirror production patterns
 
-**State isolation controls**
-Molecule provides flexible controls for managing isolation levels, with automatic `default` scenario management when sharing is enabled:
+**Implementation strategies**
+Native inventory support enables various approaches to resource management and test isolation:
 
 ```bash
-# Complete isolation (default)
-# Each test run gets fresh environment, handles own create/destroy
+# Complete isolation - each scenario manages its own resources
 molecule test --scenario-name feature-test
+# Uses scenario-specific inventory and infrastructure
 
-# Shared state only
-# Molecule automatically manages infrastructure through default scenario
-molecule test --scenario-name integration-test --shared-state
-# Automatic: default create → integration-test (skips create/destroy) → default destroy
+# Shared inventory coordination - multiple scenarios use common inventory
+molecule test --scenario-name infrastructure-test  # Uses ../shared_inventory/
+molecule test --scenario-name application-test     # Uses ../shared_inventory/
+molecule test --scenario-name integration-test     # Uses ../shared_inventory/
 
-# Full sharing
-# Molecule automatically manages infrastructure and coordinates inventory
-molecule test --scenario-name performance-test --shared-state --shared-inventory
-# Automatic: default create → performance-test with shared inventory → default destroy
+# External inventory testing - test against existing systems
+molecule test --scenario-name staging-validation   # Uses --inventory=staging_hosts.yml
+molecule test --scenario-name lab-verification     # Uses --inventory=lab_inventory.py
 
-# Multiple scenarios with automatic resource sharing
-molecule test --all --shared-state
-# Automatic: default create → all scenarios (skip create/destroy) → default destroy
+# Single source of truth with selective targeting
+molecule test --scenario-name web-staging          # Uses enterprise inventory --limit=web_staging
+molecule test --scenario-name db-lab               # Uses enterprise inventory --limit=database_lab
+molecule test --scenario-name app-test             # Uses enterprise inventory --limit=environment_test
 
-# Mixed approach in separate runs
-molecule test --scenario-name shared-test --shared-state      # Uses automatic default management
-molecule test --scenario-name isolated-test                  # Handles own create/destroy independently
+# Playbook-level targeting (no --limit needed)
+molecule test --scenario-name staging-deployment   # Playbooks use hosts: web_staging, hosts: db_staging
+molecule test --scenario-name lab-testing          # Playbooks use hosts: lab_environment
+molecule test --scenario-name multi-tier           # Different actions target different groups
+
+# Multi-source inventory patterns
+molecule test --scenario-name cloud-discovery      # Uses cloud inventory + molecule config
+molecule test --scenario-name hybrid-infrastructure # Uses multiple provider inventories + test config
+molecule test --scenario-name dynamic-targeting    # Cloud provider discovers, molecule configures
+
+# Mixed approach for comprehensive testing
+molecule test --scenario-name isolated-unit        # Isolated resources
+molecule test --scenario-name shared-integration   # Shared inventory
+molecule test --scenario-name lab-validation       # External inventory
 ```
 
-This flexibility allows teams to optimize their testing strategies based on resource constraints, execution time requirements, and test isolation needs while maintaining the reliability and reproducibility essential for effective automation testing.
+This flexibility allows teams to optimize their testing strategies based on resource constraints, execution time requirements, and test isolation needs while maintaining the reliability and reproducibility essential for effective automation testing through native Ansible inventory integration.
 
 ### Configuration flexibility and extensibility
 
@@ -331,13 +614,13 @@ As Ansible has emerged as the de facto DSL for automation, Molecule's developmen
 ### Current and planned integration enhancements
 
 **Enhanced collection testing support**
-Molecule's shared state and shared inventory capabilities are being extended specifically for Ansible collection testing scenarios. This includes automatic collection detection to streamline testing workflows, improved collection dependency resolution, and optimized testing patterns that reflect how collections are developed and deployed in enterprise environments.
+Molecule's native inventory integration capabilities provide comprehensive support for Ansible collection testing scenarios. This includes automatic collection detection to streamline testing workflows, improved collection dependency resolution, and optimized testing patterns that reflect how collections are developed and deployed in enterprise environments using existing inventory systems.
 
 **Unified user experience**
 Visual and functional alignment with Ansible's output patterns ensures that teams experience consistent interfaces across their automation toolkit. This includes UI changes that better integrate Molecule's test output with standard Ansible playbook output, making the transition between development, testing, and deployment workflows more natural and reducing cognitive overhead for automation practitioners.
 
 **Deeper inventory integration**
-More obvious and tighter integration with Ansible's inventory systems eliminates friction between test and production inventory patterns. This includes enhanced inventory sharing mechanisms, improved inventory validation during testing, and clearer mapping between test inventory structures and production deployment patterns.
+More obvious and tighter integration with Ansible's inventory systems eliminates friction between test and production inventory patterns. This includes comprehensive native support for external inventory sources (static files, dynamic scripts, and inventory plugins), improved inventory validation during testing, and clearer mapping between test inventory structures and production deployment patterns. Teams can seamlessly test automation using production inventory patterns against appropriate lab and staging systems while maintaining flexibility for cross-scenario coordination through standard Ansible inventory patterns.
 
 **Extended executor support**
 Support for modern Ansible execution environments through tools like ansible-navigator enables testing within the same containerized environments used for production automation. This ensures test environments more accurately reflect production execution contexts while supporting the shift toward standardized, reproducible automation execution environments.
