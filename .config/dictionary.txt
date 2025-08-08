@@ -14,6 +14,7 @@ cgroupns
 checkpointing
 clicolor
 cloudinitdisk
+cmdb
 connopts
 containerdisk
 credssp
@@ -60,6 +61,7 @@ libcloud
 libera
 libpod
 lifecycle
+lifecycles
 lineterm
 lockf
 makereport
