@@ -520,8 +520,14 @@ def test_split_command_to_strings_handles_complex_args() -> None:
     assert "playbook.yml" in result
 
 
-def test_bordered_stream_wraps_long_lines() -> None:
-    """Test BorderedStream wraps long lines using textwrap with proper indentation and color preservation."""
+def test_bordered_stream_wraps_long_lines(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test BorderedStream wraps long lines using textwrap with proper indentation and color preservation.
+
+    Args:
+        monkeypatch: pytest.MonkeyPatch object to mock environment variables.
+    """
+    monkeypatch.setenv("COLUMNS", "100")
+
     ansi = AnsiOutput()
     original_stream = io.StringIO()
 
