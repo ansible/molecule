@@ -201,6 +201,7 @@ Molecule supports the full spectrum of Ansible inventory sources through direct 
 - **Constructed inventories**: Dynamic grouping and variable assignment based on existing inventory data
 - **Mixed inventory sources**: Combine multiple inventory types within the same testing scenario
 - **Multi-source patterns**: Separate infrastructure provider inventory from molecule-specific configuration inventory
+- **Dynamic data caching**: Use json_cache and file lookups to persist and share data between actions
 
 **Native inventory workflow patterns**
 Teams can configure Molecule to use external inventory sources by leveraging the `ansible_args` provisioner option to pass inventory parameters directly to `ansible-playbook`. Targeting can be achieved either through `--limit` flags at the molecule level or through `hosts:` directives at the individual playbook level:
@@ -256,6 +257,7 @@ provisioner:
 - **Inventory validation**: Test inventory plugins, dynamic scripts, and constructed configurations as part of the automation testing process
 - **Enterprise integration**: Use existing CMDB, monitoring, or asset management systems as inventory sources for comprehensive testing
 - **Multi-source flexibility**: Combine infrastructure provider inventory (cloud/hyperscaler) with molecule-specific configuration inventory for separation of concerns
+- **Cross-action data persistence**: Use json_cache and file-based patterns to share dynamic data between create, converge, verify, and destroy actions
 - **Multi-environment testing**: Test automation against development, lab, and staging systems from the same inventory source using different targeting strategies
 - **Reduced complexity**: Eliminate the need for complex inventory generation and focus on testing automation logic against realistic inventory structures
 
@@ -477,6 +479,107 @@ This multi-source approach provides:
 - **Reduced maintenance**: Infrastructure team manages enterprise config, testing team manages test instances
 - **Environment flexibility**: Same enterprise configuration works across different testing scenarios and regions
 
+**Cross-action data sharing with json_cache**
+When using native inventory patterns, teams often need to share dynamically generated data between different Molecule actions (create, converge, verify, destroy). The `json_cache` inventory plugin provides a powerful way to persist and share data across the test lifecycle:
+
+```yaml
+# Example: Using json_cache to share created resource information
+# inventory/03-json_cache.yml
+plugin: advanced_host_list
+compose:
+  # Load cached data from previous actions
+  cached_data: "{{ lookup('file', molecule_ephemeral_directory + '/resource_cache.json') | from_json | default({}) }}"
+
+# create.yml - Store created resource information
+---
+- name: Create and cache infrastructure data
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Create test instances
+      amazon.aws.ec2_instance:
+        # ... instance creation configuration using enterprise infrastructure vars
+        vpc_subnet_id: "{{ subnet_ids['us-east-1a'] }}"
+        security_groups: "{{ security_group_ids['molecule_testing'] }}"
+        tags: "{{ required_instance_tags | combine({'Name': inventory_hostname}) }}"
+      register: created_instances
+      loop: "{{ groups['web_servers'] }}"
+      loop_control:
+        loop_var: inventory_hostname
+
+    - name: Cache created instance data for other actions
+      ansible.builtin.copy:
+        content: |
+          {
+            "created_instances": {{ created_instances.results | to_nice_json }},
+            "creation_timestamp": "{{ ansible_date_time.iso8601 }}",
+            "vpc_id": "{{ vpc_id }}",
+            "test_endpoints": {
+              {% for host in groups['web_servers'] %}
+              "{{ host }}": "http://{{ hostvars[host]['ansible_host'] }}:8080/health"{% if not loop.last %},{% endif %}
+              {% endfor %}
+            }
+          }
+        dest: "{{ molecule_ephemeral_directory }}/resource_cache.json"
+        mode: '0644'
+
+# verify.yml - Use cached data for validation
+---
+- name: Verify using cached infrastructure data  
+  hosts: localhost
+  gather_facts: false
+  vars:
+    cached_data: "{{ lookup('file', molecule_ephemeral_directory + '/resource_cache.json') | from_json }}"
+  tasks:
+    - name: Validate all test endpoints are responding
+      ansible.builtin.uri:
+        url: "{{ endpoint }}"
+        method: GET
+        status_code: 200
+      loop: "{{ cached_data.test_endpoints.values() | list }}"
+      loop_control:
+        loop_var: endpoint
+
+    - name: Verify instances were created within time limit
+      ansible.builtin.assert:
+        that:
+          - creation_time_diff | int < 300  # 5 minutes
+        fail_msg: "Instance creation took too long"
+      vars:
+        creation_timestamp: "{{ cached_data.creation_timestamp }}"
+        current_timestamp: "{{ ansible_date_time.iso8601 }}"
+        creation_time_diff: "{{ (current_timestamp | to_datetime) - (creation_timestamp | to_datetime) }}"
+
+# destroy.yml - Clean up using cached instance IDs
+---
+- name: Destroy instances using cached data
+  hosts: localhost
+  gather_facts: false
+  vars:
+    cached_data: "{{ lookup('file', molecule_ephemeral_directory + '/resource_cache.json') | from_json | default({}) }}"
+  tasks:
+    - name: Terminate instances using cached instance IDs
+      amazon.aws.ec2_instance:
+        instance_ids: "{{ item.instance_id }}"
+        state: absent
+      loop: "{{ cached_data.created_instances | default([]) }}"
+      when: cached_data.created_instances is defined
+      ignore_errors: true
+
+    - name: Clean up cache file
+      ansible.builtin.file:
+        path: "{{ molecule_ephemeral_directory }}/resource_cache.json"
+        state: absent
+```
+
+This cross-action data sharing approach provides:
+
+- **Stateful testing**: Share resource IDs, endpoints, and metadata between actions
+- **Dynamic validation**: Use actual created resource data for verification  
+- **Reliable cleanup**: Ensure proper resource cleanup using cached instance information
+- **Test continuity**: Maintain context across the entire test lifecycle
+- **Debugging support**: Persistent cache files aid in troubleshooting failed tests
+
 **Advanced inventory patterns**
 Native inventory support enables sophisticated testing patterns that mirror production deployment workflows:
 
@@ -575,6 +678,11 @@ molecule test --scenario-name multi-tier           # Different actions target di
 molecule test --scenario-name cloud-discovery      # Uses cloud inventory + molecule config
 molecule test --scenario-name hybrid-infrastructure # Uses multiple provider inventories + test config
 molecule test --scenario-name dynamic-targeting    # Cloud provider discovers, molecule configures
+
+# Cross-action data sharing patterns
+molecule test --scenario-name stateful-testing     # Uses json_cache to share data between actions
+molecule test --scenario-name dynamic-endpoints    # Creates resources, caches endpoints, validates connectivity
+molecule test --scenario-name resource-lifecycle   # Full lifecycle with data persistence across actions
 
 # Mixed approach for comprehensive testing
 molecule test --scenario-name isolated-unit        # Isolated resources

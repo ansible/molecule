@@ -27,6 +27,7 @@ devel
 dind
 docsite
 dotglob
+efgh
 emptydisk
 endfor
 endgroup
@@ -49,6 +50,7 @@ helloworld
 hookwrapper
 hostvars
 htmldir
+hyperscaler
 indentless
 jinaj
 jodewey
