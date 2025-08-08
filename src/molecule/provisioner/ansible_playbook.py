@@ -32,7 +32,7 @@ from rich.markup import escape
 from molecule import logger, util
 from molecule.api import MoleculeRuntimeWarning
 from molecule.exceptions import ScenarioFailureError
-from molecule.reporting import CompletionState
+from molecule.reporting.definitions import CompletionState
 
 
 if TYPE_CHECKING:

@@ -36,7 +36,7 @@ from molecule.constants import ANSICodes as A
 if TYPE_CHECKING:
     from typing import TextIO
 
-    from molecule.reporting import ScenariosResults
+    from molecule.reporting.definitions import ScenariosResults
 
 
 def to_bool(a: object) -> bool:
@@ -330,7 +330,7 @@ class AnsiOutput:
             Formatted recap string with ANSI colors if enabled.
         """
         # Import here to avoid circular imports
-        from molecule.reporting import CompletionState  # noqa: PLC0415
+        from molecule.reporting.definitions import CompletionState  # noqa: PLC0415
 
         if not results:
             return ""

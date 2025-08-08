@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING, cast
 from molecule import logger, util
 from molecule.api import Verifier
 from molecule.exceptions import ImmediateExit
-from molecule.reporting import CompletionState
+from molecule.reporting.definitions import CompletionState
 
 
 if TYPE_CHECKING:
