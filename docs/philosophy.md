@@ -290,7 +290,7 @@ provisioner:
     - --inventory=/opt/ansible/inventory/
     - --limit=web_staging
 
-# scenario2/molecule.yml - Test against lab systems  
+# scenario2/molecule.yml - Test against lab systems
 provisioner:
   name: ansible
   ansible_args:
@@ -338,6 +338,7 @@ Beyond using `--limit` at the molecule level, teams can also target specific gro
 ```
 
 This approach ensures:
+
 - **Consistency**: Same inventory structure across all environments
 - **No duplication**: Single inventory source maintained by operations teams
 - **Selective targeting**: Choose between `--limit` flags or playbook `hosts:` directives
@@ -366,7 +367,7 @@ all:
     aws_secret_access_key: "{{ vault_aws_secret_access_key }}"
     aws_session_token: "{{ vault_aws_session_token | default(omit) }}"
     aws_account_id: "123456789012"
-    
+
     # Enterprise Infrastructure Configuration
     vpc_id: "vpc-0abcd1234efgh5678"
     subnet_ids:
@@ -377,7 +378,7 @@ all:
       molecule_testing: "sg-0abc123def456789"
       web_tier: "sg-0def456ghi789012"
       database_tier: "sg-0ghi789jkl012345"
-    
+
     # Required Tags for New Instances
     required_instance_tags:
       Environment: "molecule-test"
@@ -387,11 +388,11 @@ all:
       Compliance: "test-workload"
       AutoShutdown: "true"
       CreatedBy: "molecule"
-      
+
     # Instance Configuration
     key_pair_name: "molecule-testing-keypair"
     instance_profile: "EC2MoleculeTestingRole"
-    
+
     # Enterprise Networking
     dns_zone: "molecule-test.company.internal"
     proxy_settings:
@@ -414,7 +415,7 @@ all:
           instance_type: t3.small
           ami_id: ami-0c02fb55956c7d316  # Ubuntu 20.04 LTS
           subnet_id: "{{ subnet_ids['us-east-1a'] }}"
-          security_groups: 
+          security_groups:
             - "{{ security_group_ids['molecule_testing'] }}"
             - "{{ security_group_ids['web_tier'] }}"
           instance_tags: "{{ required_instance_tags | combine({'Name': 'molecule-web-test-01', 'Role': 'web'}) }}"
@@ -449,26 +450,26 @@ all:
 ```yaml
 # Example vault file structure (group_vars/all/vault.yml)
 vault_molecule_aws_access_key: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          66386439653762643031313...
+  $ANSIBLE_VAULT;1.1;AES256
+  66386439653762643031313...
 vault_molecule_aws_secret_key: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          38346235396136373...
+  $ANSIBLE_VAULT;1.1;AES256
+  38346235396136373...
 vault_test_db_host: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          64326539653762643...
+  $ANSIBLE_VAULT;1.1;AES256
+  64326539653762643...
 vault_test_db_password: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          39653762643031313...
+  $ANSIBLE_VAULT;1.1;AES256
+  39653762643031313...
 vault_test_api_key: !vault |
-          $ANSIBLE_VAULT;1.1;AES256
-          63031313663843623...
+  $ANSIBLE_VAULT;1.1;AES256
+  63031313663843623...
 ```
 
 This multi-source approach provides:
 
 - **Separation of concerns**: Enterprise infrastructure configuration vs. test instance definitions
-- **Secure credential management**: Use Ansible Vault for sensitive AWS credentials and test secrets  
+- **Secure credential management**: Use Ansible Vault for sensitive AWS credentials and test secrets
 - **Enterprise compliance**: Ensure all test instances use required tags, security groups, and compliance settings
 - **Infrastructure reuse**: Leverage existing enterprise VPCs, subnets, and security configurations for testing
 - **Provider agnostic**: Works with any cloud provider or infrastructure management system
