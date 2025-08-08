@@ -44,11 +44,11 @@ def test_completion_state_info_message_property() -> None:
     """Test CompletionStateInfo message property."""
     # Test with custom message
     state_info = CompletionStateInfo("successful", "info", A.GREEN, message="Custom")
-    assert state_info.message == "Completed: Custom"
+    assert state_info.message == "Executed: Custom"
 
     # Test with default message (from state)
     state_info = CompletionStateInfo("failed", "error", A.RED)
-    assert state_info.message == "Completed: Failed"
+    assert state_info.message == "Executed: Failed"
 
 
 def test_completion_state_info_note_property() -> None:
@@ -69,7 +69,7 @@ def test_completion_state_info_call_with_message() -> None:
     assert custom.log_level == "info"
     assert custom.color == A.GREEN
     assert custom._message == "2 successful, 1 failed"
-    assert custom.message == "Completed: 2 successful, 1 failed"
+    assert custom.message == "Executed: 2 successful, 1 failed"
 
 
 def test_completion_state_info_call_with_note() -> None:
@@ -88,7 +88,7 @@ def test_completion_state_info_call_with_both() -> None:
 
     assert custom._message == "Connection failed"
     assert custom.note == "Check network"
-    assert custom.message == "Completed: Connection failed"
+    assert custom.message == "Executed: Connection failed"
 
 
 def test_completion_state_info_call_returns_self_when_no_args() -> None:
@@ -366,11 +366,11 @@ def test_report_comprehensive_no_color(monkeypatch: pytest.MonkeyPatch) -> None:
 
     expected_output = (
         "\nDETAILS                                                                        \n"
-        "default > create: Completed: Successful\n"
-        "default > converge: Completed: Failed (Task failed)\n"
-        "default > verify: Completed: Missing (Playbook not found)\n"
+        "default > create: Executed: Successful\n"
+        "default > converge: Executed: Failed (Task failed)\n"
+        "default > verify: Executed: Missing (Playbook not found)\n"
         "\n"
-        "docker > destroy: Completed: Skipped\n"
+        "docker > destroy: Executed: Skipped\n"
         "\n"
         "SCENARIO RECAP                                                                 \n"
         "default                   : actions=3  successful=1  disabled=0  skipped=0  missing=1  failed=1\n"
@@ -403,11 +403,11 @@ def test_report_comprehensive_with_color(monkeypatch: pytest.MonkeyPatch) -> Non
     # Expected output with ANSI escape codes using ANSICodes constants
     expected_output = (
         f"\n{A.BOLD}{A.UNDERLINE}DETAILS                                                                        {A.RESET}\n"
-        f"{A.GREEN}default{A.RESET} ➜ {A.YELLOW}create{A.RESET}: {A.GREEN}Completed: Successful{A.RESET}\n"
-        f"{A.GREEN}default{A.RESET} ➜ {A.YELLOW}converge{A.RESET}: {A.RED}Completed: Failed{A.RESET} {A.DIM}(Task failed){A.RESET}\n"
-        f"{A.GREEN}default{A.RESET} ➜ {A.YELLOW}verify{A.RESET}: {A.MAGENTA}Completed: Missing{A.RESET} {A.DIM}(Playbook not found){A.RESET}\n"
+        f"{A.GREEN}default{A.RESET} ➜ {A.YELLOW}create{A.RESET}: {A.GREEN}Executed: Successful{A.RESET}\n"
+        f"{A.GREEN}default{A.RESET} ➜ {A.YELLOW}converge{A.RESET}: {A.RED}Executed: Failed{A.RESET} {A.DIM}(Task failed){A.RESET}\n"
+        f"{A.GREEN}default{A.RESET} ➜ {A.YELLOW}verify{A.RESET}: {A.MAGENTA}Executed: Missing{A.RESET} {A.DIM}(Playbook not found){A.RESET}\n"
         "\n"
-        f"{A.GREEN}docker{A.RESET} ➜ {A.YELLOW}destroy{A.RESET}: {A.CYAN}Completed: Skipped{A.RESET}\n"
+        f"{A.GREEN}docker{A.RESET} ➜ {A.YELLOW}destroy{A.RESET}: {A.CYAN}Executed: Skipped{A.RESET}\n"
         "\n"
         f"{A.BOLD}{A.UNDERLINE}SCENARIO RECAP                                                                 {A.RESET}\n"
         f"{A.GREEN}default                   {A.RESET}: {A.YELLOW}actions=3{A.RESET}  {A.GREEN}successful=1{A.RESET}  disabled=0  skipped=0  {A.MAGENTA}missing=1{A.RESET}  {A.RED}failed=1{A.RESET}\n"

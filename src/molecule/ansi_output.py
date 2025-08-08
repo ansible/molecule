@@ -254,7 +254,7 @@ class AnsiOutput:
         Used by both logging and reporting systems.
 
         Args:
-            message: The plain text completion message (e.g., "Completed: Successful")
+            message: The plain text completion message (e.g., "Executed: Successful")
             color: The ANSI color code (e.g., ANSICodes.GREEN, ANSICodes.RED)
 
         Returns:
@@ -293,7 +293,7 @@ class AnsiOutput:
         Args:
             scenario_name: Name of the scenario (e.g., "default")
             action_name: Name of the action (e.g., "converge", "cleanup")
-            completion_message: The completion message (e.g., "Completed: Successful")
+            completion_message: The completion message (e.g., "Executed: Successful")
             color: The ANSI color code (string) or ANSICodes enum value
             note: Optional note to append
 

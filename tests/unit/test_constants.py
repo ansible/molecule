@@ -129,7 +129,7 @@ def test_markup_map_logging_levels() -> None:
 
 def test_markup_map_execution_mappings() -> None:
     """Test MARKUP_MAP contains execution-related mappings."""
-    assert MARKUP_MAP["exec_starting"] == ANSICodes.CYAN
+    assert MARKUP_MAP["exec_executing"] == ANSICodes.CYAN
     assert MARKUP_MAP["scenario"] == ANSICodes.GREEN
     assert MARKUP_MAP["action"] == ANSICodes.YELLOW
 

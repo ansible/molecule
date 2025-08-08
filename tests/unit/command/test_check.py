@@ -59,7 +59,7 @@ def test_check_execute(  # noqa: D103
 
     expected_record_count = 2
     assert len(caplog.records) == expected_record_count
-    expected_message = "INFO     [default > check] Completed: Successful"
+    expected_message = "INFO     [default > check] Executed: Successful"
     assert caplog.records[1].getMessage() == expected_message
 
     _patched_ansible_check.assert_called_once_with()

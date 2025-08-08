@@ -54,7 +54,7 @@ def test_verify_execute(  # noqa: D103
 
     expected_record_count = 2
     assert len(caplog.records) == expected_record_count
-    expected_message = "INFO     [default > verify] Completed: Successful"
+    expected_message = "INFO     [default > verify] Executed: Successful"
     assert caplog.records[1].getMessage() == expected_message
 
     patched_default_verifier.assert_called_once_with(None)

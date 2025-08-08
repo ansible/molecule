@@ -121,10 +121,10 @@ def test_format_completion_message_with_markup_enabled(monkeypatch: pytest.Monke
     monkeypatch.setenv("FORCE_COLOR", "1")
     ansi_output = AnsiOutput()
 
-    result = ansi_output.format_completion_message("Completed: Successful", A.GREEN)
+    result = ansi_output.format_completion_message("Executed: Successful", A.GREEN)
 
     # Should contain the message
-    assert "Completed: Successful" in result
+    assert "Executed: Successful" in result
     # If markup is enabled, should contain ANSI color codes
     if ansi_output.markup_enabled:
         assert A.GREEN in result
@@ -136,10 +136,10 @@ def test_format_completion_message_with_markup_disabled(monkeypatch: pytest.Monk
     monkeypatch.setenv("NO_COLOR", "1")
     ansi_output = AnsiOutput()
 
-    result = ansi_output.format_completion_message("Completed: Successful", A.GREEN)
+    result = ansi_output.format_completion_message("Executed: Successful", A.GREEN)
 
     # Should be plain text without ANSI codes
-    assert result == "Completed: Successful"
+    assert result == "Executed: Successful"
     assert A.GREEN not in result
     assert A.RESET not in result
 
@@ -179,14 +179,14 @@ def test_format_full_completion_line_basic() -> None:
     result = ansi_output.format_full_completion_line(
         "default",
         "converge",
-        "Completed: Successful",
+        "Executed: Successful",
         "green",
     )
 
     # Should contain all components
     assert "default" in result
     assert "converge" in result
-    assert "Completed: Successful" in result
+    assert "Executed: Successful" in result
 
 
 def test_format_full_completion_line_with_note() -> None:
@@ -196,7 +196,7 @@ def test_format_full_completion_line_with_note() -> None:
     result = ansi_output.format_full_completion_line(
         "default",
         "converge",
-        "Completed: Successful",
+        "Executed: Successful",
         "green",
         "cached",
     )
@@ -205,7 +205,7 @@ def test_format_full_completion_line_with_note() -> None:
     assert "(cached)" in result
     assert "default" in result
     assert "converge" in result
-    assert "Completed: Successful" in result
+    assert "Executed: Successful" in result
 
 
 def test_format_full_completion_line_with_mock_ansi_object() -> None:
@@ -220,23 +220,23 @@ def test_format_full_completion_line_with_mock_ansi_object() -> None:
     result = ansi_output.format_full_completion_line(
         "default",
         "converge",
-        "Completed: Failed",
+        "Executed: Failed",
         mock_color,  # type: ignore[arg-type]
     )
 
     # Should handle enum-like objects with .tag attribute
     assert "default" in result
     assert "converge" in result
-    assert "Completed: Failed" in result
+    assert "Executed: Failed" in result
 
 
 @pytest.mark.parametrize(
     ("scenario", "action", "message", "color"),
     (
-        ("default", "converge", "Completed: Successful", "green"),
-        ("integration", "cleanup", "Completed: Skipped", "yellow"),
-        ("test-scenario", "verify", "Completed: Failed", "red"),
-        ("prod", "destroy", "Completed: Successful", "green"),
+        ("default", "converge", "Executed: Successful", "green"),
+        ("integration", "cleanup", "Executed: Skipped", "yellow"),
+        ("test-scenario", "verify", "Executed: Failed", "red"),
+        ("prod", "destroy", "Executed: Successful", "green"),
     ),
     ids=[
         "default_converge_successful",
