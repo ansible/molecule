@@ -201,7 +201,7 @@ Molecule supports the full spectrum of Ansible inventory sources through direct 
 - **Constructed inventories**: Dynamic grouping and variable assignment based on existing inventory data
 - **Mixed inventory sources**: Combine multiple inventory types within the same testing scenario
 - **Multi-source patterns**: Separate infrastructure provider inventory from molecule-specific configuration inventory
-- **Dynamic data caching**: Use json_cache and file lookups to persist and share data between actions
+- **File-based data sharing**: Use temporary files to persist and share host-specific data between actions
 
 **Native inventory workflow patterns**
 Teams can configure Molecule to use external inventory sources by leveraging the `ansible_args` provisioner option to pass inventory parameters directly to `ansible-playbook`. Targeting can be achieved either through `--limit` flags at the molecule level or through `hosts:` directives at the individual playbook level:
@@ -257,7 +257,7 @@ provisioner:
 - **Inventory validation**: Test inventory plugins, dynamic scripts, and constructed configurations as part of the automation testing process
 - **Enterprise integration**: Use existing CMDB, monitoring, or asset management systems as inventory sources for comprehensive testing
 - **Multi-source flexibility**: Combine infrastructure provider inventory (cloud/hyperscaler) with molecule-specific configuration inventory for separation of concerns
-- **Cross-action data persistence**: Use json_cache and file-based patterns to share dynamic data between create, converge, verify, and destroy actions
+- **Multi-action data sharing**: Use simple file-based patterns to share host-specific data between create, converge, verify, and destroy actions
 - **Multi-environment testing**: Test automation against development, lab, and staging systems from the same inventory source using different targeting strategies
 - **Reduced complexity**: Eliminate the need for complex inventory generation and focus on testing automation logic against realistic inventory structures
 
@@ -479,108 +479,83 @@ This multi-source approach provides:
 - **Reduced maintenance**: Infrastructure team manages enterprise config, testing team manages test instances
 - **Environment flexibility**: Same enterprise configuration works across different testing scenarios and regions
 
-**Cross-action data sharing with json_cache**
-When using native inventory patterns, teams often need to share dynamically generated data between different Molecule actions (create, converge, verify, destroy). The `json_cache` inventory plugin provides a powerful way to persist and share data across the test lifecycle:
+**Multi-scenario/multi-action data sharing**
+When using native inventory patterns, teams often need to share host-specific data between different Molecule actions (create, converge, verify, destroy). This is especially valuable when using `--shared-state`, where the `default` scenario's create action provisions infrastructure and other scenarios need access to resource-specific data captured during that initial provisioning. A simple and effective approach uses temporary files to pass data from one action to subsequent actions:
 
 ```yaml
-# Example: Using json_cache to share created resource information
-# inventory/03-json_cache.yml
-plugin: advanced_host_list
-compose:
-  # Load cached data from previous actions
-  cached_data: "{% raw %}{{ lookup('file', molecule_ephemeral_directory + '/resource_cache.json') | from_json | default({}) }}{% endraw %}"
-
-# create.yml - Store created resource information
+# Example: Sharing infrastructure and host-specific data between actions
+# default/create.yml - Generate shared infrastructure and host-specific data during provisioning
 ---
-- name: Create and cache infrastructure data
-  hosts: localhost
-  gather_facts: false
-  tasks:
-    - name: Create test instances
-      amazon.aws.ec2_instance:
-        # ... instance creation configuration using enterprise infrastructure vars
-        vpc_subnet_id: "{% raw %}{{ subnet_ids['us-east-1a'] }}{% endraw %}"
-        security_groups: "{% raw %}{{ security_group_ids['molecule_testing'] }}{% endraw %}"
-        tags: "{% raw %}{{ required_instance_tags | combine({'Name': inventory_hostname}) }}{% endraw %}"
-      register: created_instances
-      loop: "{% raw %}{{ groups['web_servers'] }}{% endraw %}"
-      loop_control:
-        loop_var: inventory_hostname
-
-    - name: Cache created instance data for other actions
-      ansible.builtin.copy:
-        content: |
-          {% raw %}
-          {
-            "created_instances": {{ created_instances.results | to_nice_json }},
-            "creation_timestamp": "{{ ansible_date_time.iso8601 }}",
-            "vpc_id": "{{ vpc_id }}",
-            "test_endpoints": {
-              {% for host in groups['web_servers'] %}
-              "{{ host }}": "http://{{ hostvars[host]['ansible_host'] }}:8080/health"{% if not loop.last %},{% endif %}
-              {% endfor %}
-            }
-          }
-          {% endraw %}
-        dest: "{% raw %}{{ molecule_ephemeral_directory }}{% endraw %}/resource_cache.json"
-        mode: '0644'
-
-# verify.yml - Use cached data for validation
----
-- name: Verify using cached infrastructure data  
+- name: Store infrastructure and host-specific data for other scenarios
   hosts: localhost
   gather_facts: false
   vars:
-    cached_data: "{% raw %}{{ lookup('file', molecule_ephemeral_directory + '/resource_cache.json') | from_json }}{% endraw %}"
+    execution_vars: "{% raw %}{{ molecule_ephemeral_directory }}{% endraw %}/execution_vars/"
   tasks:
-    - name: Validate all test endpoints are responding
-      ansible.builtin.uri:
-        url: "{% raw %}{{ endpoint }}{% endraw %}"
-        method: GET
-        status_code: 200
-      loop: "{% raw %}{{ cached_data.test_endpoints.values() | list }}{% endraw %}"
-      loop_control:
-        loop_var: endpoint
-
-    - name: Verify instances were created within time limit
-      ansible.builtin.assert:
-        that:
-          - creation_time_diff | int < 300  # 5 minutes
-        fail_msg: "Instance creation took too long"
-      vars:
-        creation_timestamp: "{% raw %}{{ cached_data.creation_timestamp }}{% endraw %}"
-        current_timestamp: "{% raw %}{{ ansible_date_time.iso8601 }}{% endraw %}"
-        creation_time_diff: "{% raw %}{{ (current_timestamp | to_datetime) - (creation_timestamp | to_datetime) }}{% endraw %}"
-
-# destroy.yml - Clean up using cached instance IDs
----
-- name: Destroy instances using cached data
-  hosts: localhost
-  gather_facts: false
-  vars:
-    cached_data: "{% raw %}{{ lookup('file', molecule_ephemeral_directory + '/resource_cache.json') | from_json | default({}) }}{% endraw %}"
-  tasks:
-    - name: Terminate instances using cached instance IDs
-      amazon.aws.ec2_instance:
-        instance_ids: "{% raw %}{{ item.instance_id }}{% endraw %}"
-        state: absent
-      loop: "{% raw %}{{ cached_data.created_instances | default([]) }}{% endraw %}"
-      when: cached_data.created_instances is defined
-      ignore_errors: true
-
-    - name: Clean up cache file
+    - name: Ensure execution vars directory exists
       ansible.builtin.file:
-        path: "{% raw %}{{ molecule_ephemeral_directory }}{% endraw %}/resource_cache.json"
+        path: "{% raw %}{{ execution_vars }}{% endraw %}"
+        state: directory
+        mode: '0755'
+
+    - name: Capture build details
+      ansible.builtin.command: echo "Initializing host {{ item }} at {{ ansible_date_time.iso8601 }}"
+      loop: "{% raw %}{{ groups['molecule'] }}{% endraw %}"
+      register: results
+
+    - name: Write host-specific data files for each molecule host
+      ansible.builtin.copy:
+        dest: "{% raw %}{{ execution_vars }}{% endraw %}host_{{ item.item }}.yml"
+        content: "{% raw %}{{ data | to_yaml }}{% endraw %}"
+        mode: '0644'
+      vars:
+        data:
+          host_specific_value: "{% raw %}{{ item.stdout }}{% endraw %}"
+      loop: "{% raw %}{{ results.results }}{% endraw %}"
+
+# other-scenario/converge.yml - Load host-specific data
+---
+- name: Configure applications with host-specific data
+  hosts: molecule
+  gather_facts: false
+  vars:
+    execution_vars: "{% raw %}{{ molecule_ephemeral_directory }}{% endraw %}/execution_vars/"
+  vars_files:
+    - "{% raw %}{{ execution_vars }}{% endraw %}host_{{ inventory_hostname }}.yml"
+  tasks:
+    - name: Display host-specific data unique to this host
+      ansible.builtin.debug:
+        msg: "Host-specific value: {% raw %}{{ host_specific_value }}{% endraw %}"
+
+# default/destroy.yml - Clean up temp files after instances are destroyed
+---
+- name: Final cleanup of host-specific data
+  hosts: localhost
+  gather_facts: false
+  vars:
+    execution_vars: "{% raw %}{{ molecule_ephemeral_directory }}{% endraw %}/execution_vars/"
+  tasks:
+    - name: Destroying resources
+      ansible.builtin.debug:
+        msg: "Tearing down infrastructure for host: {% raw %}{{ item }}{% endraw %}"
+      loop: "{% raw %}{{ groups['molecule'] }}{% endraw %}"
+
+    - name: Remove execution vars directory
+      ansible.builtin.file:
+        path: "{% raw %}{{ execution_vars }}{% endraw %}"
         state: absent
+        recurse: true
+      ignore_errors: true
 ```
 
-This cross-action data sharing approach provides:
+This multi-action data sharing approach provides:
 
-- **Stateful testing**: Share resource IDs, endpoints, and metadata between actions
-- **Dynamic validation**: Use actual created resource data for verification  
-- **Reliable cleanup**: Ensure proper resource cleanup using cached instance information
-- **Test continuity**: Maintain context across the entire test lifecycle
-- **Debugging support**: Persistent cache files aid in troubleshooting failed tests
+- **Cross-action data persistence**: Enable `create` action on localhost to share captured data with subsequent actions on target hosts
+- **Localhost-to-host data flow**: Demonstrate how localhost operations can provide data for individual host operations
+- **File-based state sharing**: Use ephemeral directory files to bridge the gap between separate ansible-playbook executions
+- **Per-host data isolation**: Each host gets its own data file while sharing the same capture mechanism
+- **Action independence**: Each action can independently access host-specific data from previous actions without complex delegation
+- **Simple cleanup**: Single directory removal cleans up all execution data files efficiently
 
 **Advanced inventory patterns**
 Native inventory support enables sophisticated testing patterns that mirror production deployment workflows:
@@ -681,10 +656,15 @@ molecule test --scenario-name cloud-discovery      # Uses cloud inventory + mole
 molecule test --scenario-name hybrid-infrastructure # Uses multiple provider inventories + test config
 molecule test --scenario-name dynamic-targeting    # Cloud provider discovers, molecule configures
 
-# Cross-action data sharing patterns
-molecule test --scenario-name stateful-testing     # Uses json_cache to share data between actions
-molecule test --scenario-name dynamic-endpoints    # Creates resources, caches endpoints, validates connectivity
-molecule test --scenario-name resource-lifecycle   # Full lifecycle with data persistence across actions
+# Multi-action data sharing patterns
+molecule test --scenario-name host-specific-data   # Uses file-based vars sharing between actions
+molecule test --scenario-name secret-propagation   # Shares secrets from create to converge/verify
+molecule test --scenario-name dynamic-configuration # Generates host configs in create, uses in other actions
+
+# Shared-state with data propagation
+molecule test --all --shared-state                 # Default creates infrastructure, other scenarios use shared data
+molecule test --scenario-name app-deploy --shared-state    # Uses infrastructure data from default scenario
+molecule test --scenario-name integration --shared-state   # Accesses database/LB endpoints from default
 
 # Mixed approach for comprehensive testing
 molecule test --scenario-name isolated-unit        # Isolated resources
