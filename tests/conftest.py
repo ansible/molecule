@@ -167,10 +167,10 @@ def inject_molecule_handler() -> Generator[None, None, None]:
     (scenario > step: message) that users see, which caplog then captures.
 
     This allows tests to assert against realistic output like:
-        assert "[default > idempotence] Completed: Successful" in caplog.text
+        assert "[default > idempotence] Executed: Successful" in caplog.text
 
     Instead of just:
-        assert "Completed: Successful" in caplog.text
+        assert "Executed: Successful" in caplog.text
 
     Yields:
         None: This fixture provides setup/teardown behavior only.

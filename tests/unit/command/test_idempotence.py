@@ -67,7 +67,7 @@ def test_idempotence_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D
 
     expected_record_count = 2
     assert len(caplog.records) == expected_record_count
-    expected_message = "INFO     [default > idempotence] Completed: Successful"
+    expected_message = "INFO     [default > idempotence] Executed: Successful"
     assert caplog.records[1].getMessage() == expected_message
 
     patched_ansible_converge.assert_called_once_with()
