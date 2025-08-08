@@ -34,9 +34,9 @@ from molecule.constants import ANSICodes as A
 if TYPE_CHECKING:
     from typing import TextIO
 
-    from molecule.reporting.definitions import ScenariosResults
     from typing_extensions import Self
 
+    from molecule.reporting.definitions import ScenariosResults
 
 
 def to_bool(a: object) -> bool:
