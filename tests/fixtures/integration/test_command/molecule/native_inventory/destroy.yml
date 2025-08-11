@@ -1,0 +1,13 @@
+---
+- name: Destroy containers
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Remove containers
+      containers.podman.podman_container:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ groups['containers'] | default([]) }}"
+      loop_control:
+        label: "{{ item }}"
+      ignore_errors: true

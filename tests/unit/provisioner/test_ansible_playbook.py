@@ -189,7 +189,10 @@ def test_bake_has_ansible_args(_inventory_directory, _instance):  # type: ignore
     assert _instance._ansible_command == args
 
 
-def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+def test_bake_does_not_have_ansible_args(_inventory_directory, _instance, monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+    # Set strict mode to ensure old behavior
+    monkeypatch.setenv("MOLECULE_ANSIBLE_ARGS_STRICT_MODE", "true")
+
     for action in ["create", "destroy"]:
         _instance._config.ansible_args = ("foo", "bar")
         _instance._config.action = action
@@ -205,6 +208,72 @@ def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):  # ty
         ]
 
         assert _instance._ansible_command == args
+
+
+def test_bake_create_destroy_smart_mode_user_provided(
+    _inventory_directory: str,  # noqa: PT019
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that ansible_args are passed for user-provided create/destroy playbooks in smart mode.
+
+    Args:
+        _inventory_directory: Temporary inventory directory fixture.
+        _instance: AnsiblePlaybook instance fixture.
+        monkeypatch: Pytest monkeypatch fixture for mocking.
+    """
+    # Mock _should_provide_args to simulate user-provided playbook behavior
+    monkeypatch.setattr(_instance, "_should_provide_args", lambda _: True)
+
+    _instance._config.ansible_args = ("foo", "bar")
+    _instance._config.config["provisioner"]["ansible_args"] = ["frob", "nitz"]
+    _instance._config.action = "create"
+    _instance.bake()
+
+    args = [
+        "ansible-playbook",
+        "--inventory",
+        _inventory_directory,
+        "--skip-tags",
+        "molecule-notest,notest",
+        "frob",
+        "nitz",
+        "foo",
+        "bar",
+        "playbook",
+    ]
+
+    assert _instance._ansible_command == args
+
+
+def test_bake_strict_mode_none_action(
+    _inventory_directory: str,  # noqa: PT019
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test that strict mode with None action is conservative (no args).
+
+    Args:
+        _inventory_directory: Temporary inventory directory fixture.
+        _instance: AnsiblePlaybook instance fixture.
+        monkeypatch: Pytest monkeypatch fixture for mocking.
+    """
+    monkeypatch.setenv("MOLECULE_ANSIBLE_ARGS_STRICT_MODE", "true")
+
+    _instance._config.ansible_args = ("foo", "bar")
+    _instance._config.action = None  # type: ignore[assignment]
+    _instance.bake()
+
+    args = [
+        "ansible-playbook",
+        "--inventory",
+        _inventory_directory,
+        "--skip-tags",
+        "molecule-notest,notest",
+        "playbook",
+    ]
+
+    assert _instance._ansible_command == args
 
 
 def test_bake_idem_does_have_skip_tag(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
@@ -293,6 +362,35 @@ def test_add_cli_arg(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201
 
     _instance.add_cli_arg("foo", "bar")
     assert _instance._cli == {"foo": "bar"}
+
+
+def test_should_provide_args_when_no_provisioner(
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test _should_provide_args when self._config.provisioner is None.
+
+    This tests the fallback behavior when no provisioner is configured:
+    - action not in ["create", "destroy"] if action else True
+
+    Args:
+        _instance: AnsiblePlaybook instance fixture.
+        monkeypatch: Pytest monkeypatch fixture for mocking.
+    """
+    # Mock the provisioner to be None/falsy
+    monkeypatch.setattr(_instance._config, "provisioner", None)
+
+    # Test action is None -> should return True
+    assert _instance._should_provide_args(None) is True
+
+    # Test action is "converge" (not create/destroy) -> should return True
+    assert _instance._should_provide_args("converge") is True
+
+    # Test action is "create" -> should return False
+    assert _instance._should_provide_args("create") is False
+
+    # Test action is "destroy" -> should return False
+    assert _instance._should_provide_args("destroy") is False
 
 
 def test_add_env_arg(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
