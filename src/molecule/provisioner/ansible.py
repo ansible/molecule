@@ -32,8 +32,10 @@ from typing import TYPE_CHECKING
 from ansible_compat.ports import cached_property
 
 from molecule import logger, util
-from molecule.exceptions import MoleculeError
+from molecule.constants import RC_SETUP_ERROR
+from molecule.exceptions import ImmediateExit, MoleculeError
 from molecule.provisioner import ansible_playbook, ansible_playbooks, base
+from molecule.reporting import CompletionState
 
 
 if TYPE_CHECKING:
@@ -572,7 +574,7 @@ class Ansible(base.Base):
         return self._config.config["provisioner"]["inventory"]["links"]
 
     @property
-    def inventory(self) -> dict[str, str]:
+    def inventory(self) -> dict[str, Any]:
         """Create an inventory structure and returns a dict.
 
         ``` yaml
@@ -604,6 +606,7 @@ class Ansible(base.Base):
                     "molecule_file": "{{ lookup('env', 'MOLECULE_FILE') }}",
                     "molecule_ephemeral_directory": "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
                     "molecule_scenario_directory": "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
+                    "molecule_shared_inventory_dir": "{{ lookup('env', 'MOLECULE_SHARED_INVENTORY_DIR') }}",
                     "molecule_yml": "{{ lookup('file', molecule_file) | from_yaml }}",
                     "molecule_instance_config": "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                     "molecule_no_log": "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
@@ -767,7 +770,11 @@ class Ansible(base.Base):
         elif self.playbooks.verify:
             playbooks = [self.playbooks.verify]
         if not playbooks:
-            self._log.warning("Skipping, verify playbook not configured.")
+            message = "Missing playbook"
+            note = f"Remove from {self._config.subcommand}_sequence to suppress"
+            self._config.scenario.results.add_completion(
+                CompletionState.missing(message=message, note=note),
+            )
             return
         for playbook in playbooks:
             # Get ansible playbooks for `verify` instead of `provision`
@@ -898,11 +905,11 @@ class Ansible(base.Base):
         """Verify the inventory is valid and returns None.
 
         Raises:
-            MoleculeError: if inventory is missing.
+            ImmediateExit: if inventory is missing.
         """
         if not self.inventory:
             msg = "Instances missing from the 'platform' section of molecule.yml."
-            raise MoleculeError(msg)
+            raise ImmediateExit(msg, code=RC_SETUP_ERROR)
 
     def _get_config_template(self) -> str:
         """Return a config template string.

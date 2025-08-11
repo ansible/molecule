@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING
 
 from molecule.click_cfg import click_command_ex, common_options
 from molecule.command import base
+from molecule.reporting import CompletionState
 
 
 if TYPE_CHECKING:
@@ -47,6 +48,7 @@ class Create(base.Base):
         if self._config.state.created:
             msg = "Skipping, instances already created."
             self._log.warning(msg)
+            self._config.scenario.results.add_completion(CompletionState.skipped(note=msg))
             return
 
         if self._config.provisioner:
@@ -66,6 +68,7 @@ def create(ctx: click.Context) -> None:  # pragma: no cover
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
+        "command_borders": ctx.params["command_borders"],
         "driver_name": ctx.params["driver_name"],
         "report": ctx.params["report"],
         "shared_inventory": ctx.params["shared_inventory"],

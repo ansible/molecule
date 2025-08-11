@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING
 
 from molecule.click_cfg import click_command_ex, common_options
 from molecule.command import base
+from molecule.reporting import CompletionState
 
 
 if TYPE_CHECKING:
@@ -99,8 +100,11 @@ class Prepare(base.Base):
 
         if self._config.provisioner:
             if not self._config.provisioner.playbooks.prepare:
-                msg = "Skipping, prepare playbook not configured."
-                self._log.warning(msg)
+                message = "Missing playbook"
+                note = f"Remove from {self._config.subcommand}_sequence to suppress"
+                self._config.scenario.results.add_completion(
+                    CompletionState.missing(message=message, note=note),
+                )
                 return
 
             self._config.provisioner.prepare()
@@ -118,6 +122,7 @@ def prepare(ctx: click.Context) -> None:  # pragma: no cover
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
+        "command_borders": ctx.params["command_borders"],
         "force": ctx.params["force"],
         "report": ctx.params["report"],
         "shared_inventory": ctx.params["shared_inventory"],

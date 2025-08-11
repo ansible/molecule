@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from molecule.dependency import base
+from molecule.reporting import CompletionState
 
 
 if TYPE_CHECKING:
@@ -112,6 +113,7 @@ class Shell(base.Base):
         if not self.enabled:
             msg = "Skipping, dependency is disabled."
             self._log.warning(msg)
+            self._config.scenario.results.add_completion(CompletionState.disabled)
             return
         super().execute()
 

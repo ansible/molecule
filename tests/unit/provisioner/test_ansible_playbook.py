@@ -30,6 +30,7 @@ from molecule.provisioner import ansible_playbook
 
 @pytest.fixture
 def _instance(config_instance: config.Config) -> ansible_playbook.AnsiblePlaybook:
+    config_instance.scenario.results.add_action_result("ansible_playbook")
     _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance)
 
     return _instance  # noqa: RET504

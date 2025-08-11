@@ -51,17 +51,15 @@ def test_syntax_execute(  # noqa: D103
     patched_config_validate: Mock,
     config_instance: config.Config,
 ) -> None:
-    # Configure caplog to capture the correct logger
-    with caplog.at_level(logging.INFO, logger="molecule.molecule.logger"):
-        s = syntax.Syntax(config_instance)
+    config_instance.action = "syntax"
+    s = syntax.Syntax(config_instance)
+
+    with caplog.at_level(logging.INFO):
         s.execute()
 
-        # Check that logs contain scenario and step information in extras
-        assert len(caplog.records) >= 1
-        record = caplog.records[0]
-        assert hasattr(record, "molecule_scenario")
-        assert record.molecule_scenario == "default"
-        assert hasattr(record, "molecule_step")
-        assert record.molecule_step == "syntax"
+    expected_record_count = 2
+    assert len(caplog.records) == expected_record_count
+    expected_message = "INFO     [default > syntax] Executed: Successful"
+    assert caplog.records[1].getMessage() == expected_message
 
     _patched_ansible_syntax.assert_called_once_with()

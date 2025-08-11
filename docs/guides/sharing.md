@@ -47,3 +47,36 @@ provisioner:
     converge: ../resources/playbooks/converge.yml
     prepare: ../resources/playbooks/prepare.yml
 ```
+
+## Shared Inventory
+
+When using the `--shared-inventory` option, Molecule can share inventory data between scenarios.
+This is useful when testing multiple scenarios that need to interact with the same set of instances.
+
+The `molecule_shared_inventory_dir` variable is available in playbooks to access the shared inventory location:
+
+```yaml
+- name: Build shared inventory with INI template
+  ansible.builtin.copy:
+    content: "{% raw %}{{ inventory_ini }}{% endraw %}"
+    dest: "{% raw %}{{ molecule_shared_inventory_dir }}{% endraw %}/shared_inventory.ini"
+    mode: "0600"
+  when: molecule_shared_inventory_dir != ""
+  vars:
+    inventory_ini: |
+      [molecule]
+      {% raw %}{% for platform in molecule_yml.platforms %}
+      {{ platform.name }}{% for key, value in platform.get('host_vars', {}).items() %} {{ key }}={{ value }}{% endfor %}
+      {% endfor %}{% endraw %}
+
+      [molecule:vars]
+      ansible_user=root
+      ansible_connection=docker
+   delegate_to: localhost
+
+- name: Force inventory refresh
+  ansible.builtin.meta: refresh_inventory
+```
+
+The variable contains the path to the shared inventory directory when `--shared-inventory` is enabled,
+or an empty string when running in normal mode or with `--parallel`.

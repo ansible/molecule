@@ -48,6 +48,7 @@ def _instance(  # type: ignore[no-untyped-def]  # noqa: ANN202
     patched_config_validate,
     config_instance: config.Config,
 ):
+    config_instance.scenario.results.add_action_result("dependency")
     return shell.Shell(config_instance)
 
 
@@ -119,7 +120,7 @@ def test_shell_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     _instance,  # noqa: PT019
 ):
     # Configure caplog to capture the correct logger with scenario context
-    with caplog.at_level(logging.INFO, logger="molecule.molecule.logger"):
+    with caplog.at_level(logging.INFO):
         _instance._sh_command = "patched-command"
         _instance.execute()
 
@@ -127,6 +128,7 @@ def test_shell_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
             "patched-command",
             debug=False,
             check=True,
+            command_borders=False,
         )
 
         # Check for scenario-aware log records instead of text

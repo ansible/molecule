@@ -28,7 +28,8 @@ from typing import TYPE_CHECKING, Any
 import pytest
 
 from molecule import config, util
-from molecule.exceptions import MoleculeError
+from molecule.constants import RC_SETUP_ERROR
+from molecule.exceptions import ImmediateExit, MoleculeError
 from molecule.provisioner import ansible, ansible_playbooks
 from tests.unit.conftest import os_split  # pylint:disable=C0411
 
@@ -106,6 +107,7 @@ def fixture_instance(
         _provisioner_section_data: A dictionary containing the provisioner section data.
         config_instance: An instance of a Molecule config.
     """
+    config_instance.scenario.results.add_action_result("verify")
     return ansible.Ansible(config_instance)
 
 
@@ -745,13 +747,10 @@ def test_verify_inventory_raises_when_missing_hosts(  # type: ignore[no-untyped-
     instance,
 ):
     instance._config.config["platforms"] = []
-    with pytest.raises(MoleculeError) as e:
+    with pytest.raises(ImmediateExit) as e:
         instance._verify_inventory()
-
-    assert e.value.code == 1
-
-    msg = "Instances missing from the 'platform' section of molecule.yml."
-    assert msg in caplog.text
+    assert "Instances missing from the 'platform' section of molecule.yml." in str(e.value)
+    assert e.value.code == RC_SETUP_ERROR
 
 
 def test_vivify(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
@@ -793,3 +792,21 @@ def test_absolute_path_for_raises_with_missing_key(instance):  # type: ignore[no
 
     with pytest.raises(KeyError):
         instance._absolute_path_for(env, "invalid")
+
+
+def test_inventory_contains_molecule_shared_inventory_dir_variable(instance: Ansible) -> None:
+    """Test that molecule_shared_inventory_dir is included in inventory vars.
+
+    Args:
+        instance: Ansible provisioner instance fixture.
+    """
+    inventory = instance.inventory
+
+    # Check that all groups have the molecule_shared_inventory_dir variable
+    assert "all" in inventory
+    assert "vars" in inventory["all"]
+    assert "molecule_shared_inventory_dir" in inventory["all"]["vars"]
+    assert (
+        inventory["all"]["vars"]["molecule_shared_inventory_dir"]
+        == "{{ lookup('env', 'MOLECULE_SHARED_INVENTORY_DIR') }}"
+    )

@@ -1,6 +1,3 @@
-Qalthos
-Sbarnea
-Sorin
 antsibull
 anyconfig
 argnames
@@ -29,6 +26,7 @@ dind
 docsite
 dotglob
 emptydisk
+endfor
 endgroup
 endraw
 enoent
@@ -54,12 +52,14 @@ jinaj
 jodewey
 jpvanhal
 jsonfile
+keepends
 keypair
 kubevirt
 libcloud
 libera
 libpod
 lifecycle
+lineterm
 lockf
 makereport
 maxsplit
@@ -86,6 +86,7 @@ prerun
 printenv
 profisioner
 pycolors
+Qalthos
 quux
 reget
 reraised
@@ -94,6 +95,7 @@ rolebinding
 rrequirements
 runcmd
 saez
+Sbarnea
 schemafile
 seccomp
 selectattr
@@ -102,6 +104,7 @@ sessionfinish
 setenv
 signoff
 skipsdist
+Sorin
 ssbarnea
 stestr
 stopall
@@ -115,6 +118,7 @@ testrole
 testvar
 timedout
 tmpfs
+tofile
 topdown
 tryfirst
 ulimits

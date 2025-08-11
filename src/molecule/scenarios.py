@@ -27,12 +27,12 @@ from typing import TYPE_CHECKING
 
 from molecule import util
 from molecule.exceptions import MoleculeError
+from molecule.reporting import ScenariosResults
 
 
 if TYPE_CHECKING:
     from molecule.config import Config
     from molecule.scenario import Scenario
-    from molecule.types import ScenariosResults
 
 
 LOG = logging.getLogger(__name__)
@@ -55,7 +55,7 @@ class Scenarios:
         self._configs = configs
         self._scenario_names = [] if scenario_names is None else scenario_names
         self._scenarios = self.all
-        self.results: list[ScenariosResults] = []
+        self.results: ScenariosResults = ScenariosResults()
 
     def __iter__(self) -> Scenarios:
         """Make object iterable.

@@ -30,7 +30,7 @@ import pytest
 
 from molecule import config, util
 from molecule.command import base
-from molecule.exceptions import ScenarioFailureError
+from molecule.exceptions import ImmediateExit, ScenarioFailureError
 
 
 if TYPE_CHECKING:
@@ -258,7 +258,7 @@ def test_execute_cmdline_scenarios_missing(
     args: MoleculeArgs = {}
     command_args: CommandArgs = {"destroy": "always", "subcommand": "test"}
 
-    with pytest.raises(SystemExit):
+    with pytest.raises(ImmediateExit):
         base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
     error_msg = "'molecule/nonexistent/molecule.yml' glob failed.  Exiting."
@@ -325,8 +325,7 @@ def test_execute_cmdline_scenarios_exit_destroy(  # noqa: PLR0913
 ) -> None:
     """Ensure execute_cmdline_scenarios handles errors correctly when 'destroy' is set.
 
-    - destroy subcommand is only run when destroy == "always"
-    - scenario is only pruned when destroy == "always"
+    - When ScenarioFailureError occurs, ImmediateExit should be raised immediately
 
     Args:
         patched_execute_scenario: Mocked execute_scenario function.
@@ -341,15 +340,11 @@ def test_execute_cmdline_scenarios_exit_destroy(  # noqa: PLR0913
     command_args: CommandArgs = {"destroy": destroy, "subcommand": "test"}
     patched_execute_scenario.side_effect = ScenarioFailureError()
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
-    assert patched_execute_scenario.called
+    # Should raise ImmediateExit when ScenarioFailureError occurs
+    with pytest.raises(ImmediateExit):
+        base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
-    call_count = len(subcommands)
-    assert patched_execute_subcommand.call_count == call_count
-    for i, subcommand in enumerate(subcommands):
-        assert patched_execute_subcommand.call_args_list[i][0][1] == subcommand
-    assert patched_prune.called is (destroy == "always")
-    assert patched_sysexit.called
+    assert patched_execute_scenario.called
 
 
 def test_execute_subcommand(config_instance: config.Config) -> None:
@@ -548,3 +543,30 @@ def test_command_completion(shell: str) -> None:
     else:
         assert result.returncode == 0
         assert "Found config file" not in result.stdout
+
+
+def test_execute_cmdline_scenarios_handles_scenario_failure_error_when_all_scenarios(
+    mocker: MockerFixture,
+) -> None:
+    """Test that ScenarioFailureError is handled gracefully when scenario_names is None.
+
+    This tests the fix for the issue where running 'molecule test' with missing
+    platforms would cause an unhandled exception instead of a clean exit.
+
+    Args:
+        mocker: Pytest mocker fixture.
+    """
+    # Mock get_configs to raise ScenarioFailureError
+    mock_get_configs = mocker.patch("molecule.command.base.get_configs")
+    mock_get_configs.side_effect = ScenarioFailureError("Test error", 1)
+
+    scenario_names = None  # This triggers the "run all scenarios" path
+    args: MoleculeArgs = {}
+    command_args: CommandArgs = {"subcommand": "test"}
+
+    # This should raise ScenarioFailureError directly (no conversion in this path)
+    with pytest.raises(ScenarioFailureError) as exc_info:
+        base.execute_cmdline_scenarios(scenario_names, args, command_args)
+
+    # Verify that ScenarioFailureError was raised with the correct error code
+    assert exc_info.value.code == 1

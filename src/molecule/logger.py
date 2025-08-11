@@ -32,6 +32,8 @@ from ansible_compat.ports import cache
 
 from molecule.ansi_output import AnsiOutput
 from molecule.console import console, original_stderr
+from molecule.constants import ANSICodes as A
+from molecule.reporting import CompletionState
 from molecule.text import underscore
 
 
@@ -166,17 +168,21 @@ def configure() -> None:
     # libraries.
     logger = logging.getLogger()
 
-    # Use our custom ANSI color handler instead of RichHandler
-    handler = MoleculeConsoleHandler(
-        show_time=False,
-        show_path=False,
-    )
+    # Avoid adding duplicate MoleculeConsoleHandlers
+    if not any(isinstance(h, MoleculeConsoleHandler) for h in logger.handlers):
+        # Use our custom ANSI color handler instead of RichHandler
+        handler = MoleculeConsoleHandler(
+            show_time=False,
+            show_path=False,
+        )
 
-    # Set a minimal formatter since we handle styling in the handler
-    formatter = logging.Formatter("%(message)s")
-    handler.setFormatter(formatter)
+        # Set a minimal formatter since we handle styling in the handler
+        formatter = logging.Formatter("%(message)s")
+        handler.setFormatter(formatter)
 
-    logger.addHandler(handler)
+        # Insert at index 0 for priority - ensures our handler processes first
+        logger.handlers.insert(0, handler)
+
     logger.propagate = False
     logger.setLevel(logging.INFO)
 
@@ -391,13 +397,35 @@ def section_logger(func: Callable[P, R]) -> Callable[P, R]:
 
     @wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-        self = cast("HasConfig", args[0])
-        step_name = underscore(self.__class__.__name__)
-        scenario_log = get_scenario_logger(__name__, self._config.scenario.name, step_name)
-        scenario_log.info("[exec_phase]Starting[/]")
-        rt = func(*args, **kwargs)
-        scenario_log.info("[exec_phase]Completed[/]")
-        return rt
+        config_instance = args[0]
+        if not hasattr(config_instance, "_config"):
+            return func(*args, **kwargs)
+
+        step_name = config_instance._config.action  # noqa: SLF001
+        scenario_log = get_scenario_logger(
+            __name__,
+            config_instance._config.scenario.name,  # noqa: SLF001
+            step_name,
+        )
+
+        scenario_log.info("[exec_executing]Executing[/]")
+
+        try:
+            rt = func(*args, **kwargs)
+
+            state_info = config_instance._config.scenario.results.last_action_summary  # noqa: SLF001
+            ansi_output = AnsiOutput()
+            log = ansi_output.format_completion_message(state_info.message, state_info.color)
+            if state_info.note:
+                log += ansi_output.format_completion_note(state_info.note)
+            getattr(scenario_log, state_info.log_level)(log)
+
+        except Exception:
+            failed_state = CompletionState.failed
+            scenario_log.error(f"{failed_state.color}{failed_state.message}{A.RESET}")
+            raise
+        else:
+            return rt
 
     return wrapper
 

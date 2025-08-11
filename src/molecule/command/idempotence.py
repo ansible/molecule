@@ -61,10 +61,7 @@ class Idempotence(base.Base):
             output = self._config.provisioner.converge()
 
             idempotent = self._is_idempotent(output)
-            if idempotent:
-                msg = "Idempotence completed successfully."
-                self._log.info(msg)
-            else:
+            if not idempotent:
                 details = "\n".join(self._non_idempotent_tasks(output))
                 msg = f"Idempotence test failed because of the following tasks:\n{details}"
                 raise ScenarioFailureError(message=msg)
@@ -130,6 +127,7 @@ def idempotence(ctx: click.Context) -> None:  # pragma: no cover
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
+        "command_borders": ctx.params["command_borders"],
         "report": ctx.params["report"],
         "shared_inventory": ctx.params["shared_inventory"],
         "shared_state": ctx.params["shared_state"],

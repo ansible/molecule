@@ -63,7 +63,8 @@ def _with_scenario(  # noqa: PLR0913
     monkeypatch.chdir(scenario_directory)
 
     yield
-    if request.node.rep_call.failed:
+    rep_call = getattr(request.node, "rep_call", None)
+    if rep_call and rep_call.failed:
         return
     if scenario_name:
         msg = f"CLEANUP: Destroying instances for {scenario_name}"
