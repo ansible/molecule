@@ -4,7 +4,7 @@ ansi2html==1.9.2          # via molecule (pyproject.toml)
 ansible-builder==3.1.0    # via ansible-navigator
 ansible-compat==25.6.0    # via ansible-lint, molecule (pyproject.toml)
 ansible-lint==25.7.0      # via ansible-navigator, molecule (pyproject.toml)
-ansible-navigator==25.5.0 # via molecule (pyproject.toml)
+ansible-navigator==25.5.0  # via molecule (pyproject.toml)
 ansible-runner==2.4.1     # via ansible-navigator
 astroid==3.3.11           # via pylint
 attrs==25.3.0             # via jsonschema, referencing
@@ -21,9 +21,9 @@ certifi==2025.8.3         # via requests
 cffi==1.17.1              # via cairocffi, cryptography, onigurumacffi
 cfgv==3.4.0               # via pre-commit
 chardet==5.2.0            # via tox
-charset-normalizer==3.4.3 # via requests
+charset-normalizer==3.4.3  # via requests
 click==8.2.1              # via black, click-help-colors, mkdocs, pydoclint, molecule (pyproject.toml)
-click-help-colors==0.9.4  # via molecule (pyproject.toml)
+click-help-colors==0.9.4   # via molecule (pyproject.toml)
 colorama==0.4.6           # via griffe, mkdocs-material, tox
 coverage==7.10.2          # via molecule (pyproject.toml)
 cryptography==45.0.6      # via ansible-core
