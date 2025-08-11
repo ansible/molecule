@@ -35,7 +35,7 @@ from molecule import logger, util
 from molecule.constants import RC_SETUP_ERROR
 from molecule.exceptions import ImmediateExit, MoleculeError
 from molecule.provisioner import ansible_playbook, ansible_playbooks, base
-from molecule.reporting import CompletionState
+from molecule.reporting.definitions import CompletionState
 
 
 if TYPE_CHECKING:

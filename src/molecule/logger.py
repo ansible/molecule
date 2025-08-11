@@ -33,7 +33,7 @@ from ansible_compat.ports import cache
 from molecule.ansi_output import AnsiOutput
 from molecule.console import console, original_stderr
 from molecule.constants import ANSICodes as A
-from molecule.reporting import CompletionState
+from molecule.reporting.definitions import CompletionState
 from molecule.text import underscore
 
 
