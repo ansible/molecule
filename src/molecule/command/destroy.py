@@ -21,23 +21,16 @@
 
 from __future__ import annotations
 
-import logging
-
 from typing import TYPE_CHECKING
 
-import click
-
-from molecule import util
-from molecule.api import drivers
+from molecule.click_cfg import click_command_ex, common_options
 from molecule.command import base
-from molecule.config import DEFAULT_DRIVER, MOLECULE_PARALLEL
 
 
 if TYPE_CHECKING:
+    import click
+
     from molecule.types import CommandArgs, MoleculeArgs
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Destroy(base.Base):
@@ -51,7 +44,7 @@ class Destroy(base.Base):
         """
         if self._config.command_args.get("destroy") == "never":
             msg = "Skipping, '--destroy=never' requested."
-            LOG.warning(msg)
+            self._log.warning(msg)
             return
 
         if self._config.provisioner:
@@ -59,62 +52,30 @@ class Destroy(base.Base):
         self._config.state.reset()
 
 
-@base.click_command_ex()
-@click.pass_context
-@base.click_command_options
-@click.option(
-    "--driver-name",
-    "-d",
-    type=click.Choice([str(s) for s in drivers()]),
-    help=f"Name of driver to use. ({DEFAULT_DRIVER})",
-)
-@click.option(
-    "--parallel/--no-parallel",
-    default=MOLECULE_PARALLEL,
-    help="Enable or disable parallel mode. Default is disabled.",
-)
-def destroy(  # noqa: PLR0913
-    ctx: click.Context,
-    /,
-    scenario_name: list[str] | None,
-    exclude: list[str],
-    driver_name: str,
-    __all: bool,  # noqa: FBT001
-    *,
-    parallel: bool,
-    report: bool,
-    shared_inventory: bool,
-    shared_state: bool,
-) -> None:  # pragma: no cover
+@click_command_ex()
+@common_options("driver_name_with_choices", "parallel")
+def destroy(ctx: click.Context) -> None:  # pragma: no cover
     """Use the provisioner to destroy the instances.
 
-    \f
     Args:
         ctx: Click context object holding commandline arguments.
-        scenario_name: Name of the scenario to target.
-        exclude: Name of the scenarios to avoid targeting.
-        driver_name: Molecule driver to use.
-        __all: Whether molecule should target scenario_name or all scenarios.
-        parallel: Whether the scenario(s) should be run in parallel mode.
-        report: Whether to show an after-run summary report.
-        shared_inventory: Whether the inventory should be shared between scenarios.
-        shared_state: Whether the (some) state should be shared between scenarios.
-    """  # noqa: D301
+    """
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
-        "parallel": parallel,
+        "command_borders": ctx.params["command_borders"],
+        "driver_name": ctx.params["driver_name"],
+        "report": ctx.params["report"],
+        "shared_inventory": ctx.params["shared_inventory"],
+        "shared_state": ctx.params["shared_state"],
         "subcommand": subcommand,
-        "driver_name": driver_name,
-        "report": report,
-        "shared_inventory": shared_inventory,
-        "shared_state": shared_state,
     }
+
+    __all = ctx.params["all"]
+    exclude = ctx.params["exclude"]
+    scenario_name = ctx.params["scenario_name"]
 
     if __all:
         scenario_name = None
-
-    if parallel:
-        util.validate_parallel_cmd_args(command_args)
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args, excludes=exclude)

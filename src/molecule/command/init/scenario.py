@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 import json
-import logging
 import os
 import sys
 
@@ -31,14 +30,19 @@ from typing import TYPE_CHECKING
 
 import click
 
-from molecule import api
-from molecule.command import base as command_base
+from molecule import api, logger, util
+from molecule.click_cfg import click_command_ex
 from molecule.command.init import base
 from molecule.config import (
     DEFAULT_DRIVER,
     MOLECULE_EMBEDDED_DATA_DIR,
     Config,
     molecule_directory,
+)
+from molecule.constants import (
+    MOLECULE_COLLECTION_ROOT,
+    MOLECULE_DEFAULT_SCENARIO_NAME,
+    MOLECULE_ROOT,
 )
 from molecule.exceptions import MoleculeError
 
@@ -62,9 +66,6 @@ if TYPE_CHECKING:
         provisioner_name: str
         scenario_name: str
         subcommand: str
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Scenario(base.Base):
@@ -99,6 +100,9 @@ class Scenario(base.Base):
         """
         self._config = config
         self._command_args = command_args
+        # For init scenario, use the scenario name from command args
+        scenario_name = command_args.get("scenario_name", "unknown")
+        self._log = logger.get_scenario_logger(__name__, scenario_name, "init")
 
     def execute(self, action_args: list[str] | None = None) -> None:  # noqa: ARG002
         """Execute the actions necessary to perform a `molecule init scenario`.
@@ -112,13 +116,28 @@ class Scenario(base.Base):
         scenario_name = self._command_args["scenario_name"]
 
         msg = f"Initializing new scenario {scenario_name}..."
-        LOG.info(msg)
-        molecule_path = Path(molecule_directory(Path.cwd()))
+        self._log.info(msg)
+
+        # Use collection-aware molecule directory
+        collection_dir, _ = util.get_collection_metadata()
+
+        if collection_dir:
+            # We're in collection mode, use extensions/molecule
+            molecule_path = collection_dir / MOLECULE_COLLECTION_ROOT
+            relative_path = f"{MOLECULE_COLLECTION_ROOT}/{scenario_name}"
+        else:
+            # Standard mode, use molecule/
+            molecule_path = Path(molecule_directory(Path.cwd()))
+            relative_path = f"{MOLECULE_ROOT}/{scenario_name}"
+
         scenario_directory = molecule_path / scenario_name
 
         if scenario_directory.is_dir():
-            msg = f"The directory molecule/{scenario_name} exists. Cannot create new scenario."
+            msg = f"The directory {relative_path} exists. Cannot create new scenario."
             raise MoleculeError(msg)
+
+        # Ensure parent directory exists
+        molecule_path.mkdir(parents=True, exist_ok=True)
 
         extra_vars = json.dumps(self._command_args)
         cmd = [
@@ -135,10 +154,15 @@ class Scenario(base.Base):
         # it to use colors.
         env["ANSIBLE_FORCE_COLOR"] = "1"
         env["ANSIBLE_PYTHON_INTERPRETER"] = sys.executable
-        self._config.app.run_command(cmd, env=env, check=True)
+        self._config.app.run_command(
+            cmd,
+            env=env,
+            check=True,
+            command_borders=self._config.command_borders,
+        )
 
         msg = f"Initialized scenario in {scenario_directory} successfully."
-        LOG.info(msg)
+        self._log.info(msg)
 
 
 def _role_exists(
@@ -158,7 +182,7 @@ def _role_exists(
     return value
 
 
-@command_base.click_command_ex()
+@click_command_ex()
 @click.pass_context
 @click.option(
     "--dependency-name",
@@ -181,7 +205,7 @@ def _role_exists(
 )
 @click.argument(
     "scenario-name",
-    default=command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
+    default=MOLECULE_DEFAULT_SCENARIO_NAME,
     required=False,
 )
 def scenario(
@@ -195,7 +219,6 @@ def scenario(
 
     If name is not specified the 'default' value will be used.
 
-    \f
     Args:
         ctx: Click context object holding commandline arguments.
         dependency_name: Name of dependency to initialize.
@@ -205,7 +228,7 @@ def scenario(
 
     Raises:
         click.Abort: If the specified driver is not available.
-    """  # noqa: D301
+    """
     config = Config("", args={})
     available_drivers = list(api.drivers(config).keys())
     if driver_name not in available_drivers:

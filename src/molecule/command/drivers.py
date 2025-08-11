@@ -21,42 +21,31 @@
 
 from __future__ import annotations
 
-import logging
-
-import click
+from typing import TYPE_CHECKING
 
 from molecule import api
-from molecule.command import base
+from molecule.click_cfg import click_command_ex, options
 from molecule.console import console
 
 
-LOG = logging.getLogger(__name__)
+if TYPE_CHECKING:
+    import click
 
 
-@base.click_command_ex()
-@click.pass_context
-@click.option(
-    "--format",
-    "-f",
-    type=click.Choice(["simple", "plain"]),
-    default="simple",
-    help="Change output format. (simple)",
-)
-def drivers(
-    ctx: click.Context,  # noqa: ARG001
-    format: str,  # noqa: A002
-) -> None:  # pragma: no cover
+@click_command_ex()
+@options(["format_simple"])
+def drivers(ctx: click.Context) -> None:  # pragma: no cover
     """List drivers.
 
-    \f
     Args:
         ctx: Click context object holding commandline arguments.
-        format: Output format to use.
-    """  # noqa: D301
+    """
+    output_format = ctx.params["format"]
     drivers = []  # pylint: disable=redefined-outer-name
+
     for driver in api.drivers().values():
         description = str(driver)
-        if format == "plain":
+        if output_format == "plain":
             description = f"{driver!s:16s}[logging.level.notset] {driver.title} Version {driver.version} from {driver.module} python module.)[/logging.level.notset]"
         drivers.append([driver, description])
         console.print(description)

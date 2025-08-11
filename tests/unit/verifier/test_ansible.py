@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import os
 
 import pytest
@@ -32,6 +33,7 @@ def _instance(  # type: ignore[no-untyped-def]  # noqa: ANN202
     patched_config_validate,
     config_instance: config.Config,
 ):
+    config_instance.scenario.results.add_action_result("verify")
     return ansible.Ansible(config_instance)
 
 
@@ -96,16 +98,16 @@ def test_verifier_ansible_options_property_handles_cli_args(_instance):  # type:
     assert x == _instance.options
 
 
-def test_ansible_execute(caplog, _patched_ansible_verify, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
-    _instance.execute()
+def test_ansible_execute(caplog, _patched_ansible_verify, _instance, monkeypatch):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+    monkeypatch.setattr(
+        "molecule.provisioner.ansible_playbooks.AnsiblePlaybooks.verify",
+        "verify.yml",
+    )
+
+    with caplog.at_level(logging.INFO):
+        _instance.execute()
 
     _patched_ansible_verify.assert_called_once_with(None)
-
-    msg = "Running Ansible Verifier"
-    assert msg in caplog.text
-
-    msg = "Verifier completed successfully."
-    assert msg in caplog.text
 
 
 def test_execute_does_not_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
@@ -114,7 +116,9 @@ def test_execute_does_not_execute(  # type: ignore[no-untyped-def]  # noqa: ANN2
     _instance,  # noqa: PT019
 ):
     _instance._config.config["verifier"]["enabled"] = False
-    _instance.execute()
+
+    with caplog.at_level(logging.INFO):
+        _instance.execute()
 
     assert not patched_ansible_converge.called
 

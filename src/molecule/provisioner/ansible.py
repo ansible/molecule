@@ -23,7 +23,6 @@ from __future__ import annotations
 
 import collections
 import copy
-import logging
 import os
 import shutil
 
@@ -32,9 +31,11 @@ from typing import TYPE_CHECKING
 
 from ansible_compat.ports import cached_property
 
-from molecule import util
-from molecule.exceptions import MoleculeError
+from molecule import logger, util
+from molecule.constants import RC_SETUP_ERROR
+from molecule.exceptions import ImmediateExit, MoleculeError
 from molecule.provisioner import ansible_playbook, ansible_playbooks, base
+from molecule.reporting import CompletionState
 
 
 if TYPE_CHECKING:
@@ -43,9 +44,6 @@ if TYPE_CHECKING:
     from molecule.types import Options
 
     Vivify = collections.defaultdict[str, Any | "Vivify"]
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Ansible(base.Base):
@@ -411,6 +409,17 @@ class Ansible(base.Base):
     """
 
     @property
+    def _log(self) -> logger.ScenarioLoggerAdapter:
+        """Get a fresh scenario logger with current context.
+
+        Returns:
+            A scenario logger adapter with current scenario and step context.
+        """
+        # Get step context from the current action being executed
+        step_name = getattr(self._config, "action", "provisioner")
+        return logger.get_scenario_logger(__name__, self._config.scenario.name, step_name)
+
+    @property
     def default_config_options(self) -> dict[str, Any]:
         """Provide default options to construct ansible.cfg.
 
@@ -565,7 +574,7 @@ class Ansible(base.Base):
         return self._config.config["provisioner"]["inventory"]["links"]
 
     @property
-    def inventory(self) -> dict[str, str]:
+    def inventory(self) -> dict[str, Any]:
         """Create an inventory structure and returns a dict.
 
         ``` yaml
@@ -597,6 +606,7 @@ class Ansible(base.Base):
                     "molecule_file": "{{ lookup('env', 'MOLECULE_FILE') }}",
                     "molecule_ephemeral_directory": "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
                     "molecule_scenario_directory": "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
+                    "molecule_shared_inventory_dir": "{{ lookup('env', 'MOLECULE_SHARED_INVENTORY_DIR') }}",
                     "molecule_yml": "{{ lookup('file', molecule_file) | from_yaml }}",
                     "molecule_instance_config": "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                     "molecule_no_log": "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
@@ -760,7 +770,11 @@ class Ansible(base.Base):
         elif self.playbooks.verify:
             playbooks = [self.playbooks.verify]
         if not playbooks:
-            LOG.warning("Skipping, verify playbook not configured.")
+            message = "Missing playbook"
+            note = f"Remove from {self._config.subcommand}_sequence to suppress"
+            self._config.scenario.results.add_completion(
+                CompletionState.missing(message=message, note=note),
+            )
             return
         for playbook in playbooks:
             # Get ansible playbooks for `verify` instead of `provision`
@@ -854,13 +868,13 @@ class Ansible(base.Base):
             if os.path.exists(target):  # noqa: PTH110
                 if os.path.realpath(target) == os.path.realpath(source):
                     msg = f"Required symlink {target} to {source} exist, skip creation"
-                    LOG.debug(msg)
+                    self._log.debug(msg)
                     continue
                 msg = f"Required symlink {target} exist with another source"
-                LOG.debug(msg)
+                self._log.debug(msg)
                 os.remove(target)  # noqa: PTH107
             msg = f"Inventory {source} linked to {target}"
-            LOG.debug(msg)
+            self._log.debug(msg)
             os.symlink(source, target)
 
     def _get_ansible_playbook(
@@ -891,11 +905,11 @@ class Ansible(base.Base):
         """Verify the inventory is valid and returns None.
 
         Raises:
-            MoleculeError: if inventory is missing.
+            ImmediateExit: if inventory is missing.
         """
         if not self.inventory:
             msg = "Instances missing from the 'platform' section of molecule.yml."
-            raise MoleculeError(msg)
+            raise ImmediateExit(msg, code=RC_SETUP_ERROR)
 
     def _get_config_template(self) -> str:
         """Return a config template string.

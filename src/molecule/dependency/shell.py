@@ -21,20 +21,16 @@
 
 from __future__ import annotations
 
-import logging
-
 from typing import TYPE_CHECKING
 
 from molecule.dependency import base
+from molecule.reporting import CompletionState
 
 
 if TYPE_CHECKING:
     from collections.abc import MutableMapping
 
     from molecule.config import Config
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Shell(base.Base):
@@ -116,7 +112,8 @@ class Shell(base.Base):
         """
         if not self.enabled:
             msg = "Skipping, dependency is disabled."
-            LOG.warning(msg)
+            self._log.warning(msg)
+            self._config.scenario.results.add_completion(CompletionState.disabled)
             return
         super().execute()
 

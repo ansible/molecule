@@ -22,23 +22,20 @@
 from __future__ import annotations
 
 import abc
-import logging
 import os
 import time
 
 from subprocess import CalledProcessError
 from typing import TYPE_CHECKING
 
-from molecule import util
+from molecule import logger, util
+from molecule.exceptions import ImmediateExit
 
 
 if TYPE_CHECKING:
     from collections.abc import MutableMapping
 
     from molecule.config import Config
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Base(abc.ABC):
@@ -63,35 +60,60 @@ class Base(abc.ABC):
         self._config = config
         self._sh_command: str | list[str] = []
 
+    @property
+    def _log(self) -> logger.ScenarioLoggerAdapter:
+        """Get a fresh scenario logger with current context.
+
+        Returns:
+            A scenario logger adapter with current scenario and step context.
+        """
+        # Get step context from the current action being executed
+        step_name = getattr(self._config, "action", "dependency")
+        return logger.get_scenario_logger(__name__, self._config.scenario.name, step_name)
+
     def execute_with_retries(self) -> None:
-        """Run dependency downloads with retry and timed back-off."""
+        """Run dependency downloads with retry and timed back-off.
+
+        Raises:
+            ImmediateExit: When dependency installation fails after retries.
+        """
         try:
-            self._config.app.run_command(self._sh_command, debug=self._config.debug, check=True)
+            self._config.app.run_command(
+                self._sh_command,
+                debug=self._config.debug,
+                check=True,
+                command_borders=self._config.command_borders,
+            )
             msg = "Dependency completed successfully."
-            LOG.info(msg)
+            self._log.info(msg)
             return  # noqa: TRY300
         except CalledProcessError:
             pass
 
         for counter in range(1, (self.RETRY + 1)):
             msg = f"Retrying dependency ... {counter:d}/{self.RETRY:d} time(s)"
-            LOG.warning(msg)
+            self._log.warning(msg)
 
             msg = f"Sleeping for {self.SLEEP:d} seconds before retrying ..."
-            LOG.warning(msg)
+            self._log.warning(msg)
             time.sleep(self.SLEEP)
             self.SLEEP += self.BACKOFF
 
             try:
-                self._config.app.run_command(self._sh_command, debug=self._config.debug, check=True)
+                self._config.app.run_command(
+                    self._sh_command,
+                    debug=self._config.debug,
+                    check=True,
+                    command_borders=self._config.command_borders,
+                )
                 msg = "Dependency completed successfully."
-                LOG.info(msg)
+                self._log.info(msg)
                 return  # noqa: TRY300
             except CalledProcessError as _exception:
                 exception = _exception
 
-        LOG.error(str(exception))
-        util.sysexit(exception.returncode)
+        self._log.error(str(exception))
+        raise ImmediateExit(str(exception), code=exception.returncode)
 
     @abc.abstractmethod
     def execute(

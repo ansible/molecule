@@ -21,22 +21,19 @@
 
 from __future__ import annotations
 
-import logging
 import os
 
 from typing import TYPE_CHECKING, cast
 
-from molecule import util
+from molecule import logger, util
 from molecule.api import Verifier
+from molecule.reporting import CompletionState
 
 
 if TYPE_CHECKING:
     from collections.abc import MutableMapping
 
     from molecule.verifier.base import Schema
-
-
-log = logging.getLogger(__name__)
 
 
 class Ansible(Verifier):
@@ -68,6 +65,18 @@ class Ansible(Verifier):
             FOO: bar
     ```
     """
+
+    @property
+    def _log(self) -> logger.ScenarioLoggerAdapter:
+        """Get a fresh scenario logger with current context.
+
+        Returns:
+            A scenario logger adapter with current scenario and step context.
+        """
+        # Get step context from the current action being executed
+        step_name = getattr(self._config, "action", "verify")
+        scenario_name = self._config.scenario.name if self._config else "unknown"
+        return logger.get_scenario_logger(__name__, scenario_name, step_name)
 
     @property
     def name(self) -> str:
@@ -108,17 +117,21 @@ class Ansible(Verifier):
         """
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
-            log.warning(msg)
+            self._log.warning(msg)
+            self._config.scenario.results.add_completion(CompletionState.disabled)
             return
 
-        msg = "Running Ansible Verifier"
-        log.info(msg)
-
         if self._config.provisioner:
-            self._config.provisioner.verify(action_args)
+            # Check if verify playbook exists before calling provisioner
+            if not self._config.provisioner.playbooks.verify:
+                note = f"Remove from {self._config.subcommand}_sequence to suppress"
+                message = "Missing playbook"
+                self._config.scenario.results.add_completion(
+                    CompletionState.missing(message=message, note=note),
+                )
+                return
 
-            msg = "Verifier completed successfully."
-            log.info(msg)
+            self._config.provisioner.verify(action_args)
 
     def schema(self) -> Schema:
         """Return validation schema.

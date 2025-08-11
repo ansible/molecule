@@ -21,13 +21,12 @@
 
 from __future__ import annotations
 
-import logging
 import os
 
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from molecule import util
+from molecule import logger, util
 
 
 if TYPE_CHECKING:
@@ -46,9 +45,6 @@ if TYPE_CHECKING:
     ]
 
 
-LOG = logging.getLogger(__name__)
-
-
 class AnsiblePlaybooks:
     """A class to act as a module to namespace playbook properties."""
 
@@ -59,6 +55,17 @@ class AnsiblePlaybooks:
             config: An instance of a Molecule config.
         """
         self._config = config
+
+    @property
+    def _log(self) -> logger.ScenarioLoggerAdapter:
+        """Get a fresh scenario logger with current context.
+
+        Returns:
+            A scenario logger adapter with current scenario and step context.
+        """
+        # Get step context from the current action being executed
+        step_name = getattr(self._config, "action", "provisioner")
+        return logger.get_scenario_logger(__name__, self._config.scenario.name, step_name)
 
     @property
     def cleanup(self) -> str | None:
@@ -151,8 +158,8 @@ class AnsiblePlaybooks:
         if driver_dict:
             try:
                 playbook = driver_dict[section]
-            except Exception as exc:
-                LOG.exception(exc)  # noqa: TRY401
+            except KeyError as exc:
+                self._log.exception(exc)
         if self._config.provisioner and playbook is not None:
             playbook = self._config.provisioner.abs_path(playbook)
             if playbook:
@@ -214,7 +221,7 @@ class AnsiblePlaybooks:
         if basename in pb_rename_map:
             fb_playbook = play_path.parent / pb_rename_map[basename]
             if fb_playbook.is_file():
-                LOG.warning(
+                self._log.warning(
                     "%s was deprecated, rename it to %s",
                     fb_playbook.name,
                     basename,

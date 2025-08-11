@@ -22,14 +22,15 @@
 from __future__ import annotations
 
 import glob
-import logging
 import os
 
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
-from molecule import util
+from molecule import logger, util
 from molecule.api import Verifier
+from molecule.exceptions import ImmediateExit
+from molecule.reporting import CompletionState
 
 
 if TYPE_CHECKING:
@@ -37,9 +38,6 @@ if TYPE_CHECKING:
 
     from molecule.config import Config
     from molecule.verifier.base import Schema
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Testinfra(Verifier):
@@ -109,6 +107,18 @@ class Testinfra(Verifier):
         super().__init__(config)
         self._testinfra_command: list[str] = []
         self._tests = []  # type: ignore[var-annotated]
+
+    @property
+    def _log(self) -> logger.ScenarioLoggerAdapter:
+        """Get a fresh scenario logger with current context.
+
+        Returns:
+            A scenario logger adapter with current scenario and step context.
+        """
+        # Get step context from the current action being executed
+        step_name = getattr(self._config, "action", "verify")
+        scenario_name = self._config.scenario.name if self._config else "unknown"
+        return logger.get_scenario_logger(__name__, scenario_name, step_name)
 
     @property
     def name(self) -> str:
@@ -203,10 +213,14 @@ class Testinfra(Verifier):
 
         Args:
             action_args: list of arguments to be passed.
+
+        Raises:
+            ImmediateExit: When verifier tests fail.
         """
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
-            LOG.warning(msg)
+            self._log.warning(msg)
+            self._config.scenario.results.add_completion(CompletionState.disabled)
             return
 
         if self._config:
@@ -215,25 +229,27 @@ class Testinfra(Verifier):
             self._tests = []
         if not len(self._tests) > 0:
             msg = "Skipping, no tests found."
-            LOG.warning(msg)
+            self._log.warning(msg)
             return
 
         self.bake()
 
         msg = f"Executing Testinfra tests found in {self.directory}/..."
-        LOG.info(msg)
+        self._log.info(msg)
 
         result = self._config.app.run_command(
             self._testinfra_command,
             env=self.env,
             debug=self._config.debug,
             cwd=Path(self._config.scenario.directory),
+            command_borders=self._config.command_borders,
         )
         if result.returncode == 0:
             msg = "Verifier completed successfully."
-            LOG.info(msg)
+            self._log.info(msg)
         else:
-            util.sysexit(result.returncode)
+            msg = "Verifier tests failed"
+            raise ImmediateExit(msg, code=result.returncode)
 
     def _get_tests(self, action_args: list[str] | None = None) -> list[str]:
         """Walk the verifier's directory for tests.

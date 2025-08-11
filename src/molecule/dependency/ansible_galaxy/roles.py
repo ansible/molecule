@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import logging
-
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
@@ -13,9 +11,6 @@ from molecule.dependency.ansible_galaxy.base import AnsibleGalaxyBase
 
 if TYPE_CHECKING:
     from collections.abc import MutableMapping
-
-
-LOG = logging.getLogger(__name__)
 
 
 class Roles(AnsibleGalaxyBase):

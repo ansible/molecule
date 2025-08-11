@@ -19,22 +19,24 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import logging
 import os
 
 from typing import TYPE_CHECKING
 
 import pytest
 
-from molecule import config, util
+from molecule import util
 from molecule.command import side_effect
 
 
 if TYPE_CHECKING:
     from typing import Literal
-    from unittest.mock import MagicMock, Mock
+    from unittest.mock import Mock
 
     from pytest_mock import MockerFixture
 
+    from molecule import config
     from molecule.types import ProvisionerData
 
 
@@ -43,22 +45,14 @@ def _command_provisioner_section_with_side_effect_data() -> dict[
     Literal["provisioner"],
     ProvisionerData,
 ]:
-    return {
-        "provisioner": {
-            "name": "ansible",
-            "playbooks": {"side_effect": "side_effect.yml"},
-        },
-    }
+    return {"provisioner": {"name": "ansible", "playbooks": {"side_effect": "side_effect.yml"}}}
 
 
 @pytest.fixture
-def _patched_ansible_side_effect(mocker: MockerFixture) -> MagicMock:
+def _patched_ansible_side_effect(mocker: MockerFixture) -> Mock:
     return mocker.patch("molecule.provisioner.ansible.Ansible.side_effect")
 
 
-# NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
-# config.Config._validate from executing.  Thus preventing odd side-effects
-# throughout patched.assert_called unit tests.
 @pytest.mark.parametrize(
     "config_instance",
     ["_command_provisioner_section_with_side_effect_data"],  # noqa: PT007
@@ -74,11 +68,16 @@ def test_side_effect_execute(  # noqa: D103
     pb = os.path.join(config_instance.scenario.directory, "side_effect.yml")  # noqa: PTH118
     util.write_file(pb, "")
 
+    config_instance.action = "side_effect"
     se = side_effect.SideEffect(config_instance)
-    se.execute()
 
-    assert "default" in caplog.text
-    assert "side_effect" in caplog.text
+    with caplog.at_level(logging.INFO):
+        se.execute()
+
+    expected_record_count = 2
+    assert len(caplog.records) == expected_record_count
+    expected_message = "INFO     [default > side_effect] Executed: Successful"
+    assert caplog.records[1].getMessage() == expected_message
 
     _patched_ansible_side_effect.assert_called_once_with(None)
 
@@ -88,10 +87,16 @@ def test_side_effect_execute_skips_when_playbook_not_configured(  # noqa: D103
     _patched_ansible_side_effect: Mock,  # noqa: PT019
     config_instance: config.Config,
 ) -> None:
-    se = side_effect.SideEffect(config_instance)
-    se.execute()
+    with caplog.at_level(logging.INFO):
+        se = side_effect.SideEffect(config_instance)
+        se.execute()
 
-    msg = "Skipping, side effect playbook not configured."
-    assert msg in caplog.text
+    completion_records = [r for r in caplog.records if "Executed:" in r.getMessage()]
+    assert len(completion_records) >= 1, "Should have completion message"
+
+    record = completion_records[0]
+    assert "Missing playbook" in record.getMessage()
+    assert hasattr(record, "molecule_scenario")
+    assert record.molecule_scenario == "default"
 
     assert not _patched_ansible_side_effect.called

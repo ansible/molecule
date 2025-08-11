@@ -23,7 +23,6 @@ from __future__ import annotations
 
 import abc
 import copy
-import logging
 import os
 
 from pathlib import Path
@@ -31,15 +30,13 @@ from typing import TYPE_CHECKING
 
 from molecule import util
 from molecule.dependency import base
+from molecule.reporting import CompletionState
 
 
 if TYPE_CHECKING:
     from collections.abc import MutableMapping
 
     from molecule.config import Config
-
-
-LOG = logging.getLogger(__name__)
 
 
 class AnsibleGalaxyBase(base.Base):
@@ -159,14 +156,20 @@ class AnsibleGalaxyBase(base.Base):
             action_args: Arguments for this dependency. Unused.
         """
         if not self.enabled:
-            msg = "Skipping, dependency is disabled."
-            LOG.warning(msg)
+            self._config.scenario.results.add_completion(CompletionState.disabled)
             return
         super().execute()
 
         if not self._has_requirements_file():
-            msg = "Skipping, missing the requirements file."
-            LOG.warning(msg)
+            class_name = self.__class__.__name__
+            requirements_file = Path(self.requirements_file).name
+            message = f"Missing {class_name.lower()} requirements file: {requirements_file}"
+            # keep this since dependency is looped for roles and collections
+            self._log.warning(message)
+            note = f"Remove from {self._config.subcommand}_sequence to suppress"
+            self._config.scenario.results.add_completion(
+                CompletionState.missing(message=message, note=note),
+            )
             return
 
         if not self._sh_command:

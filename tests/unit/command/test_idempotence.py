@@ -19,6 +19,8 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import logging
+
 from typing import TYPE_CHECKING
 
 import pytest
@@ -57,17 +59,20 @@ def test_idempotence_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D
     _patched_is_idempotent: Mock,  # noqa: PT019
     _instance,  # noqa: PT019
 ):
-    _instance.execute()
+    _instance._config.action = "idempotence"
+    i = idempotence.Idempotence(_instance._config)
 
-    assert "default" in caplog.text
-    assert "idempotence" in caplog.text
+    with caplog.at_level(logging.INFO):
+        i.execute()
+
+    expected_record_count = 2
+    assert len(caplog.records) == expected_record_count
+    expected_message = "INFO     [default > idempotence] Executed: Successful"
+    assert caplog.records[1].getMessage() == expected_message
 
     patched_ansible_converge.assert_called_once_with()
 
     _patched_is_idempotent.assert_called_once_with("patched-ansible-converge-stdout")
-
-    msg = "Idempotence completed successfully."
-    assert msg in caplog.text
 
 
 def test_execute_raises_when_not_converged(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103

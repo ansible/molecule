@@ -13,6 +13,13 @@ community.molecule/plugins/filter/molecule_core.py
     DOC201: Function `get_docker_networks` does not have a return section in docstring
     DOC201: Method `FilterModule.filters` does not have a return section in docstring
 --------------------
+src/molecule/compatibility.py
+    DOC101: Method `StrEnum._generate_next_value_`: Docstring contains fewer arguments than in function signature.
+    DOC106: Method `StrEnum._generate_next_value_`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
+    DOC107: Method `StrEnum._generate_next_value_`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
+    DOC103: Method `StrEnum._generate_next_value_`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [count: , last_values: , name: , start: ].
+    DOC201: Method `StrEnum._generate_next_value_` does not have a return section in docstring
+--------------------
 tests/conftest.py
     DOC101: Function `app`: Docstring contains fewer arguments than in function signature.
     DOC103: Function `app`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [name: str].
@@ -70,26 +77,6 @@ tests/fixtures/integration/test_command/scenarios/verifier/molecule/testinfra-pr
     DOC107: Function `test_ansible_hostname`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Function `test_ansible_hostname`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [host: ].
 --------------------
-tests/integration/test_command.py
-    DOC601: Class `ParamDefault`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `ParamDefault`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [argnames: tuple[str, str], argvalues: tuple[tuple[str, str]], ids: str, indirect: tuple[str, str]]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC101: Function `test_command`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `test_command`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC101: Function `test_command_idempotence`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `test_command_idempotence`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC101: Function `test_command_list_with_format_plain`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `test_command_list_with_format_plain`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC101: Function `test_with_missing_platform_name`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `test_with_missing_platform_name`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC101: Function `test_role_name_check_one`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `test_role_name_check_one`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC101: Function `test_podman`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `test_podman`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC101: Function `test_docker`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `test_docker`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
-    DOC101: Function `test_smoke`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `test_smoke`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [app: App].
---------------------
 tests/unit/command/init/test_scenario.py
     DOC201: Function `fixture_command_args` does not have a return section in docstring
     DOC201: Function `fixture_instance` does not have a return section in docstring
@@ -99,6 +86,12 @@ tests/unit/conftest.py
 --------------------
 tests/unit/provisioner/test_ansible.py
     DOC201: Function `fixture_instance` does not have a return section in docstring
+--------------------
+tests/unit/test_compatibility.py
+    DOC601: Class `CompatEnum`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+    DOC603: Class `CompatEnum`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [BAR: , BAZ_QUX: , FOO: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+    DOC601: Class `AutoEnum`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+    DOC603: Class `AutoEnum`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [BLUE: , GREEN: , RED: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
 --------------------
 tests/unit/test_logger.py
     DOC101: Function `_patched_logger_env`: Docstring contains fewer arguments than in function signature.

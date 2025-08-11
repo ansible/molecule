@@ -53,6 +53,7 @@ def _verifier_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
 # throughout patched.assert_called unit tests.
 @pytest.fixture
 def _instance(patched_config_validate, config_instance: Config):  # type: ignore[no-untyped-def]  # noqa: ANN202
+    config_instance.scenario.results.add_action_result("verify")
     return testinfra.Testinfra(config_instance)
 
 

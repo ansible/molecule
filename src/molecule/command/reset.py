@@ -21,45 +21,32 @@
 
 from __future__ import annotations
 
-import logging
-
 from typing import TYPE_CHECKING
 
-import click
-
 from molecule.api import drivers
+from molecule.click_cfg import click_command_ex, options
 from molecule.command import base
 
 
 if TYPE_CHECKING:
-    from molecule.types import CommandArgs, MoleculeArgs
+    import click
+
+    from molecule.types import CommandArgs
 
 
-LOG = logging.getLogger(__name__)
-
-
-@base.click_command_ex()
-@click.pass_context
-@click.option(
-    "--scenario-name",
-    "-s",
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
-)
-def reset(
-    ctx: click.Context,
-    scenario_name: str,
-) -> None:  # pragma: no cover
+@click_command_ex()
+@options(["scenario_name_single_with_default"])
+def reset(ctx: click.Context) -> None:  # pragma: no cover
     """Reset molecule temporary folders.
 
-    \f
     Args:
         ctx: Click context object holding commandline arguments.
-        scenario_name: Name of the scenario to target.
-    """  # noqa: D301
-    args: MoleculeArgs = ctx.obj.get("args")
+    """
+    args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {"subcommand": subcommand}
+
+    scenario_name = ctx.params["scenario_name"]
 
     base.execute_cmdline_scenarios([scenario_name], args, command_args)
     for driver in drivers().values():

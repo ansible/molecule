@@ -35,9 +35,10 @@ import molecule
 from molecule import command, logger
 from molecule.api import drivers
 from molecule.app import get_app
-from molecule.command.base import click_group_ex
+from molecule.click_cfg import click_group_ex
 from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY
 from molecule.console import console
+from molecule.constants import MOLECULE_COLLECTION_ROOT
 from molecule.util import do_report, lookup_config_file
 
 
@@ -121,7 +122,8 @@ def print_version(
         " and deep merge each scenario's "
         "molecule.yml on top. By default Molecule is looking for "
         f"'{LOCAL_CONFIG_SEARCH}' "
-        "in current VCS repository and if not found it will look "
+        "in current VCS repository, in collections at "
+        f"'{MOLECULE_COLLECTION_ROOT}/config.yml', and if not found it will look "
         f"in user home. ({LOCAL_CONFIG})."
     ),
 )
@@ -137,6 +139,7 @@ def print_version(
     callback=print_version,
     expose_value=False,
     is_eager=True,
+    help="Show version information and exit.",
 )
 @click.pass_context
 def main(
@@ -153,14 +156,13 @@ def main(
 
         eval "$(_MOLECULE_COMPLETE=SHELL_source molecule)"
 
-    \f
     Args:
         ctx: Click context object.
         debug: Debug option value.
         verbose: Verbose option value.
         base_config: Base config option value.
         env_file: Environment variable file option value.
-    """  # noqa: D301
+    """
     ctx.obj = {}
     ctx.obj["args"] = {}
     ctx.obj["args"]["debug"] = debug

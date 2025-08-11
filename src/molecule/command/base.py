@@ -27,39 +27,39 @@ import contextlib
 import copy
 import importlib
 import logging
-import os
 import shutil
 import subprocess
 
 from typing import TYPE_CHECKING, Any
 
-import click
 import wcmatch.pathlib
 import wcmatch.wcmatch
 
-from click_help_colors import HelpColorsCommand, HelpColorsGroup
 from wcmatch import glob
 
 from molecule import config, logger, text, util
-from molecule.console import console, should_do_markup
-from molecule.exceptions import MoleculeError, ScenarioFailureError
+from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME
+from molecule.exceptions import ImmediateExit, MoleculeError, ScenarioFailureError
+from molecule.reporting import ScenarioResults, report
 from molecule.scenarios import Scenarios
-from molecule.util import safe_dump
 
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
-    from typing import NoReturn
-
     from molecule.scenario import Scenario
-    from molecule.types import CommandArgs, MoleculeArgs, ScenariosResults
+    from molecule.types import CommandArgs, MoleculeArgs
 
-    ClickCommand = Callable[[Callable[..., None]], click.Command]
-    ClickGroup = Callable[[Callable[..., None]], click.Group]
 
-LOG = logging.getLogger(__name__)
-MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
-MOLECULE_DEFAULT_SCENARIO_NAME = "default"
+def _log(scenario_name: str, step: str, message: str, level: str = "info") -> None:
+    """Create scenario logger on-demand and log message.
+
+    Args:
+        scenario_name: Name of the scenario for context.
+        step: Step name for context (e.g., 'discovery', 'prerun', 'reset').
+        message: Log message (pre-formatted, no placeholders).
+        level: Log level ('info', 'warning', 'error', 'debug').
+    """
+    scenario_log = logger.get_scenario_logger(__name__, scenario_name, step)
+    getattr(scenario_log, level)(message)
 
 
 class Base(abc.ABC):
@@ -72,13 +72,24 @@ class Base(abc.ABC):
             c: An instance of a Molecule config.
         """
         self._config = c
+        self._config.scenario.results.add_action_result(self._config.action or "unknown")
         self._setup()
 
     def __init_subclass__(cls) -> None:
         """Decorate execute from all subclasses."""
         super().__init_subclass__()
         for wrapper in logger.get_section_loggers():
-            cls.execute = wrapper(cls.execute)  # type: ignore[method-assign]
+            cls.execute = wrapper(cls.execute)  # type: ignore[method-assign,assignment]
+
+    @property
+    def _log(self) -> logger.ScenarioLoggerAdapter:
+        """Get a scenario logger with command-specific step context.
+
+        Returns:
+            A scenario logger adapter with current scenario and step context.
+        """
+        step_name = self.__class__.__name__.lower()
+        return logger.get_scenario_logger(__name__, self._config.scenario.name, step_name)
 
     @abc.abstractmethod
     def execute(
@@ -120,15 +131,20 @@ def execute_cmdline_scenarios(
         command_args: dict of command arguments, including the target
         ansible_args: Optional tuple of arguments to pass to the `ansible-playbook` command
         excludes: Name of scenarios to not run.
+
+    Raises:
+        ImmediateExit: When scenario configuration fails.
     """
     if excludes is None:
         excludes = []
+
+    effective_base_glob = util.get_effective_molecule_glob()
 
     configs: list[config.Config] = []
     if scenario_names is None:
         configs = [
             config
-            for config in get_configs(args, command_args, ansible_args, MOLECULE_GLOB)
+            for config in get_configs(args, command_args, ansible_args)
             if config.scenario.name not in excludes
         ]
     else:
@@ -136,17 +152,19 @@ def execute_cmdline_scenarios(
             # filter out excludes
             scenario_names = [name for name in scenario_names if name not in excludes]
             for scenario_name in scenario_names:
-                glob_str = MOLECULE_GLOB.replace("*", scenario_name)
+                glob_str = effective_base_glob.replace("*", scenario_name)
                 configs.extend(get_configs(args, command_args, ansible_args, glob_str))
         except ScenarioFailureError as exc:
-            util.sysexit(code=exc.code)
+            msg = "Scenario configuration failed"
+            raise ImmediateExit(msg, code=exc.code) from exc
 
-    default_glob = MOLECULE_GLOB.replace("*", MOLECULE_DEFAULT_SCENARIO_NAME)
+    default_glob = effective_base_glob.replace("*", MOLECULE_DEFAULT_SCENARIO_NAME)
     default_config = None
     try:
         default_config = get_configs(args, command_args, ansible_args, default_glob)[0]
     except MoleculeError:
-        LOG.info("default scenario not found, disabling shared state.")
+        # Use a generic logger for this since it's not tied to a specific scenario
+        logging.getLogger(__name__).info("default scenario not found, disabling shared state.")
 
     scenarios = _generate_scenarios(scenario_names, configs)
 
@@ -154,10 +172,11 @@ def execute_cmdline_scenarios(
         _run_scenarios(scenarios, command_args, default_config)
 
     except ScenarioFailureError as exc:
-        util.sysexit(code=exc.code)
+        msg = "Scenario execution failed"
+        raise ImmediateExit(msg, code=exc.code) from exc
     finally:
         if command_args.get("report"):
-            console.print(generate_report(scenarios.results))
+            report(scenarios.results)
 
 
 def _generate_scenarios(
@@ -181,10 +200,11 @@ def _generate_scenarios(
     if scenario_names is not None:
         for scenario_name in scenario_names:
             if scenario_name != "*" and scenarios:
-                LOG.info(
-                    "%s scenario test matrix: %s",
+                # Use generic "discovery" step since this is scenario discovery phase
+                _log(
                     scenario_name,
-                    ", ".join(scenarios.sequence(scenario_name)),
+                    "discovery",
+                    f"scenario test matrix: {', '.join(scenarios.sequence(scenario_name))}",
                 )
 
     return scenarios
@@ -213,19 +233,27 @@ def _run_scenarios(
     for scenario in scenarios.all:
         if scenario.config.config["prerun"]:
             role_name_check = scenario.config.config["role_name_check"]
-            LOG.info("Performing prerun with role_name_check=%s...", role_name_check)
+            _log(
+                scenario.config.scenario.name,
+                "prerun",
+                f"Performing prerun with role_name_check={role_name_check}...",
+            )
             scenario.config.runtime.prepare_environment(
                 install_local=True,
                 role_name_check=role_name_check,
             )
 
         if command_args.get("subcommand") == "reset":
-            LOG.info("Removing %s", scenario.ephemeral_directory)
+            _log(
+                scenario.config.scenario.name,
+                "reset",
+                f"Removing {scenario.ephemeral_directory}",
+            )
             shutil.rmtree(scenario.ephemeral_directory)
             return
         try:
             execute_scenario(scenario)
-            scenarios.results.append({"name": scenario.name, "results": scenario.results})
+            scenarios.results.append(scenario.results)
         except ScenarioFailureError:
             # if the command has a 'destroy' arg, like test does,
             # handle that behavior here.
@@ -234,15 +262,21 @@ def _run_scenarios(
                     f"An error occurred during the {scenario.config.subcommand} sequence action: "
                     f"'{scenario.config.action}'. Cleaning up."
                 )
-                LOG.warning(msg)
+                step_name = getattr(scenario.config, "action", "cleanup")
+                _log(
+                    scenario.config.scenario.name,
+                    step_name,
+                    msg,
+                    level="warning",
+                )
                 execute_subcommand(scenario.config, "cleanup")
                 destroy_results = execute_subcommand_default(default_config, "destroy")
                 if destroy_results is not None:
-                    scenarios.results.append({"name": scenario.name, "results": scenario.results})
+                    scenarios.results.append(scenario.results)
                     scenarios.results.append(destroy_results)
                 else:
                     execute_subcommand(scenario.config, "destroy")
-                    scenarios.results.append({"name": scenario.name, "results": scenario.results})
+                    scenarios.results.append(scenario.results)
 
                 # always prune ephemeral dir if destroying on failure
                 scenario.prune()
@@ -259,7 +293,7 @@ def _run_scenarios(
 def execute_subcommand_default(
     default_config: config.Config | None,
     subcommand: str,
-) -> ScenariosResults | None:
+) -> ScenarioResults | None:
     """Execute subcommand as in execute_subcommand, but do it from the default scenario if one exists.
 
     Args:
@@ -276,11 +310,16 @@ def execute_subcommand_default(
     default = default_config.scenario
     if subcommand in default.sequence:
         execute_subcommand(default_config, subcommand)
-        results: ScenariosResults = {"name": default.name, "results": copy.copy(default.results)}
+        results = copy.deepcopy(default.results)
         # clear results for later reuse
-        default.results = []
+        default.results = ScenarioResults(name=default.name, actions=[])
         return results
-    LOG.warning("%s not found in default scenario, falling back to current scenario")
+    _log(
+        default.name,
+        subcommand,
+        f"{subcommand} not found in default scenario, falling back to current scenario",
+        level="warning",
+    )
     return None
 
 
@@ -306,7 +345,6 @@ def execute_subcommand(
     # particularly the setting of ansible options in create/destroy,
     # and is also used for reporting in execute_cmdline_scenarios
     current_config.action = subcommand
-
     return command(current_config).execute(args)
 
 
@@ -368,7 +406,7 @@ def get_configs(
     args: MoleculeArgs,
     command_args: CommandArgs,
     ansible_args: tuple[str, ...] = (),
-    glob_str: str = MOLECULE_GLOB,
+    glob_str: str | None = None,
 ) -> list[config.Config]:
     """Glob the current directory for Molecule config files.
 
@@ -379,10 +417,14 @@ def get_configs(
         command_args: A dict of options passed to the subcommand from the CLI.
         ansible_args: An optional tuple of arguments provided to the `ansible-playbook` command.
         glob_str: A string representing the glob used to find Molecule config files.
+                 If None, uses util.get_effective_molecule_glob().
 
     Returns:
         A list of Config objects.
     """
+    if glob_str is None:
+        glob_str = util.get_effective_molecule_glob()
+
     scenario_paths = glob.glob(
         glob_str,
         flags=wcmatch.pathlib.GLOBSTAR | wcmatch.pathlib.BRACE | wcmatch.pathlib.DOTGLOB,
@@ -403,16 +445,20 @@ def get_configs(
     return configs
 
 
-def _verify_configs(configs: list[config.Config], glob_str: str = MOLECULE_GLOB) -> None:
+def _verify_configs(configs: list[config.Config], glob_str: str | None = None) -> None:
     """Verify a Molecule config was found and returns None.
 
     Args:
         configs: A list containing absolute paths to Molecule config files.
         glob_str: A string representing the glob used to find Molecule config files.
+                 If None, uses util.get_effective_molecule_glob().
 
     Raises:
         ScenarioFailureError: When scenario configs cannot be verified.
     """
+    if glob_str is None:
+        glob_str = util.get_effective_molecule_glob()
+
     if configs:
         scenario_names = [c.scenario.name for c in configs]
         for scenario_name, n in collections.Counter(scenario_names).items():
@@ -435,128 +481,3 @@ def _get_subcommand(string: str) -> str:
         A string representing the subcommand.
     """
     return string.split(".")[-1]
-
-
-def click_group_ex() -> ClickGroup:
-    """Return extended version of click.group().
-
-    Returns:
-        Click command group.
-    """
-    # Color coding used to group command types, documented only here as we may
-    # decide to change them later.
-    # green : (default) as sequence step
-    # blue : molecule own command, not dependent on scenario
-    # yellow : special commands, like full test sequence, or login
-    return click.group(
-        cls=HelpColorsGroup,
-        # Workaround to disable click help line truncation to ~80 chars
-        # https://github.com/pallets/click/issues/486
-        context_settings={
-            "max_content_width": 9999,
-            "color": should_do_markup(),
-            "help_option_names": ["-h", "--help"],
-        },
-        help_headers_color="yellow",
-        help_options_color="green",
-        help_options_custom_colors={
-            "drivers": "blue",
-            "init": "blue",
-            "list": "blue",
-            "matrix": "blue",
-            "login": "bright_yellow",
-            "reset": "blue",
-            "test": "bright_yellow",
-        },
-        result_callback=result_callback,
-    )
-
-
-def click_command_ex(name: str | None = None) -> ClickCommand:
-    """Return extended version of click.command().
-
-    Args:
-        name: A replacement name in the case the automatic one is insufficient.
-
-    Returns:
-        Click command group.
-    """
-    return click.command(
-        cls=HelpColorsCommand,
-        name=name,
-        help_headers_color="yellow",
-        help_options_color="green",
-    )
-
-
-def click_command_options(func: Callable[..., None]) -> Callable[..., None]:
-    """Provide a baseline set of reusable options for molecule actions.
-
-    Args:
-        func: Function to be decorated.
-
-    Returns:
-        Function with click options for scenario_name, exclude, all, and report added.
-    """
-    # NOTE: because click.option is a decorator, options applied this way will appear in the opposite order.
-    func = click.option(
-        "--shared-state/--no-shared-state",
-        default=False,
-        help="EXPERIMENTAL: Enable or disable sharing (some) state between scenarios. Default is disabled.",
-    )(func)
-    func = click.option(
-        "--shared-inventory/--no-shared-inventory",
-        default=False,
-        help="EXPERIMENTAL: Enable or disable sharing inventory between scenarios. Default is disabled.",
-    )(func)
-    func = click.option(
-        "--report/--no-report",
-        default=False,
-        help="EXPERIMENTAL: Enable or disable end-of-run summary report. Default is disabled.",
-    )(func)
-    func = click.option(
-        "--exclude",
-        "-e",
-        multiple=True,
-        help="Name of the scenario to exclude from targeting. May be specified multiple times. Can exclude scenarios already included with scenario-name or all.",
-    )(func)
-    func = click.option(
-        "--all/--no-all",
-        "__all",
-        default=False,
-        help="Target all scenarios. Overrides scenario-name. Default is disabled.",
-    )(func)
-    return click.option(
-        "--scenario-name",
-        "-s",
-        multiple=True,
-        default=[MOLECULE_DEFAULT_SCENARIO_NAME],
-        help=f"Name of the scenario to target. May be specified multiple times. ({MOLECULE_DEFAULT_SCENARIO_NAME})",
-    )(func)
-
-
-def result_callback(
-    *args: object,  # noqa: ARG001
-    **kwargs: object,  # noqa: ARG001
-) -> NoReturn:
-    """Click natural exit callback.
-
-    Args:
-        *args: Unused.
-        **kwargs: Unused.
-    """
-    # We want to be used we run out custom exit code, regardless if run was
-    # a success or failure.
-    util.sysexit(0)
-
-
-def generate_report(results: list[ScenariosResults]) -> str:
-    """Print end-of-run report.
-
-    Args:
-        results: Dictionary containing results from each scenario.
-
-    Returns:
-        The formatted end-of-run report.
-    """
-    return safe_dump(results)

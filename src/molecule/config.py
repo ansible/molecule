@@ -22,7 +22,6 @@
 from __future__ import annotations
 
 import copy
-import logging
 import os
 import warnings
 
@@ -32,7 +31,7 @@ from uuid import uuid4
 
 from ansible_compat.ports import cache, cached_property
 
-from molecule import api, interpolation, platforms, scenario, state, util
+from molecule import api, interpolation, logger, platforms, scenario, state, util
 from molecule.app import get_app
 from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
@@ -55,7 +54,6 @@ if TYPE_CHECKING:
     from molecule.verifier.base import Verifier
 
 
-LOG = logging.getLogger(__name__)
 MOLECULE_PARALLEL: bool = boolean(os.environ.get("MOLECULE_PARALLEL", ""))
 MOLECULE_DEBUG: bool = boolean(os.environ.get("MOLECULE_DEBUG", "False"))
 MOLECULE_VERBOSITY: int = int(os.environ.get("MOLECULE_VERBOSITY", "0"))
@@ -176,6 +174,11 @@ class Config:
         return self.command_args.get("shared_state", False)
 
     @property
+    def command_borders(self) -> bool:
+        """Return if command borders are enabled."""
+        return self.command_args.get("command_borders", False)
+
+    @property
     def platform_name(self) -> str | None:
         """Configured platform.
 
@@ -245,22 +248,10 @@ class Config:
         """Location of collection containing the molecule files.
 
         Returns:
-            Root of the collection containing the molecule files.
+            Root of the collection containing the molecule files, only if galaxy.yml is valid.
         """
-        test_paths = [Path.cwd(), Path(self.project_directory)]
-
-        for path in test_paths:
-            if (path / "galaxy.yml").exists():
-                return path
-
-        # Last resort, try to find git root
-        show_toplevel = self.app.run_command("git rev-parse --show-toplevel")
-        if show_toplevel.returncode == 0:
-            path = Path(show_toplevel.stdout.strip())
-            if (path / "galaxy.yml").exists():
-                return path
-
-        return None
+        collection_dir, collection_data = util.get_collection_metadata()
+        return collection_dir if collection_data else None
 
     @property
     def molecule_directory(self) -> str:
@@ -277,24 +268,10 @@ class Config:
 
         Returns:
             A dictionary of information about the collection molecule is running inside, if any.
+            Only returns collection data when galaxy.yml is valid with required fields.
         """
-        collection_directory = self.collection_directory
-        if not collection_directory:
-            return None
-
-        galaxy_file = collection_directory / "galaxy.yml"
-        galaxy_data: CollectionData = util.safe_load_file(galaxy_file)
-
-        important_keys = {"name", "namespace"}
-        if missing_keys := important_keys.difference(galaxy_data.keys()):
-            LOG.warning(
-                "The detected galaxy.yml file (%s) is invalid, missing mandatory field %s",
-                galaxy_file,
-                util.oxford_comma(missing_keys),
-            )
-            return None  # pragma: no cover
-
-        return galaxy_data
+        _collection_directory, collection_data = util.get_collection_metadata()
+        return collection_data
 
     @cached_property
     def dependency(self) -> Dependency | None:
@@ -349,12 +326,18 @@ class Config:
         Returns:
             Total set of computed environment variables.
         """
+        shared_inventory_dir = (
+            self.scenario.inventory_directory
+            if self.shared_inventory and not self.is_parallel
+            else ""
+        )
         return {
             "MOLECULE_DEBUG": str(self.debug),
             "MOLECULE_FILE": self.config_file,
             "MOLECULE_ENV_FILE": str(self.env_file),
             "MOLECULE_STATE_FILE": self.state.state_file,
             "MOLECULE_INVENTORY_FILE": self.provisioner.inventory_file,  # type: ignore[union-attr]
+            "MOLECULE_SHARED_INVENTORY_DIR": shared_inventory_dir,
             "MOLECULE_EPHEMERAL_DIRECTORY": self.scenario.ephemeral_directory,
             "MOLECULE_SCENARIO_DIRECTORY": self.scenario.directory,
             "MOLECULE_PROJECT_DIRECTORY": self.project_directory,
@@ -401,6 +384,15 @@ class Config:
         """
         return scenario.Scenario(self)
 
+    @property
+    def _log(self) -> logger.ScenarioLoggerAdapter:
+        """Get a scenario logger with config step context.
+
+        Returns:
+            A scenario logger adapter with current scenario and step context.
+        """
+        return logger.get_scenario_logger(__name__, self.scenario.name, "config")
+
     @cached_property
     def state(self) -> State:
         """Molecule state object.
@@ -416,7 +408,7 @@ class Config:
             if my_state.molecule_yml_date_modified is None:
                 my_state.change_state("molecule_yml_date_modified", modTime)
             elif my_state.molecule_yml_date_modified != modTime:
-                LOG.warning(
+                self._log.warning(
                     "The scenario config file ('%s') has been modified since the scenario was created. "
                     "If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or "
                     "'molecule reset' to clear current configuration.",
@@ -478,7 +470,7 @@ class Config:
                 f"has changed and now defines '{driver_from_scenario}'. "
                 "To change drivers, run 'molecule destroy' for converged scenarios or 'molecule reset' otherwise."
             )
-            LOG.warning(msg)
+            self._log.warning(msg)
 
         return driver_name
 
@@ -670,8 +662,12 @@ class Config:
         Raises:
             MoleculeError: when config file fails to validate.
         """
+        # Use scenario logger with hardcoded values since scenario property isn't available yet
+        scenario_name = self.config["scenario"]["name"]
+        validation_log = logger.get_scenario_logger(__name__, scenario_name, "validate")
+
         msg = f"Validating schema {self.molecule_file}."
-        LOG.debug(msg)
+        validation_log.debug(msg)
 
         errors = schema_v3.validate(self.config)
         if errors:

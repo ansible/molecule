@@ -19,27 +19,24 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import difflib
 import os
+import re
 import shutil
 import subprocess
 import warnings
 
 from functools import cache
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, TypedDict
+from typing import Any, TypedDict
 
 import pytest
 
 from pytest import FixtureRequest  # noqa: PT013
 
 from molecule.command import base
-from molecule.util import safe_load
+from molecule.text import strip_ansi_escape
 from tests.conftest import mac_on_gh  # pylint:disable=C0411
-
-
-if TYPE_CHECKING:
-    from molecule.app import App
-    from molecule.types import ScenariosResults
 
 
 def run(cmd: list[str], env: dict[str, str] | None = None) -> subprocess.CompletedProcess[Any]:
@@ -143,7 +140,14 @@ def fixture_driver_name(request: FixtureRequest) -> str | None:  # noqa: D103
 
 
 class ParamDefault(TypedDict):
-    """Typed params."""
+    """Typed params.
+
+    Attributes:
+        argnames: The argnames.
+        argvalues: The argvalues.
+        ids: The ids.
+        indirect: The indirect.
+    """
 
     argnames: tuple[str, str]
     argvalues: tuple[tuple[str, str]]
@@ -157,6 +161,23 @@ PARAMS_DEFAULT: ParamDefault = {
     "ids": "0",
     "indirect": ("scenario_to_test", "scenario_name"),
 }
+
+
+def normalize_report_whitespace(text: str) -> str:
+    """Normalize whitespace in report text for comparison.
+
+    Strips trailing whitespace from each line while preserving line structure.
+    This handles the 79-character padding in headers like 'DETAILS' and 'SCENARIO RECAP'.
+
+    Args:
+        text: Text to normalize.
+
+    Returns:
+        Text with trailing whitespace stripped from each line.
+    """
+    return "\n".join(line.rstrip() for line in text.splitlines()) + (
+        "\n" if text.endswith("\n") else ""
+    )
 
 
 @pytest.mark.extensive
@@ -181,7 +202,6 @@ def test_command(
     test_ephemeral_dir_env: dict[str, str],
     scenario_name: str,
     command: str,
-    app: App,
 ) -> None:
     """Test a scenario using command.
 
@@ -199,58 +219,12 @@ def test_command(
         assert "PLAY RECAP" in result.stdout
 
 
-def test_command_report(
-    test_ephemeral_dir_env: dict[str, str],
-) -> None:
-    """Test the output of the --report flag.
-
-    Args:
-        test_ephemeral_dir_env: The ephemeral directory env.
-    """
-    cmd = ["molecule", "test", "--report"]
-    result = run(cmd=cmd, env=test_ephemeral_dir_env)
-    assert result.returncode == 0
-
-    scenario_result: ScenariosResults = {
-        "name": "default",
-        "results": [
-            {
-                "state": "PASSED",
-                "subcommand": "destroy",
-            },
-            {
-                "state": "PASSED",
-                "subcommand": "syntax",
-            },
-            {
-                "state": "PASSED",
-                "subcommand": "create",
-            },
-            {
-                "state": "PASSED",
-                "subcommand": "converge",
-            },
-            {
-                "state": "PASSED",
-                "subcommand": "idempotence",
-            },
-            {
-                "state": "PASSED",
-                "subcommand": "destroy",
-            },
-        ],
-    }
-    report = base.generate_report([scenario_result])
-    assert result.stdout.strip().endswith(report.strip())
-
-
 @pytest.mark.extensive
 @pytest.mark.parametrize(**PARAMS_DEFAULT)
 @pytest.mark.usefixtures("with_scenario")
 def test_command_idempotence(
     test_ephemeral_dir_env: dict[str, str],
     scenario_name: str,
-    app: App,
 ) -> None:
     """Test idempotence of a scenario.
 
@@ -324,7 +298,6 @@ def test_command_list_with_format_plain(
     monkeypatch: pytest.MonkeyPatch,
     test_fixture_dir: Path,
     test_ephemeral_dir_env: dict[str, str],
-    app: App,
 ) -> None:
     """Test list command with plain format.
 
@@ -349,7 +322,6 @@ def test_with_missing_platform_name(
     scenario_name: str,
     platform: str,
     missing: bool,  # noqa: FBT001
-    app: App,
 ) -> None:
     """Test a scenario using command with missing platform name.
 
@@ -372,7 +344,6 @@ def test_role_name_check_one(
     monkeypatch: pytest.MonkeyPatch,
     test_fixture_dir: Path,
     test_ephemeral_dir_env: dict[str, str],
-    app: App,
 ) -> None:
     """Test role name check only warns when equal to 1.
 
@@ -398,7 +369,7 @@ def test_sample_collection(
     resources_folder_path: Path,
     test_ephemeral_dir_env: dict[str, str],
 ) -> None:
-    """Test the sample collection.
+    """Test the sample collection with collection detection.
 
     Args:
         monkeypatch: Pytest fixture.
@@ -407,7 +378,9 @@ def test_sample_collection(
     """
     monkeypatch.chdir(resources_folder_path / "sample-collection")
     cmd = ["molecule", "test"]
-    assert run(cmd=cmd, env=test_ephemeral_dir_env).returncode == 0
+    result = run(cmd=cmd, env=test_ephemeral_dir_env)
+    assert result.returncode == 0, result
+    assert "Collection 'acme.goodies' detected" in result.stderr
 
 
 @pytest.mark.usefixtures("test_cache_path")
@@ -452,7 +425,7 @@ def test_with_and_without_gitignore(
 
 
 @mac_on_gh
-def test_podman(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path, app: App) -> None:
+def test_podman(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None:
     """Execute Podman scenario.
 
     Args:
@@ -469,7 +442,7 @@ def test_podman(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path, app: Ap
     not has_pure_docker(),
     reason="Bug https://github.com/ansible-collections/community.docker/issues/660",
 )
-def test_docker(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path, app: App) -> None:
+def test_docker(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None:
     """Execute Docker scenario.
 
     Args:
@@ -489,7 +462,7 @@ def test_docker(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path, app: Ap
     assert proc.returncode == 0
 
 
-def test_smoke(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path, app: App) -> None:
+def test_smoke(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None:
     """Execute smoke-test scenario that should spot potentially breaking changes.
 
     Args:
@@ -535,21 +508,77 @@ def test_with_backend_as_ansible_navigator(
     assert result.returncode == 0, result
 
 
-def test_shared_actions(
-    monkeypatch: pytest.MonkeyPatch,
-    test_fixture_dir: Path,
-) -> None:
-    """Test that shared-state properly threads scenarios.
+def _sanitize_molecule_output(output: str) -> str:
+    """Sanitize dynamic parts of molecule output for consistent comparison.
 
     Args:
-        monkeypatch: Pytest fixture.
-        test_fixture_dir: Path to the test fixture directory.
+        output: Raw molecule output with ANSI codes
+
+    Returns:
+        Sanitized output with dynamic parts replaced by REDACTED and warnings filtered out
+        and trailing whitespace removed except for the last line which is always a newline
+    """
+    clean = strip_ansi_escape(output)
+    clean = re.sub(r'([\s=\'"]|^)(/[^\s]+)', r"\1REDACTED", clean, flags=re.MULTILINE)
+    clean_lines = []
+    for line in clean.splitlines():
+        if "WARNING" in line:
+            continue
+        clean_lines.append(line.rstrip())
+
+    return "\n".join(clean_lines).rstrip() + "\n"
+
+
+def test_full_output(
+    monkeypatch: pytest.MonkeyPatch,
+    test_fixture_dir: Path,
+    tmp_path: Path,
+) -> None:
+    """Test complete molecule workflow with command borders and shared state.
+
+    This comprehensive test replaces multiple individual command border tests
+    and validates the entire molecule workflow output against a golden file.
+    It tests:
+    - Command border formatting for all external commands
+    - Shared state behavior across multiple scenarios
+    - Complete test lifecycle (dependency → syntax → converge → idempotence → verify)
+    - Report generation with proper formatting
+
+    To regenerate the fixture (when molecule output format changes):
+        MOLECULE_UPDATE_FIXTURES=1 python -m pytest tests/integration/test_command.py::test_full_output -v
+
+    Args:
+        monkeypatch: Pytest fixture for environment manipulation
+        test_fixture_dir: Path to the test fixture directory
+        tmp_path: Pytest fixture providing an isolated temporary directory
     """
     monkeypatch.chdir(test_fixture_dir)
+
+    monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", str(tmp_path))
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+    monkeypatch.delenv("CI", raising=False)
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    monkeypatch.setenv("FORCE_COLOR", "1")
+    monkeypatch.setenv("COLUMNS", "200")
+    monkeypatch.setenv("LINES", "50")
+    monkeypatch.setenv("TERM", "xterm-256color")
+    monkeypatch.setenv("ANSIBLE_FORCE_COLOR", "1")
+    monkeypatch.setenv("ANSIBLE_STDOUT_CALLBACK", "default")
+    monkeypatch.setenv("ANSIBLE_DEPRECATION_WARNINGS", "false")
+    monkeypatch.setenv("ANSIBLE_COMMAND_WARNINGS", "false")
+    monkeypatch.setenv("ANSIBLE_ACTION_WARNINGS", "false")
+
+    # Run comprehensive molecule test with command borders and shared state
+    # First reset all scenarios to ensure clean state and avoid warning messages about modified scenario config files
+    for scenario in ["default", "test-scenario", "smoke"]:
+        reset_cmd = ["molecule", "reset", "-s", scenario]
+        _reset_result = run(cmd=reset_cmd)
+
     cmd = [
         "molecule",
         "test",
         "--shared-state",
+        "--command-borders",
         "-s",
         "test-scenario",
         "-s",
@@ -558,10 +587,31 @@ def test_shared_actions(
     ]
     result = run(cmd=cmd)
     assert result.returncode == 0, result
-    out = result.stdout
-    # If we redesign --report, this needs to be updated
-    run_report = safe_load(out[out.rindex("---") :])
-    assert run_report[0]["name"] == "default"
-    assert run_report[1]["name"] == "test-scenario"
-    assert run_report[2]["name"] == "smoke"
-    assert run_report[3]["name"] == "default"
+
+    actual_output = _sanitize_molecule_output(result.stderr)
+
+    # Update fixture if requested via environment variable
+    fixture_file = test_fixture_dir / "comprehensive_output.txt"
+    if os.getenv("MOLECULE_UPDATE_FIXTURES"):
+        fixture_file.write_text(actual_output)
+        print(f"Updated fixture: {fixture_file}")
+
+    assert fixture_file.exists(), f"Fixture file not found: {fixture_file}"
+    expected_output = fixture_file.read_text()
+
+    if actual_output != expected_output:
+        diff = "\n".join(
+            difflib.unified_diff(
+                expected_output.splitlines(keepends=True),
+                actual_output.splitlines(keepends=True),
+                fromfile="expected (fixture)",
+                tofile="actual (molecule output)",
+                lineterm="",
+            ),
+        )
+        pytest.fail(
+            f"Comprehensive molecule output differs from expected fixture.\n\n"
+            f"Unified diff:\n{diff}\n\n"
+            f"Expected output length: {len(expected_output)} chars\n"
+            f"Actual output length: {len(actual_output)} chars",
+        )

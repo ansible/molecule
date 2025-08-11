@@ -19,6 +19,8 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import logging
+
 from typing import TYPE_CHECKING
 
 import pytest
@@ -49,8 +51,15 @@ def test_check_execute(  # noqa: D103
     patched_config_validate: Mock,
     config_instance: config.Config,
 ) -> None:
+    config_instance.action = "check"
     c = check.Check(config_instance)
-    c.execute()
 
-    assert "default" in caplog.text
-    assert "check" in caplog.text
+    with caplog.at_level(logging.INFO):
+        c.execute()
+
+    expected_record_count = 2
+    assert len(caplog.records) == expected_record_count
+    expected_message = "INFO     [default > check] Executed: Successful"
+    assert caplog.records[1].getMessage() == expected_message
+
+    _patched_ansible_check.assert_called_once_with()
