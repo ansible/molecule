@@ -166,7 +166,7 @@ class CliOptions:
         """Target all scenarios option."""
         return CliOption(
             name="all",
-            help="Target all scenarios. Overrides scenario-name.",
+            help="Target all scenarios. Overrides scenario-name. For 'reset', this includes shared state and inventory.",
             is_flag=True,
             default=False,
         )
