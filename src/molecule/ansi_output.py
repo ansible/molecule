@@ -34,6 +34,8 @@ from molecule.constants import ANSICodes as A
 if TYPE_CHECKING:
     from typing import TextIO
 
+    from typing_extensions import Self
+
     from molecule.reporting.definitions import ScenariosResults
 
 
