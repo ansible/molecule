@@ -364,6 +364,35 @@ def test_add_cli_arg(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201
     assert _instance._cli == {"foo": "bar"}
 
 
+def test_should_provide_args_when_no_provisioner(
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Test _should_provide_args when self._config.provisioner is None.
+
+    This tests the fallback behavior when no provisioner is configured:
+    - action not in ["create", "destroy"] if action else True
+
+    Args:
+        _instance: AnsiblePlaybook instance fixture.
+        monkeypatch: Pytest monkeypatch fixture for mocking.
+    """
+    # Mock the provisioner to be None/falsy
+    monkeypatch.setattr(_instance._config, "provisioner", None)
+
+    # Test action is None -> should return True
+    assert _instance._should_provide_args(None) is True
+
+    # Test action is "converge" (not create/destroy) -> should return True
+    assert _instance._should_provide_args("converge") is True
+
+    # Test action is "create" -> should return False
+    assert _instance._should_provide_args("create") is False
+
+    # Test action is "destroy" -> should return False
+    assert _instance._should_provide_args("destroy") is False
+
+
 def test_add_env_arg(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
     assert "foo" not in _instance._env
 
