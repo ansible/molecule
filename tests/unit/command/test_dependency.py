@@ -56,5 +56,5 @@ def test_dependency_execute(  # noqa: D103
 
     expected_record_count = 2
     assert len(caplog.records) == expected_record_count
-    expected_message = "INFO     [default > dependency] Completed: Successful"
+    expected_message = "INFO     [default > dependency] Executed: Successful"
     assert caplog.records[1].getMessage() == expected_message

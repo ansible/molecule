@@ -87,7 +87,7 @@ class CompletionStateInfo:
     @property
     def message(self) -> str:
         """Get the user-facing completion message."""
-        return f"Completed: {self._message or self.state.title()}"
+        return f"Executed: {self._message or self.state.title()}"
 
     @property
     def note(self) -> str | None:
@@ -188,7 +188,7 @@ class ActionResult:
         """Analyze the latest action execution and return appropriate completion state.
 
         Performs dynamic result analysis based on the most recent ActionResult:
-        - 0 results: Success (command completed without issues)
+        - 0 results: Success (command executed without issues)
         - 1 state: Use that state directly
         - 2+ states: Multi-state analysis (partial, all failed, etc.)
 

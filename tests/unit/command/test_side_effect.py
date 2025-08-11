@@ -76,7 +76,7 @@ def test_side_effect_execute(  # noqa: D103
 
     expected_record_count = 2
     assert len(caplog.records) == expected_record_count
-    expected_message = "INFO     [default > side_effect] Completed: Successful"
+    expected_message = "INFO     [default > side_effect] Executed: Successful"
     assert caplog.records[1].getMessage() == expected_message
 
     _patched_ansible_side_effect.assert_called_once_with(None)
@@ -91,7 +91,7 @@ def test_side_effect_execute_skips_when_playbook_not_configured(  # noqa: D103
         se = side_effect.SideEffect(config_instance)
         se.execute()
 
-    completion_records = [r for r in caplog.records if "Completed:" in r.getMessage()]
+    completion_records = [r for r in caplog.records if "Executed:" in r.getMessage()]
     assert len(completion_records) >= 1, "Should have completion message"
 
     record = completion_records[0]
