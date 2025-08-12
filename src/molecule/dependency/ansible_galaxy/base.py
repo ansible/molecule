@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING
 
 from molecule import util
 from molecule.dependency import base
-from molecule.reporting import CompletionState
+from molecule.reporting.definitions import CompletionState
 
 
 if TYPE_CHECKING:

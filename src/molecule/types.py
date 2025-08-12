@@ -88,16 +88,6 @@ class DriverData(TypedDict, total=False):
     safe_files: list[str]
 
 
-class ExecutorData(TypedDict, total=False):
-    """Molecule playbook executor configuration.
-
-    Attributes:
-        backend: The backend to use for executing playbooks.
-    """
-
-    backend: str
-
-
 class InventoryData(TypedDict):
     """Inventory data for a molecule run.
 
@@ -200,6 +190,46 @@ class ScenarioData(TypedDict):
     test_sequence: list[str]
 
 
+class ExecutorArgsData(TypedDict, total=False):
+    """Executor-specific arguments.
+
+    Attributes:
+        ansible_navigator: Arguments passed to ansible-navigator.
+        ansible_playbook: Arguments passed to ansible-playbook.
+    """
+
+    ansible_navigator: list[str]
+    ansible_playbook: list[str]
+
+
+class ExecutorData(TypedDict, total=False):
+    """Executor configuration.
+
+    Attributes:
+        backend: The executor backend to use (ansible-playbook or ansible-navigator).
+        args: Executor-specific arguments.
+    """
+
+    backend: str
+    args: ExecutorArgsData
+
+
+class AnsibleData(TypedDict, total=False):
+    """Ansible-specific configuration section.
+
+    Attributes:
+        cfg: Ansible configuration options (maps to ansible.cfg).
+        executor: Executor configuration including backend and arguments.
+        env: Environment variables for ansible execution.
+        playbooks: Playbook paths for different scenarios.
+    """
+
+    cfg: dict[str, Any]
+    executor: ExecutorData
+    env: dict[str, str]
+    playbooks: PlaybookData
+
+
 class VerifierData(TypedDict, total=False):
     """Molecule verifier configuration.
 
@@ -220,24 +250,53 @@ class VerifierData(TypedDict, total=False):
     additional_files_or_dirs: list[str]
 
 
-class ConfigData(TypedDict):
+class DefaultConfigData(TypedDict):
+    """Default configuration structure with forward-looking ansible section.
+
+    This represents the complete default configuration including all sections
+    with their proper types and structure. Used for DEFAULT_CONFIG constant.
+
+    Attributes:
+        ansible: Ansible-specific configuration section.
+        dependency: Dependency management configuration.
+        driver: Driver configuration for platform management.
+        platforms: List of target platforms.
+        prerun: Whether to run prerun tasks.
+        role_name_check: Role name validation level.
+        provisioner: Provisioner configuration (legacy, minus migrated keys).
+        scenario: Scenario execution configuration.
+        verifier: Verifier configuration for testing.
+    """
+
+    ansible: AnsibleData
+    dependency: DependencyData
+    driver: DriverData
+    platforms: list[PlatformData]
+    prerun: bool
+    role_name_check: int
+    provisioner: ProvisionerData
+    scenario: ScenarioData
+    verifier: VerifierData
+
+
+class ConfigData(TypedDict, total=False):
     """Class representing molecule config.
 
     Attributes:
+        ansible: Ansible-specific configuration (new format).
         dependency: Dependency config.
         driver: Driver config.
-        executor: Executor config.
         platforms: List of platforms.
         prerun: Should prerun tasks be run.
-        role_name_check: ???
+        role_name_check: Role name validation level.
         provisioner: Provisioner config.
         scenario: Scenario config.
         verifier: Verifier config.
     """
 
+    ansible: AnsibleData
     dependency: DependencyData
     driver: DriverData
-    executor: ExecutorData
     platforms: list[PlatformData]
     prerun: bool
     role_name_check: int
