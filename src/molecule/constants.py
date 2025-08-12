@@ -1,4 +1,4 @@
-"""Molecule constants."""
+"""Constants used by molecule."""
 
 from __future__ import annotations
 
