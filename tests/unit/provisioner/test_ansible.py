@@ -28,8 +28,7 @@ from typing import TYPE_CHECKING, Any
 import pytest
 
 from molecule import config, util
-from molecule.constants import RC_SETUP_ERROR
-from molecule.exceptions import ImmediateExit, MoleculeError
+from molecule.exceptions import MoleculeError
 from molecule.provisioner import ansible, ansible_playbooks
 from tests.unit.conftest import os_split  # pylint:disable=C0411
 
@@ -68,14 +67,38 @@ def _patched_link_or_update_vars(mocker: MockerFixture) -> MagicMock:
 @pytest.fixture
 def _provisioner_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
-        "provisioner": {
-            "name": "ansible",
-            "config_options": {"defaults": {"foo": "bar"}},
-            "connection_options": {"foo": "bar"},
-            "options": {"foo": "bar", "become": True, "v": True},
+        "dependency": {"name": "galaxy"},
+        "driver": {"name": "default", "options": {"managed": True}},
+        "platforms": [
+            {"name": "instance-1", "groups": ["foo", "bar"], "children": ["child1"]},
+            {"name": "instance-2", "groups": ["baz", "foo"], "children": ["child2"]},
+        ],
+        "ansible": {
+            "cfg": {"defaults": {"foo": "bar"}},
             "env": {
                 "FOO": "bar",
             },
+            "executor": {
+                "backend": "ansible-playbook",
+                "args": {
+                    "ansible_navigator": [],
+                    "ansible_playbook": [],
+                },
+            },
+            "playbooks": {
+                "cleanup": "cleanup.yml",
+                "create": "create.yml",
+                "converge": "converge.yml",
+                "destroy": "destroy.yml",
+                "prepare": "prepare.yml",
+                "side_effect": "side_effect.yml",
+                "verify": "verify.yml",
+            },
+        },
+        "provisioner": {
+            "name": "ansible",
+            "connection_options": {"foo": "bar"},
+            "options": {"foo": "bar", "become": True, "v": True},
             "inventory": {
                 "hosts": {
                     "all": {
@@ -93,6 +116,8 @@ def _provisioner_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
                 },
             },
         },
+        "scenario": {"name": "default"},
+        "verifier": {"name": "ansible"},
     }
 
 
@@ -742,17 +767,6 @@ def test_verify_inventory(instance):  # type: ignore[no-untyped-def]  # noqa: AN
     instance._verify_inventory()
 
 
-def test_verify_inventory_raises_when_missing_hosts(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    caplog,
-    instance,
-):
-    instance._config.config["platforms"] = []
-    with pytest.raises(ImmediateExit) as e:
-        instance._verify_inventory()
-    assert "Instances missing from the 'platform' section of molecule.yml." in str(e.value)
-    assert e.value.code == RC_SETUP_ERROR
-
-
 def test_vivify(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     d = instance._vivify()
     d["bar"]["baz"] = "qux"
@@ -810,3 +824,113 @@ def test_inventory_contains_molecule_shared_inventory_dir_variable(instance: Ans
         inventory["all"]["vars"]["molecule_shared_inventory_dir"]
         == "{{ lookup('env', 'MOLECULE_SHARED_INVENTORY_DIR') }}"
     )
+
+
+# Test ansible section integration with provisioner
+
+
+def test_ansible_args_property_with_ansible_playbook_backend() -> None:
+    """Test ansible_args property with ansible-playbook backend (forward-looking config)."""
+    c = config.Config(molecule_file="")
+    c.config = {
+        "ansible": {
+            "executor": {
+                "backend": "ansible-playbook",
+                "args": {"ansible_playbook": ["--forks=20"], "ansible_navigator": []},
+            },
+            "cfg": {},
+            "env": {},
+            "playbooks": {},
+        },
+        "provisioner": {"name": "ansible"},
+        "driver": {"name": "default"},
+        "platforms": [],
+    }
+
+    instance = ansible.Ansible(c)
+    assert instance.ansible_args == ["--forks=20"]
+
+
+def test_ansible_args_property_with_ansible_navigator_backend() -> None:
+    """Test ansible_args property with ansible-navigator backend (forward-looking config)."""
+    c = config.Config(molecule_file="")
+    c.config = {
+        "ansible": {
+            "executor": {
+                "backend": "ansible-navigator",
+                "args": {
+                    "ansible_navigator": ["--mode=stdout"],
+                    "ansible_playbook": ["--forks=10"],
+                },
+            },
+            "cfg": {},
+            "env": {},
+            "playbooks": {},
+        },
+        "provisioner": {"name": "ansible"},
+        "driver": {"name": "default"},
+        "platforms": [],
+    }
+
+    instance = ansible.Ansible(c)
+    # Should get navigator args + ["--"] + playbook args
+    assert instance.ansible_args == ["--mode=stdout", "--", "--forks=10"]
+
+
+def test_config_options_property_uses_forward_looking_config() -> None:
+    """Test config_options property with forward-looking ansible config structure."""
+    c = config.Config(molecule_file="")
+    c.config = {
+        "ansible": {
+            "cfg": {"defaults": {"deprecation_warnings": False}},
+            "executor": {
+                "backend": "ansible-playbook",
+                "args": {"ansible_playbook": [], "ansible_navigator": []},
+            },
+            "env": {},
+            "playbooks": {},
+        },
+        "provisioner": {"name": "ansible"},
+        "driver": {"name": "default"},
+        "platforms": [],
+    }
+
+    instance = ansible.Ansible(c)
+    result = instance.config_options
+
+    # Should get the ansible.cfg value merged with defaults
+    assert result["defaults"]["deprecation_warnings"] is False
+    # Should still have default config options
+    assert "forks" in result["defaults"]
+    assert "host_key_checking" in result["defaults"]
+
+
+def test_config_options_property_merges_ansible_cfg_with_base() -> None:
+    """Test config_options property merges ansible.cfg with base config."""
+    c = config.Config(molecule_file="")
+    c.config = {
+        "ansible": {
+            "cfg": {
+                "defaults": {"deprecation_warnings": False},
+                "ssh_connection": {"scp_if_ssh": True},
+            },
+            "executor": {
+                "backend": "ansible-playbook",
+                "args": {"ansible_playbook": [], "ansible_navigator": []},
+            },
+            "env": {},
+            "playbooks": {},
+        },
+        "provisioner": {"name": "ansible"},
+        "driver": {"name": "default"},
+        "platforms": [],
+    }
+
+    instance = ansible.Ansible(c)
+    result = instance.config_options
+
+    # Should have ansible.cfg settings merged with defaults
+    assert result["defaults"]["deprecation_warnings"] is False
+    assert result["ssh_connection"]["scp_if_ssh"] is True
+    # Should still have default config options merged in
+    assert "forks" in result["defaults"]

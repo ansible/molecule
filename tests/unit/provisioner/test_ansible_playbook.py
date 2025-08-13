@@ -38,7 +38,37 @@ def _instance(config_instance: config.Config) -> ansible_playbook.AnsiblePlayboo
 
 @pytest.fixture
 def _provisioner_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
-    return {"provisioner": {"name": "ansible", "env": {"FOO": "bar"}}}
+    return {
+        "dependency": {"name": "galaxy"},
+        "driver": {"name": "default", "options": {"managed": True}},
+        "platforms": [
+            {"name": "instance-1", "groups": ["foo", "bar"]},
+            {"name": "instance-2", "groups": ["baz", "foo"]},
+        ],
+        "ansible": {
+            "env": {"FOO": "bar"},
+            "cfg": {},
+            "executor": {
+                "backend": "ansible-playbook",
+                "args": {
+                    "ansible_navigator": [],
+                    "ansible_playbook": [],
+                },
+            },
+            "playbooks": {
+                "cleanup": "cleanup.yml",
+                "create": "create.yml",
+                "converge": "converge.yml",
+                "destroy": "destroy.yml",
+                "prepare": "prepare.yml",
+                "side_effect": "side_effect.yml",
+                "verify": "verify.yml",
+            },
+        },
+        "provisioner": {"name": "ansible"},
+        "scenario": {"name": "default"},
+        "verifier": {"name": "ansible"},
+    }
 
 
 @pytest.fixture
@@ -131,7 +161,7 @@ def test_bake(_inventory_directory, _instance):  # type: ignore[no-untyped-def] 
 def test_bake_with_ansible_navigator(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
     pb = _instance._config.provisioner.playbooks.converge
     _instance._playbook = pb
-    _instance._config.config["executor"]["backend"] = "ansible-navigator"
+    _instance._config.config["ansible"]["executor"]["backend"] = "ansible-navigator"
     _instance.bake()
 
     args = [
@@ -170,7 +200,7 @@ def test_bake_removes_non_interactive_options_from_non_converge_playbooks(  # ty
 
 def test_bake_has_ansible_args(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
     _instance._config.ansible_args = ("foo", "bar")
-    _instance._config.config["provisioner"]["ansible_args"] = ("frob", "nitz")
+    _instance._config.config["ansible"]["executor"]["args"]["ansible_playbook"] = ["frob", "nitz"]
     _instance.bake()
 
     args = [
@@ -226,7 +256,7 @@ def test_bake_create_destroy_smart_mode_user_provided(
     monkeypatch.setattr(_instance, "_should_provide_args", lambda _: True)
 
     _instance._config.ansible_args = ("foo", "bar")
-    _instance._config.config["provisioner"]["ansible_args"] = ["frob", "nitz"]
+    _instance._config.config["ansible"]["executor"]["args"]["ansible_playbook"] = ["frob", "nitz"]
     _instance._config.action = "create"
     _instance.bake()
 

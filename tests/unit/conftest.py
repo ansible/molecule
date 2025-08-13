@@ -62,7 +62,6 @@ def fixture_molecule_data() -> dict[str, Any]:
         "provisioner": {
             "name": "ansible",
             "options": {"become": True},
-            "config_options": {},
         },
         "scenario": {"name": "default"},
         "verifier": {"name": "ansible"},
@@ -96,7 +95,21 @@ def config_instance(
     """
     mdc: MutableMapping[str, Any] = copy.deepcopy(molecule_data)
     if hasattr(request, "param"):
-        mdc = util.merge_dicts(molecule_data, request.getfixturevalue(request.param))
+        fixture_data = request.getfixturevalue(request.param)
+        # If the fixture has all required sections, use it directly
+        # Otherwise merge it with molecule_data as before
+        required_sections = {
+            "dependency",
+            "driver",
+            "platforms",
+            "provisioner",
+            "scenario",
+            "verifier",
+        }
+        if all(section in fixture_data for section in required_sections):
+            mdc = fixture_data
+        else:
+            mdc = util.merge_dicts(molecule_data, fixture_data)
 
     monkeypatch.chdir(test_cache_path)
     molecule_dir = test_cache_path / "molecule" / "default"

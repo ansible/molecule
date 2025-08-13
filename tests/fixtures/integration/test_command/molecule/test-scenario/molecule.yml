@@ -1,6 +1,7 @@
 ---
-executor:
-  backend: ansible-playbook
+ansible:
+  executor:
+    backend: ansible-playbook
 platforms:
   - name: localhost
 provisioner:
