@@ -40,7 +40,8 @@ from wcmatch import glob
 from molecule import config, logger, text, util
 from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME
 from molecule.exceptions import ImmediateExit, MoleculeError, ScenarioFailureError
-from molecule.reporting import ScenarioResults, report
+from molecule.reporting.definitions import ScenarioResults
+from molecule.reporting.rendering import report
 from molecule.scenarios import Scenarios
 
 
@@ -175,8 +176,7 @@ def execute_cmdline_scenarios(
         msg = "Scenario execution failed"
         raise ImmediateExit(msg, code=exc.code) from exc
     finally:
-        if command_args.get("report"):
-            report(scenarios.results)
+        report(scenarios.results, report_flag=command_args.get("report", False))
 
 
 def _generate_scenarios(
@@ -250,7 +250,7 @@ def _run_scenarios(
                 f"Removing {scenario.ephemeral_directory}",
             )
             shutil.rmtree(scenario.ephemeral_directory)
-            return
+            continue
         try:
             execute_scenario(scenario)
             scenarios.results.append(scenario.results)

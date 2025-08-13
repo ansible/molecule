@@ -30,11 +30,10 @@ from typing import TYPE_CHECKING
 
 import click
 
-from molecule import api, logger, util
+from molecule import logger, util
 from molecule.click_cfg import click_command_ex
 from molecule.command.init import base
 from molecule.config import (
-    DEFAULT_DRIVER,
     MOLECULE_EMBEDDED_DATA_DIR,
     Config,
     molecule_directory,
@@ -54,16 +53,10 @@ if TYPE_CHECKING:
         """Argument dictionary to pass to init-scenario playbook.
 
         Attributes:
-            dependency_name: Name of the dependency to initialize.
-            driver_name: Name of the driver to initialize.
-            provisioner_name: Name of the provisioner to initialize.
             scenario_name: Name of the scenario to initialize.
             subcommand: Name of subcommand to initialize.
         """
 
-        dependency_name: str
-        driver_name: str
-        provisioner_name: str
         scenario_name: str
         subcommand: str
 
@@ -184,25 +177,6 @@ def _role_exists(
 
 @click_command_ex()
 @click.pass_context
-@click.option(
-    "--dependency-name",
-    type=click.Choice(["galaxy"]),
-    default="galaxy",
-    help="Name of dependency to initialize. (galaxy)",
-)
-@click.option(
-    "--driver-name",
-    "-d",
-    type=str,
-    default=DEFAULT_DRIVER,
-    help=f"Name of driver to initialize. ({DEFAULT_DRIVER})",
-)
-@click.option(
-    "--provisioner-name",
-    type=click.Choice(["ansible"]),
-    default="ansible",
-    help="Name of provisioner to initialize. (ansible)",
-)
 @click.argument(
     "scenario-name",
     default=MOLECULE_DEFAULT_SCENARIO_NAME,
@@ -210,9 +184,6 @@ def _role_exists(
 )
 def scenario(
     ctx: click.Context,  # noqa: ARG001
-    dependency_name: str,
-    driver_name: str,
-    provisioner_name: str,
     scenario_name: str,
 ) -> None:  # pragma: no cover
     """Initialize a new scenario for use with Molecule.
@@ -221,43 +192,9 @@ def scenario(
 
     Args:
         ctx: Click context object holding commandline arguments.
-        dependency_name: Name of dependency to initialize.
-        driver_name: Name of driver to use.
-        provisioner_name: Name of provisioner to use.
         scenario_name: Name of scenario to initialize.
-
-    Raises:
-        click.Abort: If the specified driver is not available.
     """
-    config = Config("", args={})
-    available_drivers = list(api.drivers(config).keys())
-    if driver_name not in available_drivers:
-        if len(available_drivers) == 1 and available_drivers[0] == "default":
-            click.echo(
-                click.style(
-                    f"Driver '{driver_name}' not available.\n\n"
-                    f"Install cloud drivers with:\n"
-                    f"  pip install molecule-plugins\n\n"
-                    f"Currently available drivers: {available_drivers}\n",
-                    fg="red",
-                ),
-                err=True,
-            )
-        else:
-            click.echo(
-                click.style(
-                    f"Driver '{driver_name}' not available.\n"
-                    f"Available drivers: {available_drivers}",
-                    fg="red",
-                ),
-                err=True,
-            )
-        raise click.Abort
-
     command_args: CommandArgs = {
-        "dependency_name": dependency_name,
-        "driver_name": driver_name,
-        "provisioner_name": provisioner_name,
         "scenario_name": scenario_name,
         "subcommand": __name__,
     }

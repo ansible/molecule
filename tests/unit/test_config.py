@@ -23,7 +23,7 @@ import logging
 import os
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 import pytest
 
@@ -546,3 +546,49 @@ def test_write_config(config_instance: config.Config) -> None:  # noqa: D103
     config_instance.write()
 
     assert os.path.isfile(config_instance.config_file)  # noqa: PTH113
+
+
+# Test ansible section functionality
+
+
+def test_ansible_section_defaults() -> None:
+    """Test that ansible section gets proper defaults."""
+    config_instance = config.Config(molecule_file="")
+    defaults = config_instance._get_defaults()
+
+    assert "ansible" in defaults
+    assert not defaults["ansible"]["cfg"]
+    assert defaults["ansible"]["executor"]["backend"] == "ansible-playbook"
+    assert not defaults["ansible"]["executor"]["args"]["ansible_navigator"]
+    assert not defaults["ansible"]["executor"]["args"]["ansible_playbook"]
+    assert not defaults["ansible"]["env"]
+    # Playbooks now have default filenames
+    expected_playbooks = {
+        "cleanup": "cleanup.yml",
+        "create": "create.yml",
+        "converge": "converge.yml",
+        "destroy": "destroy.yml",
+        "prepare": "prepare.yml",
+        "side_effect": "side_effect.yml",
+        "verify": "verify.yml",
+    }
+    assert defaults["ansible"]["playbooks"] == expected_playbooks
+
+
+def test_executor_property_uses_ansible_section() -> None:
+    """Test that the executor property uses ansible.executor.backend when present."""
+    config_data: dict[str, Any] = {
+        "ansible": {"executor": {"backend": "ansible-navigator"}},
+    }
+    config_instance = config.Config(molecule_file="")
+    config_instance.config = config_data  # type: ignore[assignment]
+
+    assert config_instance.executor == "ansible-navigator"
+
+
+def test_ansible_section_no_default_platforms() -> None:
+    """Test that no default platforms are provided - empty list."""
+    config_instance = config.Config(molecule_file="")
+    defaults = config_instance._get_defaults()
+
+    assert not defaults["platforms"]

@@ -131,15 +131,64 @@
       "title": "MoleculeDriverOptionsModel",
       "type": "object"
     },
-    "MoleculeExecutorModel": {
+    "AnsibleModel": {
       "additionalProperties": false,
       "properties": {
-        "backend": {
-          "title": "Backend for playbook executor",
-          "type": "string"
+        "cfg": {
+          "title": "Ansible Configuration",
+          "type": "object",
+          "default": {}
+        },
+        "executor": {
+          "additionalProperties": false,
+          "properties": {
+            "backend": {
+              "title": "Ansible Executor Backend",
+              "type": "string",
+              "default": "ansible-playbook",
+              "enum": ["ansible-playbook", "ansible-navigator"]
+            },
+            "args": {
+              "additionalProperties": false,
+              "properties": {
+                "ansible_navigator": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Ansible Navigator Arguments",
+                  "type": "array",
+                  "default": []
+                },
+                "ansible_playbook": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Ansible Playbook Arguments",
+                  "type": "array",
+                  "default": []
+                }
+              },
+              "title": "Executor Arguments",
+              "type": "object",
+              "default": {}
+            }
+          },
+          "title": "Ansible Executor Configuration",
+          "type": "object",
+          "default": {}
+        },
+        "env": {
+          "title": "Environment Variables",
+          "type": "object",
+          "default": {}
+        },
+        "playbooks": {
+          "title": "Playbooks",
+          "type": "object",
+          "default": {}
         }
       },
-      "title": "MoleculeExecutorModel",
+      "title": "AnsibleModel",
       "type": "object"
     },
     "MoleculePlatformModel": {
@@ -420,6 +469,13 @@
     "ProvisionerModel": {
       "additionalProperties": true,
       "properties": {
+        "ansible_args": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Ansible Args",
+          "type": "array"
+        },
         "config_options": {
           "$ref": "#/$defs/ProvisionerConfigOptionsModel"
         },
@@ -540,15 +596,16 @@
   "additionalProperties": false,
   "examples": ["molecule/*/molecule.yml"],
   "properties": {
+    "ansible": {
+      "$ref": "#/$defs/AnsibleModel"
+    },
     "dependency": {
       "$ref": "#/$defs/MoleculeDependencyModel"
     },
     "driver": {
       "$ref": "#/$defs/MoleculeDriverModel"
     },
-    "executor": {
-      "$ref": "#/$defs/MoleculeExecutorModel"
-    },
+
     "lint": {
       "title": "Lint",
       "type": "string",
@@ -585,7 +642,139 @@
       "$ref": "#/$defs/VerifierModel"
     }
   },
-  "required": ["platforms"],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "ansible": true
+        },
+        "required": ["ansible"]
+      },
+      "then": {
+        "required": []
+      },
+      "else": {
+        "required": ["platforms"]
+      }
+    },
+    {
+      "not": {
+        "allOf": [
+          {
+            "properties": {
+              "ansible": {
+                "properties": {
+                  "executor": {
+                    "properties": {
+                      "args": true
+                    },
+                    "required": ["args"]
+                  }
+                },
+                "required": ["executor"]
+              }
+            },
+            "required": ["ansible"]
+          },
+          {
+            "properties": {
+              "provisioner": {
+                "properties": {
+                  "ansible_args": true
+                },
+                "required": ["ansible_args"]
+              }
+            },
+            "required": ["provisioner"]
+          }
+        ]
+      }
+    },
+    {
+      "not": {
+        "allOf": [
+          {
+            "properties": {
+              "ansible": {
+                "properties": {
+                  "cfg": true
+                },
+                "required": ["cfg"]
+              }
+            },
+            "required": ["ansible"]
+          },
+          {
+            "properties": {
+              "provisioner": {
+                "properties": {
+                  "config_options": true
+                },
+                "required": ["config_options"]
+              }
+            },
+            "required": ["provisioner"]
+          }
+        ]
+      }
+    },
+    {
+      "not": {
+        "allOf": [
+          {
+            "properties": {
+              "ansible": {
+                "properties": {
+                  "env": true
+                },
+                "required": ["env"]
+              }
+            },
+            "required": ["ansible"]
+          },
+          {
+            "properties": {
+              "provisioner": {
+                "properties": {
+                  "env": true
+                },
+                "required": ["env"]
+              }
+            },
+            "required": ["provisioner"]
+          }
+        ]
+      }
+    },
+    {
+      "not": {
+        "allOf": [
+          {
+            "properties": {
+              "ansible": {
+                "properties": {
+                  "playbooks": true
+                },
+                "required": ["playbooks"]
+              }
+            },
+            "required": ["ansible"]
+          },
+          {
+            "properties": {
+              "provisioner": {
+                "properties": {
+                  "playbooks": true
+                },
+                "required": ["playbooks"]
+              }
+            },
+            "required": ["provisioner"]
+          }
+        ]
+      }
+    }
+  ],
   "title": "Molecule Scenario Schema",
   "type": "object"
 }

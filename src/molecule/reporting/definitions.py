@@ -1,4 +1,4 @@
-"""All reporting logic for Molecule."""
+"""Data structures and business logic for reporting."""
 
 from __future__ import annotations
 
@@ -6,51 +6,8 @@ from collections import Counter
 from dataclasses import dataclass, field
 from typing import cast
 
-from molecule.ansi_output import AnsiOutput
-from molecule.console import original_stderr
 from molecule.constants import COMPLETION_STATE_COLORS, COMPLETION_STATE_PRIORITY_ORDER
 from molecule.constants import ANSICodes as A
-
-
-def report(results: ScenariosResults) -> None:
-    """Report the results of the scenario.
-
-    Args:
-        results: The results of the scenario.
-    """
-    if not results:
-        return
-
-    ao = AnsiOutput()
-
-    # Details section header (bold and underlined), padded to 79 characters
-    details_text = "DETAILS"
-    details_padded = f"{details_text:<79}"
-    details_header = f"\n[bold][underline]{details_padded}[/]"
-    original_stderr.write(ao.process_markup(details_header))
-    original_stderr.write("\n")
-
-    # Details section content - show completion status for each action
-    for scenario_result in results:
-        if not scenario_result.actions:
-            continue
-        for action_result in scenario_result.actions:
-            line = ao.format_full_completion_line(
-                scenario_name=scenario_result.name,
-                action_name=action_result.action or "unknown",
-                completion_message=action_result.summary.message,
-                color=action_result.summary.color,
-                note=action_result.summary.note,
-            )
-            original_stderr.write(ao.process_markup(line))
-            original_stderr.write("\n")
-        original_stderr.write("\n")
-
-    # Scenario recap section - dynamically generated from CompletionState
-    recap = ao.format_scenario_recap(results)
-    if recap:
-        original_stderr.write(recap)
-        original_stderr.write("\n\n")
 
 
 class CompletionStateInfo:
@@ -256,6 +213,93 @@ class ScenarioResults:
         """
         return self.actions[-1].summary
 
+    @property
+    def completion_state(self) -> CompletionStateInfo:
+        """Get the overall completion state for this scenario.
+
+        Leverages ActionResult.summary logic by treating all actions in this scenario
+        as states of a single "meta-action" representing the entire scenario.
+
+        Returns:
+            CompletionStateInfo representing this scenario's overall outcome.
+        """
+        if not self.actions:
+            return CompletionState.successful
+
+        # Create a temporary ActionResult containing all states from all actions
+        # This lets us reuse the existing summary logic
+        meta_action = ActionResult(action="scenario", states=[])
+
+        for action in self.actions:
+            # Add each action's summary state to our meta-action
+            meta_action.append(action.summary)
+
+        # Let ActionResult.summary handle the priority logic for us
+        return meta_action.summary
+
 
 class ScenariosResults(list[ScenarioResults]):
     """A list of all scenarios and their results."""
+
+    def get_overall_summary(self) -> tuple[CompletionStateInfo, str]:
+        """Generate overall summary for entire molecule run.
+
+        Uses each scenario's completion_state to determine overall status
+        and generate a concise one-line summary.
+
+        Returns:
+            Tuple of (highest_priority_state, one_line_summary)
+        """
+        if not self:
+            return CompletionState.successful, "Molecule executed 0 scenarios"
+
+        # Get completion state for each scenario (let each scenario determine its own state)
+        scenario_states = [scenario.completion_state for scenario in self]
+
+        # Find highest priority overall state
+        highest_priority_state = CompletionState.successful
+        for priority_state in COMPLETION_STATE_PRIORITY_ORDER:
+            if any(state.state == priority_state for state in scenario_states):
+                highest_priority_state = getattr(CompletionState, priority_state)
+                break
+
+        # Count scenario completion states
+        state_counts = Counter(state.state for state in scenario_states)
+
+        # Generate colored count parts using PRIORITY order (failed first, etc.)
+        count_parts = []
+        # Use COMPLETION_STATE_PRIORITY_ORDER to show most important issues first
+        for state_name in COMPLETION_STATE_PRIORITY_ORDER:
+            count = state_counts.get(state_name, 0)
+            if count > 0:
+                # Get the CompletionState object and its color tag
+                state_obj = getattr(CompletionState, state_name)
+                color_tag = state_obj.color.tag
+
+                if state_name == "missing":
+                    colored_part = f"[{color_tag}]{count} missing files[/]"
+                else:
+                    colored_part = f"[{color_tag}]{count} {state_name}[/]"
+                count_parts.append(colored_part)
+
+        # Format with proper oxford comma without quotes (oxford_comma adds quotes)
+        count_parts_len = len(count_parts)
+        if count_parts_len == 0:
+            count_summary = "[green]0 successful[/]"
+        elif count_parts_len == 1:
+            count_summary = count_parts[0]
+        elif count_parts_len == 2:  # noqa: PLR2004
+            count_summary = f"{count_parts[0]} and {count_parts[1]}"
+        else:
+            # Multiple items: "item1, item2, and item3"
+            front = ", ".join(count_parts[:-1])
+            count_summary = f"{front}, and {count_parts[-1]}"
+
+        # Generate final message with colored parts
+        total_scenarios = len(self)
+        scenario_word = "scenario" if total_scenarios == 1 else "scenarios"
+
+        # Main count in white/default, details in parentheses with colors
+        summary = f"Molecule executed {total_scenarios} {scenario_word} ({count_summary})"
+
+        return highest_priority_state, summary

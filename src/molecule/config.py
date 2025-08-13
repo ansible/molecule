@@ -26,13 +26,14 @@ import os
 import warnings
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 from uuid import uuid4
 
 from ansible_compat.ports import cache, cached_property
 
 from molecule import api, interpolation, logger, platforms, scenario, state, util
 from molecule.app import get_app
+from molecule.constants import DEFAULT_CONFIG
 from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
 from molecule.exceptions import MoleculeError
@@ -50,7 +51,12 @@ if TYPE_CHECKING:
     from molecule.dependency.base import Base as Dependency
     from molecule.driver.base import Driver
     from molecule.state import State
-    from molecule.types import CollectionData, CommandArgs, ConfigData, MoleculeArgs
+    from molecule.types import (
+        CollectionData,
+        CommandArgs,
+        ConfigData,
+        MoleculeArgs,
+    )
     from molecule.verifier.base import Verifier
 
 
@@ -317,7 +323,7 @@ class Config:
         Returns:
             The executor backend.
         """
-        return self.config.get("executor", {}).get("backend", "ansible-playbook")
+        return self.config["ansible"]["executor"]["backend"]
 
     @property
     def env(self) -> dict[str, str]:
@@ -504,15 +510,13 @@ class Config:
         env: MutableMapping[str, str] = os.environ,
         keep_string: str | None = None,
     ) -> ConfigData:
-        """Perform a prioritized recursive merge of config files.
+        """Get configuration with complete migration flow.
 
-        Returns a new dict.  Prior to merging the config files are interpolated with
-        environment variables.
-
-        1. Loads Molecule defaults.
-        2. Loads a base config (if provided) and merges on top of defaults.
-        3. Loads the scenario's ``molecule file`` and merges on top of previous
-           merge.
+        This single function handles the entire config resolution:
+        1. Get forward-looking defaults
+        2. Load and interpolate user config files
+        3. Migrate legacy keys in user config
+        4. Merge migrated user config on top of defaults
 
         Args:
             env: The current set of environment variables to consider.
@@ -521,27 +525,124 @@ class Config:
         Returns:
             dict: The merged config.
         """
+        # Step 1: Get forward-looking defaults
         defaults = self._get_defaults()
+
+        # Step 2: Load all user config files into a list of tuples (filename, config)
+        user_config_files: list[tuple[str, dict[str, Any]]] = []
+
+        # Load base configs
         base_configs = filter(os.path.exists, self.args.get("base_config", []))
         for base_config in base_configs:
             with open(base_config) as stream:  # noqa: PTH123
                 s = stream.read()
                 interpolated_config = self._interpolate(s, env, keep_string)
-                defaults = util.merge_dicts(
-                    defaults,
-                    util.safe_load(interpolated_config),
-                )
+                config_data = util.safe_load(interpolated_config)
+                user_config_files.append((base_config, config_data))
 
+        # Load molecule.yml
         if self.molecule_file:
             with open(self.molecule_file) as stream:  # noqa: PTH123
                 s = stream.read()
                 interpolated_config = self._interpolate(s, env, keep_string)
-                defaults = util.merge_dicts(
-                    defaults,
-                    util.safe_load(interpolated_config),
-                )
+                config_data = util.safe_load(interpolated_config)
+                user_config_files.append((self.molecule_file, config_data))
 
-        return defaults
+        # Step 3: Debug log legacy keys that will be migrated
+        legacy_keys = ["ansible_args", "config_options", "env", "playbooks"]
+        for file_name, config_data in user_config_files:
+            provisioner = config_data.get("provisioner", {})
+            for key in legacy_keys:
+                if key in provisioner:
+                    # Use temporary logger since self._log isn't available during init
+                    temp_log = logger.get_scenario_logger(__name__, "unknown", "config")
+                    temp_log.debug(
+                        f"provisioner.{key} found in {file_name}, this can be defined in ansible.{self._get_ansible_key_mapping(key)}",
+                    )
+
+        # Step 4: Merge all user configs in order (base configs first, molecule.yml last)
+        merged_user_config: dict[str, Any] = {}
+        for _file_name, config_data in user_config_files:
+            merged_user_config = util.merge_dicts(merged_user_config, config_data)
+
+        # Step 5: Migrate user config (legacy keys -> new ansible section)
+        migrated_user_config = self._migrate_user_config(merged_user_config)
+
+        # Step 6: Merge the migrated user config on top of defaults
+        return util.merge_dicts(  # type: ignore[type-var]
+            defaults,
+            cast("ConfigData", migrated_user_config),
+        )
+
+    def _get_ansible_key_mapping(self, legacy_key: str) -> str:
+        """Map legacy provisioner keys to their ansible section equivalents.
+
+        Args:
+            legacy_key: The legacy key name from provisioner section.
+
+        Returns:
+            The corresponding key path in ansible section.
+        """
+        mapping = {
+            "ansible_args": "executor.args.ansible_playbook",
+            "config_options": "cfg",
+            "env": "env",
+            "playbooks": "playbooks",
+        }
+        return mapping.get(legacy_key, legacy_key)
+
+    def _migrate_user_config(self, user_config: dict[str, Any]) -> dict[str, Any]:
+        """Migrate legacy provisioner keys to ansible section in user config.
+
+        Migrates the keys defined in _get_ansible_key_mapping() from provisioner
+        section to their corresponding locations in the ansible section.
+
+        Args:
+            user_config: Raw user configuration (may contain legacy keys)
+
+        Returns:
+            User config with legacy keys migrated to ansible section
+        """
+        # Work on a copy to avoid modifying input
+        config = copy.deepcopy(user_config)
+
+        provisioner = config.get("provisioner", {})
+        legacy_keys = ["ansible_args", "config_options", "env", "playbooks"]
+
+        # Check if migration is needed
+        if not any(key in provisioner for key in legacy_keys):
+            return config
+
+        # Create ansible section if it doesn't exist
+        if "ansible" not in config:
+            config["ansible"] = {}
+        ansible_config = config["ansible"]
+
+        # Migrate ansible_args -> ansible.executor.args.ansible_playbook
+        if "ansible_args" in provisioner:
+            if "executor" not in ansible_config:
+                ansible_config["executor"] = {}
+            if "args" not in ansible_config["executor"]:
+                ansible_config["executor"]["args"] = {}
+            ansible_config["executor"]["args"]["ansible_playbook"] = provisioner["ansible_args"]
+            del provisioner["ansible_args"]
+
+        # Migrate config_options -> ansible.cfg
+        if "config_options" in provisioner:
+            ansible_config["cfg"] = provisioner["config_options"]
+            del provisioner["config_options"]
+
+        # Migrate env -> ansible.env
+        if "env" in provisioner:
+            ansible_config["env"] = provisioner["env"]
+            del provisioner["env"]
+
+        # Migrate playbooks -> ansible.playbooks
+        if "playbooks" in provisioner:
+            ansible_config["playbooks"] = provisioner["playbooks"]
+            del provisioner["playbooks"]
+
+        return config
 
     def _interpolate(
         self,
@@ -561,6 +662,16 @@ class Config:
         return ""
 
     def _get_defaults(self) -> ConfigData:
+        """Get default configuration with forward-looking structure.
+
+        Deepcopy here to avoid modifying the original DEFAULT_CONFIG.
+
+        Returns:
+            Default configuration from constants.
+        """
+        defaults = copy.deepcopy(DEFAULT_CONFIG)
+
+        # Handle scenario name dynamically
         if not self.molecule_file:
             scenario_name = "default"
         else:
@@ -568,93 +679,9 @@ class Config:
                 os.path.basename(os.path.dirname(self.molecule_file))  # noqa: PTH119, PTH120
                 or "default"
             )
-        return {
-            "dependency": {
-                "name": "galaxy",
-                "command": None,
-                "enabled": True,
-                "options": {},
-                "env": {},
-            },
-            "driver": {
-                "name": "default",
-                "provider": {"name": None},
-                "options": {"managed": True},
-                "ssh_connection_options": [],
-                "safe_files": [],
-            },
-            "executor": {
-                "backend": "ansible-playbook",
-            },
-            "platforms": [],
-            "prerun": True,
-            "role_name_check": 0,
-            "provisioner": {
-                "name": "ansible",
-                "config_options": {},
-                "ansible_args": [],
-                "connection_options": {},
-                "options": {},
-                "env": {},
-                "inventory": {
-                    "hosts": {},
-                    "host_vars": {},
-                    "group_vars": {},
-                    "links": {},
-                },
-                "children": {},
-                "playbooks": {
-                    "cleanup": "cleanup.yml",
-                    "create": "create.yml",
-                    "converge": "converge.yml",
-                    "destroy": "destroy.yml",
-                    "prepare": "prepare.yml",
-                    "side_effect": "side_effect.yml",
-                    "verify": "verify.yml",
-                },
-                "log": True,
-            },
-            "scenario": {
-                "name": scenario_name,
-                "check_sequence": [
-                    "dependency",
-                    "cleanup",
-                    "destroy",
-                    "create",
-                    "prepare",
-                    "converge",
-                    "check",
-                    "cleanup",
-                    "destroy",
-                ],
-                "cleanup_sequence": ["cleanup"],
-                "converge_sequence": ["dependency", "create", "prepare", "converge"],
-                "create_sequence": ["dependency", "create", "prepare"],
-                "destroy_sequence": ["dependency", "cleanup", "destroy"],
-                "test_sequence": [
-                    # dependency must be kept before lint to avoid errors
-                    "dependency",
-                    "cleanup",
-                    "destroy",
-                    "syntax",
-                    "create",
-                    "prepare",
-                    "converge",
-                    "idempotence",
-                    "side_effect",
-                    "verify",
-                    "cleanup",
-                    "destroy",
-                ],
-            },
-            "verifier": {
-                "name": "ansible",
-                "enabled": True,
-                "options": {},
-                "env": {},
-                "additional_files_or_dirs": [],
-            },
-        }
+
+        defaults["scenario"]["name"] = scenario_name
+        return defaults  # type: ignore[return-value]
 
     def _validate(self) -> None:
         """Validate molecule file.
