@@ -61,9 +61,11 @@ nav:
   - Using:
       - getting-started.md
       - usage.md
-      - next.md
+      - ansible-native.md
+      - workflow.md
       - configuration.md
       - ci.md
+      - pre-ansible-native.md
   - Collection:
       - collection.md
   - Examples:
