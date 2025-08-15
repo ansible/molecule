@@ -8,6 +8,8 @@ booleaness
 cacheprovider
 caplog
 capsys
+ceos
+ceoslab
 cfmpr
 cgroupfs
 cgroupns
@@ -70,6 +72,7 @@ lifecycle
 lifecycles
 lineterm
 lockf
+logind
 makereport
 maxsplit
 metacopy
@@ -80,6 +83,8 @@ mountopt
 multibranch
 myapp
 mygroups
+netcommon
+netcommon
 nitz
 nocows
 nodestroy
@@ -126,6 +131,7 @@ stty
 superitem
 sysexit
 templater
+testdb
 testenv
 testinfra
 testrole
@@ -149,4 +155,5 @@ virtenv
 virtualmachines
 webservers
 xdist
+zceos
 zzyzx
