@@ -125,7 +125,10 @@ def _patched_execute_subcommand() -> Callable[..., None]:
     """
 
     def _execute_subcommand_default(
-        config: object, subcommand: str, *, shared_state: bool = False
+        config: object,
+        subcommand: str,
+        *,
+        shared_state: bool = False,
     ) -> None:
         return None
 
