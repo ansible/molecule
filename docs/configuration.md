@@ -37,6 +37,39 @@ and
 [role](https://ansible.readthedocs.io/projects/lint/rules/role-name/#role-name).
 A `computed fully qualified role name` may further contain the dot character.
 
+## Shared State
+
+By default, Molecule runs each scenario independently with its own isolated state and resources. When `shared_state` is enabled, scenarios share ephemeral state, allowing them to access resources created by the `default` scenario.
+
+This is particularly useful for multi-scenario testing where one scenario manages testing resource lifecycle while other scenarios perform testing against those resources.
+
+To enable shared state, add `shared_state: true` to your configuration file:
+
+```yaml
+---
+shared_state: true
+# ... rest of configuration
+```
+
+**Effects of enabling shared state:**
+
+- All scenarios share the same ephemeral state directory
+- The default scenario handles create/destroy actions for all scenarios
+- Component scenarios can access resources created by the default scenario
+- Scenarios skip their own create/destroy actions when shared resources are managed elsewhere
+- Faster execution with single infrastructure lifecycle instead of per-scenario setup/teardown
+
+**Configuration locations:**
+
+You can add this setting to:
+
+- `.config/molecule/config.yml` file in your `$HOME` directory (global default)
+- Base `config.yml` file at the project root (project default)
+- Collection molecule directory `extensions/molecule/config.yml`
+- Individual scenario `molecule.yml` files (scenario-specific override)
+
+**Alternative:** The `--shared-state` command-line flag can also enable this behavior temporarily, but configuration file approach is recommended for consistent usage.
+
 ## Variable Substitution
 
 ::: molecule.interpolation.Interpolator
