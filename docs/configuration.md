@@ -62,6 +62,7 @@ shared_state: true
 **Configuration locations:**
 
 You can add this setting to:
+
 - `.config/molecule/config.yml` file in your `$HOME` directory (global default)
 - Base `config.yml` file at the project root (project default)
 - Collection molecule directory `extensions/molecule/config.yml`
