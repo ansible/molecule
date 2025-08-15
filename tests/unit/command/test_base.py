@@ -654,7 +654,7 @@ def test_apply_cli_overrides_comprehensive(
     captured_configs.clear()
 
     with pytest.raises(SystemExit) as exc_info:
-        main()
+        main.main(standalone_mode=False)
 
     # 6. Assert results
     assert exc_info.value.code == 0  # Our ImmediateExit code was handled properly
