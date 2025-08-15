@@ -125,7 +125,6 @@ def prepare(ctx: click.Context) -> None:  # pragma: no cover
         "command_borders": ctx.params["command_borders"],
         "force": ctx.params["force"],
         "report": ctx.params["report"],
-        "shared_inventory": ctx.params["shared_inventory"],
         "shared_state": ctx.params["shared_state"],
         "subcommand": subcommand,
     }
