@@ -74,6 +74,8 @@ This scenario tests playbooks against Linux containers using Podman.
 
 1. **Update `molecule/linux/molecule.yml`:**
 
+   The `molecule.yml` file is the scenario-specific configuration that tailors Molecule's behavior to the needs of this testing scenario.
+
    ```yaml
    ---
    dependency:
@@ -100,6 +102,8 @@ This scenario tests playbooks against Linux containers using Podman.
    ```
 
 2. **Create `molecule/linux/inventory.yml`:**
+
+   The inventory defines the testing resources and their configuration details that Molecule will use to create and manage test instances.
 
    ```yaml
    ---
@@ -135,6 +139,8 @@ This scenario tests playbooks against Linux containers using Podman.
 
 3. **Create `molecule/linux/create.yml`:**
 
+   The create playbook is used to instantiate the testing resources defined in the inventory, provisioning containers and establishing connectivity.
+
    ```yaml
    ---
    - name: Create container instances
@@ -167,6 +173,8 @@ This scenario tests playbooks against Linux containers using Podman.
 
 4. **Create `molecule/linux/prepare.yml`:**
 
+   The prepare playbook configures the testing resources with any prerequisites needed before running the main playbook under test.
+
    ```yaml
    ---
    - name: Prepare container instances
@@ -183,6 +191,8 @@ This scenario tests playbooks against Linux containers using Podman.
 
 5. **Create `molecule/linux/converge.yml`:**
 
+   The converge playbook executes the main playbook being tested, applying your automation logic to the prepared testing resources.
+
    ```yaml
    ---
    - name: Converge
@@ -190,6 +200,8 @@ This scenario tests playbooks against Linux containers using Podman.
    ```
 
 6. **Create `molecule/linux/verify.yml`:**
+
+   The verify playbook validates that the converge playbook achieved the desired results by testing the final state of the resources.
 
    ```yaml
    ---
@@ -224,6 +236,8 @@ This scenario tests playbooks against Linux containers using Podman.
 
 7. **Create `molecule/linux/cleanup.yml`:**
 
+   The cleanup playbook removes temporary artifacts and resets the testing resources to a clean state before destruction.
+
    ```yaml
    ---
    - name: Cleanup
@@ -238,6 +252,8 @@ This scenario tests playbooks against Linux containers using Podman.
    ```
 
 8. **Create `molecule/linux/destroy.yml`:**
+
+   The destroy playbook tears down all testing resources, removing containers and networks to return the system to its original state.
 
    ```yaml
    ---
@@ -267,6 +283,8 @@ This scenario tests playbooks against Arista EOS network devices using container
 
 1. **Update `molecule/network/molecule.yml`:**
 
+   This scenario-specific configuration adapts Molecule for network device testing with simplified sequences and network-specific settings.
+
    ```yaml
    ---
    dependency:
@@ -295,6 +313,8 @@ This scenario tests playbooks against Arista EOS network devices using container
 
 2. **Create `molecule/network/inventory.yml`:**
 
+   The network inventory defines containerized network devices with connection parameters and container configuration for realistic device testing.
+
    ```yaml
    ---
    all:
@@ -318,6 +338,8 @@ This scenario tests playbooks against Arista EOS network devices using container
    ```
 
 3. **Create `molecule/network/create.yml`:**
+
+   The create playbook launches containerized network devices and waits for both SSH and API services to become available for testing.
 
    ```yaml
    ---
@@ -373,6 +395,8 @@ This scenario tests playbooks against Arista EOS network devices using container
 
 4. **Create `molecule/network/converge.yml`:**
 
+   The converge playbook executes the network playbook under test against the containerized network devices.
+
    ```yaml
    ---
    - name: Converge
@@ -380,6 +404,8 @@ This scenario tests playbooks against Arista EOS network devices using container
    ```
 
 5. **Create `molecule/network/verify.yml`:**
+
+   The verify playbook tests network device functionality using EOS-specific commands to validate the playbook's effects on device configuration.
 
    ```yaml
    ---
@@ -415,6 +441,8 @@ This scenario tests playbooks against Arista EOS network devices using container
 
 6. **Create `molecule/network/cleanup.yml`:**
 
+   The cleanup playbook removes any test configurations from the network devices to restore them to a clean state.
+
    ```yaml
    ---
    - name: Cleanup network configuration
@@ -431,6 +459,8 @@ This scenario tests playbooks against Arista EOS network devices using container
    ```
 
 7. **Create `molecule/network/destroy.yml`:**
+
+   The destroy playbook removes the containerized network devices and networks, completing the test lifecycle cleanup.
 
    ```yaml
    ---
