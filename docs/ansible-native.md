@@ -210,7 +210,7 @@ plugin: amazon.aws.aws_ec2
 regions:
   - us-east-1
 filters:
-  "tag:Environment": "test"   # Only instances with tag Environment=test
+  "tag:Environment": "test" # Only instances with tag Environment=test
 keyed_groups:
   - key: tags.Name
     prefix: tag
@@ -284,6 +284,7 @@ shared_state: true
 ```
 
 When enabled:
+
 - All scenarios share the same ephemeral state directory
 - Default scenario manages testing resource lifecycle
 - Component scenarios access shared resources
@@ -292,6 +293,7 @@ When enabled:
 ### Resource Lifecycle Management
 
 **Default scenario** (testing resource management):
+
 ```yaml
 scenario:
   test_sequence:
@@ -300,6 +302,7 @@ scenario:
 ```
 
 **Component scenarios** (testing only):
+
 ```yaml
 scenario:
   test_sequence:
@@ -312,6 +315,7 @@ scenario:
 ### Execution Flow
 
 With `shared_state: true`:
+
 1. Default scenario creates shared testing resources
 2. Component scenarios execute tests against shared resources
 3. Default scenario destroys shared testing resources
@@ -481,6 +485,7 @@ shared_state: true
 ```
 
 **Default scenario** manages testing resources:
+
 ```yaml
 # default/molecule.yml
 ---
@@ -594,6 +599,7 @@ verifier:
 ```
 
 This configuration defines ansible-native testing with:
+
 - Native inventory sources in `inventory/` directory
 - Collection-based testing resource management in create/destroy playbooks
 - Shared state for multi-scenario testing

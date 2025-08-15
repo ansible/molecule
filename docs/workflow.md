@@ -11,6 +11,7 @@ molecule <subcommand> [options]
 ```
 
 Each subcommand executes either:
+
 - **A single action** - Runs one specific playbook
 - **A sequence** - Runs an ordered list of actions
 
@@ -30,13 +31,15 @@ molecule test
 ```
 
 This executes the `test` sequence:
+
 ```
 dependency → cleanup → destroy → syntax → create → prepare → converge → idempotence → side_effect → verify → cleanup → destroy
 ```
 
 Each action runs its corresponding playbook:
+
 - `create` → `create.yml` (tasks to provision testing resources)
-- `converge` → `converge.yml` (tasks to apply configuration under test)  
+- `converge` → `converge.yml` (tasks to apply configuration under test)
 - `verify` → `verify.yml` (tasks to validate results)
 - etc.
 
@@ -118,7 +121,7 @@ Actions are individual playbooks that perform specific testing lifecycle tasks. 
       ansible.builtin.file:
         path: /opt/test-data
         state: directory
-        mode: '0755'
+        mode: "0755"
 
     - name: Copy test configuration files
       ansible.builtin.copy:
@@ -149,7 +152,7 @@ Actions are individual playbooks that perform specific testing lifecycle tasks. 
       ansible.builtin.template:
         src: app.conf.j2
         dest: /etc/myapp/app.conf
-        mode: '0644'
+        mode: "0644"
       notify: restart application service
 
     - name: Ensure services are running
@@ -430,7 +433,7 @@ scenario:
     - converge
     - verify
 
-# scenarios/role2/molecule.yml  
+# scenarios/role2/molecule.yml
 ---
 scenario:
   test_sequence:
@@ -481,7 +484,6 @@ scenario:
     - verify
     - idempotence
     - verify
-
 # Inherits ansible config and shared_state from config.yml
 ```
 
@@ -492,7 +494,7 @@ scenario:
 ansible:
   env:
     INTEGRATION_MODE: true
-    
+
 scenario:
   test_sequence:
     - create
@@ -503,7 +505,7 @@ scenario:
     - cleanup
     - destroy
 
-shared_state: false  # Override global setting
+shared_state: false # Override global setting
 ```
 
 ### Shared State Sequences
@@ -529,7 +531,7 @@ scenario:
     - converge
     - verify
 
-# scenarios/role2/molecule.yml  
+# scenarios/role2/molecule.yml
 ---
 scenario:
   test_sequence:
@@ -556,33 +558,38 @@ Molecule subcommands map to either complete sequences or individual actions.
 These commands execute complete sequences of actions:
 
 #### `molecule test`
+
 - **Purpose**: Execute the full test sequence
 - **Sequence**: `dependency`, `cleanup`, `destroy`, `syntax`, `create`, `prepare`, `converge`, `idempotence`, `side_effect`, `verify`, `cleanup`, `destroy`
 - **Usage**: `molecule test [scenario-name]`
-- **Behavior**: 
+- **Behavior**:
   - Always starts fresh (destroys existing resources)
   - Runs all actions in sequence order
   - Stops on first failure unless `--destroy=never`
 
 #### `molecule check`
+
 - **Purpose**: Perform a dry-run of the provisioning sequence
 - **Sequence**: `dependency`, `cleanup`, `destroy`, `syntax`, `create`, `prepare`, `converge`
 - **Usage**: `molecule check [scenario-name]`
 - **Behavior**: Validates configuration without permanent changes
 
 #### `molecule converge`
+
 - **Purpose**: Execute the convergence sequence
 - **Sequence**: `dependency`, `create`, `prepare`, `converge`
 - **Usage**: `molecule converge [scenario-name]`
 - **Behavior**: Ensures resources exist and applies configuration
 
 #### `molecule create`
+
 - **Purpose**: Execute the creation sequence
 - **Sequence**: `dependency`, `create`, `prepare`
 - **Usage**: `molecule create [scenario-name]`
 - **Behavior**: Sets up testing resources and prepares them
 
 #### `molecule destroy`
+
 - **Purpose**: Execute the destruction sequence
 - **Sequence**: `dependency`, `cleanup`, `destroy`
 - **Usage**: `molecule destroy [scenario-name]`
@@ -593,42 +600,49 @@ These commands execute complete sequences of actions:
 These commands execute single actions only:
 
 #### `molecule prepare`
+
 - **Action**: `prepare`
 - **Purpose**: Configure existing resources for testing
 - **Usage**: `molecule prepare [scenario-name]`
 - **Behavior**: Runs prepare playbook only, resources must already exist
 
 #### `molecule verify`
+
 - **Action**: `verify`
 - **Purpose**: Run verification tests only
 - **Usage**: `molecule verify [scenario-name]`
 - **Behavior**: Tests current state without changes
 
 #### `molecule idempotence`
+
 - **Action**: `idempotence`
 - **Purpose**: Test idempotency by running converge twice
 - **Usage**: `molecule idempotence [scenario-name]`
 - **Behavior**: Runs converge, then converge again, expects no changes
 
 #### `molecule side-effect`
+
 - **Action**: `side_effect`
 - **Purpose**: Execute side effect testing
 - **Usage**: `molecule side-effect [scenario-name]`
 - **Behavior**: Runs side_effect playbook only
 
 #### `molecule cleanup`
+
 - **Action**: `cleanup`
 - **Purpose**: Clean up test artifacts without destroying resources
 - **Usage**: `molecule cleanup [scenario-name]`
 - **Behavior**: Runs cleanup playbook only
 
 #### `molecule syntax`
+
 - **Action**: `syntax`
 - **Purpose**: Check playbook syntax
 - **Usage**: `molecule syntax [scenario-name]`
 - **Behavior**: Validates Ansible syntax without execution
 
 #### `molecule dependency`
+
 - **Action**: `dependency`
 - **Purpose**: Install role dependencies
 - **Usage**: `molecule dependency [scenario-name]`
@@ -639,16 +653,19 @@ These commands execute single actions only:
 These commands provide information and access:
 
 #### `molecule list`
+
 - **Purpose**: Display scenario information and status
 - **Usage**: `molecule list [scenario-name]`
 - **Behavior**: Shows current state of instances
 
 #### `molecule login`
+
 - **Purpose**: Log into a running instance
 - **Usage**: `molecule login [--host hostname] [scenario-name]`
 - **Behavior**: Opens shell session to instance
 
 #### `molecule matrix`
+
 - **Purpose**: Display test matrix for scenarios
 - **Usage**: `molecule matrix [subcommand] [scenario-name]`
 - **Behavior**: Shows sequence of actions for given subcommand
@@ -656,6 +673,7 @@ These commands provide information and access:
 ### Command Groups
 
 #### Development Workflow
+
 ```bash
 # Quick iteration cycle
 molecule create
@@ -671,13 +689,14 @@ molecule destroy
 ```
 
 #### Full Testing Workflow
+
 ```bash
 # Complete test suite
 molecule test
 
 # Or step by step
 molecule create
-molecule prepare  
+molecule prepare
 molecule converge
 molecule verify
 molecule idempotence
@@ -687,6 +706,7 @@ molecule destroy
 ```
 
 #### Debugging Workflow
+
 ```bash
 # Create and access resources
 molecule create
@@ -704,6 +724,7 @@ molecule verify
 ```
 
 #### Multi-Scenario Testing
+
 ```bash
 # Test specific scenarios
 molecule test --scenario unit
@@ -726,7 +747,7 @@ molecule create --scenario default
 molecule converge --scenario role1
 molecule verify --scenario role1
 
-molecule converge --scenario role2  
+molecule converge --scenario role2
 molecule verify --scenario role2
 
 # Default scenario cleans up
@@ -738,13 +759,14 @@ molecule destroy --scenario default
 ```bash
 # Each scenario manages its own resources
 molecule test --scenario role1  # Creates, tests, destroys
-molecule test --scenario role2  # Creates, tests, destroys  
+molecule test --scenario role2  # Creates, tests, destroys
 molecule test --scenario role3  # Creates, tests, destroys
 ```
 
 ### Advanced Command Usage
 
 #### Selective Testing
+
 ```bash
 # Skip destroy for debugging
 molecule test --destroy=never
@@ -759,6 +781,7 @@ molecule test
 ```
 
 #### Parallel Execution
+
 ```bash
 # Test multiple scenarios in parallel
 molecule test --scenario unit &
@@ -767,6 +790,7 @@ wait
 ```
 
 #### Environment-Specific Testing
+
 ```bash
 # Test with environment variables
 MOLECULE_DOCKER_HOST=tcp://remote:2376 molecule test

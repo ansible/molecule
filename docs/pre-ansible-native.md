@@ -2,7 +2,6 @@
 
 The pre ansible-native approach is maintained for compatibility with environments that still rely on third-party tools and pre ansible-native configurations. This document provides technical reference for the these configuration constructs: platforms, drivers, and provisioner sections.
 
-
 ## Configuration Structure
 
 Pre ansible-native molecule configurations use the following top-level sections:
@@ -303,8 +302,6 @@ verifier:
 
 Testinfra verifier executes Python-based tests. It requires separate installation as an optional dependency.
 
-
-
 ### Verifier Options
 
 ```yaml
@@ -319,8 +316,6 @@ verifier:
 ```
 
 **Ansible-native approach:** Verification remains as `verifier.name: ansible` but relies on standard Ansible playbooks and inventory rather than generated inventory from platforms.
-
-
 
 ## Generated Inventory
 
