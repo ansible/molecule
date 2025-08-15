@@ -94,6 +94,7 @@ def _patched_scenarios_factory(
             {
                 "all": scenarios_list,
                 "results": [],
+                "shared_state": False,  # Default to False for test scenarios
             },
         )()
 
@@ -116,14 +117,19 @@ def _patched_rmtree_tracker() -> tuple[Callable[[str, bool], None], list[str]]:
 
 
 @pytest.fixture(name="patched_execute_subcommand")
-def _patched_execute_subcommand() -> Callable[[object, str], None]:
+def _patched_execute_subcommand() -> Callable[..., None]:
     """Fixture that provides a no-op patched for execute_subcommand_default.
 
     Returns:
         Patched function that accepts config and subcommand parameters.
     """
 
-    def _execute_subcommand_default(config: object, subcommand: str) -> None:
+    def _execute_subcommand_default(
+        config: object,
+        subcommand: str,
+        *,
+        shared_state: bool = False,
+    ) -> None:
         return None
 
     return _execute_subcommand_default
@@ -168,7 +174,7 @@ def _patched_execute_cmdline_scenarios(monkeypatch: pytest.MonkeyPatch) -> list[
 def _common_patches(
     monkeypatch: pytest.MonkeyPatch,
     patched_rmtree_tracker: tuple[Callable[[str, bool], None], list[str]],
-    patched_execute_subcommand: Callable[[object, str], None],
+    patched_execute_subcommand: Callable[..., None],
 ) -> dict[str, Any]:
     """Fixture that applies common patches needed for reset tests.
 
