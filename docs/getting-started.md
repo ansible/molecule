@@ -1,8 +1,6 @@
 # Getting Started With Molecule
 
-The following guide will step through an example of developing and
-testing a new Ansible collection. After reading this guide, you should be
-familiar with the basics of how to use Molecule and what it can offer.
+This guide demonstrates developing and testing a new Ansible collection. This guide covers the fundamentals of Molecule usage and capabilities.
 
 1.  Create a collection
 
