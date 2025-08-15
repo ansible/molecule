@@ -69,6 +69,7 @@ DEFAULT_CONFIG: DefaultConfigData = {
     "platforms": [],
     "prerun": True,
     "role_name_check": 0,
+    "shared_state": False,
     "provisioner": {
         "name": "ansible",
         # Migrated keys removed: ansible_args, config_options, env, playbooks

@@ -29,6 +29,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 from uuid import uuid4
 
+import click
+
 from ansible_compat.ports import cache, cached_property
 
 from molecule import api, interpolation, logger, platforms, scenario, state, util
@@ -135,12 +137,27 @@ class Config:
 
         # Former after_init() contents
         self.config = self._reget_config()
+        self._apply_cli_overrides()
         if self.molecule_file:
             self._validate()
 
     def write(self) -> None:
         """Write config file to filesystem."""
         util.write_file(self.config_file, util.safe_dump(self.config))
+
+    def _apply_cli_overrides(self) -> None:
+        """Apply CLI argument overrides to config.
+
+        This method modifies the config dictionary to include CLI overrides,
+        creating a single source of truth for configuration values.
+        """
+        # Apply shared_state CLI override ONLY if it was explicitly provided via CLI
+        ctx = click.get_current_context(silent=True)
+        if "shared_state" not in self.command_args or ctx is None:
+            return
+        source = ctx.get_parameter_source("shared_state")
+        if source == click.core.ParameterSource.COMMANDLINE:
+            self.config["shared_state"] = self.command_args["shared_state"]
 
     @property
     def config_file(self) -> str:
@@ -171,13 +188,13 @@ class Config:
         return self.command_args.get("shared_inventory", False)
 
     @property
-    def shared_data(self) -> bool:
-        """Should molecule share ephemeral data.
+    def shared_state(self) -> bool:
+        """Should molecule share ephemeral state.
 
         Returns:
-            Whether molecule should share ephemeral data.
+            Whether molecule should share ephemeral state.
         """
-        return self.command_args.get("shared_state", False)
+        return self.config.get("shared_state", False)
 
     @property
     def command_borders(self) -> bool:
@@ -421,7 +438,7 @@ class Config:
                     self.molecule_file,
                 )
 
-        return state.SharedState(self) if self.shared_data else state.State(self)
+        return state.SharedState(self) if self.shared_state else state.State(self)
 
     @cached_property
     def verifier(self) -> Verifier:
