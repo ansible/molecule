@@ -60,8 +60,8 @@ nav:
   - philosophy.md
   - installation.md
   - Using:
-      - getting-started-collections.md
       - getting-started-playbooks.md
+      - getting-started-collections.md
       - usage.md
       - ansible-native.md
       - workflow.md

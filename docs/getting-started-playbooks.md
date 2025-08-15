@@ -72,192 +72,208 @@ This scenario tests playbooks against Linux containers using Podman.
 
 ### Configure the Linux Scenario
 
-1. **Update `molecule/linux/molecule.yml`:**
+- **Update `molecule/linux/molecule.yml`:**
 
-   ```yaml
-   ---
-   dependency:
-     name: galaxy
-     options:
-       requirements-file: ../requirements.yml
+  The `molecule.yml` file is the scenario-specific configuration that tailors Molecule's behavior to the needs of this testing scenario.
 
-   ansible:
-     cfg:
-       defaults:
-         collections_path: collections
-         inventory: inventory/hosts.yml
+  ```yaml
+  ---
+  dependency:
+    name: galaxy
+    options:
+      requirements-file: ../requirements.yml
 
-   scenario:
-     test_sequence:
-       - dependency
-       - create
-       - prepare
-       - converge
-       - idempotence
-       - verify
-       - cleanup
-       - destroy
-   ```
+  ansible:
+    cfg:
+      defaults:
+        collections_path: collections
+        inventory: inventory/hosts.yml
 
-2. **Create `molecule/linux/inventory.yml`:**
+  scenario:
+    test_sequence:
+      - dependency
+      - create
+      - prepare
+      - converge
+      - idempotence
+      - verify
+      - cleanup
+      - destroy
+  ```
 
-   ```yaml
-   ---
-   all:
-     children:
-       webservers:
-         hosts:
-           web-server:
-             ansible_host: web-server
-             container_image: quay.io/centos/centos:stream9
-             container_command: /sbin/init
-             container_privileged: true
-         vars:
-           http_port: 80
-           server_name: test-web
-           required_packages:
-             - python3
-             - systemd
-       databases:
-         hosts:
-           db-server:
-             ansible_host: db-server
-             container_image: quay.io/centos/centos:stream9
-             container_command: /sbin/init
-             container_privileged: true
-         vars:
-           db_name: testdb
-           db_user: testuser
-           required_packages:
-             - python3
-             - systemd
-   ```
+- **Create `molecule/linux/inventory.yml`:**
 
-3. **Create `molecule/linux/create.yml`:**
+  The inventory defines the testing resources and their configuration details that Molecule will use to create and manage test instances.
 
-   ```yaml
-   ---
-   - name: Create container instances
-     hosts: localhost
-     gather_facts: false
-     tasks:
-       - name: Create container network
-         containers.podman.podman_network:
-           name: molecule-linux-test
-           state: present
+  ```yaml
+  ---
+  all:
+    children:
+      webservers:
+        hosts:
+          web-server:
+            ansible_host: web-server
+            container_image: quay.io/centos/centos:stream9
+            container_command: /sbin/init
+            container_privileged: true
+        vars:
+          http_port: 80
+          server_name: test-web
+          required_packages:
+            - python3
+            - systemd
+      databases:
+        hosts:
+          db-server:
+            ansible_host: db-server
+            container_image: quay.io/centos/centos:stream9
+            container_command: /sbin/init
+            container_privileged: true
+        vars:
+          db_name: testdb
+          db_user: testuser
+          required_packages:
+            - python3
+            - systemd
+  ```
 
-       - name: Create test containers
-         containers.podman.podman_container:
-           name: "{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}"
-           image: "{% raw %}{{ hostvars[item].container_image }}{% endraw %}"
-           command: "{% raw %}{{ hostvars[item].container_command }}{% endraw %}"
-           privileged: "{% raw %}{{ hostvars[item].container_privileged }}{% endraw %}"
-           state: started
-           networks:
-             - molecule-linux-test
-           systemd: true
-         loop: "{% raw %}{{ groups['all'] }}{% endraw %}"
+- **Create `molecule/linux/create.yml`:**
 
-       - name: Wait for containers to be ready
-         ansible.builtin.wait_for_connection:
-           timeout: 300
-         delegate_to: "{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}"
-         loop: "{% raw %}{{ groups['all'] }}{% endraw %}"
-   ```
+  The create playbook is used to instantiate the testing resources defined in the inventory, provisioning containers and establishing connectivity.
 
-4. **Create `molecule/linux/prepare.yml`:**
+  ```yaml
+  ---
+  - name: Create container instances
+    hosts: localhost
+    gather_facts: false
+    tasks:
+      - name: Create container network
+        containers.podman.podman_network:
+          name: molecule-linux-test
+          state: present
 
-   ```yaml
-   ---
-   - name: Prepare container instances
-     hosts: all
-     gather_facts: false
-     become: true
-     tasks:
-       - name: Install required packages
-         ansible.builtin.dnf:
-           name: "{% raw %}{{ required_packages }}{% endraw %}"
-           state: present
-         when: required_packages is defined
-   ```
+      - name: Create test containers
+        containers.podman.podman_container:
+          name: "{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}"
+          image: "{% raw %}{{ hostvars[item].container_image }}{% endraw %}"
+          command: "{% raw %}{{ hostvars[item].container_command }}{% endraw %}"
+          privileged: "{% raw %}{{ hostvars[item].container_privileged }}{% endraw %}"
+          state: started
+          networks:
+            - molecule-linux-test
+          systemd: true
+        loop: "{% raw %}{{ groups['all'] }}{% endraw %}"
 
-5. **Create `molecule/linux/converge.yml`:**
+      - name: Wait for containers to be ready
+        ansible.builtin.wait_for_connection:
+          timeout: 300
+        delegate_to: "{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}"
+        loop: "{% raw %}{{ groups['all'] }}{% endraw %}"
+  ```
 
-   ```yaml
-   ---
-   - name: Converge
-     ansible.builtin.import_playbook: ../../linux_playbook.yml
-   ```
+- **Create `molecule/linux/prepare.yml`:**
 
-6. **Create `molecule/linux/verify.yml`:**
+  The prepare playbook configures the testing resources with any prerequisites needed before running the main playbook under test.
 
-   ```yaml
-   ---
-   - name: Verify
-     hosts: all
-     gather_facts: true
-     tasks:
-       - name: Check required packages are installed
-         ansible.builtin.package_facts:
-           manager: auto
+  ```yaml
+  ---
+  - name: Prepare container instances
+    hosts: all
+    gather_facts: false
+    become: true
+    tasks:
+      - name: Install required packages
+        ansible.builtin.dnf:
+          name: "{% raw %}{{ required_packages }}{% endraw %}"
+          state: present
+        when: required_packages is defined
+  ```
 
-       - name: Verify python3 is installed
-         ansible.builtin.assert:
-           that:
-             - "'python3' in ansible_facts.packages"
-           fail_msg: "Python3 package not found"
+- **Create `molecule/linux/converge.yml`:**
 
-       - name: Verify systemd service is running
-         ansible.builtin.systemd:
-           name: systemd-logind
-           state: started
-         check_mode: true
-         register: systemd_check
-         failed_when: false
+  The converge playbook executes the main playbook being tested, applying your automation logic to the prepared testing resources.
 
-       - name: Assert systemd is active
-         ansible.builtin.assert:
-           that:
-             - systemd_check is not failed
-           fail_msg: "Systemd service not running"
-   ```
+  ```yaml
+  ---
+  - name: Converge
+    ansible.builtin.import_playbook: ../../linux_playbook.yml
+  ```
 
-7. **Create `molecule/linux/cleanup.yml`:**
+- **Create `molecule/linux/verify.yml`:**
 
-   ```yaml
-   ---
-   - name: Cleanup
-     hosts: all
-     gather_facts: false
-     tasks:
-       - name: Remove test artifacts
-         ansible.builtin.file:
-           path: /tmp/molecule-test
-           state: absent
-         become: true
-   ```
+  The verify playbook validates that the converge playbook achieved the desired results by testing the final state of the resources.
 
-8. **Create `molecule/linux/destroy.yml`:**
+  ```yaml
+  ---
+  - name: Verify
+    hosts: all
+    gather_facts: true
+    tasks:
+      - name: Check required packages are installed
+        ansible.builtin.package_facts:
+          manager: auto
 
-   ```yaml
-   ---
-   - name: Destroy container instances
-     hosts: localhost
-     gather_facts: false
-     tasks:
-       - name: Remove test containers
-         containers.podman.podman_container:
-           name: "{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}"
-           state: absent
-         loop: "{% raw %}{{ groups['all'] }}{% endraw %}"
-         failed_when: false
+      - name: Verify python3 is installed
+        ansible.builtin.assert:
+          that:
+            - "'python3' in ansible_facts.packages"
+          fail_msg: "Python3 package not found"
 
-       - name: Remove container network
-         containers.podman.podman_network:
-           name: molecule-linux-test
-           state: absent
-         failed_when: false
-   ```
+      - name: Verify systemd service is running
+        ansible.builtin.systemd:
+          name: systemd-logind
+          state: started
+        check_mode: true
+        register: systemd_check
+        failed_when: false
+
+      - name: Assert systemd is active
+        ansible.builtin.assert:
+          that:
+            - systemd_check is not failed
+          fail_msg: "Systemd service not running"
+  ```
+
+- **Create `molecule/linux/cleanup.yml`:**
+
+  The cleanup playbook removes temporary artifacts and resets the testing resources to a clean state before destruction.
+
+  ```yaml
+  ---
+  - name: Cleanup
+    hosts: all
+    gather_facts: false
+    tasks:
+      - name: Remove test artifacts
+        ansible.builtin.file:
+          path: /tmp/molecule-test
+          state: absent
+        become: true
+  ```
+
+- **Create `molecule/linux/destroy.yml`:**
+
+  The destroy playbook tears down all testing resources, removing containers and networks to return the system to its original state.
+
+  ```yaml
+  ---
+  - name: Destroy container instances
+    hosts: localhost
+    gather_facts: false
+    tasks:
+      - name: Remove test containers
+        containers.podman.podman_container:
+          name: "{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}"
+          state: absent
+        loop: "{% raw %}{{ groups['all'] }}{% endraw %}"
+        failed_when: false
+
+      - name: Remove container network
+        containers.podman.podman_network:
+          name: molecule-linux-test
+          state: absent
+        failed_when: false
+  ```
 
 ## Network Device Testing Scenario
 
@@ -265,192 +281,206 @@ This scenario tests playbooks against Arista EOS network devices using container
 
 ### Configure the Network Scenario
 
-1. **Update `molecule/network/molecule.yml`:**
+- **Update `molecule/network/molecule.yml`:**
 
-   ```yaml
-   ---
-   dependency:
-     name: galaxy
-     options:
-       requirements-file: ../requirements.yml
+  This scenario-specific configuration adapts Molecule for network device testing with simplified sequences and network-specific settings.
 
-   ansible:
-     cfg:
-       defaults:
-         collections_path: collections
-         inventory: inventory/hosts.yml
-         host_key_checking: false
+  ```yaml
+  ---
+  dependency:
+    name: galaxy
+    options:
+      requirements-file: ../requirements.yml
 
-   scenario:
-     name: network
-     description: Test against network devices
-     test_sequence:
-       - dependency
-       - create
-       - converge
-       - verify
-       - cleanup
-       - destroy
-   ```
+  ansible:
+    cfg:
+      defaults:
+        collections_path: collections
+        inventory: inventory/hosts.yml
+        host_key_checking: false
 
-2. **Create `molecule/network/inventory.yml`:**
+  scenario:
+    name: network
+    description: Test against network devices
+    test_sequence:
+      - dependency
+      - create
+      - converge
+      - verify
+      - cleanup
+      - destroy
+  ```
 
-   ```yaml
-   ---
-   all:
-     children:
-       arista_switches:
-         hosts:
-           eos-switch-01:
-             ansible_host: eos-switch-01
-             ansible_network_os: eos
-             ansible_user: admin
-             ansible_password: admin
-             ansible_connection: ansible.netcommon.network_cli
-             container_image: ceos:latest
-             container_privileged: true
-             container_env:
-               CEOS: 1
-               EOS_PLATFORM: ceoslab
-               container: docker
-         vars:
-           ansible_python_interpreter: "{% raw %}{{ ansible_playbook_python }}{% endraw %}"
-   ```
+- **Create `molecule/network/inventory.yml`:**
 
-3. **Create `molecule/network/create.yml`:**
+  The network inventory defines containerized network devices with connection parameters and container configuration for realistic device testing.
 
-   ```yaml
-   ---
-   - name: Create network device containers
-     hosts: localhost
-     gather_facts: false
-     tasks:
-       - name: Create container network
-         containers.podman.podman_network:
-           name: molecule-network-test
-           state: present
+  ```yaml
+  ---
+  all:
+    children:
+      arista_switches:
+        hosts:
+          eos-switch-01:
+            ansible_host: eos-switch-01
+            ansible_network_os: eos
+            ansible_user: admin
+            ansible_password: admin
+            ansible_connection: ansible.netcommon.network_cli
+            container_image: ceos:latest
+            container_privileged: true
+            container_env:
+              CEOS: 1
+              EOS_PLATFORM: ceoslab
+              container: docker
+        vars:
+          ansible_python_interpreter: "{% raw %}{{ ansible_playbook_python }}{% endraw %}"
+  ```
 
-       - name: Create EOS containers
-         containers.podman.podman_container:
-           name: "{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}"
-           image: "{% raw %}{{ hostvars[item].container_image }}{% endraw %}"
-           privileged: "{% raw %}{{ hostvars[item].container_privileged }}{% endraw %}"
-           state: started
-           networks:
-             - molecule-network-test
-           ports:
-             - "2200:22"
-             - "2600:443"
-           volumes:
-             - /etc/sysctl.d/99-zceos.conf:/etc/sysctl.d/99-zceos.conf:ro
-           tmpfs:
-             - /tmp
-           command: /sbin/init
-           env: "{% raw %}{{ hostvars[item].container_env }}{% endraw %}"
-           network_cli_ssh_type: paramiko
-         loop: "{% raw %}{{ groups['arista_switches'] }}{% endraw %}"
+- **Create `molecule/network/create.yml`:**
 
-       - name: Wait for SSH to be available
-         ansible.builtin.wait_for:
-           host: "{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}"
-           port: 22
-           timeout: 300
-         loop: "{% raw %}{{ groups['arista_switches'] }}{% endraw %}"
+  The create playbook launches containerized network devices and waits for both SSH and API services to become available for testing.
 
-       - name: Wait for EOS API to be ready
-         ansible.builtin.uri:
-           url: "https://{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}:443/command-api"
-           method: GET
-           validate_certs: false
-           timeout: 10
-         register: api_check
-         until: api_check.status == 200
-         retries: 30
-         delay: 10
-         loop: "{% raw %}{{ groups['arista_switches'] }}{% endraw %}"
-         failed_when: false
-   ```
+  ```yaml
+  ---
+  - name: Create network device containers
+    hosts: localhost
+    gather_facts: false
+    tasks:
+      - name: Create container network
+        containers.podman.podman_network:
+          name: molecule-network-test
+          state: present
 
-4. **Create `molecule/network/converge.yml`:**
+      - name: Create EOS containers
+        containers.podman.podman_container:
+          name: "{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}"
+          image: "{% raw %}{{ hostvars[item].container_image }}{% endraw %}"
+          privileged: "{% raw %}{{ hostvars[item].container_privileged }}{% endraw %}"
+          state: started
+          networks:
+            - molecule-network-test
+          ports:
+            - "2200:22"
+            - "2600:443"
+          volumes:
+            - /etc/sysctl.d/99-zceos.conf:/etc/sysctl.d/99-zceos.conf:ro
+          tmpfs:
+            - /tmp
+          command: /sbin/init
+          env: "{% raw %}{{ hostvars[item].container_env }}{% endraw %}"
+          network_cli_ssh_type: paramiko
+        loop: "{% raw %}{{ groups['arista_switches'] }}{% endraw %}"
 
-   ```yaml
-   ---
-   - name: Converge
-     ansible.builtin.import_playbook: ../../network_playbook.yml
-   ```
+      - name: Wait for SSH to be available
+        ansible.builtin.wait_for:
+          host: "{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}"
+          port: 22
+          timeout: 300
+        loop: "{% raw %}{{ groups['arista_switches'] }}{% endraw %}"
 
-5. **Create `molecule/network/verify.yml`:**
+      - name: Wait for EOS API to be ready
+        ansible.builtin.uri:
+          url: "https://{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}:443/command-api"
+          method: GET
+          validate_certs: false
+          timeout: 10
+        register: api_check
+        until: api_check.status == 200
+        retries: 30
+        delay: 10
+        loop: "{% raw %}{{ groups['arista_switches'] }}{% endraw %}"
+        failed_when: false
+  ```
 
-   ```yaml
-   ---
-   - name: Verify network devices
-     hosts: arista_switches
-     gather_facts: false
-     connection: ansible.netcommon.network_cli
-     tasks:
-       - name: Get EOS version
-         arista.eos.eos_command:
-           commands:
-             - show version
-         register: version_output
+- **Create `molecule/network/converge.yml`:**
 
-       - name: Verify EOS version contains expected info
-         ansible.builtin.assert:
-           that:
-             - "'Arista' in version_output.stdout[0]"
-           fail_msg: "EOS version check failed"
+  The converge playbook executes the network playbook under test against the containerized network devices.
 
-       - name: Gather EOS facts
-         arista.eos.eos_facts:
-           gather_subset: min
-         register: eos_facts
+  ```yaml
+  ---
+  - name: Converge
+    ansible.builtin.import_playbook: ../../network_playbook.yml
+  ```
 
-       - name: Verify system facts
-         ansible.builtin.assert:
-           that:
-             - eos_facts.ansible_facts.ansible_net_version is defined
-             - eos_facts.ansible_facts.ansible_net_hostname is defined
-           fail_msg: "Required EOS facts not available"
-   ```
+- **Create `molecule/network/verify.yml`:**
 
-6. **Create `molecule/network/cleanup.yml`:**
+  The verify playbook tests network device functionality using EOS-specific commands to validate the playbook's effects on device configuration.
 
-   ```yaml
-   ---
-   - name: Cleanup network configuration
-     hosts: arista_switches
-     gather_facts: false
-     connection: ansible.netcommon.network_cli
-     tasks:
-       - name: Remove test configurations
-         arista.eos.eos_config:
-           lines:
-             - no interface Loopback99
-           backup: false
-         failed_when: false
-   ```
+  ```yaml
+  ---
+  - name: Verify network devices
+    hosts: arista_switches
+    gather_facts: false
+    connection: ansible.netcommon.network_cli
+    tasks:
+      - name: Get EOS version
+        arista.eos.eos_command:
+          commands:
+            - show version
+        register: version_output
 
-7. **Create `molecule/network/destroy.yml`:**
+      - name: Verify EOS version contains expected info
+        ansible.builtin.assert:
+          that:
+            - "'Arista' in version_output.stdout[0]"
+          fail_msg: "EOS version check failed"
 
-   ```yaml
-   ---
-   - name: Destroy network device containers
-     hosts: localhost
-     gather_facts: false
-     tasks:
-       - name: Remove EOS containers
-         containers.podman.podman_container:
-           name: "{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}"
-           state: absent
-         loop: "{% raw %}{{ groups['arista_switches'] }}{% endraw %}"
-         failed_when: false
+      - name: Gather EOS facts
+        arista.eos.eos_facts:
+          gather_subset: min
+        register: eos_facts
 
-       - name: Remove container network
-         containers.podman.podman_network:
-           name: molecule-network-test
-           state: absent
-         failed_when: false
-   ```
+      - name: Verify system facts
+        ansible.builtin.assert:
+          that:
+            - eos_facts.ansible_facts.ansible_net_version is defined
+            - eos_facts.ansible_facts.ansible_net_hostname is defined
+          fail_msg: "Required EOS facts not available"
+  ```
+
+- **Create `molecule/network/cleanup.yml`:**
+
+  The cleanup playbook removes any test configurations from the network devices to restore them to a clean state.
+
+  ```yaml
+  ---
+  - name: Cleanup network configuration
+    hosts: arista_switches
+    gather_facts: false
+    connection: ansible.netcommon.network_cli
+    tasks:
+      - name: Remove test configurations
+        arista.eos.eos_config:
+          lines:
+            - no interface Loopback99
+          backup: false
+        failed_when: false
+  ```
+
+- **Create `molecule/network/destroy.yml`:**
+
+  The destroy playbook removes the containerized network devices and networks, completing the test lifecycle cleanup.
+
+  ```yaml
+  ---
+  - name: Destroy network device containers
+    hosts: localhost
+    gather_facts: false
+    tasks:
+      - name: Remove EOS containers
+        containers.podman.podman_container:
+          name: "{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}"
+          state: absent
+        loop: "{% raw %}{{ groups['arista_switches'] }}{% endraw %}"
+        failed_when: false
+
+      - name: Remove container network
+        containers.podman.podman_network:
+          name: molecule-network-test
+          state: absent
+        failed_when: false
+  ```
 
 ## Running the Tests
 
