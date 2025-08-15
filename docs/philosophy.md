@@ -257,8 +257,8 @@ ansible:
 ansible:
   cfg:
     defaults:
-      inventory: ../shared_inventory/
       host_key_checking: false
+      inventory: ../shared_inventory/
   executor:
     args:
       ansible_playbook:
@@ -527,11 +527,11 @@ For testing scenarios that require coordination between multiple test runs, team
 
 ```bash
 project/
-├── inventory/                    # Shared inventory directory
-│   ├── hosts.yml
-│   ├── constructed.yml
-│   └── group_vars/
-├── scenarios/
+├── molecule/
+│   ├── inventory/                # Shared inventory directory
+│   │   ├── hosts.yml
+│   │   ├── constructed.yml
+│   │   └── group_vars/
 │   ├── infrastructure/
 │   │   └── molecule.yml         # Points to ../inventory/
 │   ├── application/
@@ -566,47 +566,47 @@ Native inventory support enables various approaches to resource management and t
 
 ```bash
 # Complete isolation - each scenario manages its own resources
-molecule test --scenario-name feature-test
+molecule test --scenario-name feature-test --report --command-borders
 # Uses scenario-specific inventory and infrastructure
 
 # Shared inventory coordination - multiple scenarios use common inventory
-molecule test --scenario-name infrastructure-test  # Uses ../shared_inventory/
-molecule test --scenario-name application-test     # Uses ../shared_inventory/
-molecule test --scenario-name integration-test     # Uses ../shared_inventory/
+molecule test --scenario-name infrastructure-test --report --command-borders  # Uses ../shared_inventory/
+molecule test --scenario-name application-test --report --command-borders     # Uses ../shared_inventory/
+molecule test --scenario-name integration-test --report --command-borders     # Uses ../shared_inventory/
 
 # External inventory testing - test against existing systems
-molecule test --scenario-name staging-validation   # Uses --inventory=staging_hosts.yml
-molecule test --scenario-name lab-verification     # Uses --inventory=lab_inventory.py
+molecule test --scenario-name staging-validation --report --command-borders   # Uses --inventory=staging_hosts.yml
+molecule test --scenario-name lab-verification --report --command-borders     # Uses --inventory=lab_inventory.py
 
 # Single source of truth with selective targeting
-molecule test --scenario-name web-staging          # Uses enterprise inventory --limit=web_staging
-molecule test --scenario-name db-lab               # Uses enterprise inventory --limit=database_lab
-molecule test --scenario-name app-test             # Uses enterprise inventory --limit=environment_test
+molecule test --scenario-name web-staging --report --command-borders          # Uses enterprise inventory --limit=web_staging
+molecule test --scenario-name db-lab --report --command-borders               # Uses enterprise inventory --limit=database_lab
+molecule test --scenario-name app-test --report --command-borders             # Uses enterprise inventory --limit=environment_test
 
 # Playbook-level targeting (no --limit needed)
-molecule test --scenario-name staging-deployment   # Playbooks use hosts: web_staging, hosts: db_staging
-molecule test --scenario-name lab-testing          # Playbooks use hosts: lab_environment
-molecule test --scenario-name multi-tier           # Different actions target different groups
+molecule test --scenario-name staging-deployment --report --command-borders   # Playbooks use hosts: web_staging, hosts: db_staging
+molecule test --scenario-name lab-testing --report --command-borders          # Playbooks use hosts: lab_environment
+molecule test --scenario-name multi-tier --report --command-borders           # Different actions target different groups
 
 # Multi-source inventory patterns
-molecule test --scenario-name cloud-discovery      # Uses cloud inventory + molecule config
-molecule test --scenario-name hybrid-infrastructure # Uses multiple provider inventories + test config
-molecule test --scenario-name dynamic-targeting    # Cloud provider discovers, molecule configures
+molecule test --scenario-name cloud-discovery --report --command-borders      # Uses cloud inventory + molecule config
+molecule test --scenario-name hybrid-infrastructure --report --command-borders # Uses multiple provider inventories + test config
+molecule test --scenario-name dynamic-targeting --report --command-borders    # Cloud provider discovers, molecule configures
 
 # Multi-action data sharing patterns
-molecule test --scenario-name host-specific-data   # Uses file-based vars sharing between actions
-molecule test --scenario-name secret-propagation   # Shares secrets from create to converge/verify
-molecule test --scenario-name dynamic-configuration # Generates host configs in create, uses in other actions
+molecule test --scenario-name host-specific-data --report --command-borders   # Uses file-based vars sharing between actions
+molecule test --scenario-name secret-propagation --report --command-borders   # Shares secrets from create to converge/verify
+molecule test --scenario-name dynamic-configuration --report --command-borders # Generates host configs in create, uses in other actions
 
 # Shared-state with data propagation
-molecule test --all --shared-state                 # Default creates infrastructure, other scenarios use shared data
-molecule test --scenario-name app-deploy --shared-state    # Uses infrastructure data from default scenario
-molecule test --scenario-name integration --shared-state   # Accesses database/LB endpoints from default
+molecule test --all --shared-state --report --command-borders                 # Default creates infrastructure, other scenarios use shared data
+molecule test --scenario-name app-deploy --shared-state --report --command-borders    # Uses infrastructure data from default scenario
+molecule test --scenario-name integration --shared-state --report --command-borders   # Accesses database/LB endpoints from default
 
 # Mixed approach for comprehensive testing
-molecule test --scenario-name isolated-unit        # Isolated resources
-molecule test --scenario-name shared-integration   # Shared inventory
-molecule test --scenario-name lab-validation       # External inventory
+molecule test --scenario-name isolated-unit --report --command-borders        # Isolated resources
+molecule test --scenario-name shared-integration --report --command-borders   # Shared inventory
+molecule test --scenario-name lab-validation --report --command-borders       # External inventory
 ```
 
 This flexibility allows teams to optimize their testing strategies based on resource constraints, execution time requirements, and test isolation needs while maintaining the reliability and reproducibility essential for effective automation testing through native Ansible inventory integration.
