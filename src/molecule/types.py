@@ -340,7 +340,6 @@ class CommandArgs(TypedDict, total=False):
         platform_name: Name of the platform to target.
         report: Whether to show an after-run summary report.
         scenario_name: Name of the scenario to target.
-        shared_inventory: Whether inventory should be shared between scenarios.
         shared_state: Whether (some) state should be shared between scenarios.
         subcommand: Name of subcommand being run.
         command_borders: Whether to enable borders around command output.
@@ -355,7 +354,6 @@ class CommandArgs(TypedDict, total=False):
     platform_name: str
     report: bool
     scenario_name: str
-    shared_inventory: bool
     shared_state: bool
     subcommand: str
     command_borders: bool
