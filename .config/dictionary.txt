@@ -13,6 +13,7 @@ ceoslab
 cfmpr
 cgroupfs
 cgroupns
+checkpointing
 cidr
 clicolor
 cloudinitdisk
@@ -31,6 +32,7 @@ devel
 dind
 docsite
 dotglob
+efgh
 emptydisk
 endfor
 endgroup
@@ -53,6 +55,7 @@ helloworld
 hookwrapper
 hostvars
 htmldir
+hyperscaler
 indentless
 jinaj
 jodewey
@@ -66,6 +69,7 @@ libcloud
 libera
 libpod
 lifecycle
+lifecycles
 lineterm
 lockf
 logind
@@ -109,6 +113,7 @@ rolebinding
 rrequirements
 runcmd
 saez
+sandboxed
 Sbarnea
 schemafile
 seccomp
