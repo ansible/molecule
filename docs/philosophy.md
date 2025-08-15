@@ -204,48 +204,65 @@ Molecule supports the full spectrum of Ansible inventory sources through direct 
 - **File-based data sharing**: Use temporary files to persist and share host-specific data between actions
 
 **Native inventory workflow patterns**
-Teams can configure Molecule to use external inventory sources by leveraging the `ansible_args` provisioner option to pass inventory parameters directly to `ansible-playbook`. Targeting can be achieved either through `--limit` flags at the molecule level or through `hosts:` directives at the individual playbook level:
+Teams can configure Molecule to use external inventory sources by leveraging the `ansible.executor.args.ansible_playbook` configuration to pass inventory parameters directly to `ansible-playbook`. Targeting can be achieved either through `--limit` flags at the molecule level or through `hosts:` directives at the individual playbook level:
 
 ```yaml
 # Using external static inventory directory
-provisioner:
-  name: ansible
-  ansible_args:
-    - --inventory=${% raw %}{MOLECULE_SCENARIO_DIRECTORY}{% endraw %}/inventory/
+ansible:
+  executor:
+    args:
+      ansible_playbook:
+        - --inventory=${% raw %}{MOLECULE_SCENARIO_DIRECTORY}{% endraw %}/inventory/
 
 # Using cloud inventory plugin
-provisioner:
-  name: ansible
-  ansible_args:
-    - --inventory=aws_ec2.yml
+ansible:
+  executor:
+    args:
+      ansible_playbook:
+        - --inventory=aws_ec2.yml
 
 # Using existing enterprise inventory with selective targeting
-provisioner:
-  name: ansible
-  ansible_args:
-    - --inventory=/path/to/enterprise/inventory/
-    - --limit=staging_environment
+ansible:
+  executor:
+    args:
+      ansible_playbook:
+        - --inventory=/path/to/enterprise/inventory/
+        - --limit=staging_environment
 
 # Using multiple inventory sources
-provisioner:
-  name: ansible
-  ansible_args:
-    - --inventory=static_hosts.yml
-    - --inventory=dynamic_script.py
-    - --inventory=constructed_groups.yml
+ansible:
+  executor:
+    args:
+      ansible_playbook:
+        - --inventory=static_hosts.yml
+        - --inventory=dynamic_script.py
+        - --inventory=constructed_groups.yml
 
 # Combining infrastructure provider inventory with molecule-specific configuration
-provisioner:
-  name: ansible
-  ansible_args:
-    - --inventory=aws_ec2.yml              # Cloud provider dynamic inventory
-    - --inventory=${% raw %}{MOLECULE_SCENARIO_DIRECTORY}{% endraw %}/molecule_config.yml  # Molecule-specific config
+ansible:
+  executor:
+    args:
+      ansible_playbook:
+        - --inventory=aws_ec2.yml              # Cloud provider dynamic inventory
+        - --inventory=${% raw %}{MOLECULE_SCENARIO_DIRECTORY}{% endraw %}/molecule_config.yml  # Molecule-specific config
 
 # Using inventory from parent directory (shared across scenarios)
-provisioner:
-  name: ansible
-  ansible_args:
-    - --inventory=../shared_inventory/
+ansible:
+  executor:
+    args:
+      ansible_playbook:
+        - --inventory=../shared_inventory/
+
+# Alternative: Using ansible.cfg for inventory configuration
+ansible:
+  cfg:
+    defaults:
+      inventory: ../shared_inventory/
+      host_key_checking: false
+  executor:
+    args:
+      ansible_playbook:
+        - --limit=staging_environment
 ```
 
 **Benefits of native inventory integration**
@@ -286,25 +303,28 @@ all:
 
 # Molecule scenarios using the same inventory with selective targeting
 # scenario1/molecule.yml - Test against staging systems
-provisioner:
-  name: ansible
-  ansible_args:
-    - --inventory=/opt/ansible/inventory/
-    - --limit=web_staging
+ansible:
+  executor:
+    args:
+      ansible_playbook:
+        - --inventory=/opt/ansible/inventory/
+        - --limit=web_staging
 
 # scenario2/molecule.yml - Test against lab systems
-provisioner:
-  name: ansible
-  ansible_args:
-    - --inventory=/opt/ansible/inventory/
-    - --limit=web_lab
+ansible:
+  executor:
+    args:
+      ansible_playbook:
+        - --inventory=/opt/ansible/inventory/
+        - --limit=web_lab
 
 # scenario3/molecule.yml - Test against specific environment
-provisioner:
-  name: ansible
-  ansible_args:
-    - --inventory=/opt/ansible/inventory/
-    - --limit=environment_staging
+ansible:
+  executor:
+    args:
+      ansible_playbook:
+        - --inventory=/opt/ansible/inventory/
+        - --limit=environment_staging
 ```
 
 **Alternative targeting approaches**
@@ -354,11 +374,12 @@ A powerful approach involves combining enterprise infrastructure configuration i
 ```yaml
 # Example: AWS enterprise infrastructure + Molecule test instances
 # molecule.yml
-provisioner:
-  name: ansible
-  ansible_args:
-    - --inventory=aws_infrastructure.yml         # Enterprise AWS infrastructure config
-    - --inventory=${% raw %}{MOLECULE_SCENARIO_DIRECTORY}{% endraw %}/molecule_config.yml  # Test instances to create
+ansible:
+  executor:
+    args:
+      ansible_playbook:
+        - --inventory=aws_infrastructure.yml         # Enterprise AWS infrastructure config
+        - --inventory=${% raw %}{MOLECULE_SCENARIO_DIRECTORY}{% endraw %}/molecule_config.yml  # Test instances to create
 
 # aws_infrastructure.yml (enterprise infrastructure configuration)
 all:
@@ -494,10 +515,11 @@ groups:
   staging: environment == 'staging'
 
 # Molecule configuration using this inventory
-provisioner:
-  name: ansible
-  ansible_args:
-    - --inventory=${% raw %}{MOLECULE_SCENARIO_DIRECTORY}{% endraw %}/inventory/
+ansible:
+  executor:
+    args:
+      ansible_playbook:
+        - --inventory=${% raw %}{MOLECULE_SCENARIO_DIRECTORY}{% endraw %}/inventory/
 ```
 
 **Cross-scenario inventory coordination**
