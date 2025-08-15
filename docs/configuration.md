@@ -100,12 +100,6 @@ MOLECULE_INVENTORY_FILE
 : Path to generated inventory file, usually
 `~/.cache/molecule/<role-name>/<scenario-name>/inventory/ansible_inventory.yml`
 
-MOLECULE_SHARED_INVENTORY_DIR
-
-: Path to shared inventory directory when `--shared-inventory` is enabled, otherwise empty string.
-Allows playbooks to access the shared inventory location across scenarios.
-This is also available as the `molecule_shared_inventory_dir` variable in playbooks.
-
 MOLECULE_EPHEMERAL_DIRECTORY
 
 : Path to generated directory, usually

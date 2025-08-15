@@ -300,30 +300,6 @@ def test_inventory_directory_property(instance: Ansible) -> None:
     assert str(x) == instance.inventory_directory
 
 
-def test_inventory_directory_property_shared(instance: Ansible) -> None:
-    """Test the shared_inventory_directory property.
-
-    Args:
-        instance: Ansible provisioner instance.
-    """
-    instance._config.command_args["shared_inventory"] = True
-    x = Path(instance._config.scenario.shared_ephemeral_directory, "inventory")
-    assert str(x) == instance.inventory_directory
-
-
-def test_inventory_directory_property_shared_parallel(instance: Ansible) -> None:
-    """Test the shared_inventory_directory property with parallel mode on.
-
-    Args:
-        instance: Ansible provisioner instance.
-    """
-    instance._config.command_args["shared_inventory"] = True
-    instance._config.command_args["parallel"] = True
-    # Parallel disables shared ephemeral directory
-    x = Path(instance._config.scenario.ephemeral_directory, "inventory")
-    assert str(x) == instance.inventory_directory
-
-
 def test_inventory_file_property(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     x = os.path.join(  # noqa: PTH118
         instance._config.scenario.inventory_directory,
@@ -806,24 +782,6 @@ def test_absolute_path_for_raises_with_missing_key(instance):  # type: ignore[no
 
     with pytest.raises(KeyError):
         instance._absolute_path_for(env, "invalid")
-
-
-def test_inventory_contains_molecule_shared_inventory_dir_variable(instance: Ansible) -> None:
-    """Test that molecule_shared_inventory_dir is included in inventory vars.
-
-    Args:
-        instance: Ansible provisioner instance fixture.
-    """
-    inventory = instance.inventory
-
-    # Check that all groups have the molecule_shared_inventory_dir variable
-    assert "all" in inventory
-    assert "vars" in inventory["all"]
-    assert "molecule_shared_inventory_dir" in inventory["all"]["vars"]
-    assert (
-        inventory["all"]["vars"]["molecule_shared_inventory_dir"]
-        == "{{ lookup('env', 'MOLECULE_SHARED_INVENTORY_DIR') }}"
-    )
 
 
 # Test ansible section integration with provisioner

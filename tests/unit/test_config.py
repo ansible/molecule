@@ -227,7 +227,6 @@ def test_env(config_instance: config.Config) -> None:  # noqa: D103
         "MOLECULE_FILE": config_instance.config_file,
         "MOLECULE_ENV_FILE": util.abs_path(env_file),
         "MOLECULE_INVENTORY_FILE": config_instance.provisioner.inventory_file,  # type: ignore[union-attr]
-        "MOLECULE_SHARED_INVENTORY_DIR": "",
         "MOLECULE_EPHEMERAL_DIRECTORY": config_instance.scenario.ephemeral_directory,
         "MOLECULE_SCENARIO_DIRECTORY": config_instance.scenario.directory,
         "MOLECULE_PROJECT_DIRECTORY": config_instance.project_directory,
@@ -499,47 +498,6 @@ def test_set_env_from_file_returns_original_env_when_env_file_not_found(  # noqa
     env = config.set_env_from_file({}, "file-not-found")
 
     assert env == {}
-
-
-def test_env_molecule_shared_inventory_dir_when_shared_inventory_disabled(
-    config_instance: config.Config,
-) -> None:
-    """Test MOLECULE_SHARED_INVENTORY_DIR is empty when shared_inventory=False.
-
-    Args:
-        config_instance: Molecule config instance fixture.
-    """
-    config_instance.command_args["shared_inventory"] = False
-    env = config_instance.env
-    assert env["MOLECULE_SHARED_INVENTORY_DIR"] == ""
-
-
-def test_env_molecule_shared_inventory_dir_when_shared_inventory_enabled(
-    config_instance: config.Config,
-) -> None:
-    """Test MOLECULE_SHARED_INVENTORY_DIR points to shared directory when shared_inventory=True.
-
-    Args:
-        config_instance: Molecule config instance fixture.
-    """
-    config_instance.command_args["shared_inventory"] = True
-    env = config_instance.env
-    assert env["MOLECULE_SHARED_INVENTORY_DIR"] == config_instance.scenario.inventory_directory
-
-
-def test_env_molecule_shared_inventory_dir_when_parallel_mode(
-    config_instance: config.Config,
-) -> None:
-    """Test MOLECULE_SHARED_INVENTORY_DIR is empty in parallel mode (shared inventory disabled).
-
-    Args:
-        config_instance: Molecule config instance fixture.
-    """
-    config_instance.command_args["shared_inventory"] = True
-    config_instance.command_args["parallel"] = True
-    env = config_instance.env
-    # In parallel mode, shared_inventory should be treated as disabled
-    assert env["MOLECULE_SHARED_INVENTORY_DIR"] == ""
 
 
 def test_write_config(config_instance: config.Config) -> None:  # noqa: D103

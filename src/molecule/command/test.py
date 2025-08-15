@@ -66,7 +66,6 @@ def test(ctx: click.Context) -> None:  # pragma: no cover
         "driver_name": ctx.params["driver_name"],
         "platform_name": ctx.params["platform_name"],
         "report": ctx.params["report"],
-        "shared_inventory": ctx.params["shared_inventory"],
         "shared_state": ctx.params["shared_state"],
         "subcommand": subcommand,
     }
