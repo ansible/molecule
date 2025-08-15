@@ -1,4 +1,4 @@
-# Getting Started with Playbook Testing
+# Playbook Testing
 
 This guide demonstrates testing Ansible playbooks using Molecule within an ansible-creator playbook project. It covers the fundamentals of playbook testing, container and network device testing scenarios, and complete test lifecycle management.
 
@@ -483,67 +483,62 @@ molecule converge --scenario-name network --report --command-borders
 ```bash
 $ molecule test --scenario-name linux --report --command-borders
 
-INFO     Running linux > dependency
-═══════════════════════════════════════════
-Running ansible-galaxy collection install -r requirements.yml
-
-DETAILS
-✓ 2 collections installed
-
-INFO     Running linux > create
-════════════════════════════════════
-Running ansible-playbook create.yml
-
-DETAILS
-✓ Container network created
-✓ 2 containers started
-✓ Connection established to all hosts
-
-INFO     Running linux > prepare
-═════════════════════════════════
-Running ansible-playbook prepare.yml
-
-DETAILS
-✓ Required packages installed
-
-INFO     Running linux > converge
-═══════════════════════════════════
-Running ansible-playbook converge.yml
-
-DETAILS
-✓ linux_playbook.yml executed successfully
-
-INFO     Running linux > idempotence
-═════════════════════════════════════
-Running ansible-playbook converge.yml
-
-DETAILS
-✓ Playbook is idempotent
-
-INFO     Running linux > verify
-════════════════════════════════
-Running ansible-playbook verify.yml
-
-DETAILS
-✓ All verification checks passed
-
-INFO     Running linux > cleanup
-═════════════════════════════════
-Running ansible-playbook cleanup.yml
-
-DETAILS
-✓ Test artifacts removed
-
-INFO     Running linux > destroy
-═════════════════════════════════
-Running ansible-playbook destroy.yml
-
-DETAILS
-✓ All containers removed
-✓ Networks cleaned up
+INFO     linux ➜ discovery: scenario test matrix: dependency, create, prepare, converge, idempotence, verify, cleanup, destroy
+INFO     linux ➜ dependency: Executing
+INFO     linux ➜ create: Executing
+  ┌──────────────────────────────────────────────────────────────────────────────────
+  │ ansible-playbook --inventory /tmp/molecule/linux/inventory
+  │   --skip-tags molecule-notest,notest
+  │   /tmp/molecule/linux/create.yml
+  │
+  │
+  │ PLAY [Create container instances] ********************************************
+  │
+  │ TASK [Create container network] **********************************************
+  │ changed: [localhost]
+  │
+  │ TASK [Create test containers] ************************************************
+  │ changed: [localhost] => (item=web-server)
+  │ changed: [localhost] => (item=db-server)
+  │
+  │ TASK [Wait for containers to be ready] **************************************
+  │ ok: [web-server]
+  │ ok: [db-server]
+  │
+  │ PLAY RECAP ********************************************************************
+  │ localhost                  : ok=2    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+  │
+  └─ Return code: 0 ─────────────────────────────────────────────────────────────────
+INFO     linux ➜ create: Executed: Successful
+INFO     linux ➜ prepare: Executing
+  ┌──────────────────────────────────────────────────────────────────────────────────
+  │ ansible-playbook --inventory /tmp/molecule/linux/inventory
+  │   --skip-tags molecule-notest,notest
+  │   /tmp/molecule/linux/prepare.yml
+  │
+  │
+  │ PLAY [Prepare container instances] *******************************************
+  │
+  │ TASK [Install required packages] *********************************************
+  │ changed: [web-server] => (item=python3)
+  │ changed: [db-server] => (item=python3)
+  │ changed: [web-server] => (item=systemd)
+  │ changed: [db-server] => (item=systemd)
+  │
+  │ PLAY RECAP ********************************************************************
+  │ web-server                 : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+  │ db-server                  : ok=1    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+  │
+  └─ Return code: 0 ─────────────────────────────────────────────────────────────────
+INFO     linux ➜ prepare: Executed: Successful
+INFO     linux ➜ converge: Executing
+INFO     linux ➜ idempotence: Executing
+INFO     linux ➜ verify: Executing
+INFO     linux ➜ cleanup: Executing
+INFO     linux ➜ destroy: Executing
 
 SCENARIO RECAP
-✓ linux: 7 actions completed successfully
+linux                       : actions=8  successful=8  disabled=0  skipped=0  missing=0  failed=0
 ```
 
 ## Advanced Testing Patterns
