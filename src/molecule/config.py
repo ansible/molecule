@@ -162,15 +162,6 @@ class Config:
         return self.command_args.get("parallel", False)
 
     @property
-    def shared_inventory(self) -> bool:
-        """Should molecule share ephemeral data.
-
-        Returns:
-            Whether molecule should share ephemeral data.
-        """
-        return self.command_args.get("shared_inventory", False)
-
-    @property
     def shared_data(self) -> bool:
         """Should molecule share ephemeral data.
 
@@ -332,18 +323,12 @@ class Config:
         Returns:
             Total set of computed environment variables.
         """
-        shared_inventory_dir = (
-            self.scenario.inventory_directory
-            if self.shared_inventory and not self.is_parallel
-            else ""
-        )
         return {
             "MOLECULE_DEBUG": str(self.debug),
             "MOLECULE_FILE": self.config_file,
             "MOLECULE_ENV_FILE": str(self.env_file),
             "MOLECULE_STATE_FILE": self.state.state_file,
             "MOLECULE_INVENTORY_FILE": self.provisioner.inventory_file,  # type: ignore[union-attr]
-            "MOLECULE_SHARED_INVENTORY_DIR": shared_inventory_dir,
             "MOLECULE_EPHEMERAL_DIRECTORY": self.scenario.ephemeral_directory,
             "MOLECULE_SCENARIO_DIRECTORY": self.scenario.directory,
             "MOLECULE_PROJECT_DIRECTORY": self.project_directory,

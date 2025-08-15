@@ -71,7 +71,6 @@ def create(ctx: click.Context) -> None:  # pragma: no cover
         "command_borders": ctx.params["command_borders"],
         "driver_name": ctx.params["driver_name"],
         "report": ctx.params["report"],
-        "shared_inventory": ctx.params["shared_inventory"],
         "shared_state": ctx.params["shared_state"],
         "subcommand": subcommand,
     }

@@ -39,7 +39,6 @@ COMMON_OPTIONS = [
     "exclude",
     "report",
     "scenario_name_with_default",
-    "shared_inventory",
     "shared_state",
     "command_borders",
 ]
@@ -355,17 +354,6 @@ class CliOptions:
             self.scenario_name_single,
             default=MOLECULE_DEFAULT_SCENARIO_NAME,
             help="Name of the scenario to target.",
-        )
-
-    @property
-    def shared_inventory(self) -> CliOption:
-        """Shared inventory option."""
-        return CliOption(
-            name="shared-inventory",
-            help="Enable or disable sharing inventory between scenarios.",
-            is_flag=True,
-            default=False,
-            experimental=True,
         )
 
     @property

@@ -477,12 +477,6 @@ def test_output_options() -> None:
     assert "EXPERIMENTAL:" in help_text
     assert "(default: disabled)" in help_text
 
-    shared_inventory = options.shared_inventory
-    assert shared_inventory.name == "shared-inventory"
-    assert shared_inventory.is_flag is True
-    assert shared_inventory.experimental is True
-    help_text = shared_inventory._generate_help_text()
-    assert "EXPERIMENTAL:" in help_text
     assert "(default: disabled)" in help_text
 
     shared_state = options.shared_state
@@ -557,7 +551,6 @@ def test_experimental_flag_functionality() -> None:
     # Test experimental options
     experimental_options = [
         options.report,
-        options.shared_inventory,
         options.shared_state,
     ]
 
