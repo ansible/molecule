@@ -194,7 +194,7 @@ class Scenario:
         Returns:
             The directory containing the scenario's inventory.
         """
-        return str(Path(self.shared_ephemeral_directory) / "inventory")
+        return str(Path(self.ephemeral_directory) / "inventory")
 
     @property
     def check_sequence(self) -> list[str]:
