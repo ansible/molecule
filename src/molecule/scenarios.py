@@ -27,7 +27,7 @@ from typing import TYPE_CHECKING
 
 from molecule import util
 from molecule.exceptions import MoleculeError
-from molecule.reporting import ScenariosResults
+from molecule.reporting.definitions import ScenariosResults
 
 
 if TYPE_CHECKING:
@@ -94,6 +94,15 @@ class Scenarios:
         scenarios = [c.scenario for c in self._configs]
         scenarios.sort(key=lambda x: x.directory)
         return scenarios
+
+    @property
+    def shared_state(self) -> bool:
+        """Whether these scenarios require shared state infrastructure.
+
+        Returns:
+            True if any scenario in the current execution selection has shared_state: true.
+        """
+        return any(scenario.config.shared_state for scenario in self.all)
 
     def print_matrix(self) -> None:
         """Show the test matrix for all scenarios."""

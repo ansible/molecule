@@ -21,10 +21,12 @@
 
 from __future__ import annotations
 
+import os
 import shlex
 import subprocess
 import warnings
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from rich.markup import escape
@@ -32,7 +34,7 @@ from rich.markup import escape
 from molecule import logger, util
 from molecule.api import MoleculeRuntimeWarning
 from molecule.exceptions import ScenarioFailureError
-from molecule.reporting import CompletionState
+from molecule.reporting.definitions import CompletionState
 
 
 if TYPE_CHECKING:
@@ -101,20 +103,8 @@ class AnsiblePlaybook:
                 if options.get("become"):
                     del options["become"]
 
-            # We do not pass user-specified Ansible arguments to the create and
-            # destroy invocations because playbooks involved in those two
-            # operations are not always provided by end users. And in those cases,
-            # custom Ansible arguments can break the creation and destruction
-            # processes.
-            #
-            # If users need to modify the creation of deletion, they can supply
-            # custom playbooks and specify them in the scenario configuration.
-            if self._config.action not in ["create", "destroy"]:
-                ansible_args = list(self._config.provisioner.ansible_args) + list(
-                    self._config.ansible_args,
-                )
-            else:
-                ansible_args = []
+            all_args = [*self._config.provisioner.ansible_args, *self._config.ansible_args]
+            ansible_args = all_args if self._should_provide_args(self._config.action) else []
 
             backend = self._config.executor
 
@@ -221,3 +211,28 @@ class AnsiblePlaybook:
             value: The value of argument to be added.
         """
         self._env[name] = value
+
+    def _should_provide_args(self, action: str | None) -> bool:
+        """Check if ansible_args should be provided for this action.
+
+        Args:
+            action: The action name (create, destroy, etc.)
+
+        Returns:
+            True if ansible_args should be provided, False otherwise.
+        """
+        # Strict mode: be conservative, exclude create/destroy and None actions
+        if os.getenv("MOLECULE_ANSIBLE_ARGS_STRICT_MODE"):
+            return action not in ["create", "destroy", None]
+
+        # No provisioner: fall back to original behavior (None gets args)
+        if not self._config.provisioner:
+            return action not in ["create", "destroy"] if action else True
+
+        # Smart mode: exclude create/destroy only for bundled playbooks
+        if action in ["create", "destroy"]:
+            playbook = getattr(self._config.provisioner.playbooks, action, None)
+            return bool(playbook and Path(playbook).exists())
+
+        # Default: provide args (None actions, non-create/destroy actions)
+        return True

@@ -12,12 +12,15 @@ cfmpr
 cgroupfs
 cgroupns
 checkpointing
+cidr
 clicolor
 cloudinitdisk
 cmdb
 connopts
 containerdisk
+cpus
 credssp
+dbadmin
 decentral
 dedriver
 delenv
@@ -59,6 +62,7 @@ jsonfile
 keepends
 keypair
 kubevirt
+levelname
 libcloud
 libera
 libpod
@@ -74,11 +78,13 @@ minversion
 modifyitems
 mountopt
 multibranch
+myapp
 mygroups
 nitz
 nocows
 nodestroy
 nodev
+nofile
 nopasswd
 notest
 ntlm
@@ -90,7 +96,9 @@ prepender
 prerun
 printenv
 profisioner
+psql
 pycolors
+pythonpath
 Qalthos
 quux
 reget
@@ -121,6 +129,7 @@ templater
 testenv
 testinfra
 testrole
+testuser
 testvar
 timedout
 tmpfs
@@ -138,5 +147,6 @@ virt
 virt's
 virtenv
 virtualmachines
+webservers
 xdist
 zzyzx

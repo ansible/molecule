@@ -40,7 +40,8 @@ from wcmatch import glob
 from molecule import config, logger, text, util
 from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME
 from molecule.exceptions import ImmediateExit, MoleculeError, ScenarioFailureError
-from molecule.reporting import ScenarioResults, report
+from molecule.reporting.definitions import ScenarioResults
+from molecule.reporting.rendering import report
 from molecule.scenarios import Scenarios
 
 
@@ -175,8 +176,7 @@ def execute_cmdline_scenarios(
         msg = "Scenario execution failed"
         raise ImmediateExit(msg, code=exc.code) from exc
     finally:
-        if command_args.get("report"):
-            report(scenarios.results)
+        report(scenarios.results, report_flag=command_args.get("report", False))
 
 
 def _generate_scenarios(
@@ -226,7 +226,11 @@ def _run_scenarios(
         ScenarioFailureError: when a scenario fails prematurely.
     """
     # Run initial create
-    create_results = execute_subcommand_default(default_config, "create")
+    create_results = execute_subcommand_default(
+        default_config,
+        "create",
+        shared_state=scenarios.shared_state,
+    )
     if create_results is not None:
         scenarios.results.append(create_results)
 
@@ -250,9 +254,9 @@ def _run_scenarios(
                 f"Removing {scenario.ephemeral_directory}",
             )
             shutil.rmtree(scenario.ephemeral_directory)
-            return
+            continue
         try:
-            execute_scenario(scenario)
+            execute_scenario(scenario, shared_state=scenarios.shared_state)
             scenarios.results.append(scenario.results)
         except ScenarioFailureError:
             # if the command has a 'destroy' arg, like test does,
@@ -270,7 +274,11 @@ def _run_scenarios(
                     level="warning",
                 )
                 execute_subcommand(scenario.config, "cleanup")
-                destroy_results = execute_subcommand_default(default_config, "destroy")
+                destroy_results = execute_subcommand_default(
+                    default_config,
+                    "destroy",
+                    shared_state=scenarios.shared_state,
+                )
                 if destroy_results is not None:
                     scenarios.results.append(scenario.results)
                     scenarios.results.append(destroy_results)
@@ -284,8 +292,12 @@ def _run_scenarios(
                     scenario._remove_scenario_state_directory()  # noqa: SLF001
             raise
 
-    # Run final destroy
-    destroy_results = execute_subcommand_default(default_config, "destroy")
+    # Run final destroy if any scenario needed shared state
+    destroy_results = execute_subcommand_default(
+        default_config,
+        "destroy",
+        shared_state=scenarios.shared_state,
+    )
     if destroy_results is not None:
         scenarios.results.append(destroy_results)
 
@@ -293,17 +305,20 @@ def _run_scenarios(
 def execute_subcommand_default(
     default_config: config.Config | None,
     subcommand: str,
+    *,
+    shared_state: bool,
 ) -> ScenarioResults | None:
     """Execute subcommand as in execute_subcommand, but do it from the default scenario if one exists.
 
     Args:
         default_config: The Config object for the default scenario, if it exists.
         subcommand: The desired subcommand to run.
+        shared_state: Whether any scenario requires shared state infrastructure.
 
     Returns:
         The result of the subcommand.
     """
-    if default_config is None or default_config.shared_data is not True:
+    if default_config is None or not shared_state:
         # We have not been asked to do anything.
         return None
 
@@ -348,22 +363,22 @@ def execute_subcommand(
     return command(current_config).execute(args)
 
 
-def execute_scenario(scenario: Scenario) -> None:
+def execute_scenario(scenario: Scenario, *, shared_state: bool = False) -> None:
     """Execute each command in the given scenario's configured sequence.
 
     Args:
         scenario: The scenario to execute.
+        shared_state: Whether global shared state execution is active for this run.
     """
-    shared_data = scenario.config.shared_data is True
     for action in scenario.sequence:
-        if shared_data and action in ("create", "destroy"):
+        if shared_state and action in ("create", "destroy"):
             # Ignore
             continue
 
         execute_subcommand(scenario.config, action)
 
     if (
-        not shared_data
+        not shared_state
         and "destroy" in scenario.sequence
         and scenario.config.command_args.get("destroy") != "never"
     ):

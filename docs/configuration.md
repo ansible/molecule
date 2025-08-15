@@ -37,6 +37,39 @@ and
 [role](https://ansible.readthedocs.io/projects/lint/rules/role-name/#role-name).
 A `computed fully qualified role name` may further contain the dot character.
 
+## Shared State
+
+By default, Molecule runs each scenario independently with its own isolated state and resources. When `shared_state` is enabled, scenarios share ephemeral state, allowing them to access resources created by the `default` scenario.
+
+This is particularly useful for multi-scenario testing where one scenario manages testing resource lifecycle while other scenarios perform testing against those resources.
+
+To enable shared state, add `shared_state: true` to your configuration file:
+
+```yaml
+---
+shared_state: true
+# ... rest of configuration
+```
+
+**Effects of enabling shared state:**
+
+- All scenarios share the same ephemeral state directory
+- The default scenario handles create/destroy actions for all scenarios
+- Component scenarios can access resources created by the default scenario
+- Scenarios skip their own create/destroy actions when shared resources are managed elsewhere
+- Faster execution with single infrastructure lifecycle instead of per-scenario setup/teardown
+
+**Configuration locations:**
+
+You can add this setting to:
+
+- `.config/molecule/config.yml` file in your `$HOME` directory (global default)
+- Base `config.yml` file at the project root (project default)
+- Collection molecule directory `extensions/molecule/config.yml`
+- Individual scenario `molecule.yml` files (scenario-specific override)
+
+**Alternative:** The `--shared-state` command-line flag can also enable this behavior temporarily, but configuration file approach is recommended for consistent usage.
+
 ## Variable Substitution
 
 ::: molecule.interpolation.Interpolator
@@ -67,12 +100,6 @@ MOLECULE_INVENTORY_FILE
 : Path to generated inventory file, usually
 `~/.cache/molecule/<role-name>/<scenario-name>/inventory/ansible_inventory.yml`
 
-MOLECULE_SHARED_INVENTORY_DIR
-
-: Path to shared inventory directory when `--shared-inventory` is enabled, otherwise empty string.
-Allows playbooks to access the shared inventory location across scenarios.
-This is also available as the `molecule_shared_inventory_dir` variable in playbooks.
-
 MOLECULE_EPHEMERAL_DIRECTORY
 
 : Path to generated directory, usually
@@ -92,6 +119,13 @@ MOLECULE_INSTANCE_CONFIG
 : Path to the instance config file, contains instance name,
 connection, user, port, etc. (populated from driver). Usually
 `~/.cache/molecule/<role-name>/<scenario-name>/instance_config.yml`
+
+MOLECULE_ANSIBLE_ARGS_STRICT_MODE
+
+: When set to any non-empty value, reverts to legacy behavior where `ansible_args`
+are excluded from create and destroy actions regardless of playbook source.
+By default (unset), `ansible_args` are included for user-provided create/destroy
+playbooks but excluded for bundled playbooks for safety.
 
 MOLECULE_DEPENDENCY_NAME
 

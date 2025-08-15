@@ -438,6 +438,19 @@ def test_podman(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None
 
 
 @mac_on_gh
+def test_native_inventory(monkeypatch: pytest.MonkeyPatch, test_fixture_dir: Path) -> None:
+    """Execute Native inventory scenario.
+
+    Args:
+        monkeypatch: Pytest fixture.
+        test_fixture_dir: Path to the test fixture directory.
+    """
+    monkeypatch.chdir(test_fixture_dir)
+    command = ["molecule", "test", "--scenario-name", "native_inventory"]
+    assert run(command).returncode == 0
+
+
+@mac_on_gh
 @pytest.mark.skipif(
     not has_pure_docker(),
     reason="Bug https://github.com/ansible-collections/community.docker/issues/660",

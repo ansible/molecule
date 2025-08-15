@@ -150,16 +150,9 @@ class AnsiblePlaybooks:
             The playbook path, or none if one is not needed.
         """
         c = self._config.config
-        driver_dict: dict[Section, str | None] | None = c["provisioner"]["playbooks"].get(  # type: ignore[assignment]
-            self._config.driver.name,
-        )
 
-        playbook: str | None = c["provisioner"]["playbooks"][section]
-        if driver_dict:
-            try:
-                playbook = driver_dict[section]
-            except KeyError as exc:
-                self._log.exception(exc)
+        playbook: str | None = c["ansible"]["playbooks"][section]
+
         if self._config.provisioner and playbook is not None:
             playbook = self._config.provisioner.abs_path(playbook)
             if playbook:
@@ -190,14 +183,14 @@ class AnsiblePlaybooks:
         path = Path(
             self._get_playbook_directory(),
             self._config.driver.name,
-            self._config.config["provisioner"]["playbooks"][section],
+            self._config.config["ansible"]["playbooks"][section],
         )
         if path.exists():
             return str(path)
         path = Path(
             self._config.driver._path,  # noqa: SLF001
             "playbooks",
-            self._config.config["provisioner"]["playbooks"][section],
+            self._config.config["ansible"]["playbooks"][section],
         )
         return str(path)
 

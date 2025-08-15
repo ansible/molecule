@@ -34,7 +34,7 @@ from typing import TYPE_CHECKING
 from molecule import logger, scenarios, util
 from molecule.constants import RC_TIMEOUT
 from molecule.exceptions import MoleculeError
-from molecule.reporting import ScenarioResults
+from molecule.reporting.definitions import ScenarioResults
 from molecule.text import checksum
 
 
@@ -194,12 +194,7 @@ class Scenario:
         Returns:
             The directory containing the scenario's inventory.
         """
-        if self.config.shared_inventory and not self.config.is_parallel:
-            ephemeral = Path(self.shared_ephemeral_directory)
-        else:
-            ephemeral = Path(self.ephemeral_directory)
-
-        return str(ephemeral / "inventory")
+        return str(Path(self.ephemeral_directory) / "inventory")
 
     @property
     def check_sequence(self) -> list[str]:
