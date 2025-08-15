@@ -31,6 +31,7 @@ import pytest
 from molecule import config, util
 from molecule.command import base
 from molecule.exceptions import ImmediateExit, ScenarioFailureError
+from molecule.shell import main
 
 
 if TYPE_CHECKING:
@@ -411,11 +412,11 @@ def test_execute_scenario_shared_destroy(
     mocker: MockerFixture,
     patched_execute_subcommand: MagicMock,
 ) -> None:
-    """Ensure execute_scenario runs normally.
+    """Ensure execute_scenario runs normally with shared_state.
 
     - call a spoofed scenario with a sequence that includes destroy
-    - shared_state is set which means destroy should be ignored.
-    - execute_subcommand should be called once for each sequence item
+    - shared_state=True is passed which means destroy should be ignored.
+    - execute_subcommand should be called once for each sequence item except destroy
     - prune should not be called, since destroy has been elided from the sequence.
 
     Args:
@@ -423,11 +424,11 @@ def test_execute_scenario_shared_destroy(
         patched_execute_subcommand: Mocked execute_subcommand function.
     """
     scenario = mocker.Mock()
-    scenario.config.shared_data = True
     scenario.sequence = ("a", "b", "destroy", "c")
-    expected_sequence = ("a", "b", "c")
+    expected_sequence = ("a", "b", "c")  # destroy should be skipped
 
-    base.execute_scenario(scenario)
+    # Pass shared_state=True as keyword argument
+    base.execute_scenario(scenario, shared_state=True)
 
     assert patched_execute_subcommand.call_count == len(expected_sequence)
     assert not scenario.prune.called
@@ -570,3 +571,92 @@ def test_execute_cmdline_scenarios_handles_scenario_failure_error_when_all_scena
 
     # Verify that ScenarioFailureError was raised with the correct error code
     assert exc_info.value.code == 1
+
+
+@pytest.mark.parametrize(
+    ("cli_args", "config_value", "expected"),
+    (
+        # CLI: true cases
+        (["--shared-state"], True, True),
+        (["--shared-state"], False, True),
+        (["--shared-state"], None, True),
+        # CLI: false cases
+        (["--no-shared-state"], True, False),
+        (["--no-shared-state"], False, False),
+        (["--no-shared-state"], None, False),
+        # CLI: none cases
+        ([], True, True),
+        ([], False, False),
+        ([], None, False),
+    ),
+    ids=(
+        "cli_true_config_true_expect_true",
+        "cli_true_config_false_expect_true",
+        "cli_true_config_missing_expect_true",
+        "cli_false_config_true_expect_false",
+        "cli_false_config_false_expect_false",
+        "cli_false_config_missing_expect_false",
+        "cli_none_config_true_expect_true",
+        "cli_none_config_false_expect_false",
+        "cli_none_config_missing_expect_false",
+    ),
+)
+def test_apply_cli_overrides_comprehensive(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    cli_args: list[str],
+    *,
+    config_value: bool | None,
+    expected: bool,
+) -> None:
+    """Test all combinations of config file vs CLI shared_state values.
+
+    This test validates that CLI arguments properly override config file values
+    by using the actual Molecule shell.main entry point with a TestConfig that
+    captures Config objects during CLI execution.
+
+    Args:
+        tmp_path: pytest temporary directory fixture.
+        monkeypatch: pytest monkeypatch fixture.
+        cli_args: CLI arguments to pass (e.g., ["--shared-state"]).
+        config_value: Value to set in the config file.
+        expected: Expected final shared_state value.
+    """
+    # 1. Create molecule.yml with or without shared_state
+    molecule_dir = tmp_path / "molecule" / "default"
+    molecule_dir.mkdir(parents=True)
+    molecule_file = molecule_dir / "molecule.yml"
+
+    config_content = "scenario:\n  name: default\n"
+    if config_value is not None:
+        config_content += f"shared_state: {str(config_value).lower()}\n"
+
+    molecule_file.write_text(config_content)
+
+    # 2. Capture configs and exit after _apply_cli_overrides
+    captured_configs: list[config.Config] = []
+
+    # Store the original method before patching
+    original_apply_cli_overrides = config.Config._apply_cli_overrides
+
+    def mock_apply_cli_overrides(self: config.Config) -> None:
+        original_apply_cli_overrides(self)
+        captured_configs.append(self)
+        msg = "Test capture complete"
+        raise ImmediateExit(msg, 0)
+
+    monkeypatch.setattr("molecule.config.Config._apply_cli_overrides", mock_apply_cli_overrides)
+    monkeypatch.chdir(tmp_path)
+
+    argv = ["molecule", "test", *cli_args]
+    monkeypatch.setattr("sys.argv", argv)
+
+    captured_configs.clear()
+
+    with pytest.raises(SystemExit) as exc_info:
+        main.main(standalone_mode=False)
+
+    # 6. Assert results
+    assert exc_info.value.code == 0  # Our ImmediateExit code was handled properly
+    assert len(captured_configs) >= 1  # At least one config was created
+    assert captured_configs[0].shared_state is expected  # CLI override logic worked correctly

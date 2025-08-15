@@ -95,6 +95,15 @@ class Scenarios:
         scenarios.sort(key=lambda x: x.directory)
         return scenarios
 
+    @property
+    def shared_state(self) -> bool:
+        """Whether these scenarios require shared state infrastructure.
+
+        Returns:
+            True if any scenario in the current execution selection has shared_state: true.
+        """
+        return any(scenario.config.shared_state for scenario in self.all)
+
     def print_matrix(self) -> None:
         """Show the test matrix for all scenarios."""
         msg = "Test matrix"

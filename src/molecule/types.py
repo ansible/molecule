@@ -265,6 +265,7 @@ class DefaultConfigData(TypedDict):
         role_name_check: Role name validation level.
         provisioner: Provisioner configuration (legacy, minus migrated keys).
         scenario: Scenario execution configuration.
+        shared_state: Whether to share state between scenarios.
         verifier: Verifier configuration for testing.
     """
 
@@ -276,6 +277,7 @@ class DefaultConfigData(TypedDict):
     role_name_check: int
     provisioner: ProvisionerData
     scenario: ScenarioData
+    shared_state: bool
     verifier: VerifierData
 
 
@@ -291,6 +293,7 @@ class ConfigData(TypedDict, total=False):
         role_name_check: Role name validation level.
         provisioner: Provisioner config.
         scenario: Scenario config.
+        shared_state: Should state be shared between scenarios.
         verifier: Verifier config.
     """
 
@@ -302,6 +305,7 @@ class ConfigData(TypedDict, total=False):
     role_name_check: int
     provisioner: ProvisionerData
     scenario: ScenarioData
+    shared_state: bool
     verifier: VerifierData
 
 
