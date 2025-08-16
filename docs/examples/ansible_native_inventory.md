@@ -1,4 +1,4 @@
-# Ansible Native Inventory Example
+# Ansible native inventory
 
 !!! note
 
