@@ -1,5 +1,9 @@
 # Ansible Native Inventory Example
 
+!!! note
+
+    This example demonstrates the use of an ansible-native configuration.
+
 This example demonstrates how to use native Ansible inventory sources with Molecule instead of relying on platform-based inventory generation.
 
 ## Overview
