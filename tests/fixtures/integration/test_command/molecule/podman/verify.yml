@@ -1,0 +1,38 @@
+---
+- name: Verify
+  hosts: molecule
+  gather_facts: true
+  tasks:
+    - name: Read OS info file created during converge
+      ansible.builtin.slurp:
+        src: /tmp/molecule_os_info.txt
+      register: os_info_file
+
+    - name: Verify OS is Fedora-based
+      ansible.builtin.assert:
+        that:
+          - os_correct == true
+          - os_family_correct == true
+        fail_msg: "Expected Fedora Linux-based OS, but got: {{ os_info }} and {{ ansible_facts['os_family'] }}"
+        success_msg: "Successfully verified Fedora Linux-based container"
+      vars:
+        os: Fedora Linux
+        os_family: RedHat
+        os_info: "{{ os_info_file.content | b64decode }}"
+        os_correct: "{{ os in os_info }}"
+        os_family_correct: "{{ os_family == ansible_facts['os_family'] }}"
+
+    
+    - name: Verify the dev tools environment variable
+      ansible.builtin.assert:
+        that:
+          - env_var_value == expected
+        fail_msg: "Expected {{ env_var }} to be {{ expected }}, but got: {{ env_var_value }}"
+        success_msg: "Successfully verified {{ env_var }}"
+      vars:
+        env_var: ANSIBLE_DEV_TOOLS_CONTAINER
+        env_var_value: "{{ ansible_env['ANSIBLE_DEV_TOOLS_CONTAINER'] }}"
+        expected: "1"
+
+
+
