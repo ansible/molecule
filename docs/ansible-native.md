@@ -110,7 +110,7 @@ Playbook paths are relative to the scenario directory.
 
 ## Native Inventory Usage
 
-Ansible-native approach uses standard Ansible inventory sources instead of generated inventory from platform definitions.
+Ansible-native approach uses standard Ansible inventory sources.
 
 ### Static YAML Inventory
 
@@ -322,7 +322,7 @@ With `shared_state: true`:
 
 ## Collection-Based Resource Management
 
-The ansible-native approach leverages ansible collections for testing resource management instead of driver plugins.
+The ansible-native approach leverages ansible collections for testing resource management.
 
 ### Container Testing Resources
 
