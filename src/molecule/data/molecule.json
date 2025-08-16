@@ -627,6 +627,11 @@
       "title": "Prerun",
       "type": "boolean"
     },
+    "shared_state": {
+      "title": "Shared State",
+      "type": "boolean",
+      "default": false
+    },
     "provisioner": {
       "$ref": "#/$defs/ProvisionerModel"
     },

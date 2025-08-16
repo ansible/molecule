@@ -97,6 +97,7 @@ def test_ansible_args_migration(tmp_path: Path, caplog: pytest.LogCaptureFixture
         "platforms": [{"name": "instance"}],  # from user config
         "prerun": DEFAULT_CONFIG["prerun"],  # not migrated
         "role_name_check": DEFAULT_CONFIG["role_name_check"],  # not migrated
+        "shared_state": DEFAULT_CONFIG["shared_state"],  # not migrated
         "provisioner": {
             "name": "ansible",
             # ansible_args removed - migrated to ansible.executor.args.ansible_playbook
@@ -196,6 +197,7 @@ def test_config_options_migration(tmp_path: Path, caplog: pytest.LogCaptureFixtu
         "platforms": [{"name": "instance"}],  # from user config
         "prerun": DEFAULT_CONFIG["prerun"],  # not migrated
         "role_name_check": DEFAULT_CONFIG["role_name_check"],  # not migrated
+        "shared_state": DEFAULT_CONFIG["shared_state"],  # not migrated
         "provisioner": {
             "name": "ansible",
             # config_options removed - migrated to ansible.cfg
@@ -290,6 +292,7 @@ def test_env_migration(tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None
         "platforms": [{"name": "instance"}],  # from user config
         "prerun": DEFAULT_CONFIG["prerun"],  # not migrated
         "role_name_check": DEFAULT_CONFIG["role_name_check"],  # not migrated
+        "shared_state": DEFAULT_CONFIG["shared_state"],  # not migrated
         "provisioner": {
             "name": "ansible",
             # env removed - migrated to ansible.env
@@ -381,6 +384,7 @@ def test_playbooks_migration(tmp_path: Path, caplog: pytest.LogCaptureFixture) -
         "platforms": [{"name": "instance"}],  # from user config
         "prerun": DEFAULT_CONFIG["prerun"],  # not migrated
         "role_name_check": DEFAULT_CONFIG["role_name_check"],  # not migrated
+        "shared_state": DEFAULT_CONFIG["shared_state"],  # not migrated
         "provisioner": {
             "name": "ansible",
             # playbooks removed - migrated to ansible.playbooks
@@ -486,6 +490,7 @@ def test_multiple_keys_migration(tmp_path: Path, caplog: pytest.LogCaptureFixtur
         "platforms": [{"name": "instance"}],  # from user config
         "prerun": DEFAULT_CONFIG["prerun"],  # not migrated
         "role_name_check": DEFAULT_CONFIG["role_name_check"],  # not migrated
+        "shared_state": DEFAULT_CONFIG["shared_state"],  # not migrated
         "provisioner": {
             "name": "ansible",
             # ansible_args, config_options, env, playbooks removed - migrated to ansible section
