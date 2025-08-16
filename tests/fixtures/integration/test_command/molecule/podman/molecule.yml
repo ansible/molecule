@@ -15,6 +15,7 @@ dependency:
 
 scenario:
   test_sequence:
+    - dependency
     - destroy
     - create
     - converge
