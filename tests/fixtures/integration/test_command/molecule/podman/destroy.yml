@@ -1,24 +1,22 @@
-- name: Destroy molecule containers
-  hosts: molecule
-  gather_facts: false
-  tasks:
-    - name: Stop and remove container
-      delegate_to: localhost
-      containers.podman.podman_container:
-        name: "{{ inventory_hostname }}"
-        state: absent
-        rm: true
-    - name: Remove potentially stopped container
-      delegate_to: localhost
-      ansible.builtin.command:
-        cmd: podman container rm --ignore {{ inventory_hostname }}
-      changed_when: false
-
-- name: Remove dynamic molecule inventory
+---
+- name: Destroy container instances
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Remove dynamic inventory file
-      ansible.builtin.file:
-        path: "{{ molecule_ephemeral_directory }}/inventory/molecule_inventory.yml"
-        state: absent
+    - name: Get info for all containers
+      containers.podman.podman_container_info:
+        name: "{{ item }}"
+      loop: "{{ groups['molecule'] }}"
+      register: podman_infos
+
+    - name: Kill container if running
+      containers.podman.podman_container:
+        name: "{{ item.item }}"
+        state: stopped
+        timeout: 2
+      loop: "{{ podman_infos.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+      when:
+        - item.containers | length > 0
+        - item.containers[0].State.Status == "running"
