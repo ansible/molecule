@@ -32,5 +32,3 @@ python3 -m molecule ...  # python module calling method
 Molecule projects also hosts the [community.molecule] collection, which
 contains some filters, plugins, roles and playbooks that can be used by
 molecule test writers to ease writing tests.
-
-
