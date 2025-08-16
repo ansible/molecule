@@ -8,17 +8,18 @@
 [![Discussions](https://img.shields.io/badge/Discussions-silver.svg)](https://forum.ansible.com/tag/molecule)
 [![Repository License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
-Molecule is an ansible-native testing framework designed for testing
+Molecule is an Ansible testing framework designed for developing and testing
 [Ansible](https://ansible.com) collections, playbooks, and roles.
 
-Molecule provides configurable test workflows with support for native inventory
-integration, multi-scenario testing, and validation of any system or service
-reachable through Ansible - from infrastructure and containers to APIs,
-databases, and cloud services.
+Molecule leverages standard Ansible features including inventory, playbooks,
+and collections to provide flexible testing workflows. Test scenarios can
+target any system or service reachable from Ansible, from containers and
+virtual machines to cloud infrastructure, hyperscaler services, APIs,
+databases, and network devices. Molecule can also validate inventory
+configurations and dynamic inventory sources.
 
-Molecule promotes consistent development practices through automated testing
-workflows that ensure Ansible content is reliable, maintainable, and follows
-established engineering standards.
+Molecule encourages an approach that results in consistently developed
+Ansible content that is well-written, easily understood and maintained.
 
 Molecule supports only the latest two major versions of Ansible (N/N-1).
 
