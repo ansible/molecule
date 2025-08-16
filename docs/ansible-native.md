@@ -40,7 +40,7 @@ verifier:
 
 ## Ansible Configuration Section
 
-The `ansible` section contains all Ansible-specific configuration, replacing the legacy provisioner approach.
+The `ansible` section contains all Ansible-specific configuration.
 
 ### Executor Configuration
 
