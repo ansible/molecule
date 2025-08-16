@@ -22,7 +22,6 @@
         os_correct: "{{ os in os_info }}"
         os_family_correct: "{{ os_family == ansible_facts['os_family'] }}"
 
-    
     - name: Verify the dev tools environment variable
       ansible.builtin.assert:
         that:
@@ -33,6 +32,3 @@
         env_var: ANSIBLE_DEV_TOOLS_CONTAINER
         env_var_value: "{{ ansible_env['ANSIBLE_DEV_TOOLS_CONTAINER'] }}"
         expected: "1"
-
-
-

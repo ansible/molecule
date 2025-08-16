@@ -12,4 +12,4 @@
       ansible.builtin.copy:
         content: "{{ os_release.content | b64decode }}"
         dest: /tmp/molecule_os_info.txt
-        mode: '0644'
+        mode: "0644"
