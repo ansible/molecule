@@ -1,5 +1,11 @@
 # Using Kubevirt
 
+!!! note
+
+    This example demonstrates the use of a pre-ansible-native configuration.
+    For ansible-native examples see the [Using podman containers](podman.md)
+    or [Ansible native inventory](ansible_native_inventory.md) examples.
+
 Below you can see a scenario that is using [Kubevirt VMs](https://kubevirt.io/user-guide/) as test hosts. For Ansible to connect with the SSH in the KubeVirt VMs, it will be made accessible through the Service NodePort.
 When you run `molecule test --scenario-name kubevirt` the `create`, `converge` and
 `destroy` steps will be run one after another.
