@@ -20,51 +20,51 @@ pip install ansible-creator
 
 **Initialize a playbook project using ansible-creator:**
 
-   ```bash
-   ansible-creator init playbook-project --init-path /tmp/my-playbooks
-   cd /tmp/my-playbooks
-   ```
+```bash
+ansible-creator init playbook-project --init-path /tmp/my-playbooks
+cd /tmp/my-playbooks
+```
 
-   This creates the following structure:
+This creates the following structure:
 
-   ```
-   my-playbooks/
-   ├── ansible.cfg
-   ├── ansible-navigator.yml
-   ├── collections/
-   │   └── requirements.yml
-   ├── inventory/
-   │   ├── group_vars/
-   │   ├── host_vars/
-   │   └── hosts.yml
-   ├── linux_playbook.yml
-   ├── network_playbook.yml
-   └── site.yml
-   ```
+```
+my-playbooks/
+├── ansible.cfg
+├── ansible-navigator.yml
+├── collections/
+│   └── requirements.yml
+├── inventory/
+│   ├── group_vars/
+│   ├── host_vars/
+│   └── hosts.yml
+├── linux_playbook.yml
+├── network_playbook.yml
+└── site.yml
+```
 
 **Create Molecule requirements file:**
 
-   ```bash
-   mkdir molecule
-   cat > molecule/requirements.yml << 'EOF'
-   ---
-   collections:
-     - name: containers.podman
-       version: ">=1.10.0"
-     - name: arista.eos
-       version: ">=6.0.0"
-   EOF
-   ```
+```bash
+mkdir molecule
+cat > molecule/requirements.yml << 'EOF'
+---
+collections:
+  - name: containers.podman
+    version: ">=1.10.0"
+  - name: arista.eos
+    version: ">=6.0.0"
+EOF
+```
 
 **Initialize Molecule scenarios for different testing needs:**
 
-   ```bash
-   # Linux container testing scenario
-   molecule init scenario linux
+```bash
+# Linux container testing scenario
+molecule init scenario linux
 
-   # Network device testing scenario
-   molecule init scenario network
-   ```
+# Network device testing scenario
+molecule init scenario network
+```
 
 ## Linux Container Testing Scenario
 
