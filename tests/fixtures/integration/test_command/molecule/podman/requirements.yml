@@ -1,2 +1,4 @@
+---
 collections:
-  - containers.podman
+  - name: containers.podman
+    version: ">=1.10.0"
