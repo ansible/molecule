@@ -6,7 +6,6 @@
     For ansible-native examples see the [Using podman containers](podman.md)
     or [Ansible native inventory](ansible_native_inventory.md) examples.
 
-
 Below you can see a scenario that is using docker containers as test hosts.
 When you run `molecule test --scenario-name docker` the `create`, `converge` and
 `destroy` steps will be run one after another.
