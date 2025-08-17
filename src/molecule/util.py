@@ -113,15 +113,6 @@ def print_environment_vars(env: dict[str, str] | None) -> None:
         )
 
 
-def do_report() -> None:
-    """Dump html report atexit."""
-    report_file = Path(os.environ["MOLECULE_REPORT"])
-    LOG.info("Writing %s report.", report_file)
-    with report_file.open("w") as f:
-        f.write(console.export_html())
-        f.close()
-
-
 def sysexit(code: int = 1) -> NoReturn:
     """Perform a system exit with given code.
 
