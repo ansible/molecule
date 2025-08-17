@@ -31,7 +31,6 @@ import pytest
 
 from molecule import config
 from molecule.command import base
-from molecule.constants import ENV_VAR_CONFIG_MAPPING
 from molecule.exceptions import ImmediateExit, ScenarioFailureError
 from molecule.shell import main
 from molecule.utils import util
@@ -920,5 +919,9 @@ def test_env_overrides_invalid_values(
     assert config_obj.command_args.get("test_int", 0) == 0
 
     # Check that warnings were logged for invalid values
-    warning_messages = [record.message for record in caplog.records if record.levelname == "WARNING"]
-    assert any("Invalid value for TEST_INT_VAR: not_a_number, ignoring" in msg for msg in warning_messages)
+    warning_messages = [
+        record.message for record in caplog.records if record.levelname == "WARNING"
+    ]
+    assert any(
+        "Invalid value for TEST_INT_VAR: not_a_number, ignoring" in msg for msg in warning_messages
+    )
