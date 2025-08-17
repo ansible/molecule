@@ -37,34 +37,7 @@ if TYPE_CHECKING:
 
 
 class Ansible(Verifier):
-    """`Ansible`_ is the default test verifier.
-
-    Molecule executes a playbook (`verify.yml`) located in the role's
-    `scenario.directory`.
-
-    ``` yaml
-        verifier:
-          name: ansible
-    ```
-
-    The testing can be disabled by setting ``enabled`` to False.
-
-    ``` yaml
-        verifier:
-          name: ansible
-          enabled: False
-    ```
-
-    Environment variables can be passed to the verifier.
-
-    ``` yaml
-
-        verifier:
-          name: ansible
-          env:
-            FOO: bar
-    ```
-    """
+    """The Ansible verifier."""
 
     @property
     def _log(self) -> logger.ScenarioLoggerAdapter:

@@ -32,45 +32,7 @@ if TYPE_CHECKING:
 
 
 class Platforms:
-    """Platforms define the instances to be tested, and the groups to which the instances belong.
-
-    ``` yaml
-
-        platforms:
-          - name: instance-1
-    ```
-
-    Multiple instances can be provided.
-
-    ``` yaml
-        platforms:
-          - name: instance-1
-          - name: instance-2
-    ```
-
-    Mapping instances to groups.  These groups will be used by the Provisioner_
-    for orchestration purposes.
-
-    ``` yaml
-        platforms:
-          - name: instance-1
-            groups:
-              - group1
-              - group2
-    ```
-
-    Children allow the creation of groups of groups.
-
-    ``` yaml
-        platforms:
-          - name: instance-1
-            groups:
-              - group1
-              - group2
-            children:
-              - child_group1
-    ```
-    """
+    """The Platforms class."""
 
     def __init__(
         self,
