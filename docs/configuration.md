@@ -139,6 +139,10 @@ MOLECULE_PROVISIONER_NAME
 
 : Name of the provisioner tool (usually 'ansible')
 
+MOLECULE_REPORT
+
+: Name of HTML file where to dump execution report.
+
 MOLECULE_SCENARIO_NAME
 
 : Name of the scenario
