@@ -167,13 +167,18 @@ class Config:
 
         Precedence: defaults → env vars → CLI args.
         Only applies env vars if the CLI argument wasn't set by the user.
+        Includes variables from both os.environ and env_file.
         """
         ctx = click.get_current_context(silent=True)
         if ctx is None or not ENV_VAR_CONFIG_MAPPING or not hasattr(self, "command_args"):
             return
 
+        # Build merged environment (os.environ + env_file) same as _reget_config
+        merged_env = util.merge_dicts(os.environ, self.env)
+        merged_env = set_env_from_file(merged_env, self.env_file)
+
         for env_var, config in ENV_VAR_CONFIG_MAPPING.items():
-            env_value = os.environ.get(env_var)
+            env_value = merged_env.get(env_var)
             if env_value is None:
                 continue
 
