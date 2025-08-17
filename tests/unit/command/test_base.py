@@ -26,6 +26,7 @@ import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
+import click
 import pytest
 
 from molecule import config
@@ -881,3 +882,50 @@ def test_env_var_cli_precedence(  # noqa: PLR0913
     config_obj = captured_configs[0]
     assert config_obj.command_args.get("report", False) is expected_report
     assert config_obj.command_args.get("command_borders", False) is expected_borders
+
+
+def test_env_overrides_invalid_values(
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test that invalid environment variable values are logged and ignored.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        caplog: Pytest log capture fixture.
+    """
+    # Mock a new environment variable mapping that uses int type to trigger ValueError
+    from molecule.constants import ENV_VAR_CONFIG_MAPPING
+
+    # Add a temporary mapping that will cause conversion errors  
+    original_mapping = ENV_VAR_CONFIG_MAPPING.copy()
+    # Use a dict to bypass TypedDict constraints during testing
+    test_mapping = dict(ENV_VAR_CONFIG_MAPPING)
+    test_mapping["TEST_INT_VAR"] = {"attr": "test_int", "type": int}
+    ENV_VAR_CONFIG_MAPPING.clear()
+    ENV_VAR_CONFIG_MAPPING.update(test_mapping)
+
+    try:
+        # Set an environment variable with invalid int value
+        monkeypatch.setenv("TEST_INT_VAR", "not_a_number")
+
+        # Create a minimal config to test error handling
+        args: dict[str, None] = {"env_file": None}
+        command_args: dict[str, object] = {"subcommand": "test", "test_int": 0}
+
+        # Mock click context to avoid parameter source check issues
+        with click.Context(click.Command("test")):
+            # Create config - this should trigger _apply_env_overrides and hit the error handling
+            config_obj = config.Config(molecule_file="", args=args, command_args=command_args)  # type: ignore[arg-type]
+
+        # Value should remain at default since invalid value was ignored
+        assert config_obj.command_args.get("test_int", 0) == 0
+
+        # Check that warnings were logged for invalid values
+        warning_messages = [record.message for record in caplog.records if record.levelname == "WARNING"]
+        assert any("Invalid value for TEST_INT_VAR: not_a_number, ignoring" in msg for msg in warning_messages)
+
+    finally:
+        # Restore original mapping
+        ENV_VAR_CONFIG_MAPPING.clear()
+        ENV_VAR_CONFIG_MAPPING.update(original_mapping)
