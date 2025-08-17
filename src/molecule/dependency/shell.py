@@ -34,44 +34,7 @@ if TYPE_CHECKING:
 
 
 class Shell(base.Base):
-    """``Shell`` is an alternate dependency manager.
-
-    It is intended to run a command in situations where `Ansible Galaxy`_
-    don't suffice.
-
-    The ``command`` to execute is required, and is relative to Molecule's
-    project directory when referencing a script not in $PATH.
-
-    !!! note
-
-        Unlike the other dependency managers, ``options`` are ignored and not
-        passed to `shell`.  Additional flags/subcommands should simply be added
-        to the `command`.
-
-    ``` yaml
-        dependency:
-          name: shell
-          command: path/to/command --flag1 subcommand --flag2
-    ```
-
-    The dependency manager can be disabled by setting ``enabled`` to False.
-
-    ``` yaml
-        dependency:
-          name: shell
-          command: path/to/command --flag1 subcommand --flag2
-          enabled: False
-    ```
-    Environment variables can be passed to the dependency.
-
-    ``` yaml
-        dependency:
-          name: shell
-          command: path/to/command --flag1 subcommand --flag2
-          env:
-            FOO: bar
-    ```
-    """
+    """The Shell dependency."""
 
     def __init__(self, config: Config) -> None:
         """Construct Shell.
