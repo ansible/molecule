@@ -21,7 +21,6 @@
 
 from __future__ import annotations
 
-import atexit
 import os
 import sys
 
@@ -39,7 +38,7 @@ from molecule.click_cfg import click_group_ex
 from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY
 from molecule.console import console
 from molecule.constants import MOLECULE_COLLECTION_ROOT
-from molecule.util import do_report, lookup_config_file
+from molecule.util import lookup_config_file
 
 
 # Setup logging. This location of initialization is not ideal, but the code
@@ -173,9 +172,6 @@ def main(
     logger.set_log_level(verbose, debug)
     if verbose:
         os.environ["ANSIBLE_VERBOSITY"] = str(verbose)
-
-    if "MOLECULE_REPORT" in os.environ:
-        atexit.register(do_report)
 
 
 main.add_command(command.cleanup.cleanup)
