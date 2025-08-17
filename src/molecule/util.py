@@ -10,7 +10,7 @@ from __future__ import annotations
 import warnings
 
 # Import everything from the new location
-from molecule.utils.util import *  # noqa: F403
+from molecule.utils.util import *  # noqa: F403  # pylint: disable=wildcard-import,unused-wildcard-import
 
 
 # Issue a deprecation warning when this module is imported
