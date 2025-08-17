@@ -1,25 +1,18 @@
 ---
+ansible:
+  cfg:
+    defaults:
+      deprecation_warnings: false
+  executor:
+    backend: ansible-playbook
+    args:
+      ansible_playbook:
+        - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/inventory/
+
 dependency:
   name: galaxy
   options:
     requirements-file: requirements.yml
-
-platforms:
-  - name: external-inventory # Required placeholder
-
-driver:
-  name: default
-
-provisioner:
-  name: ansible
-  config_options:
-    defaults:
-      deprecation_warnings: false
-  ansible_args:
-    - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/inventory/
-
-verifier:
-  name: ansible
 
 scenario:
   test_sequence:
