@@ -25,9 +25,9 @@ import logging
 
 from typing import TYPE_CHECKING
 
-from molecule import util
 from molecule.exceptions import MoleculeError
 from molecule.reporting.definitions import ScenariosResults
+from molecule.utils import util
 
 
 if TYPE_CHECKING:

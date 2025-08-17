@@ -23,9 +23,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from molecule import util
 from molecule.click_cfg import click_command_ex, common_options
 from molecule.command import base
+from molecule.utils import util
 
 
 if TYPE_CHECKING:

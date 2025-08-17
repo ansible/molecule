@@ -27,10 +27,11 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
-from molecule import logger, util
+from molecule import logger
 from molecule.api import Verifier
 from molecule.exceptions import ImmediateExit
 from molecule.reporting.definitions import CompletionState
+from molecule.utils import util
 
 
 if TYPE_CHECKING:

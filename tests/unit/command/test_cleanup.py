@@ -26,8 +26,8 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from molecule import config, util
 from molecule.command import cleanup
+from molecule.utils import util
 
 
 if TYPE_CHECKING:
@@ -36,6 +36,7 @@ if TYPE_CHECKING:
 
     from pytest_mock import MockerFixture
 
+    from molecule import config
     from molecule.types import ProvisionerData
 
 

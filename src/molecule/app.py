@@ -11,7 +11,7 @@ from ansible_compat.runtime import Runtime
 
 from molecule.ansi_output import CommandBorders
 from molecule.console import original_stderr
-from molecule.util import print_environment_vars
+from molecule.utils.util import print_environment_vars
 
 
 if TYPE_CHECKING:

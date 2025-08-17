@@ -27,7 +27,8 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from molecule import config, util
+from molecule import config
+from molecule.utils import util
 
 
 if TYPE_CHECKING:
@@ -136,7 +137,7 @@ def config_instance(
 
 @pytest.fixture
 def patched_print_debug(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    return mocker.patch("molecule.util.print_debug")
+    return mocker.patch("molecule.utils.util.print_debug")
 
 
 @pytest.fixture

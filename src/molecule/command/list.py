@@ -27,12 +27,13 @@ from rich import box
 from rich.syntax import Syntax
 from rich.table import Table
 
-from molecule import scenarios, text, util
+from molecule import scenarios, text
 from molecule.click_cfg import click_command_ex, options
 from molecule.command import base
 from molecule.console import console
 from molecule.exceptions import ImmediateExit, ScenarioFailureError
 from molecule.status import Status
+from molecule.utils import util
 
 
 if TYPE_CHECKING:

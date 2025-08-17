@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal, TypedDict
 
 from molecule.compatibility import StrEnum
 
@@ -29,6 +29,26 @@ MOLECULE_COLLECTION_GLOB = f"{MOLECULE_COLLECTION_ROOT}/*/molecule.yml"
 # Default values
 MOLECULE_DEFAULT_SCENARIO_NAME = "default"
 MOLECULE_PLATFORM_NAME = os.environ.get("MOLECULE_PLATFORM_NAME", None)
+
+# Environment variable to config attribute mapping for CLI options
+
+
+class EnvVarConfig(TypedDict):
+    """Configuration for an environment variable mapping.
+
+    Attributes:
+        attr: The config attribute name
+        type: The type class for conversion (bool, str, int, etc.)
+    """
+
+    attr: Literal["report", "command_borders"]
+    type: type
+
+
+ENV_VAR_CONFIG_MAPPING: dict[str, EnvVarConfig] = {
+    "MOLECULE_REPORT": {"attr": "report", "type": bool},
+    "MOLECULE_COMMAND_BORDERS": {"attr": "command_borders", "type": bool},
+}
 
 # Default molecule configuration (forward-looking)
 DEFAULT_CONFIG: DefaultConfigData = {

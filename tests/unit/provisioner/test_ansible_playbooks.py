@@ -21,11 +21,17 @@ from __future__ import annotations
 
 import os
 
+from typing import TYPE_CHECKING
+
 import pytest
 
-from molecule import config, util
 from molecule.provisioner import ansible_playbooks
+from molecule.utils import util
 from tests.unit.conftest import os_split  # pylint:disable=C0411
+
+
+if TYPE_CHECKING:
+    from molecule import config
 
 
 @pytest.fixture

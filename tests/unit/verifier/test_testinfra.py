@@ -24,7 +24,7 @@ import os
 import pytest
 
 from molecule.config import Config
-from molecule.util import write_file
+from molecule.utils.util import write_file
 from molecule.verifier import testinfra
 
 
