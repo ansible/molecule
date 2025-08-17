@@ -9,7 +9,7 @@ ansible-runner==2.4.1     # via ansible-navigator
 astroid==3.3.11           # via pylint
 attrs==25.3.0             # via jsonschema, referencing
 babel==2.17.0             # via mkdocs-material
-backrefs==6.0.1             # via mkdocs-material
+backrefs==5.9             # via mkdocs-material
 beautifulsoup4==4.13.4    # via linkchecker, mkdocs-htmlproofer-plugin
 bindep==2.13.0            # via ansible-builder
 black==25.1.0             # via ansible-lint
@@ -22,7 +22,7 @@ cffi==1.17.1              # via cairocffi, cryptography, onigurumacffi
 cfgv==3.4.0               # via pre-commit
 chardet==5.2.0            # via tox
 charset-normalizer==3.4.3  # via requests
-click==8.2.1              # via black, click-help-colors, mkdocs, pydoclint, molecule (pyproject.toml)
+click==8.2.1              # via black, click-help-colors, mkdocs, mkdocs-material, pydoclint, molecule (pyproject.toml)
 click-help-colors==0.9.4  # via molecule (pyproject.toml)
 colorama==0.4.6           # via griffe, mkdocs-material, tox
 coverage==7.10.4          # via molecule (pyproject.toml)
@@ -91,7 +91,7 @@ pluggy==1.6.0             # via pytest, tox, molecule (pyproject.toml)
 pre-commit==4.3.0         # via molecule (pyproject.toml)
 ptyprocess==0.7.0         # via pexpect
 pycparser==2.22           # via cffi
-pydoclint==0.6.10          # via molecule (pyproject.toml)
+pydoclint==0.6.10         # via molecule (pyproject.toml)
 pygments==2.19.2          # via mkdocs-material, pytest, rich
 pylint==3.3.8             # via molecule (pyproject.toml)
 pymdown-extensions==10.16.1  # via markdown-exec, mkdocs-ansible, mkdocs-material, mkdocstrings
