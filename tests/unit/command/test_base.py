@@ -897,7 +897,7 @@ def test_env_overrides_invalid_values(
     # Mock a new environment variable mapping that uses int type to trigger ValueError
     from molecule.constants import ENV_VAR_CONFIG_MAPPING
 
-    # Add a temporary mapping that will cause conversion errors  
+    # Add a temporary mapping that will cause conversion errors
     original_mapping = ENV_VAR_CONFIG_MAPPING.copy()
     # Use a dict to bypass TypedDict constraints during testing
     test_mapping = dict(ENV_VAR_CONFIG_MAPPING)
