@@ -894,31 +894,23 @@ def test_env_overrides_invalid_values(
         monkeypatch: Pytest monkeypatch fixture.
         caplog: Pytest log capture fixture.
     """
-    # Mock environment variable mapping with int type to trigger ValueError
     test_mapping = {
         "MOLECULE_REPORT": {"attr": "report", "type": bool},
         "MOLECULE_COMMAND_BORDERS": {"attr": "command_borders", "type": bool},
         "TEST_INT_VAR": {"attr": "test_int", "type": int},
     }
-    monkeypatch.setattr("molecule.constants.ENV_VAR_CONFIG_MAPPING", test_mapping)  # type: ignore[arg-type]
-    monkeypatch.setattr("molecule.config.ENV_VAR_CONFIG_MAPPING", test_mapping)  # type: ignore[arg-type]
+    monkeypatch.setattr("molecule.config.ENV_VAR_CONFIG_MAPPING", test_mapping)
 
-    # Set an environment variable with invalid int value
     monkeypatch.setenv("TEST_INT_VAR", "not_a_number")
 
-    # Create a minimal config to test error handling
     args: dict[str, None] = {"env_file": None}
     command_args: dict[str, object] = {"subcommand": "test", "test_int": 0}
 
-    # Mock click context to avoid parameter source check issues
     with click.Context(click.Command("test")):
-        # Create config - this should trigger _apply_env_overrides and hit the error handling
         config_obj = config.Config(molecule_file="", args=args, command_args=command_args)  # type: ignore[arg-type]
 
-    # Value should remain at default since invalid value was ignored
     assert config_obj.command_args.get("test_int", 0) == 0
 
-    # Check that warnings were logged for invalid values
     warning_messages = [
         record.message for record in caplog.records if record.levelname == "WARNING"
     ]
