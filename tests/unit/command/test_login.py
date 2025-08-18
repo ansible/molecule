@@ -24,7 +24,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 from molecule.command import login
-from molecule.exceptions import MoleculeError
+from molecule.exceptions import ImmediateExit
 
 
 if TYPE_CHECKING:
@@ -81,13 +81,13 @@ def test_get_hostname_does_not_match(  # noqa: D103
 ) -> None:
     _instance._config.command_args = {"host": "invalid"}
     hosts = ["instance-1"]
-    with pytest.raises(MoleculeError) as e:
+    with pytest.raises(ImmediateExit) as e:
         _instance._get_hostname(hosts)
 
     assert e.value.code == 1
 
     msg = "There are no hosts that match 'invalid'.  You can only login to valid hosts."
-    assert msg in caplog.text
+    assert e.value.message == msg
 
 
 def test_get_hostname_exact_match_with_one_host(  # noqa: D103
@@ -132,7 +132,7 @@ def test_get_hostname_partial_match_with_multiple_hosts_raises(  # noqa: D103
 ) -> None:
     _instance._config.command_args = {"host": "inst"}
     hosts = ["instance-1", "instance-2"]
-    with pytest.raises(MoleculeError) as e:
+    with pytest.raises(ImmediateExit) as e:
         _instance._get_hostname(hosts)
 
     assert e.value.code == 1
@@ -144,7 +144,7 @@ def test_get_hostname_partial_match_with_multiple_hosts_raises(  # noqa: D103
         "instance-1\n"
         "instance-2"
     )
-    assert msg in caplog.text
+    assert e.value.message == msg
 
 
 def test_get_hostname_no_host_flag_specified_on_cli(  # noqa: D103
@@ -163,7 +163,7 @@ def test_get_hostname_no_host_flag_specified_on_cli_with_multiple_hosts_raises( 
 ) -> None:
     _instance._config.command_args = {}
     hosts = ["instance-1", "instance-2"]
-    with pytest.raises(MoleculeError) as e:
+    with pytest.raises(ImmediateExit) as e:
         _instance._get_hostname(hosts)
 
     assert e.value.code == 1
@@ -175,4 +175,4 @@ def test_get_hostname_no_host_flag_specified_on_cli_with_multiple_hosts_raises( 
         "instance-1\n"
         "instance-2"
     )
-    assert msg in caplog.text
+    assert e.value.message == msg

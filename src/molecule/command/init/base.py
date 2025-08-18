@@ -25,7 +25,7 @@ import abc
 
 from pathlib import Path
 
-from molecule.exceptions import MoleculeError
+from molecule.exceptions import ImmediateExit
 
 
 class Base(abc.ABC):
@@ -42,4 +42,4 @@ class Base(abc.ABC):
     def _validate_template_dir(self, template_dir: str) -> None:
         if not Path(template_dir).is_dir():
             msg = f"The specified template directory ({template_dir!s}) does not exist"
-            raise MoleculeError(message=msg)
+            raise ImmediateExit(msg, code=1)

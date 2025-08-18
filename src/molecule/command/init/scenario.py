@@ -43,7 +43,7 @@ from molecule.constants import (
     MOLECULE_DEFAULT_SCENARIO_NAME,
     MOLECULE_ROOT,
 )
-from molecule.exceptions import MoleculeError
+from molecule.exceptions import ImmediateExit
 from molecule.utils import util
 
 
@@ -105,7 +105,7 @@ class Scenario(base.Base):
             action_args: Arguments for this command. Unused.
 
         Raises:
-            MoleculeError: when the scenario cannot be created.
+            ImmediateExit: when the scenario cannot be created.
         """
         scenario_name = self._command_args["scenario_name"]
 
@@ -128,7 +128,7 @@ class Scenario(base.Base):
 
         if scenario_directory.is_dir():
             msg = f"The directory {relative_path} exists. Cannot create new scenario."
-            raise MoleculeError(msg)
+            raise ImmediateExit(msg, code=1)
 
         # Ensure parent directory exists
         molecule_path.mkdir(parents=True, exist_ok=True)
@@ -172,7 +172,7 @@ def _role_exists(
     role_directory = Path.cwd().parent / value
     if not role_directory.exists():
         msg = f"The role '{value}' not found. Please choose the proper role name."
-        raise MoleculeError(msg)
+        raise ImmediateExit(msg, code=1)
     return value
 
 

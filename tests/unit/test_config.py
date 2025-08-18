@@ -29,7 +29,7 @@ import pytest
 
 from molecule import config, platforms, scenario, state
 from molecule.dependency import ansible_galaxy, shell
-from molecule.exceptions import MoleculeError
+from molecule.exceptions import ImmediateExit
 from molecule.provisioner import ansible
 from molecule.utils import util
 from molecule.verifier.ansible import Ansible as AnsibleVerifier
@@ -278,7 +278,7 @@ def test_get_driver_name_from_state_file(  # noqa: D103
 ) -> None:
     config_instance.state.change_state("driver", "state-driver")
 
-    with pytest.raises(MoleculeError):
+    with pytest.raises(ImmediateExit):
         config_instance._get_driver_name()
 
     mocker.patch("molecule.api.drivers", return_value=["state-driver"])
@@ -301,7 +301,7 @@ def test_get_driver_name_raises_when_different_driver_used(  # noqa: D103
 ) -> None:
     config_instance.state.change_state("driver", "foo")
     config_instance.command_args = {"driver_name": "bar"}
-    with pytest.raises(MoleculeError) as e:
+    with pytest.raises(ImmediateExit) as e:
         config_instance._get_driver_name()
 
     assert e.value.code == 1
@@ -310,7 +310,7 @@ def test_get_driver_name_raises_when_different_driver_used(  # noqa: D103
         "Instance(s) were created with the 'foo' driver, but the subcommand is using 'bar' driver."
     )
 
-    assert msg in caplog.text
+    assert e.value.message == msg
 
 
 def test_get_config(config_instance: config.Config) -> None:  # noqa: D103
@@ -394,7 +394,7 @@ def test_interpolate_raises_on_failed_interpolation(  # noqa: D103
 ) -> None:
     string = "$6$8I5Cfmpr$kGZB"
 
-    with pytest.raises(MoleculeError) as e:
+    with pytest.raises(ImmediateExit) as e:
         config_instance._interpolate(string, os.environ, "")
 
     assert e.value.code == 1
@@ -404,7 +404,7 @@ def test_interpolate_raises_on_failed_interpolation(  # noqa: D103
         "Invalid placeholder in string: line 1, col 1\n"
         "$6$8I5Cfmpr$kGZB"
     )
-    assert msg in caplog.text
+    assert e.value.message == msg
 
 
 def test_get_defaults(  # noqa: D103
@@ -465,13 +465,13 @@ def test_validate_exists_when_validation_fails(  # noqa: D103
     m = mocker.patch("molecule.model.schema_v3.validate")
     m.return_value = "validation errors"
 
-    with pytest.raises(MoleculeError) as e:
+    with pytest.raises(ImmediateExit) as e:
         config_instance._validate()
 
     assert e.value.code == 1
 
     msg = f"Failed to validate {config_instance.molecule_file}\n\nvalidation errors"
-    assert msg in caplog.text
+    assert e.value.message == msg
 
 
 def test_molecule_directory() -> None:  # noqa: D103

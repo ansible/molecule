@@ -25,7 +25,7 @@ import pytest
 
 from molecule import config, scenario, scenarios
 from molecule.console import console
-from molecule.exceptions import MoleculeError
+from molecule.exceptions import ImmediateExit
 from molecule.text import chomp, strip_ansi_escape
 
 
@@ -137,13 +137,13 @@ def test_verify_raises_when_scenario_not_found(  # noqa: D103
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     _instance._scenario_names = ["invalid"]
-    with pytest.raises(MoleculeError) as e:
+    with pytest.raises(ImmediateExit) as e:
         _instance._verify()
 
     assert e.value.code == 1
 
     msg = "Scenario 'invalid' not found.  Exiting."
-    assert msg in caplog.text
+    assert e.value.message == msg
 
 
 def test_verify_raises_when_multiple_scenarios_not_found(  # noqa: D103
@@ -151,13 +151,13 @@ def test_verify_raises_when_multiple_scenarios_not_found(  # noqa: D103
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     _instance._scenario_names = ["invalid", "also invalid"]
-    with pytest.raises(MoleculeError) as e:
+    with pytest.raises(ImmediateExit) as e:
         _instance._verify()
 
     assert e.value.code == 1
 
     msg = "Scenarios 'also invalid, invalid' not found.  Exiting."
-    assert msg in caplog.text
+    assert e.value.message == msg
 
 
 def test_filter_for_scenario(  # noqa: D103
