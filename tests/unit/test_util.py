@@ -20,44 +20,30 @@
 from __future__ import annotations
 
 import binascii
+import logging
 import os
 import tempfile
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import pytest
 import yaml
 
-from molecule.console import console
 from molecule.constants import MOLECULE_COLLECTION_GLOB, MOLECULE_HEADER
 from molecule.exceptions import MoleculeError
-from molecule.text import strip_ansi_escape
 from molecule.utils import util
 
 
 if TYPE_CHECKING:
     from collections.abc import MutableMapping
-    from typing import Any
-    from unittest.mock import Mock
-
-    from pytest_mock import MockerFixture
 
     from molecule.app import App
     from molecule.types import Options
 
 
-def test_print_debug() -> None:  # noqa: D103
-    expected = "DEBUG: test_title:\ntest_data\n"
-    with console.capture() as capture:
-        util.print_debug("test_title", "test_data")
-
-    result = strip_ansi_escape(capture.get())
-    assert result == expected
-
-
 def test_print_environment_vars(  # noqa: D103
-    capsys: pytest.CaptureFixture[str],
+    caplog: pytest.LogCaptureFixture,
 ) -> None:
     env = {
         "ANSIBLE_FOO": "foo",
@@ -67,22 +53,18 @@ def test_print_environment_vars(  # noqa: D103
         "MOLECULE_BAR": "bar",
         "MOLECULE": "",
     }
-    expected = """DEBUG: ANSIBLE ENVIRONMENT:
-ANSIBLE_BAR: bar
-ANSIBLE_FOO: foo
 
-DEBUG: MOLECULE ENVIRONMENT:
-MOLECULE_BAR: bar
-MOLECULE_FOO: foo
-
-DEBUG: SHELL REPLAY:
-ANSIBLE_BAR=bar ANSIBLE_FOO=foo MOLECULE_BAR=bar MOLECULE_FOO=foo
-"""
-
-    with console.capture() as capture:
+    with caplog.at_level(logging.DEBUG):
         util.print_environment_vars(env)
-    result = strip_ansi_escape(capture.get())
-    assert result == expected
+
+    # Check that the expected debug messages were logged
+    assert "ANSIBLE ENVIRONMENT:" in caplog.text
+    assert "MOLECULE ENVIRONMENT:" in caplog.text
+    assert "SHELL REPLAY:" in caplog.text
+    assert "ANSIBLE_BAR: bar" in caplog.text
+    assert "ANSIBLE_FOO: foo" in caplog.text
+    assert "MOLECULE_BAR: bar" in caplog.text
+    assert "MOLECULE_FOO: foo" in caplog.text
 
 
 def test_sysexit() -> None:  # noqa: D103
@@ -132,19 +114,19 @@ def test_run_command(app: App) -> None:  # noqa: D103
 
 
 def test_run_command_with_debug(  # noqa: D103
-    mocker: MockerFixture,
-    patched_print_debug: Mock,
+    caplog: pytest.LogCaptureFixture,
     app: App,
 ) -> None:
     env = {"ANSIBLE_FOO": "foo", "MOLECULE_BAR": "bar"}
-    app.run_command(["ls"], debug=True, env=env)
-    x = [
-        mocker.call("ANSIBLE ENVIRONMENT", "ANSIBLE_FOO: foo\n"),
-        mocker.call("MOLECULE ENVIRONMENT", "MOLECULE_BAR: bar\n"),
-        mocker.call("SHELL REPLAY", "ANSIBLE_FOO=foo MOLECULE_BAR=bar"),
-    ]
+    with caplog.at_level(logging.DEBUG):
+        app.run_command(["ls"], debug=True, env=env)
 
-    assert x == patched_print_debug.mock_calls
+    # Check that environment variables were logged
+    assert "ANSIBLE ENVIRONMENT:" in caplog.text
+    assert "ANSIBLE_FOO: foo" in caplog.text
+    assert "MOLECULE ENVIRONMENT:" in caplog.text
+    assert "MOLECULE_BAR: bar" in caplog.text
+    assert "SHELL REPLAY:" in caplog.text
 
 
 def test_run_command_baked_cmd_env(app: App) -> None:  # noqa: D103
@@ -163,16 +145,17 @@ def test_run_command_baked_cmd_env(app: App) -> None:  # noqa: D103
 
 
 def test_run_command_with_debug_handles_no_env(  # noqa: D103
-    mocker: MockerFixture,
-    patched_print_debug: Mock,
+    caplog: pytest.LogCaptureFixture,
     app: App,
 ) -> None:
     cmd = ["ls"]
-    app.run_command(cmd, debug=True)
-    # when env is empty we expect not to print anything
-    empty_list: list[Any] = []
+    with caplog.at_level(logging.DEBUG):
+        app.run_command(cmd, debug=True)
 
-    assert empty_list == patched_print_debug.mock_calls
+    # When env is empty, print_environment_vars should not log anything
+    # since the function has an early return when env is None/empty
+    assert "ANSIBLE ENVIRONMENT:" not in caplog.text
+    assert "MOLECULE ENVIRONMENT:" not in caplog.text
 
 
 def test_os_walk(test_cache_path: Path) -> None:  # noqa: D103

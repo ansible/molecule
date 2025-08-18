@@ -136,11 +136,6 @@ def config_instance(
 
 
 @pytest.fixture
-def patched_print_debug(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    return mocker.patch("molecule.utils.util.print_debug")
-
-
-@pytest.fixture
 def patched_logger_info(mocker):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     return mocker.patch("logging.Logger.info")
 
