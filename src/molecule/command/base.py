@@ -361,7 +361,11 @@ def execute_subcommand(
     # particularly the setting of ansible options in create/destroy,
     # and is also used for reporting in execute_cmdline_scenarios
     current_config.action = subcommand
-    return command(current_config).execute(args)
+    try:
+        return command(current_config).execute(args)
+    except MoleculeError as exc:
+        # Catch-all for MoleculeErrors in subcommands if they are able to fall through somehow.
+        util.sysexit(exc.code)
 
 
 def execute_scenario(scenario: Scenario, *, shared_state: bool = False) -> None:
