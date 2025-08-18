@@ -170,7 +170,7 @@ def _role_exists(
     role_directory = Path.cwd().parent / value
     if not role_directory.exists():
         msg = f"The role '{value}' not found. Please choose the proper role name."
-        sysexit_with_message(msg, code=1)
+        util.sysexit_with_message(msg, code=1)
     return value
 
 
