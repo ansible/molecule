@@ -72,10 +72,7 @@ class Base(abc.ABC):
         return logger.get_scenario_logger(__name__, self._config.scenario.name, step_name)
 
     def execute_with_retries(self) -> None:
-        """Run dependency downloads with retry and timed back-off.
-
-        Exits with error code when dependency installation fails after retries.
-        """
+        """Run dependency downloads with retry and timed back-off."""
         try:
             self._config.app.run_command(
                 self._sh_command,
