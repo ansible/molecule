@@ -33,6 +33,9 @@ class MoleculeError(Exception):
         self.code = code
         self.message = message
 
+        if message:
+            LOG.critical(message, extra={"highlighter": False})
+
 
 class ScenarioFailureError(MoleculeError):
     """Details about a scenario that failed."""
@@ -51,9 +54,6 @@ class ScenarioFailureError(MoleculeError):
             warns: Warnings about the problem to issue.
         """
         super().__init__(message, code)
-
-        if message:
-            LOG.critical(message, extra={"highlighter": False})
 
         for warn in warns:
             LOG.warning(warn.message)
