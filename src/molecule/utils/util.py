@@ -611,7 +611,7 @@ def get_collection_metadata() -> tuple[Path, CollectionData] | tuple[None, None]
             )
             return None, None
     except FileNotFoundError:
-        LOG.warning("No galaxy.yml found at %s", galaxy_file)
+        LOG.debug("No galaxy.yml found at %s", galaxy_file)
         return None, None
     except (OSError, yaml.YAMLError, MoleculeError) as exc:
         LOG.warning("Failed to load galaxy.yml at %s: %s", galaxy_file, exc)
