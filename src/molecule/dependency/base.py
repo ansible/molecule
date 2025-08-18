@@ -30,7 +30,6 @@ from typing import TYPE_CHECKING
 
 from molecule import logger
 from molecule.utils import util
-from molecule.utils.util import sysexit_with_message
 
 
 if TYPE_CHECKING:
@@ -112,8 +111,7 @@ class Base(abc.ABC):
             except CalledProcessError as _exception:
                 exception = _exception
 
-        self._log.error(str(exception))
-        sysexit_with_message(str(exception), code=exception.returncode)
+        util.sysexit_with_message(str(exception), code=exception.returncode)
 
     @abc.abstractmethod
     def execute(
