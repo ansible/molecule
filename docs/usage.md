@@ -56,6 +56,7 @@ molecule list
 
 ## molecule login
 
+<<<<<<< HEAD
 When using a pre ansible-native configuration, if configured, Molecule has per resource awareness and can
 facilitate an interactive connection to a system.
 
@@ -67,6 +68,19 @@ Options leveraging the resources defined in the ansible inventory include:
 - [ansible adhoc commands](https://docs.ansible.com/ansible/latest/command_guide/intro_adhoc.html)
 
 - [ansible-console](https://docs.ansible.com/ansible/latest/cli/ansible-console.html)
+=======
+When using a pre ansible-native configuration, if configured,  Molecule has per resource awareness and can
+facilitate an interactive connection to a system.
+
+When using an ansible-native configuration, the same connection methods used to connect to production systems
+are available. 
+
+Options leveraging the resources defined in the ansible inventory include:
+
+  - [ansible adhoc commands](https://docs.ansible.com/ansible/latest/command_guide/intro_adhoc.html)
+
+  - [ansible-console](https://docs.ansible.com/ansible/latest/cli/ansible-console.html)
+>>>>>>> 6d7764cd (Add documentation links to molecule login error messages)
 
 Resource native connection options include:
 

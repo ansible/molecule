@@ -77,6 +77,10 @@ class Login(base.Base):
                     f"There are {len(hosts)} running hosts. Please specify "
                     "which with --host.\n\n"
                     f"Available hosts:\n{host_list}\n\n"
+<<<<<<< HEAD
+=======
+                    "For more information: https://ansible.readthedocs.io/projects/molecule/usage/#molecule-login"
+>>>>>>> 6d7764cd (Add documentation links to molecule login error messages)
                 )
                 sysexit_with_message(msg, code=1)
         match = [x for x in hosts if x.startswith(hostname)]
@@ -96,6 +100,10 @@ class Login(base.Base):
                     f"There are {len(match)} hosts that match '{hostname}'. You "
                     "can only login to one at a time.\n\n"
                     f"Available hosts:\n{host_list}\n\n"
+<<<<<<< HEAD
+=======
+                    "For more information: https://ansible.readthedocs.io/projects/molecule/usage/#molecule-login"
+>>>>>>> 6d7764cd (Add documentation links to molecule login error messages)
                 )
                 sysexit_with_message(msg, code=1)
 
