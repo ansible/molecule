@@ -158,8 +158,6 @@ class Testinfra(Verifier):
 
         Args:
             action_args: list of arguments to be passed.
-
-        Exits with error code when verifier tests fail.
         """
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
