@@ -44,7 +44,6 @@ from molecule.constants import (
     MOLECULE_ROOT,
 )
 from molecule.utils import util
-from molecule.utils.util import sysexit_with_message
 
 
 if TYPE_CHECKING:
@@ -127,7 +126,7 @@ class Scenario(base.Base):
 
         if scenario_directory.is_dir():
             msg = f"The directory {relative_path} exists. Cannot create new scenario."
-            sysexit_with_message(msg, code=1)
+            util.sysexit_with_message(msg, code=1)
 
         # Ensure parent directory exists
         molecule_path.mkdir(parents=True, exist_ok=True)
