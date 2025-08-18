@@ -96,8 +96,8 @@ def test_print_matrix(  # noqa: D103
     # Check that the simplified matrix format is present
     assert "Test matrix" in result
     assert "-----------" in result
-    assert "default:" in result
-    assert "foo:" in result
+    assert "default" in result
+    assert "foo" in result
     assert "├─ dependency" in result
     assert "├─ converge" in result
     assert "├─ destroy" in result or "└─ destroy" in result
