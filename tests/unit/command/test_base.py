@@ -659,7 +659,7 @@ def test_apply_cli_overrides_comprehensive(
         main.main(standalone_mode=False)
 
     # 6. Assert results
-    assert exc_info.value.code == 0  # Our ImmediateExit code was handled properly by Click
+    assert exc_info.value.code == 0
     assert len(captured_configs) >= 1  # At least one config was created
     assert captured_configs[0].shared_state is expected  # CLI override logic worked correctly
 
@@ -771,7 +771,7 @@ def test_apply_env_overrides_comprehensive(  # noqa: PLR0913
         main.main(standalone_mode=False)
 
     # 5. Assert results
-    assert exc_info.value.code == 0  # Our ImmediateExit code was handled properly by Click
+    assert exc_info.value.code == 0
     assert len(captured_configs) >= 1  # At least one config was created
 
     config_obj = captured_configs[0]
