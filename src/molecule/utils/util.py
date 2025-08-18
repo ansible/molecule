@@ -135,7 +135,7 @@ def sysexit_with_message(
         # Show only the error message in normal mode for failures
         LOG.error(msg)
 
-    sys.exit(code)
+    sysexit(code)
 
 
 def sysexit_from_exception(exc: MoleculeError) -> NoReturn:
