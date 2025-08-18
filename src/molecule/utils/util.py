@@ -128,19 +128,13 @@ def sysexit_with_message(
     code: int = 1,
     warns: Sequence[WarningMessage] = (),
 ) -> NoReturn:
-    """This method is a lie for compatibility purposes.
+    """Wrapper around sysexit to also display a message.
 
     Args:
         msg: The message to display.
         code: The return code to exit with.
         warns: A series of warnings to send alongside the message.
     """
-    # Check if debug mode is enabled
-    ctx = click.get_current_context(silent=True)
-    debug_mode = False
-    if ctx and ctx.obj and isinstance(ctx.obj, dict):
-        debug_mode = ctx.obj.get("args", {}).get("debug", False)
-
     for warning in warns:
         LOG.warning(warning.message)
 
@@ -148,9 +142,6 @@ def sysexit_with_message(
     # For failures (code != 0), use debug-aware logging
     if code == 0:
         LOG.info(msg)
-    elif debug_mode:
-        # Show full traceback in debug mode for failures
-        LOG.exception(msg)
     else:
         # Show only the error message in normal mode for failures
         LOG.error(msg)
@@ -159,12 +150,23 @@ def sysexit_with_message(
 
 
 def sysexit_from_exception(exc: MoleculeError) -> NoReturn:
-    """Wrapper for sysexit_with_message to use values from a MoleculeError.
+    """Wrapper for sysexit to display messages and use return code from an exception.
 
     Args:
         exc: The exception to determine exit values from.
     """
-    sysexit_with_message(exc.message, exc.code)
+    # Check if debug mode is enabled
+    ctx = click.get_current_context(silent=True)
+    debug_mode = False
+    if ctx and ctx.obj and isinstance(ctx.obj, dict):
+        debug_mode = ctx.obj.get("args", {}).get("debug", False)
+
+    if debug_mode:
+        # Show full traceback in debug mode for failures
+        LOG.exception(exc.message)
+        sysexit(exc.code)
+    else:
+        sysexit_with_message(exc.message, exc.code)
 
 
 def os_walk(
