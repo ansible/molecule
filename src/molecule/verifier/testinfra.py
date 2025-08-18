@@ -29,9 +29,9 @@ from typing import TYPE_CHECKING, cast
 
 from molecule import logger
 from molecule.api import Verifier
-from molecule.exceptions import ImmediateExit
 from molecule.reporting.definitions import CompletionState
 from molecule.utils import util
+from molecule.utils.util import sysexit_with_message
 
 
 if TYPE_CHECKING:
@@ -161,7 +161,7 @@ class Testinfra(Verifier):
             action_args: list of arguments to be passed.
 
         Raises:
-            ImmediateExit: When verifier tests fail.
+            SystemExit: When verifier tests fail.
         """
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
@@ -195,7 +195,7 @@ class Testinfra(Verifier):
             self._log.info(msg)
         else:
             msg = "Verifier tests failed"
-            raise ImmediateExit(msg, code=result.returncode)
+            sysexit_with_message(msg, code=result.returncode)
 
     def _get_tests(self, action_args: list[str] | None = None) -> list[str]:
         """Walk the verifier's directory for tests.

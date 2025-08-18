@@ -39,11 +39,12 @@ from wcmatch import glob
 
 from molecule import config, logger, text
 from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME
-from molecule.exceptions import ImmediateExit, MoleculeError, ScenarioFailureError
+from molecule.exceptions import MoleculeError, ScenarioFailureError
 from molecule.reporting.definitions import ScenarioResults
 from molecule.reporting.rendering import report
 from molecule.scenarios import Scenarios
 from molecule.utils import util
+from molecule.utils.util import sysexit_with_message
 
 
 if TYPE_CHECKING:
@@ -135,7 +136,7 @@ def execute_cmdline_scenarios(
         excludes: Name of scenarios to not run.
 
     Raises:
-        ImmediateExit: When scenario configuration fails.
+        SystemExit: When scenario configuration fails.
     """
     if excludes is None:
         excludes = []
@@ -158,7 +159,7 @@ def execute_cmdline_scenarios(
                 configs.extend(get_configs(args, command_args, ansible_args, glob_str))
         except ScenarioFailureError as exc:
             msg = "Scenario configuration failed"
-            raise ImmediateExit(msg, code=exc.code) from exc
+            sysexit_with_message(msg, code=exc.code)
 
     default_glob = effective_base_glob.replace("*", MOLECULE_DEFAULT_SCENARIO_NAME)
     default_config = None
@@ -175,7 +176,7 @@ def execute_cmdline_scenarios(
 
     except ScenarioFailureError as exc:
         msg = "Scenario execution failed"
-        raise ImmediateExit(msg, code=exc.code) from exc
+        sysexit_with_message(msg, code=exc.code)
     finally:
         report(scenarios.results, report_flag=command_args.get("report", False))
 

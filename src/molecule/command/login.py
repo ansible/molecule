@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING
 from molecule import scenarios
 from molecule.click_cfg import click_command_ex, options
 from molecule.command import base
-from molecule.exceptions import ImmediateExit
+from molecule.utils.util import sysexit_with_message
 
 
 if TYPE_CHECKING:
@@ -78,11 +78,11 @@ class Login(base.Base):
                     "which with --host.\n\n"
                     f"Available hosts:\n{host_list}"
                 )
-                raise ImmediateExit(msg, code=1)
+                sysexit_with_message(msg, code=1)
         match = [x for x in hosts if x.startswith(hostname)]
         if len(match) == 0:
             msg = f"There are no hosts that match '{hostname}'.  You can only login to valid hosts."
-            raise ImmediateExit(msg, code=1)
+            sysexit_with_message(msg, code=1)
         if len(match) != 1:
             # If there are multiple matches, but one of them is an exact string
             # match, assume this is the one they're looking for and use it.
@@ -94,7 +94,7 @@ class Login(base.Base):
                     "can only login to one at a time.\n\n"
                     f"Available hosts:\n{host_list}"
                 )
-                raise ImmediateExit(msg, code=1)
+                sysexit_with_message(msg, code=1)
 
         return match[0]
 

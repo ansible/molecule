@@ -27,7 +27,6 @@ import pytest
 
 from molecule.command.init.scenario import Scenario
 from molecule.config import Config
-from molecule.exceptions import ImmediateExit
 from molecule.utils import util
 
 
@@ -114,13 +113,13 @@ def test_execute_scenario_exists(
     monkeypatch.chdir(test_cache_path)
     instance.execute()
 
-    with pytest.raises(ImmediateExit) as e:
+    with pytest.raises(SystemExit) as e:
         instance.execute()
 
     assert e.value.code == 1
 
     msg = "The directory molecule/test-scenario exists. Cannot create new scenario."
-    assert e.value.message == msg
+    assert msg in caplog.text
 
 
 def test_scenario_execute_collection_mode(
@@ -249,13 +248,13 @@ version: 1.0.0
     # Clear cache to ensure fresh detection
     util.get_collection_metadata.cache_clear()
 
-    with pytest.raises(ImmediateExit) as e:
+    with pytest.raises(SystemExit) as e:
         instance.execute()
 
     assert e.value.code == 1
 
     msg = "The directory extensions/molecule/test-scenario exists. Cannot create new scenario."
-    assert e.value.message == msg
+    assert msg in caplog.text
 
 
 def test_scenario_execute_invalid_collection(

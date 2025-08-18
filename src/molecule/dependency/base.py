@@ -29,8 +29,8 @@ from subprocess import CalledProcessError
 from typing import TYPE_CHECKING
 
 from molecule import logger
-from molecule.exceptions import ImmediateExit
 from molecule.utils import util
+from molecule.utils.util import sysexit_with_message
 
 
 if TYPE_CHECKING:
@@ -76,7 +76,7 @@ class Base(abc.ABC):
         """Run dependency downloads with retry and timed back-off.
 
         Raises:
-            ImmediateExit: When dependency installation fails after retries.
+            SystemExit: When dependency installation fails after retries.
         """
         try:
             self._config.app.run_command(
@@ -114,7 +114,7 @@ class Base(abc.ABC):
                 exception = _exception
 
         self._log.error(str(exception))
-        raise ImmediateExit(str(exception), code=exception.returncode)
+        sysexit_with_message(str(exception), code=exception.returncode)
 
     @abc.abstractmethod
     def execute(

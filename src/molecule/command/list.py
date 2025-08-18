@@ -31,9 +31,10 @@ from molecule import scenarios, text
 from molecule.click_cfg import click_command_ex, options
 from molecule.command import base
 from molecule.console import console
-from molecule.exceptions import ImmediateExit, ScenarioFailureError
+from molecule.exceptions import ScenarioFailureError
 from molecule.status import Status
 from molecule.utils import util
+from molecule.utils.util import sysexit_with_message
 
 
 if TYPE_CHECKING:
@@ -69,7 +70,7 @@ def list_(ctx: click.Context) -> None:  # pragma: no cover
         ctx: Click context object holding commandline arguments.
 
     Raises:
-        ImmediateExit: If scenario configuration fails.
+        SystemExit: If scenario configuration fails.
     """
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
@@ -85,7 +86,7 @@ def list_(ctx: click.Context) -> None:  # pragma: no cover
     try:
         configs = base.get_configs(args, command_args)
     except ScenarioFailureError as exc:
-        raise ImmediateExit(str(exc), exc.code) from exc
+        sysexit_with_message(str(exc), code=exc.code)
 
     s = scenarios.Scenarios(
         configs,

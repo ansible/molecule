@@ -127,17 +127,22 @@ def sysexit_with_message(
     code: int = 1,
     warns: Sequence[WarningMessage] = (),
 ) -> NoReturn:
-    """This method is a lie for compatibility purposes.
+    """Exit with a message and optional warnings.
 
     Args:
         msg: The message to display.
         code: The return code to exit with.
         warns: A series of warnings to send alongside the message.
-
-    Raises:
-        MoleculeError: always.
     """
-    raise MoleculeError(message=msg, code=code, warns=warns)
+    logger = logging.getLogger(__name__)
+
+    if msg:
+        logger.critical(msg)
+
+    for warn in warns:
+        logger.warning(warn.__dict__["message"].args[0])
+
+    sys.exit(code)
 
 
 def os_walk(
