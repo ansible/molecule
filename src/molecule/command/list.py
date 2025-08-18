@@ -34,7 +34,6 @@ from molecule.console import console
 from molecule.exceptions import ScenarioFailureError
 from molecule.status import Status
 from molecule.utils import util
-from molecule.utils.util import sysexit_with_message
 
 
 if TYPE_CHECKING:
