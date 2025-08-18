@@ -27,7 +27,7 @@ import subprocess
 
 from typing import TYPE_CHECKING
 
-from molecule import scenarios
+from molecule import scenarios, util
 from molecule.click_cfg import click_command_ex, options
 from molecule.command import base
 from molecule.exceptions import MoleculeError
@@ -63,7 +63,11 @@ class Login(base.Base):
             base.execute_subcommand(c, "create")
 
         hosts = [d["name"] for d in self._config.platforms.instances]
-        hostname = self._get_hostname(hosts)
+        try:
+            hostname = self._get_hostname(hosts)
+        except MoleculeError as exc:
+            util.sysexit(exc.code)
+
         self._get_login(hostname)
 
     def _get_hostname(self, hosts: list[str]) -> str:
