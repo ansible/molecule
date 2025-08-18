@@ -654,7 +654,7 @@ def test_apply_cli_overrides_comprehensive(
     captured_configs.clear()
 
     with pytest.raises(SystemExit) as exc_info:
-        main.main(standalone_mode=False)
+        main.main()
 
     # 6. Assert results
     assert exc_info.value.code == 0
@@ -766,7 +766,7 @@ def test_apply_env_overrides_comprehensive(  # noqa: PLR0913
     captured_configs.clear()
 
     with pytest.raises(SystemExit) as exc_info:
-        main.main(standalone_mode=False)
+        main.main()
 
     # 5. Assert results
     assert exc_info.value.code == 0
@@ -871,7 +871,7 @@ def test_env_var_cli_precedence(  # noqa: PLR0913
     captured_configs.clear()
 
     with pytest.raises(SystemExit) as exc_info:
-        main.main(standalone_mode=False)
+        main.main()
 
     # 5. Assert results
     assert exc_info.value.code == 0
