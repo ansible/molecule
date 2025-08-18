@@ -133,8 +133,6 @@ def execute_cmdline_scenarios(
         command_args: dict of command arguments, including the target
         ansible_args: Optional tuple of arguments to pass to the `ansible-playbook` command
         excludes: Name of scenarios to not run.
-
-    Exits with error code on scenario configuration failure.
     """
     if excludes is None:
         excludes = []
