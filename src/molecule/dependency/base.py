@@ -75,8 +75,7 @@ class Base(abc.ABC):
     def execute_with_retries(self) -> None:
         """Run dependency downloads with retry and timed back-off.
 
-        Raises:
-            SystemExit: When dependency installation fails after retries.
+        Exits with error code when dependency installation fails after retries.
         """
         try:
             self._config.app.run_command(

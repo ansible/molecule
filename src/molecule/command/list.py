@@ -69,8 +69,7 @@ def list_(ctx: click.Context) -> None:  # pragma: no cover
     Args:
         ctx: Click context object holding commandline arguments.
 
-    Raises:
-        SystemExit: If scenario configuration fails.
+    Exits with error code if scenario configuration fails.
     """
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001

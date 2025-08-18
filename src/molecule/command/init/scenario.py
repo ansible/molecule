@@ -104,8 +104,7 @@ class Scenario(base.Base):
         Args:
             action_args: Arguments for this command. Unused.
 
-        Raises:
-            SystemExit: when the scenario cannot be created.
+        Exits with error code 1 if the scenario cannot be created.
         """
         scenario_name = self._command_args["scenario_name"]
 

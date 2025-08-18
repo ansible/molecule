@@ -556,8 +556,7 @@ class Ansible(base.Base):
         The inventory property always returns a minimal valid structure
         regardless of the platforms defined in the molecule.yml file.
 
-        Raises:
-            SystemExit: if a specific platform was requested but doesn't exist.
+        Exits with error code if a specific platform was requested but doesn't exist.
         """
         if self._config.platform_name is not None and not self._config.platforms.instances:
             msg = "Instances missing from the 'platform' section of molecule.yml."
