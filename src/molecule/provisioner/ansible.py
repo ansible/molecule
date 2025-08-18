@@ -37,7 +37,6 @@ from molecule.exceptions import MoleculeError
 from molecule.provisioner import ansible_playbook, ansible_playbooks, base
 from molecule.reporting.definitions import CompletionState
 from molecule.utils import util
-from molecule.utils.util import sysexit_with_message
 
 
 if TYPE_CHECKING:
@@ -560,7 +559,7 @@ class Ansible(base.Base):
         """
         if self._config.platform_name is not None and not self._config.platforms.instances:
             msg = "Instances missing from the 'platform' section of molecule.yml."
-            sysexit_with_message(msg, code=RC_SETUP_ERROR)
+            util.sysexit_with_message(msg, code=RC_SETUP_ERROR)
 
     def _get_config_template(self) -> str:
         """Return a config template string.
