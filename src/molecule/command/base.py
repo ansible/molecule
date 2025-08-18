@@ -44,7 +44,6 @@ from molecule.reporting.definitions import ScenarioResults
 from molecule.reporting.rendering import report
 from molecule.scenarios import Scenarios
 from molecule.utils import util
-from molecule.utils.util import sysexit_with_message
 
 
 if TYPE_CHECKING:
@@ -174,7 +173,7 @@ def execute_cmdline_scenarios(
 
     except ScenarioFailureError as exc:
         msg = "Scenario execution failed"
-        sysexit_with_message(msg, code=exc.code)
+        util.sysexit_with_message(msg, code=exc.code)
     finally:
         report(scenarios.results, report_flag=command_args.get("report", False))
 
