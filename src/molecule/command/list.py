@@ -84,7 +84,7 @@ def list_(ctx: click.Context) -> None:  # pragma: no cover
     try:
         configs = base.get_configs(args, command_args)
     except ScenarioFailureError as exc:
-        sysexit_from_exception(exc)
+        util.sysexit_from_exception(exc)
 
     s = scenarios.Scenarios(
         configs,
