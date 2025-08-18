@@ -12,9 +12,10 @@ if TYPE_CHECKING:
 
     from molecule.types import ConfigData
 
-from molecule import config, util
+from molecule import config
 from molecule.constants import DEFAULT_CONFIG
 from molecule.model.schema_v3 import validate
+from molecule.utils import util
 
 
 # Constants for validation assertions

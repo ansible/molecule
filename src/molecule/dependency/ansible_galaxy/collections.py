@@ -5,8 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
-from molecule import util
 from molecule.dependency.ansible_galaxy.base import AnsibleGalaxyBase
+from molecule.utils import util
 
 
 if TYPE_CHECKING:

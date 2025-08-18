@@ -38,7 +38,7 @@ from molecule.click_cfg import click_group_ex
 from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY
 from molecule.console import console
 from molecule.constants import MOLECULE_COLLECTION_ROOT
-from molecule.util import lookup_config_file
+from molecule.utils.util import lookup_config_file
 
 
 # Setup logging. This location of initialization is not ideal, but the code

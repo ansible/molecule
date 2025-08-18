@@ -25,10 +25,10 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from molecule import util
 from molecule.command.init.scenario import Scenario
 from molecule.config import Config
 from molecule.exceptions import MoleculeError
+from molecule.utils import util
 
 
 if TYPE_CHECKING:

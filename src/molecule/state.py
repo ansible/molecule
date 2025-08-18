@@ -25,7 +25,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict, TypeVar, cast
 
-from molecule import util
+from molecule.utils import util
 
 
 if TYPE_CHECKING:

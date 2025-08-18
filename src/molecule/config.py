@@ -33,15 +33,17 @@ import click
 
 from ansible_compat.ports import cache, cached_property
 
-from molecule import api, interpolation, logger, platforms, scenario, state, util
+from molecule import api, interpolation, logger, platforms, scenario, state
 from molecule.app import get_app
-from molecule.constants import DEFAULT_CONFIG
+from molecule.constants import DEFAULT_CONFIG, ENV_VAR_CONFIG_MAPPING
 from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
 from molecule.exceptions import MoleculeError
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
-from molecule.util import boolean
+from molecule.utils import util
+from molecule.utils.boolean import to_bool
+from molecule.utils.util import boolean
 
 
 if TYPE_CHECKING:
@@ -137,6 +139,7 @@ class Config:
 
         # Former after_init() contents
         self.config = self._reget_config()
+        self._apply_env_overrides()
         self._apply_cli_overrides()
         if self.molecule_file:
             self._validate()
@@ -158,6 +161,41 @@ class Config:
         source = ctx.get_parameter_source("shared_state")
         if source == click.core.ParameterSource.COMMANDLINE:
             self.config["shared_state"] = self.command_args["shared_state"]
+
+    def _apply_env_overrides(self) -> None:
+        """Apply environment variable overrides to command_args.
+
+        Precedence: defaults → env vars → CLI args.
+        Only applies env vars if the CLI argument wasn't set by the user.
+        Includes variables from both os.environ and env_file.
+        """
+        ctx = click.get_current_context(silent=True)
+        if ctx is None or not ENV_VAR_CONFIG_MAPPING or not hasattr(self, "command_args"):
+            return
+
+        # Build merged environment (os.environ + env_file) same as _reget_config
+        merged_env = util.merge_dicts(os.environ, self.env)
+        merged_env = set_env_from_file(merged_env, self.env_file)
+
+        for env_var, config in ENV_VAR_CONFIG_MAPPING.items():
+            env_value = merged_env.get(env_var)
+            if env_value is None:
+                continue
+
+            config_attr, expected_type = config["attr"], config["type"]
+
+            source = ctx.get_parameter_source(config_attr)
+            if source == click.core.ParameterSource.COMMANDLINE:
+                continue
+
+            try:
+                converted_value = (
+                    to_bool(env_value) if expected_type is bool else expected_type(env_value)
+                )
+                self.command_args[config_attr] = converted_value
+            except (ValueError, TypeError):
+                msg = f"Invalid value for {env_var}: {env_value}, ignoring"
+                self._log.warning(msg)
 
     @property
     def config_file(self) -> str:

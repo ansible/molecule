@@ -28,9 +28,9 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from molecule import util
 from molecule.dependency import base
 from molecule.reporting.definitions import CompletionState
+from molecule.utils import util
 
 
 if TYPE_CHECKING:

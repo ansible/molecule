@@ -24,9 +24,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from molecule import util
 from molecule.api import Driver
 from molecule.data import __file__ as data_module
+from molecule.utils import util
 
 
 if TYPE_CHECKING:

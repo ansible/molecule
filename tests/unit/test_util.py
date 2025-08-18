@@ -29,11 +29,11 @@ from typing import TYPE_CHECKING, Any
 import pytest
 import yaml
 
-from molecule import util
 from molecule.console import console
 from molecule.constants import MOLECULE_COLLECTION_GLOB, MOLECULE_HEADER
 from molecule.exceptions import MoleculeError
 from molecule.text import strip_ansi_escape
+from molecule.utils import util
 
 
 if TYPE_CHECKING:
@@ -276,8 +276,7 @@ def test_verbose_flag_extra_verbose() -> None:  # noqa: D103
 def test_verbose_flag_preserves_verbose_option() -> None:  # noqa: D103
     options: Options = {"verbose": True}
 
-    # pylint: disable=use-implicit-booleaness-not-comparison
-    assert util.verbose_flag(options) == []
+    assert not util.verbose_flag(options)
     assert options == {"verbose": True}
 
 
@@ -621,7 +620,7 @@ def test_lookup_config_file_found_in_vcs_root(
     config_file.write_text("config: vcs_root")
 
     # Mock find_vcs_root to return our test directory
-    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: str(vcs_root))  # noqa: ARG005
+    monkeypatch.setattr("molecule.utils.util.find_vcs_root", lambda default=None: str(vcs_root))  # noqa: ARG005
 
     # Change to a subdirectory
     subdir = vcs_root / "subdir"
@@ -668,7 +667,7 @@ def test_lookup_config_file_found_in_collection_extensions(
     monkeypatch.chdir(collection_root)
 
     # Mock find_vcs_root to return empty (no VCS root)
-    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: "~")  # noqa: ARG005
+    monkeypatch.setattr("molecule.utils.util.find_vcs_root", lambda default=None: "~")  # noqa: ARG005
 
     # Clear caches
     util.get_collection_metadata.cache_clear()
@@ -700,10 +699,10 @@ def test_lookup_config_file_found_in_home_directory(
     config_file.write_text("config: home")
 
     # Mock Path.home() to return our fake home
-    monkeypatch.setattr("molecule.util.Path.home", lambda: fake_home)
+    monkeypatch.setattr("molecule.utils.util.Path.home", lambda: fake_home)
 
     # Mock find_vcs_root to return empty (no VCS root)
-    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: "~")  # noqa: ARG005
+    monkeypatch.setattr("molecule.utils.util.find_vcs_root", lambda default=None: "~")  # noqa: ARG005
 
     # Change to a different directory (not a collection)
     work_dir = tmp_path / "workdir"
@@ -756,8 +755,8 @@ def test_lookup_config_file_search_priority_vcs_root_wins(
     collection_config.write_text("config: collection")
 
     # Set up mocks
-    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: str(vcs_root))  # noqa: ARG005
-    monkeypatch.setattr("molecule.util.Path.home", lambda: fake_home)
+    monkeypatch.setattr("molecule.utils.util.find_vcs_root", lambda default=None: str(vcs_root))  # noqa: ARG005
+    monkeypatch.setattr("molecule.utils.util.Path.home", lambda: fake_home)
 
     # Change to collection directory
     monkeypatch.chdir(collection_root)
@@ -802,8 +801,8 @@ def test_lookup_config_file_search_priority_collection_over_home(
     collection_config.write_text("config: collection")
 
     # Set up mocks - no VCS root found
-    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: "~")  # noqa: ARG005
-    monkeypatch.setattr("molecule.util.Path.home", lambda: fake_home)
+    monkeypatch.setattr("molecule.utils.util.find_vcs_root", lambda default=None: "~")  # noqa: ARG005
+    monkeypatch.setattr("molecule.utils.util.Path.home", lambda: fake_home)
 
     # Change to collection directory
     monkeypatch.chdir(collection_root)
@@ -835,8 +834,8 @@ def test_lookup_config_file_not_found(
     work_dir.mkdir()
 
     # Set up mocks - no VCS root, no collection
-    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: "~")  # noqa: ARG005
-    monkeypatch.setattr("molecule.util.Path.home", lambda: fake_home)
+    monkeypatch.setattr("molecule.utils.util.find_vcs_root", lambda default=None: "~")  # noqa: ARG005
+    monkeypatch.setattr("molecule.utils.util.Path.home", lambda: fake_home)
 
     # Change to work directory
     monkeypatch.chdir(work_dir)
@@ -880,7 +879,7 @@ def test_lookup_config_file_handles_path_filename_extraction(
     monkeypatch.chdir(collection_root)
 
     # Mock find_vcs_root to return empty
-    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: "~")  # noqa: ARG005
+    monkeypatch.setattr("molecule.utils.util.find_vcs_root", lambda default=None: "~")  # noqa: ARG005
 
     # Clear caches
     util.get_collection_metadata.cache_clear()
@@ -918,8 +917,8 @@ def test_lookup_config_file_collection_no_extensions_dir(
     home_config.write_text("config: home")
 
     # Set up mocks
-    monkeypatch.setattr("molecule.util.find_vcs_root", lambda default=None: "~")  # noqa: ARG005
-    monkeypatch.setattr("molecule.util.Path.home", lambda: fake_home)
+    monkeypatch.setattr("molecule.utils.util.find_vcs_root", lambda default=None: "~")  # noqa: ARG005
+    monkeypatch.setattr("molecule.utils.util.Path.home", lambda: fake_home)
 
     # Change to collection directory
     monkeypatch.chdir(collection_root)

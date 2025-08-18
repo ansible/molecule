@@ -26,7 +26,8 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from molecule import logger, util
+from molecule import logger
+from molecule.utils import util
 
 
 if TYPE_CHECKING:

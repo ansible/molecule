@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING
 
 import click
 
-from molecule import logger, util
+from molecule import logger
 from molecule.click_cfg import click_command_ex
 from molecule.command.init import base
 from molecule.config import (
@@ -44,6 +44,7 @@ from molecule.constants import (
     MOLECULE_ROOT,
 )
 from molecule.exceptions import MoleculeError
+from molecule.utils import util
 
 
 if TYPE_CHECKING:

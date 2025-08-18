@@ -27,9 +27,10 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from molecule import config, util
+from molecule import config
 from molecule.exceptions import MoleculeError
 from molecule.provisioner import ansible, ansible_playbooks
+from molecule.utils import util
 from tests.unit.conftest import os_split  # pylint:disable=C0411
 
 

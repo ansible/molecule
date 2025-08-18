@@ -27,8 +27,9 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from molecule import config, util
+from molecule import config
 from molecule.scenario import Scenario
+from molecule.utils import util
 
 
 if TYPE_CHECKING:

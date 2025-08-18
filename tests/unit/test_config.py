@@ -27,10 +27,11 @@ from typing import TYPE_CHECKING, Any, Literal
 
 import pytest
 
-from molecule import config, platforms, scenario, state, util
+from molecule import config, platforms, scenario, state
 from molecule.dependency import ansible_galaxy, shell
 from molecule.exceptions import MoleculeError
 from molecule.provisioner import ansible
+from molecule.utils import util
 from molecule.verifier.ansible import Ansible as AnsibleVerifier
 
 

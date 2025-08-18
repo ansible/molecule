@@ -29,6 +29,7 @@ from typing import TYPE_CHECKING
 
 from molecule.constants import DEFAULT_BORDER_WIDTH, MARKUP_MAP, SCENARIO_RECAP_STATE_ORDER
 from molecule.constants import ANSICodes as A
+from molecule.utils.boolean import to_bool
 
 
 if TYPE_CHECKING:
@@ -37,22 +38,6 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
     from molecule.reporting.definitions import ScenariosResults
-
-
-def to_bool(a: object) -> bool:
-    """Return a bool for the arg.
-
-    Args:
-        a: A value to coerce to bool.
-
-    Returns:
-        A bool representation of a.
-    """
-    if a is None or isinstance(a, bool):
-        return bool(a)
-    if isinstance(a, str):
-        a = a.lower()
-    return a in ("yes", "on", "1", "true", 1)
 
 
 def should_do_markup() -> bool:
