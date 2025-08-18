@@ -99,6 +99,15 @@ def test_sysexit_with_custom_code() -> None:  # noqa: D103
     assert e.value.code == 2  # noqa: PLR2004
 
 
+def test_sysexit_from_exception() -> None:
+    """Tests the sysexit_from_exception function."""
+    exc = MoleculeError(message="Test exception", code=3)
+    with pytest.raises(SystemExit) as e:
+        util.sysexit_from_exception(exc)
+
+    assert e.value.code == exc.code
+
+
 def test_run_command(app: App) -> None:  # noqa: D103
     cmd = ["ls"]
     x = app.run_command(cmd)
