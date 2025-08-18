@@ -30,6 +30,7 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, overload
 
+import click
 import jinja2
 import yaml
 
@@ -127,22 +128,45 @@ def sysexit_with_message(
     code: int = 1,
     warns: Sequence[WarningMessage] = (),
 ) -> NoReturn:
-    """Exit with a message and optional warnings.
+    """Wrapper around sysexit to also display a message.
 
     Args:
         msg: The message to display.
         code: The return code to exit with.
         warns: A series of warnings to send alongside the message.
     """
-    logger = logging.getLogger(__name__)
+    for warning in warns:
+        LOG.warning(warning.message)
 
-    if msg:
-        logger.critical(msg)
-
-    for warn in warns:
-        logger.warning(warn.__dict__["message"].args[0])
+    # For success (code 0), always use info logging
+    # For failures (code != 0), use debug-aware logging
+    if code == 0:
+        LOG.info(msg)
+    else:
+        # Show only the error message in normal mode for failures
+        LOG.error(msg)
 
     sys.exit(code)
+
+
+def sysexit_from_exception(exc: MoleculeError) -> NoReturn:
+    """Wrapper for sysexit to display messages and use return code from an exception.
+
+    Args:
+        exc: The exception to determine exit values from.
+    """
+    # Check if debug mode is enabled
+    ctx = click.get_current_context(silent=True)
+    debug_mode = False
+    if ctx and ctx.obj and isinstance(ctx.obj, dict):
+        debug_mode = ctx.obj.get("args", {}).get("debug", False)
+
+    if debug_mode:
+        # Show full traceback in debug mode for failures
+        LOG.exception(exc.message)
+        sysexit(exc.code)
+    else:
+        sysexit_with_message(exc.message, exc.code)
 
 
 def os_walk(
