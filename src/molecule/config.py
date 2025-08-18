@@ -344,8 +344,6 @@ class Config:
 
         Returns:
             The driver for this scenario.
-
-        Exits with error code 1 if the specified driver cannot be found.
         """
         driver_name = self._get_driver_name()
         driver = None
@@ -722,10 +720,7 @@ class Config:
         return defaults  # type: ignore[return-value]
 
     def _validate(self) -> None:
-        """Validate molecule file.
-
-        Exits with error code 1 if config file fails to validate.
-        """
+        """Validate molecule file."""
         # Use scenario logger with hardcoded values since scenario property isn't available yet
         scenario_name = self.config["scenario"]["name"]
         validation_log = logger.get_scenario_logger(__name__, scenario_name, "validate")

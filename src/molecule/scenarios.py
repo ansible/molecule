@@ -27,7 +27,6 @@ from typing import TYPE_CHECKING
 
 from molecule.reporting.definitions import ScenariosResults
 from molecule.utils import util
-from molecule.utils.util import sysexit_with_message
 
 
 if TYPE_CHECKING:
@@ -134,10 +133,7 @@ class Scenarios:
         )
 
     def _verify(self) -> None:
-        """Verify the specified scenario was found.
-
-        Exits with error code 1 if scenario is not found.
-        """
+        """Verify the specified scenario was found."""
         scenario_names = [c.scenario.name for c in self._configs]
         if missing_names := sorted(set(self._scenario_names).difference(scenario_names)):
             scenario = "Scenario"
@@ -145,7 +141,7 @@ class Scenarios:
                 scenario += "s"
             missing = ", ".join(missing_names)
             msg = f"{scenario} '{missing}' not found.  Exiting."
-            sysexit_with_message(msg, code=1)
+            util.sysexit_with_message(msg, code=1)
 
     def _filter_for_scenario(self) -> list[Scenario]:
         """Find the scenario matching the provided scenario name and returns a list.
