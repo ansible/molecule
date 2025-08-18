@@ -25,6 +25,7 @@ import shlex
 import shutil
 import sys
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from molecule.constants import DEFAULT_BORDER_WIDTH, MARKUP_MAP, SCENARIO_RECAP_STATE_ORDER
@@ -703,3 +704,66 @@ class CommandBorders:
         """Context manager exit."""
         return_code = 1 if exc_type else 0
         self.finalize(return_code)
+
+
+def print_matrix(matrix_data: dict[str, list[str]], config: object | None = None) -> None:
+    """Print the test matrix with colored output and file paths.
+
+    Args:
+        matrix_data: Dictionary mapping scenario names to their action sequences.
+        config: Molecule config object to resolve playbook file paths.
+    """
+    output = AnsiOutput()
+
+    # Get subcommand name for dynamic header
+    subcommand = "test"  # default fallback
+    if config and hasattr(config, "subcommand"):
+        subcommand = config.subcommand
+
+    header = f"{subcommand.title()} matrix"
+    sys.stdout.write(f"\n{header}\n")
+    sys.stdout.write("-" * len(header) + "\n")
+
+    for scenario_name, actions in matrix_data.items():
+        # Print scenario name in green
+        scenario_markup = f"[scenario]{scenario_name}[/]"
+        sys.stdout.write(output.process_markup(scenario_markup) + "\n")
+
+        for i, action in enumerate(actions):
+            # Use molecule's existing playbook resolution
+            playbook_path = None
+            if config and hasattr(config, "provisioner") and getattr(config, "provisioner", None):
+                # Use public interface via property instead of private method
+                provisioner = config.provisioner
+                if hasattr(provisioner, "playbooks"):
+                    playbook_property = getattr(provisioner.playbooks, action, None)
+                    if playbook_property:
+                        playbook_path = playbook_property
+
+            # Choose tree character: └─ for last item, ├─ for others
+            is_last = i == len(actions) - 1
+            tree_char = (
+                f"{A.BOX_BOTTOM_LEFT}{A.BOX_HORIZONTAL}"
+                if is_last
+                else f"{A.BOX_LEFT_MIDDLE}{A.BOX_HORIZONTAL}"
+            )
+
+            # Format action with file path or "Missing"
+            action_markup = f"[action]{action}[/]"
+            if playbook_path and Path(playbook_path).exists():
+                # Show file path in dim
+                file_info = f"[dim]{playbook_path}[/]"
+                line = f"  {tree_char} {output.process_markup(action_markup)} {output.process_markup(file_info)}"
+            else:
+                # Show missing message consistent with rest of molecule
+                subcommand = "test"  # default fallback
+                if config and hasattr(config, "subcommand"):
+                    subcommand = config.subcommand
+                missing_info = (
+                    f"[dim]Missing playbook (remove from {subcommand}_sequence to suppress)[/]"
+                )
+                line = f"  {tree_char} {output.process_markup(action_markup)} {output.process_markup(missing_info)}"
+
+            sys.stdout.write(line + "\n")
+
+        sys.stdout.write("\n")  # Empty line between scenarios

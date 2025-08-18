@@ -35,7 +35,6 @@ import jinja2
 import yaml
 
 from ansible_compat.ports import cache
-from rich.syntax import Syntax
 
 from molecule.console import console
 from molecule.constants import (
@@ -577,17 +576,6 @@ def bool2args(data: bool | list[str]) -> list[str]:  # noqa: ARG001, FBT001
         An empty list
     """
     return []
-
-
-def print_as_yaml(data: object) -> None:
-    """Render python object as yaml on console.
-
-    Args:
-        data: A YAML object.
-    """
-    # https://github.com/Textualize/rich/discussions/990#discussioncomment-342217
-    result = Syntax(code=safe_dump(data), lexer="yaml", background_color="default")
-    console.print(result)
 
 
 def oxford_comma(listed: Iterable[bool | str | Path], condition: str = "and") -> str:

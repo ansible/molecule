@@ -24,9 +24,8 @@ import copy
 import pytest
 
 from molecule import config, scenario, scenarios
-from molecule.console import console
 from molecule.exceptions import MoleculeError
-from molecule.text import chomp, strip_ansi_escape
+from molecule.text import strip_ansi_escape
 
 
 @pytest.fixture
@@ -90,38 +89,23 @@ def test_print_matrix(  # noqa: D103
     capsys: pytest.CaptureFixture[str],
     _instance: scenarios.Scenarios,  # noqa: PT019
 ) -> None:
-    with console.capture() as capture:
-        _instance.print_matrix()
-    result = chomp(strip_ansi_escape(capture.get()))
+    _instance.print_matrix()
+    captured = capsys.readouterr()
+    result = strip_ansi_escape(captured.out)
 
-    matrix_out = """---
-default:
-  - dependency
-  - cleanup
-  - destroy
-  - syntax
-  - create
-  - prepare
-  - converge
-  - idempotence
-  - side_effect
-  - verify
-  - cleanup
-  - destroy
-foo:
-  - dependency
-  - cleanup
-  - destroy
-  - syntax
-  - create
-  - prepare
-  - converge
-  - idempotence
-  - side_effect
-  - verify
-  - cleanup
-  - destroy"""
-    assert matrix_out in result
+    # Check that the simplified matrix format is present
+    assert "Test matrix" in result
+    assert "-----------" in result
+    assert "default:" in result
+    assert "foo:" in result
+    assert "├─ dependency" in result
+    assert "├─ converge" in result
+    assert "├─ destroy" in result or "└─ destroy" in result
+    # Should show Missing for actions without playbook files
+    assert "Missing playbook" in result
+    assert "to suppress" in result
+    # Should show tree tail for last item
+    assert "└─" in result
 
 
 def test_verify_does_not_raise_when_found(  # noqa: D103
