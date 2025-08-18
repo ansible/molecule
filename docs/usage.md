@@ -56,6 +56,32 @@ molecule list
 
 ## molecule login
 
+When using a pre ansible-native configuration, if configured,  Molecule has per resource awareness and can
+facilitate an interactive connection to a system.
+
+When using an ansible-native configuration, the same connection methods used to connect to production systems
+are available. 
+
+Options leveraging the resources defined in the ansible inventory include:
+
+  - [ansible adhoc commands](https://docs.ansible.com/ansible/latest/command_guide/intro_adhoc.html)
+
+  - [ansible-console](https://docs.ansible.com/ansible/latest/cli/ansible-console.html)
+
+Resource native connection options include:
+
+- `SSH`
+
+- `podman exec`
+
+- `curl`
+
+- `psql`, `mysql`, and `mongosh`
+
+- `oc`, `kubectl`, and `odo`
+
+- etc
+
 ## molecule matrix
 
 Matrix will display the subcommand's ordered list of actions, which can
