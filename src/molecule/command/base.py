@@ -39,7 +39,7 @@ from wcmatch import glob
 
 from molecule import config, logger, text
 from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME
-from molecule.exceptions import ImmediateExit, MoleculeError, ScenarioFailureError
+from molecule.exceptions import MoleculeError, ScenarioFailureError
 from molecule.reporting.definitions import ScenarioResults
 from molecule.reporting.rendering import report
 from molecule.scenarios import Scenarios
@@ -133,9 +133,6 @@ def execute_cmdline_scenarios(
         command_args: dict of command arguments, including the target
         ansible_args: Optional tuple of arguments to pass to the `ansible-playbook` command
         excludes: Name of scenarios to not run.
-
-    Raises:
-        ImmediateExit: When scenario configuration fails.
     """
     if excludes is None:
         excludes = []
@@ -157,8 +154,7 @@ def execute_cmdline_scenarios(
                 glob_str = effective_base_glob.replace("*", scenario_name)
                 configs.extend(get_configs(args, command_args, ansible_args, glob_str))
         except ScenarioFailureError as exc:
-            msg = "Scenario configuration failed"
-            raise ImmediateExit(msg, code=exc.code) from exc
+            util.sysexit_from_exception(exc)
 
     default_glob = effective_base_glob.replace("*", MOLECULE_DEFAULT_SCENARIO_NAME)
     default_config = None
@@ -174,8 +170,7 @@ def execute_cmdline_scenarios(
         _run_scenarios(scenarios, command_args, default_config)
 
     except ScenarioFailureError as exc:
-        msg = "Scenario execution failed"
-        raise ImmediateExit(msg, code=exc.code) from exc
+        util.sysexit_from_exception(exc)
     finally:
         report(scenarios.results, report_flag=command_args.get("report", False))
 

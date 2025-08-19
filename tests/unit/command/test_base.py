@@ -261,7 +261,7 @@ def test_execute_cmdline_scenarios_missing(
     args: MoleculeArgs = {}
     command_args: CommandArgs = {"destroy": "always", "subcommand": "test"}
 
-    with pytest.raises(ImmediateExit):
+    with pytest.raises(SystemExit):
         base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
     error_msg = "'molecule/nonexistent/molecule.yml' glob failed.  Exiting."
@@ -318,23 +318,21 @@ def test_execute_cmdline_scenarios_no_prune(
     ),
 )
 @pytest.mark.usefixtures("config_instance")
-def test_execute_cmdline_scenarios_exit_destroy(  # noqa: PLR0913
+def test_execute_cmdline_scenarios_exit_destroy(
     patched_execute_scenario: MagicMock,
     patched_prune: MagicMock,
     patched_execute_subcommand: MagicMock,
-    patched_sysexit: MagicMock,
     destroy: Literal["always", "never"],
     subcommands: tuple[str, ...],
 ) -> None:
     """Ensure execute_cmdline_scenarios handles errors correctly when 'destroy' is set.
 
-    - When ScenarioFailureError occurs, ImmediateExit should be raised immediately
+    - When ScenarioFailureError occurs, SystemExit should be raised immediately
 
     Args:
         patched_execute_scenario: Mocked execute_scenario function.
         patched_prune: Mocked prune function.
         patched_execute_subcommand: Mocked execute_subcommand function.
-        patched_sysexit: Mocked util.sysexit function.
         destroy: Value to set 'destroy' arg to.
         subcommands: Expected subcommands to run after execute_scenario fails.
     """
@@ -343,8 +341,8 @@ def test_execute_cmdline_scenarios_exit_destroy(  # noqa: PLR0913
     command_args: CommandArgs = {"destroy": destroy, "subcommand": "test"}
     patched_execute_scenario.side_effect = ScenarioFailureError()
 
-    # Should raise ImmediateExit when ScenarioFailureError occurs
-    with pytest.raises(ImmediateExit):
+    # Should raise SystemExit when ScenarioFailureError occurs
+    with pytest.raises(SystemExit):
         base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
     assert patched_execute_scenario.called
@@ -659,7 +657,7 @@ def test_apply_cli_overrides_comprehensive(
         main.main(standalone_mode=False)
 
     # 6. Assert results
-    assert exc_info.value.code == 0  # Our ImmediateExit code was handled properly
+    assert exc_info.value.code == 0
     assert len(captured_configs) >= 1  # At least one config was created
     assert captured_configs[0].shared_state is expected  # CLI override logic worked correctly
 
@@ -771,7 +769,7 @@ def test_apply_env_overrides_comprehensive(  # noqa: PLR0913
         main.main(standalone_mode=False)
 
     # 5. Assert results
-    assert exc_info.value.code == 0  # Our ImmediateExit code was handled properly
+    assert exc_info.value.code == 0
     assert len(captured_configs) >= 1  # At least one config was created
 
     config_obj = captured_configs[0]

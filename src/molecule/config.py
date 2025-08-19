@@ -38,12 +38,11 @@ from molecule.app import get_app
 from molecule.constants import DEFAULT_CONFIG, ENV_VAR_CONFIG_MAPPING
 from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
-from molecule.exceptions import MoleculeError
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
 from molecule.utils import util
 from molecule.utils.boolean import to_bool
-from molecule.utils.util import boolean
+from molecule.utils.util import boolean, sysexit_with_message
 
 
 if TYPE_CHECKING:
@@ -345,9 +344,6 @@ class Config:
 
         Returns:
             The driver for this scenario.
-
-        Raises:
-            MoleculeError: when the specified driver cannot be found.
         """
         driver_name = self._get_driver_name()
         driver = None
@@ -355,7 +351,7 @@ class Config:
         api_drivers = api.drivers(config=self)
         if driver_name not in api_drivers:
             msg = f"Failed to find driver {driver_name}. Please ensure that the driver is correctly installed."
-            raise MoleculeError(msg)
+            sysexit_with_message(msg, code=1)
 
         driver = api_drivers[driver_name]
         driver.name = driver_name
@@ -501,14 +497,14 @@ class Config:
                 f"Instance(s) were created with the '{driver_name}' driver, but the "
                 f"subcommand is using '{driver_from_cli}' driver."
             )
-            raise MoleculeError(msg)
+            sysexit_with_message(msg, code=1)
 
         if driver_from_state_file and driver_name not in api.drivers():
             msg = (
                 f"Driver '{driver_name}' from state-file "
                 f"'{self.state.state_file}' is not available."
             )
-            raise MoleculeError(msg)
+            sysexit_with_message(msg, code=1)
 
         if driver_from_scenario != driver_name:
             msg = (
@@ -698,7 +694,7 @@ class Config:
             return i.interpolate(stream, keep_string)
         except interpolation.InvalidInterpolation as e:
             msg = f"parsing config file '{self.molecule_file}'.\n\n{e.place}\n{e.string}"
-            raise MoleculeError(msg) from e
+            sysexit_with_message(msg, code=1)
         return ""
 
     def _get_defaults(self) -> ConfigData:
@@ -724,11 +720,7 @@ class Config:
         return defaults  # type: ignore[return-value]
 
     def _validate(self) -> None:
-        """Validate molecule file.
-
-        Raises:
-            MoleculeError: when config file fails to validate.
-        """
+        """Validate molecule file."""
         # Use scenario logger with hardcoded values since scenario property isn't available yet
         scenario_name = self.config["scenario"]["name"]
         validation_log = logger.get_scenario_logger(__name__, scenario_name, "validate")
@@ -739,7 +731,7 @@ class Config:
         errors = schema_v3.validate(self.config)
         if errors:
             msg = f"Failed to validate {self.molecule_file}\n\n{errors}"
-            raise MoleculeError(msg)
+            sysexit_with_message(msg, code=1)
 
 
 def molecule_directory(path: str | Path) -> str:
