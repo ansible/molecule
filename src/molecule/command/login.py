@@ -76,14 +76,14 @@ class Login(base.Base):
                 msg = (
                     f"There are {len(hosts)} running hosts. Please specify "
                     "which with --host.\n\n"
-                    f"Available hosts:\n{host_list}\n\n"
-                    "For more information: https://ansible.readthedocs.io/projects/molecule/usage/#molecule-login"
+                    f"Available hosts:\n{host_list}\n"
                 )
                 sysexit_with_message(msg, code=1)
         match = [x for x in hosts if x.startswith(hostname)]
         if len(match) == 0:
             msg = (
-                f"Unable to find host '{hostname}'. \n"
+                f"Unable to find host '{hostname}'.\n"
+                "For more information: https://ansible.readthedocs.io/projects/molecule/usage/#molecule-login"
             )
             sysexit_with_message(msg, code=1)
         if len(match) != 1:
