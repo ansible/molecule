@@ -95,7 +95,7 @@ class Login(base.Base):
                 msg = (
                     f"There are {len(match)} hosts that match '{hostname}'. You "
                     "can only login to one at a time.\n\n"
-                    f"Available hosts:\n{host_list}\n\n"
+                    f"Available hosts:\n{host_list}"
                 )
                 sysexit_with_message(msg, code=1)
 
