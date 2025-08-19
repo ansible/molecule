@@ -154,7 +154,7 @@ def execute_cmdline_scenarios(
                 glob_str = effective_base_glob.replace("*", scenario_name)
                 configs.extend(get_configs(args, command_args, ansible_args, glob_str))
         except ScenarioFailureError as exc:
-            util.sysexit_with_message(str(exc), code=exc.code)
+            util.sysexit_from_exception(exc)
 
     default_glob = effective_base_glob.replace("*", MOLECULE_DEFAULT_SCENARIO_NAME)
     default_config = None
@@ -170,8 +170,7 @@ def execute_cmdline_scenarios(
         _run_scenarios(scenarios, command_args, default_config)
 
     except ScenarioFailureError as exc:
-        msg = "Scenario execution failed"
-        util.sysexit_with_message(msg, code=exc.code)
+        util.sysexit_from_exception(exc)
     finally:
         report(scenarios.results, report_flag=command_args.get("report", False))
 
