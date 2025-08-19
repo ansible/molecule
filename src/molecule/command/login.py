@@ -76,7 +76,7 @@ class Login(base.Base):
                 msg = (
                     f"There are {len(hosts)} running hosts. Please specify "
                     "which with --host.\n\n"
-                    f"Available hosts:\n{host_list}\n"
+                    f"Available hosts:\n{host_list}"
                 )
                 sysexit_with_message(msg, code=1)
         match = [x for x in hosts if x.startswith(hostname)]
