@@ -318,11 +318,10 @@ def test_execute_cmdline_scenarios_no_prune(
     ),
 )
 @pytest.mark.usefixtures("config_instance")
-def test_execute_cmdline_scenarios_exit_destroy(  # noqa: PLR0913
+def test_execute_cmdline_scenarios_exit_destroy(
     patched_execute_scenario: MagicMock,
     patched_prune: MagicMock,
     patched_execute_subcommand: MagicMock,
-    patched_sysexit: MagicMock,
     destroy: Literal["always", "never"],
     subcommands: tuple[str, ...],
 ) -> None:
@@ -334,7 +333,6 @@ def test_execute_cmdline_scenarios_exit_destroy(  # noqa: PLR0913
         patched_execute_scenario: Mocked execute_scenario function.
         patched_prune: Mocked prune function.
         patched_execute_subcommand: Mocked execute_subcommand function.
-        patched_sysexit: Mocked util.sysexit function.
         destroy: Value to set 'destroy' arg to.
         subcommands: Expected subcommands to run after execute_scenario fails.
     """
