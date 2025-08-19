@@ -56,7 +56,6 @@ molecule list
 
 ## molecule login
 
-<<<<<<< HEAD
 When using a pre ansible-native configuration, if configured, Molecule has per resource awareness and can
 facilitate an interactive connection to a system.
 
