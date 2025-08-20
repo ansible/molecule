@@ -1,4 +1,7 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
+# pylint: disable=too-many-lines
+
+
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -938,3 +941,75 @@ def test_lookup_config_file_collection_no_extensions_dir(
 
     # Should fall back to home directory since collection extensions dir doesn't exist
     assert result == str(home_config)
+
+
+@pytest.mark.parametrize(
+    ("input_value", "expected"),
+    (
+        (True, True),
+        (False, False),
+        ("yes", True),
+        ("YES", True),
+        ("on", True),
+        ("ON", True),
+        ("1", True),
+        ("true", True),
+        ("TRUE", True),
+        ("no", False),
+        ("off", False),
+        ("0", False),
+        ("false", False),
+        (1, True),
+        (0, False),
+        ("", False),
+    ),
+)
+def test_boolean_valid_inputs(input_value: object, expected: bool) -> None:  # noqa: FBT001
+    """Test boolean function with valid inputs.
+
+    Args:
+        input_value: The input value to test.
+        expected: The expected boolean result.
+    """
+    assert util.boolean(input_value) is expected
+
+
+@pytest.mark.parametrize(
+    "input_value",
+    (
+        None,
+        "random",
+        42,
+        "invalid",
+    ),
+)
+def test_boolean_invalid_values(input_value: object) -> None:
+    """Test boolean function raises TypeError for invalid inputs.
+
+    Args:
+        input_value: The invalid input value to test.
+    """
+    with pytest.raises(TypeError):
+        util.boolean(input_value)
+
+
+@pytest.mark.parametrize(
+    ("input_value", "default_value", "expected"),
+    (
+        (None, False, False),
+        ("random", True, True),
+        (42, False, False),
+        ("invalid", True, True),
+        ("yes", False, True),  # Valid input should ignore default
+        ("no", True, False),  # Valid input should ignore default
+    ),
+)
+def test_boolean_with_default(input_value: object, default_value: bool, expected: bool) -> None:  # noqa: FBT001
+    """Test boolean function with default parameter.
+
+    Args:
+        input_value: The input value to test.
+        default_value: The default value to use for invalid inputs.
+        expected: The expected boolean result.
+    """
+    assert util.boolean(input_value, default=default_value) is expected

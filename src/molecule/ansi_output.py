@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING
 
 from molecule.constants import DEFAULT_BORDER_WIDTH, MARKUP_MAP, SCENARIO_RECAP_STATE_ORDER
 from molecule.constants import ANSICodes as A
-from molecule.util import to_bool
+from molecule.util import boolean
 
 
 if TYPE_CHECKING:
@@ -53,7 +53,7 @@ def should_do_markup() -> bool:
     for v in ["PY_COLORS", "CLICOLOR", "FORCE_COLOR", "ANSIBLE_FORCE_COLOR"]:
         value = os.environ.get(v, None)
         if value is not None:
-            py_colors = to_bool(value)
+            py_colors = boolean(value, default=False)
             break
 
     # If deliberately disabled colors
@@ -62,7 +62,7 @@ def should_do_markup() -> bool:
 
     # User configuration requested colors
     if py_colors is not None:
-        return to_bool(py_colors)
+        return boolean(py_colors)
 
     term = os.environ.get("TERM", "")
     if "xterm" in term:

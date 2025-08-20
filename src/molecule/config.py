@@ -40,7 +40,7 @@ from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
-from molecule.util import boolean, sysexit_with_message, to_bool
+from molecule.util import boolean, sysexit_with_message
 
 
 if TYPE_CHECKING:
@@ -61,8 +61,8 @@ if TYPE_CHECKING:
     from molecule.verifier.base import Verifier
 
 
-MOLECULE_PARALLEL: bool = boolean(os.environ.get("MOLECULE_PARALLEL", ""))
-MOLECULE_DEBUG: bool = boolean(os.environ.get("MOLECULE_DEBUG", "False"))
+MOLECULE_PARALLEL: bool = boolean(os.environ.get("MOLECULE_PARALLEL", ""), default=False)
+MOLECULE_DEBUG: bool = boolean(os.environ.get("MOLECULE_DEBUG", "False"), default=False)
 MOLECULE_VERBOSITY: int = int(os.environ.get("MOLECULE_VERBOSITY", "0"))
 MOLECULE_DIRECTORY = "molecule"
 MOLECULE_FILE = "molecule.yml"
@@ -187,7 +187,7 @@ class Config:
 
             try:
                 converted_value = (
-                    to_bool(env_value) if expected_type is bool else expected_type(env_value)
+                    boolean(env_value) if expected_type is bool else expected_type(env_value)
                 )
                 self.command_args[config_attr] = converted_value
             except (ValueError, TypeError):
