@@ -6,35 +6,6 @@ import pytest
 
 from molecule.ansi_output import AnsiOutput, should_do_markup
 from molecule.constants import ANSICodes as A
-from molecule.util import to_bool
-
-
-@pytest.mark.parametrize(
-    ("input_value", "expected"),
-    (
-        (None, False),
-        (True, True),
-        (False, False),
-        ("yes", True),
-        ("YES", True),
-        ("on", True),
-        ("ON", True),
-        ("1", True),
-        ("true", True),
-        ("TRUE", True),
-        ("no", False),
-        ("off", False),
-        ("0", False),
-        ("false", False),
-        ("random", False),
-        (1, True),
-        (0, False),
-        (42, False),
-    ),
-)
-def test_to_bool(input_value: object, expected: bool) -> None:  # noqa: FBT001
-    """Test to_bool function with various inputs."""
-    assert to_bool(input_value) is expected
 
 
 def test_should_do_markup_basic() -> None:

@@ -49,7 +49,7 @@ from molecule.exceptions import MoleculeError
 if TYPE_CHECKING:
     from collections.abc import Generator, Iterable, MutableMapping, Sequence
     from io import TextIOWrapper
-    from typing import Any, AnyStr, NoReturn, TypeVar
+    from typing import Any, NoReturn, TypeVar
     from warnings import WarningMessage
 
     from molecule.types import CollectionData, CommandArgs, ConfigData, Options, PlatformData
@@ -495,18 +495,18 @@ def lookup_config_file(filename: str) -> str | None:
     return None
 
 
-def boolean(value: bool | AnyStr, *, strict: bool = True) -> bool:  # noqa: FBT001
+def boolean(value: object, *, default: bool | None = None) -> bool:
     """Evaluate any object as boolean matching ansible behavior.
 
     Args:
         value: The value to evaluate as a boolean.
-        strict: If True, invalid booleans will raises TypeError instead of returning False.
+        default: If provided, return this value for invalid inputs instead of raising TypeError.
 
     Returns:
-        The boolean value of value.
+        The boolean value of value, or default if value is invalid and default is provided.
 
     Raises:
-        TypeError: If value does not resolve to a valid boolean and strict is True.
+        TypeError: If value does not resolve to a valid boolean and no default is provided.
     """
     # Based on https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/parsing/convert_bool.py
 
@@ -525,8 +525,12 @@ def boolean(value: bool | AnyStr, *, strict: bool = True) -> bool:  # noqa: FBT0
 
     if normalized_value in BOOLEANS_TRUE:
         return True
-    if normalized_value in BOOLEANS_FALSE or not strict:
+    if normalized_value in BOOLEANS_FALSE:
         return False
+
+    # If we have a default, return it for invalid values
+    if default is not None:
+        return default
 
     raise TypeError(  # noqa: TRY003
         f"The value '{value!s}' is not a valid boolean.  Valid booleans include: {', '.join(repr(i) for i in BOOLEANS)!s}",  # noqa: EM102
