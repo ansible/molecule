@@ -27,7 +27,7 @@ from typing import TYPE_CHECKING
 
 from molecule import ansi_output
 from molecule.reporting.definitions import ScenariosResults
-
+from molecule.utils import util
 
 if TYPE_CHECKING:
     from molecule.config import Config
