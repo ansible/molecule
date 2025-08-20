@@ -27,7 +27,6 @@ import pytest
 
 from molecule.command.init.scenario import Scenario
 from molecule.config import Config
-from molecule.exceptions import MoleculeError
 from molecule.utils import util
 
 
@@ -114,7 +113,7 @@ def test_execute_scenario_exists(
     monkeypatch.chdir(test_cache_path)
     instance.execute()
 
-    with pytest.raises(MoleculeError) as e:
+    with pytest.raises(SystemExit) as e:
         instance.execute()
 
     assert e.value.code == 1
@@ -249,7 +248,7 @@ version: 1.0.0
     # Clear cache to ensure fresh detection
     util.get_collection_metadata.cache_clear()
 
-    with pytest.raises(MoleculeError) as e:
+    with pytest.raises(SystemExit) as e:
         instance.execute()
 
     assert e.value.code == 1
