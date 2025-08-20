@@ -85,7 +85,7 @@ def test_get_hostname_does_not_match(  # noqa: D103
 
     assert e.value.code == 1
 
-    msg = "There are no hosts that match 'invalid'.  You can only login to valid hosts."
+    msg = "Unable to find host 'invalid'."
     assert msg in caplog.text
 
 
