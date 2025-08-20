@@ -35,9 +35,7 @@ import jinja2
 import yaml
 
 from ansible_compat.ports import cache
-from rich.syntax import Syntax
 
-from molecule.console import console
 from molecule.constants import (
     MOLECULE_COLLECTION_GLOB,
     MOLECULE_COLLECTION_ROOT,
@@ -80,38 +78,27 @@ class SafeDumper(yaml.SafeDumper):
         return super().increase_indent(flow, indentless=False)
 
 
-def print_debug(title: str, data: str) -> None:
-    """Print debug information.
-
-    Args:
-        title: A title to describe the data.
-        data: The data to print.
-    """
-    console.print(f"DEBUG: {title}:\n{data}")
-
-
 def print_environment_vars(env: dict[str, str] | None) -> None:
-    """Print ``Ansible`` and ``Molecule`` environment variables and returns None.
+    """Log ``Ansible`` and ``Molecule`` environment variables and returns None.
 
     Args:
         env: A dict containing the shell's environment as collected by ``os.environ``.
     """
-    if env:
-        ansible_env = {k: v for (k, v) in env.items() if "ANSIBLE_" in k}
-        print_debug("ANSIBLE ENVIRONMENT", safe_dump(ansible_env, explicit_start=False))
+    if not env:
+        return
 
-        molecule_env = {k: v for (k, v) in env.items() if "MOLECULE_" in k}
-        print_debug(
-            "MOLECULE ENVIRONMENT",
-            safe_dump(molecule_env, explicit_start=False),
-        )
+    logger = logging.getLogger(__name__)
 
-        combined_env = ansible_env.copy()
-        combined_env.update(molecule_env)
-        print_debug(
-            "SHELL REPLAY",
-            " ".join([f"{k}={v}" for (k, v) in sorted(combined_env.items())]),
-        )
+    sections: dict[str, list[tuple[str, str]]] = {}
+
+    for n in ["ANSIBLE", "MOLECULE"]:
+        sections[n] = [(k, v) for (k, v) in sorted(env.items()) if k.startswith(f"{n}_")]
+        logger.debug("%s ENVIRONMENT:\n%s\n", n, "\n".join(f"{k}: {v}" for (k, v) in sections[n]))
+
+    logger.debug(
+        "SHELL REPLAY: %s",
+        " ".join(f"{k}={v}" for _, es in sections.items() for (k, v) in es),
+    )
 
 
 def sysexit(code: int = 1) -> NoReturn:
@@ -577,17 +564,6 @@ def bool2args(data: bool | list[str]) -> list[str]:  # noqa: ARG001, FBT001
         An empty list
     """
     return []
-
-
-def print_as_yaml(data: object) -> None:
-    """Render python object as yaml on console.
-
-    Args:
-        data: A YAML object.
-    """
-    # https://github.com/Textualize/rich/discussions/990#discussioncomment-342217
-    result = Syntax(code=safe_dump(data), lexer="yaml", background_color="default")
-    console.print(result)
 
 
 def oxford_comma(listed: Iterable[bool | str | Path], condition: str = "and") -> str:
