@@ -24,10 +24,7 @@ import copy
 import pytest
 
 from molecule import config, scenario, scenarios
-from molecule.exceptions import MoleculeError
 from molecule.text import strip_ansi_escape
-from molecule.console import console
-from molecule.text import chomp, strip_ansi_escape
 
 
 @pytest.fixture

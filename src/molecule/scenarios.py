@@ -26,7 +26,6 @@ import logging
 from typing import TYPE_CHECKING
 
 from molecule import ansi_output
-from molecule.exceptions import MoleculeError
 from molecule.reporting.definitions import ScenariosResults
 
 

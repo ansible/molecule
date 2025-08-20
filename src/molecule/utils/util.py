@@ -36,7 +36,6 @@ import yaml
 
 from ansible_compat.ports import cache
 
-from molecule.console import console
 from molecule.constants import (
     MOLECULE_COLLECTION_GLOB,
     MOLECULE_COLLECTION_ROOT,
