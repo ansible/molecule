@@ -79,6 +79,7 @@ metacopy
 mfoo
 minversion
 modifyitems
+mongosh
 mountopt
 multibranch
 myapp

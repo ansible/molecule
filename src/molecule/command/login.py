@@ -81,7 +81,10 @@ class Login(base.Base):
                 sysexit_with_message(msg, code=1)
         match = [x for x in hosts if x.startswith(hostname)]
         if len(match) == 0:
-            msg = f"There are no hosts that match '{hostname}'.  You can only login to valid hosts."
+            msg = (
+                f"Unable to find host '{hostname}'.\n"
+                "For more information: https://ansible.readthedocs.io/projects/molecule/usage/#molecule-login"
+            )
             sysexit_with_message(msg, code=1)
         if len(match) != 1:
             # If there are multiple matches, but one of them is an exact string
