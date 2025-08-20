@@ -29,7 +29,6 @@ from subprocess import CalledProcessError
 from typing import TYPE_CHECKING
 
 from molecule import logger
-from molecule.exceptions import ImmediateExit
 from molecule.utils import util
 
 
@@ -73,11 +72,7 @@ class Base(abc.ABC):
         return logger.get_scenario_logger(__name__, self._config.scenario.name, step_name)
 
     def execute_with_retries(self) -> None:
-        """Run dependency downloads with retry and timed back-off.
-
-        Raises:
-            ImmediateExit: When dependency installation fails after retries.
-        """
+        """Run dependency downloads with retry and timed back-off."""
         try:
             self._config.app.run_command(
                 self._sh_command,
@@ -113,8 +108,7 @@ class Base(abc.ABC):
             except CalledProcessError as _exception:
                 exception = _exception
 
-        self._log.error(str(exception))
-        raise ImmediateExit(str(exception), code=exception.returncode)
+        util.sysexit_with_message(str(exception), code=exception.returncode)
 
     @abc.abstractmethod
     def execute(
