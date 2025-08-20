@@ -40,7 +40,7 @@ from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
-from molecule.util import boolean, sysexit_with_message
+from molecule.util import boolean, sysexit_with_message, to_bool
 
 
 if TYPE_CHECKING:
