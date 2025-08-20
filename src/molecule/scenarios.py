@@ -25,6 +25,7 @@ import logging
 
 from typing import TYPE_CHECKING
 
+from molecule import ansi_output
 from molecule.reporting.definitions import ScenariosResults
 from molecule.utils import util
 
@@ -104,14 +105,14 @@ class Scenarios:
         return any(scenario.config.shared_state for scenario in self.all)
 
     def print_matrix(self) -> None:
-        """Show the test matrix for all scenarios."""
-        msg = "Test matrix"
-        LOG.info(msg)
-
+        """Show the matrix for all scenarios."""
         tree = {}
         for scenario in self.all:
             tree[scenario.name] = list(scenario.sequence)
-        util.print_as_yaml(tree)
+
+        # Use the first scenario's config for playbook path resolution
+        config = self.all[0].config if self.all else None
+        ansi_output.print_matrix(tree, config)
 
     def sequence(self, scenario_name: str) -> list[str]:
         """Sequence for a given scenario.
