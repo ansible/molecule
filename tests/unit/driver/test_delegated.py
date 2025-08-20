@@ -282,7 +282,7 @@ def test_ansible_connection_options_handles_missing_instance_config_managed(  # 
     mocker: MockerFixture,
     _instance,  # noqa: PT019
 ):
-    m = mocker.patch("molecule.utils.util.safe_load_file")
+    m = mocker.patch("molecule.util.safe_load_file")
     m.side_effect = IOError
 
     assert _instance.ansible_connection_options("foo") == {}
@@ -292,7 +292,7 @@ def test_ansible_connection_options_handles_missing_results_key_when_managed(  #
     mocker: MockerFixture,
     _instance,  # noqa: PT019
 ):
-    m = mocker.patch("molecule.utils.util.safe_load_file")
+    m = mocker.patch("molecule.util.safe_load_file")
     m.side_effect = StopIteration
 
     assert _instance.ansible_connection_options("foo") == {}
@@ -362,7 +362,7 @@ def test_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, P
 
 
 def test_get_instance_config(mocker: MockerFixture, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
-    m = mocker.patch("molecule.utils.util.safe_load_file")
+    m = mocker.patch("molecule.util.safe_load_file")
     m.return_value = [{"instance": "foo"}, {"instance": "bar"}]
 
     x = {"instance": "foo"}

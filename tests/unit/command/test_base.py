@@ -29,11 +29,10 @@ from typing import TYPE_CHECKING, Literal
 import click
 import pytest
 
-from molecule import config
+from molecule import config, util
 from molecule.command import base
 from molecule.exceptions import ImmediateExit, ScenarioFailureError
 from molecule.shell import main
-from molecule.utils import util
 
 
 if TYPE_CHECKING:
@@ -184,7 +183,7 @@ def fixture_patched_sysexit(mocker: MockerFixture) -> MagicMock:
     Returns:
         MagicMock: Mocked util.sysexit function.
     """
-    return mocker.patch("molecule.utils.util.sysexit")
+    return mocker.patch("molecule.util.sysexit")
 
 
 def test_command_config_private_member(instance: ExtendedBase) -> None:

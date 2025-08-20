@@ -31,12 +31,11 @@ from typing import TYPE_CHECKING
 
 from ansible_compat.ports import cached_property
 
-from molecule import logger
+from molecule import logger, util
 from molecule.constants import DEFAULT_ANSIBLE_CFG_OPTIONS, RC_SETUP_ERROR
 from molecule.exceptions import MoleculeError
 from molecule.provisioner import ansible_playbook, ansible_playbooks, base
 from molecule.reporting.definitions import CompletionState
-from molecule.utils import util
 
 
 if TYPE_CHECKING:

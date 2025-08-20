@@ -26,7 +26,7 @@ import abc
 from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict
 
-from molecule.utils import util
+from molecule import util
 
 
 if TYPE_CHECKING:

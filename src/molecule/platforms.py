@@ -23,7 +23,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from molecule.utils import util
+from molecule import util
 
 
 if TYPE_CHECKING:

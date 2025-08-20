@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from molecule import util
 from molecule.dependency.ansible_galaxy.collections import Collections
 from molecule.dependency.ansible_galaxy.roles import Roles
 from molecule.dependency.base import Base
-from molecule.utils import util
 
 
 if TYPE_CHECKING:

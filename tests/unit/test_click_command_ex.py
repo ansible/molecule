@@ -24,7 +24,7 @@ def test_click_command_ex_with_immediate_exit_success(mocker: MockerFixture) -> 
     """
     # Mock the logger and util.sysexit
     mock_logger = mocker.patch("logging.getLogger")
-    mock_sysexit = mocker.patch("molecule.utils.util.sysexit")
+    mock_sysexit = mocker.patch("molecule.util.sysexit")
 
     # Create a command that raises ImmediateExit with success code
     @click_command_ex()
@@ -57,7 +57,7 @@ def test_click_command_ex_with_immediate_exit_failure(mocker: MockerFixture) -> 
     """
     # Mock the logger and util.sysexit
     mock_logger = mocker.patch("logging.getLogger")
-    mock_sysexit = mocker.patch("molecule.utils.util.sysexit")
+    mock_sysexit = mocker.patch("molecule.util.sysexit")
     mock_get_current_context = mocker.patch("click.get_current_context")
 
     # Mock context without debug mode
@@ -97,7 +97,7 @@ def test_click_command_ex_with_immediate_exit_failure_debug_mode(mocker: MockerF
     """
     # Mock the logger and util.sysexit
     mock_logger = mocker.patch("logging.getLogger")
-    mock_sysexit = mocker.patch("molecule.utils.util.sysexit")
+    mock_sysexit = mocker.patch("molecule.util.sysexit")
     mock_get_current_context = mocker.patch("click.get_current_context")
 
     # Mock context with debug mode enabled
@@ -137,7 +137,7 @@ def test_click_command_ex_failure_no_context(mocker: MockerFixture) -> None:
     """
     # Mock the logger and util.sysexit
     mock_logger = mocker.patch("logging.getLogger")
-    mock_sysexit = mocker.patch("molecule.utils.util.sysexit")
+    mock_sysexit = mocker.patch("molecule.util.sysexit")
     mock_get_current_context = mocker.patch("click.get_current_context")
 
     # Mock no context available
