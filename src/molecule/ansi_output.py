@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING
 
 from molecule.constants import DEFAULT_BORDER_WIDTH, MARKUP_MAP, SCENARIO_RECAP_STATE_ORDER
 from molecule.constants import ANSICodes as A
-from molecule.utils.boolean import to_bool
+from molecule.util import to_bool
 
 
 if TYPE_CHECKING:

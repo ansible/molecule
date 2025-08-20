@@ -27,8 +27,7 @@ from typing import TYPE_CHECKING, Any
 
 import pytest
 
-from molecule import config
-from molecule.utils import util
+from molecule import config, util
 
 
 if TYPE_CHECKING:

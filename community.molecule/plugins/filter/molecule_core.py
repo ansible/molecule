@@ -19,8 +19,7 @@ description:
     - This callback just adds total play duration to the play stats.
 """
 try:
-    from molecule import config, interpolation
-    from molecule.utils import util
+    from molecule import config, interpolation, util
 
     MOLECULE_IMPORT_ERROR = None
 except ImportError as imp_exc:

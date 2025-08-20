@@ -37,13 +37,12 @@ import wcmatch.wcmatch
 
 from wcmatch import glob
 
-from molecule import config, logger, text
+from molecule import config, logger, text, util
 from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME
 from molecule.exceptions import MoleculeError, ScenarioFailureError
 from molecule.reporting.definitions import ScenarioResults
 from molecule.reporting.rendering import report
 from molecule.scenarios import Scenarios
-from molecule.utils import util
 
 
 if TYPE_CHECKING:

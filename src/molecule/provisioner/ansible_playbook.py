@@ -31,11 +31,10 @@ from typing import TYPE_CHECKING
 
 from rich.markup import escape
 
-from molecule import logger
+from molecule import logger, util
 from molecule.api import MoleculeRuntimeWarning
 from molecule.exceptions import ScenarioFailureError
 from molecule.reporting.definitions import CompletionState
-from molecule.utils import util
 
 
 if TYPE_CHECKING:

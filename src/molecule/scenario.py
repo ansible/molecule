@@ -31,12 +31,11 @@ from pathlib import Path
 from time import sleep
 from typing import TYPE_CHECKING
 
-from molecule import logger, scenarios
+from molecule import logger, scenarios, util
 from molecule.constants import RC_TIMEOUT
 from molecule.exceptions import MoleculeError
 from molecule.reporting.definitions import ScenarioResults
 from molecule.text import checksum
-from molecule.utils import util
 
 
 if TYPE_CHECKING:

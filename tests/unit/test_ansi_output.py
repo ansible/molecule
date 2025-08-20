@@ -6,7 +6,7 @@ import pytest
 
 from molecule.ansi_output import AnsiOutput, should_do_markup
 from molecule.constants import ANSICodes as A
-from molecule.utils.boolean import to_bool
+from molecule.util import to_bool
 
 
 @pytest.mark.parametrize(

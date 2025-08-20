@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING
 from molecule import scenarios
 from molecule.click_cfg import click_command_ex, options
 from molecule.command import base
-from molecule.utils.util import sysexit_with_message
+from molecule.util import sysexit_with_message
 
 
 if TYPE_CHECKING:

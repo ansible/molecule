@@ -17,12 +17,12 @@ import click
 
 from click_help_colors import HelpColorsCommand, HelpColorsGroup
 
+from molecule import util
 from molecule.ansi_output import should_do_markup
 from molecule.api import drivers
 from molecule.config import MOLECULE_PARALLEL
 from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME, MOLECULE_PLATFORM_NAME
 from molecule.exceptions import ImmediateExit
-from molecule.utils import util
 
 
 if TYPE_CHECKING:

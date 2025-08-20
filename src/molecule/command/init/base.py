@@ -25,7 +25,7 @@ import abc
 
 from pathlib import Path
 
-from molecule.utils.util import sysexit_with_message
+from molecule.util import sysexit_with_message
 
 
 class Base(abc.ABC):

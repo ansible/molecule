@@ -33,16 +33,14 @@ import click
 
 from ansible_compat.ports import cache, cached_property
 
-from molecule import api, interpolation, logger, platforms, scenario, state
+from molecule import api, interpolation, logger, platforms, scenario, state, util
 from molecule.app import get_app
 from molecule.constants import DEFAULT_CONFIG, ENV_VAR_CONFIG_MAPPING
 from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
-from molecule.utils import util
-from molecule.utils.boolean import to_bool
-from molecule.utils.util import boolean, sysexit_with_message
+from molecule.util import boolean, sysexit_with_message, to_bool
 
 
 if TYPE_CHECKING:
