@@ -9,7 +9,7 @@ ansible-runner==2.4.1     # via ansible-navigator
 astroid==3.3.11           # via pylint
 attrs==25.3.0             # via jsonschema, referencing
 babel==2.17.0             # via mkdocs-material
-backrefs==6.0.1             # via mkdocs-material
+backrefs==6.0.1           # via mkdocs-material
 beautifulsoup4==4.13.5    # via linkchecker, mkdocs-htmlproofer-plugin
 bindep==2.13.0            # via ansible-builder
 black==25.1.0             # via ansible-lint
@@ -111,7 +111,7 @@ requests==2.32.5          # via docker, linkchecker, mkdocs-htmlproofer-plugin, 
 rich==14.1.0              # via enrich, molecule (pyproject.toml)
 rpds-py==0.27.1           # via jsonschema, referencing
 ruamel-yaml==0.18.15      # via ansible-lint
-ruff==0.12.11              # via molecule (pyproject.toml)
+ruff==0.12.11             # via molecule (pyproject.toml)
 setuptools==80.9.0        # via pbr
 six==1.17.0               # via python-dateutil
 soupsieve==2.8            # via beautifulsoup4
