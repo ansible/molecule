@@ -2,8 +2,10 @@
 ci:
   # format compatible with commitlint
   autoupdate_commit_msg: "chore: pre-commit autoupdate"
-  autoupdate_schedule: monthly
+  # we rely on renovate to update it but there is no way to fully disable it
+  autoupdate_schedule: quarterly
   autofix_commit_msg: "chore: auto fixes from pre-commit.com hooks"
+
   skip:
     # https://github.com/pre-commit-ci/issues/issues/55
     - pip-compile
