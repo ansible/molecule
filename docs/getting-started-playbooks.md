@@ -21,7 +21,7 @@ pip install ansible-creator
 **Initialize a playbook project using ansible-creator:**
 
 ```bash
-ansible-creator init playbook-project --init-path /tmp/my-playbooks
+ansible-creator init playbook myorg.myproject /tmp/my-playbooks
 cd /tmp/my-playbooks
 ```
 
