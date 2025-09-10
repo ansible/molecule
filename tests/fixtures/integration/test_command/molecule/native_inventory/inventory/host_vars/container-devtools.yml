@@ -1,0 +1,3 @@
+container_env:
+  MOLECULE_TEST_CONTAINER: "true"
+  TEST_HOST_VAR: "from_host_vars"

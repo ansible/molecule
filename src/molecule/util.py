@@ -30,13 +30,12 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, overload
 
+import click
 import jinja2
 import yaml
 
 from ansible_compat.ports import cache
-from rich.syntax import Syntax
 
-from molecule.console import console
 from molecule.constants import (
     MOLECULE_COLLECTION_GLOB,
     MOLECULE_COLLECTION_ROOT,
@@ -50,7 +49,7 @@ from molecule.exceptions import MoleculeError
 if TYPE_CHECKING:
     from collections.abc import Generator, Iterable, MutableMapping, Sequence
     from io import TextIOWrapper
-    from typing import Any, AnyStr, NoReturn, TypeVar
+    from typing import Any, NoReturn, TypeVar
     from warnings import WarningMessage
 
     from molecule.types import CollectionData, CommandArgs, ConfigData, Options, PlatformData
@@ -79,47 +78,27 @@ class SafeDumper(yaml.SafeDumper):
         return super().increase_indent(flow, indentless=False)
 
 
-def print_debug(title: str, data: str) -> None:
-    """Print debug information.
-
-    Args:
-        title: A title to describe the data.
-        data: The data to print.
-    """
-    console.print(f"DEBUG: {title}:\n{data}")
-
-
 def print_environment_vars(env: dict[str, str] | None) -> None:
-    """Print ``Ansible`` and ``Molecule`` environment variables and returns None.
+    """Log ``Ansible`` and ``Molecule`` environment variables and returns None.
 
     Args:
         env: A dict containing the shell's environment as collected by ``os.environ``.
     """
-    if env:
-        ansible_env = {k: v for (k, v) in env.items() if "ANSIBLE_" in k}
-        print_debug("ANSIBLE ENVIRONMENT", safe_dump(ansible_env, explicit_start=False))
+    if not env:
+        return
 
-        molecule_env = {k: v for (k, v) in env.items() if "MOLECULE_" in k}
-        print_debug(
-            "MOLECULE ENVIRONMENT",
-            safe_dump(molecule_env, explicit_start=False),
-        )
+    logger = logging.getLogger(__name__)
 
-        combined_env = ansible_env.copy()
-        combined_env.update(molecule_env)
-        print_debug(
-            "SHELL REPLAY",
-            " ".join([f"{k}={v}" for (k, v) in sorted(combined_env.items())]),
-        )
+    sections: dict[str, list[tuple[str, str]]] = {}
 
+    for n in ["ANSIBLE", "MOLECULE"]:
+        sections[n] = [(k, v) for (k, v) in sorted(env.items()) if k.startswith(f"{n}_")]
+        logger.debug("%s ENVIRONMENT:\n%s\n", n, "\n".join(f"{k}: {v}" for (k, v) in sections[n]))
 
-def do_report() -> None:
-    """Dump html report atexit."""
-    report_file = Path(os.environ["MOLECULE_REPORT"])
-    LOG.info("Writing %s report.", report_file)
-    with report_file.open("w") as f:
-        f.write(console.export_html())
-        f.close()
+    logger.debug(
+        "SHELL REPLAY: %s",
+        " ".join(f"{k}={v}" for _, es in sections.items() for (k, v) in es),
+    )
 
 
 def sysexit(code: int = 1) -> NoReturn:
@@ -136,17 +115,45 @@ def sysexit_with_message(
     code: int = 1,
     warns: Sequence[WarningMessage] = (),
 ) -> NoReturn:
-    """This method is a lie for compatibility purposes.
+    """Wrapper around sysexit to also display a message.
 
     Args:
         msg: The message to display.
         code: The return code to exit with.
         warns: A series of warnings to send alongside the message.
-
-    Raises:
-        MoleculeError: always.
     """
-    raise MoleculeError(message=msg, code=code, warns=warns)
+    for warning in warns:
+        LOG.warning(warning.message)
+
+    # For success (code 0), always use info logging
+    # For failures (code != 0), use debug-aware logging
+    if code == 0:
+        LOG.info(msg)
+    else:
+        # Show only the error message in normal mode for failures
+        LOG.error(msg)
+
+    sysexit(code)
+
+
+def sysexit_from_exception(exc: MoleculeError) -> NoReturn:
+    """Wrapper for sysexit to display messages and use return code from an exception.
+
+    Args:
+        exc: The exception to determine exit values from.
+    """
+    # Check if debug mode is enabled
+    ctx = click.get_current_context(silent=True)
+    debug_mode = False
+    if ctx and ctx.obj and isinstance(ctx.obj, dict):
+        debug_mode = ctx.obj.get("args", {}).get("debug", False)
+
+    if debug_mode:
+        # Show full traceback in debug mode for failures
+        LOG.exception(exc.message)
+        sysexit(exc.code)
+    else:
+        sysexit_with_message(exc.message, exc.code)
 
 
 def os_walk(
@@ -488,18 +495,18 @@ def lookup_config_file(filename: str) -> str | None:
     return None
 
 
-def boolean(value: bool | AnyStr, *, strict: bool = True) -> bool:  # noqa: FBT001
+def boolean(value: object, *, default: bool | None = None) -> bool:
     """Evaluate any object as boolean matching ansible behavior.
 
     Args:
         value: The value to evaluate as a boolean.
-        strict: If True, invalid booleans will raises TypeError instead of returning False.
+        default: If provided, return this value for invalid inputs instead of raising TypeError.
 
     Returns:
-        The boolean value of value.
+        The boolean value of value, or default if value is invalid and default is provided.
 
     Raises:
-        TypeError: If value does not resolve to a valid boolean and strict is True.
+        TypeError: If value does not resolve to a valid boolean and no default is provided.
     """
     # Based on https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/parsing/convert_bool.py
 
@@ -518,8 +525,12 @@ def boolean(value: bool | AnyStr, *, strict: bool = True) -> bool:  # noqa: FBT0
 
     if normalized_value in BOOLEANS_TRUE:
         return True
-    if normalized_value in BOOLEANS_FALSE or not strict:
+    if normalized_value in BOOLEANS_FALSE:
         return False
+
+    # If we have a default, return it for invalid values
+    if default is not None:
+        return default
 
     raise TypeError(  # noqa: TRY003
         f"The value '{value!s}' is not a valid boolean.  Valid booleans include: {', '.join(repr(i) for i in BOOLEANS)!s}",  # noqa: EM102
@@ -557,17 +568,6 @@ def bool2args(data: bool | list[str]) -> list[str]:  # noqa: ARG001, FBT001
         An empty list
     """
     return []
-
-
-def print_as_yaml(data: object) -> None:
-    """Render python object as yaml on console.
-
-    Args:
-        data: A YAML object.
-    """
-    # https://github.com/Textualize/rich/discussions/990#discussioncomment-342217
-    result = Syntax(code=safe_dump(data), lexer="yaml", background_color="default")
-    console.print(result)
 
 
 def oxford_comma(listed: Iterable[bool | str | Path], condition: str = "and") -> str:
@@ -620,7 +620,7 @@ def get_collection_metadata() -> tuple[Path, CollectionData] | tuple[None, None]
             )
             return None, None
     except FileNotFoundError:
-        LOG.warning("No galaxy.yml found at %s", galaxy_file)
+        LOG.debug("No galaxy.yml found at %s", galaxy_file)
         return None, None
     except (OSError, yaml.YAMLError, MoleculeError) as exc:
         LOG.warning("Failed to load galaxy.yml at %s: %s", galaxy_file, exc)
@@ -660,3 +660,19 @@ def get_effective_molecule_glob() -> str:
     msg = f"Scenarios will be used from '{MOLECULE_COLLECTION_ROOT}'"
     LOG.info(msg)
     return MOLECULE_COLLECTION_GLOB
+
+
+def to_bool(a: object) -> bool:
+    """Return a bool for the arg.
+
+    Args:
+        a: A value to coerce to bool.
+
+    Returns:
+        A bool representation of a.
+    """
+    if a is None or isinstance(a, bool):
+        return bool(a)
+    if isinstance(a, str):
+        a = a.lower()
+    return a in ("yes", "on", "1", "true", 1)

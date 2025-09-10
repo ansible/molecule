@@ -1,6 +1,7 @@
 ---
-executor:
-  backend: ansible-navigator
+ansible:
+  executor:
+    backend: ansible-navigator
 platforms:
   - name: localhost
 provisioner:

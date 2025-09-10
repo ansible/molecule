@@ -26,11 +26,13 @@ import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal
 
+import click
 import pytest
 
 from molecule import config, util
 from molecule.command import base
 from molecule.exceptions import ImmediateExit, ScenarioFailureError
+from molecule.shell import main
 
 
 if TYPE_CHECKING:
@@ -258,7 +260,7 @@ def test_execute_cmdline_scenarios_missing(
     args: MoleculeArgs = {}
     command_args: CommandArgs = {"destroy": "always", "subcommand": "test"}
 
-    with pytest.raises(ImmediateExit):
+    with pytest.raises(SystemExit):
         base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
     error_msg = "'molecule/nonexistent/molecule.yml' glob failed.  Exiting."
@@ -315,23 +317,21 @@ def test_execute_cmdline_scenarios_no_prune(
     ),
 )
 @pytest.mark.usefixtures("config_instance")
-def test_execute_cmdline_scenarios_exit_destroy(  # noqa: PLR0913
+def test_execute_cmdline_scenarios_exit_destroy(
     patched_execute_scenario: MagicMock,
     patched_prune: MagicMock,
     patched_execute_subcommand: MagicMock,
-    patched_sysexit: MagicMock,
     destroy: Literal["always", "never"],
     subcommands: tuple[str, ...],
 ) -> None:
     """Ensure execute_cmdline_scenarios handles errors correctly when 'destroy' is set.
 
-    - When ScenarioFailureError occurs, ImmediateExit should be raised immediately
+    - When ScenarioFailureError occurs, SystemExit should be raised immediately
 
     Args:
         patched_execute_scenario: Mocked execute_scenario function.
         patched_prune: Mocked prune function.
         patched_execute_subcommand: Mocked execute_subcommand function.
-        patched_sysexit: Mocked util.sysexit function.
         destroy: Value to set 'destroy' arg to.
         subcommands: Expected subcommands to run after execute_scenario fails.
     """
@@ -340,8 +340,8 @@ def test_execute_cmdline_scenarios_exit_destroy(  # noqa: PLR0913
     command_args: CommandArgs = {"destroy": destroy, "subcommand": "test"}
     patched_execute_scenario.side_effect = ScenarioFailureError()
 
-    # Should raise ImmediateExit when ScenarioFailureError occurs
-    with pytest.raises(ImmediateExit):
+    # Should raise SystemExit when ScenarioFailureError occurs
+    with pytest.raises(SystemExit):
         base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
     assert patched_execute_scenario.called
@@ -411,11 +411,11 @@ def test_execute_scenario_shared_destroy(
     mocker: MockerFixture,
     patched_execute_subcommand: MagicMock,
 ) -> None:
-    """Ensure execute_scenario runs normally.
+    """Ensure execute_scenario runs normally with shared_state.
 
     - call a spoofed scenario with a sequence that includes destroy
-    - shared_state is set which means destroy should be ignored.
-    - execute_subcommand should be called once for each sequence item
+    - shared_state=True is passed which means destroy should be ignored.
+    - execute_subcommand should be called once for each sequence item except destroy
     - prune should not be called, since destroy has been elided from the sequence.
 
     Args:
@@ -423,11 +423,11 @@ def test_execute_scenario_shared_destroy(
         patched_execute_subcommand: Mocked execute_subcommand function.
     """
     scenario = mocker.Mock()
-    scenario.config.shared_data = True
     scenario.sequence = ("a", "b", "destroy", "c")
-    expected_sequence = ("a", "b", "c")
+    expected_sequence = ("a", "b", "c")  # destroy should be skipped
 
-    base.execute_scenario(scenario)
+    # Pass shared_state=True as keyword argument
+    base.execute_scenario(scenario, shared_state=True)
 
     assert patched_execute_subcommand.call_count == len(expected_sequence)
     assert not scenario.prune.called
@@ -570,3 +570,347 @@ def test_execute_cmdline_scenarios_handles_scenario_failure_error_when_all_scena
 
     # Verify that ScenarioFailureError was raised with the correct error code
     assert exc_info.value.code == 1
+
+
+@pytest.mark.parametrize(
+    ("cli_args", "config_value", "expected"),
+    (
+        # CLI: true cases
+        (["--shared-state"], True, True),
+        (["--shared-state"], False, True),
+        (["--shared-state"], None, True),
+        # CLI: false cases
+        (["--no-shared-state"], True, False),
+        (["--no-shared-state"], False, False),
+        (["--no-shared-state"], None, False),
+        # CLI: none cases
+        ([], True, True),
+        ([], False, False),
+        ([], None, False),
+    ),
+    ids=(
+        "cli_true_config_true_expect_true",
+        "cli_true_config_false_expect_true",
+        "cli_true_config_missing_expect_true",
+        "cli_false_config_true_expect_false",
+        "cli_false_config_false_expect_false",
+        "cli_false_config_missing_expect_false",
+        "cli_none_config_true_expect_true",
+        "cli_none_config_false_expect_false",
+        "cli_none_config_missing_expect_false",
+    ),
+)
+def test_apply_cli_overrides_comprehensive(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    cli_args: list[str],
+    *,
+    config_value: bool | None,
+    expected: bool,
+) -> None:
+    """Test all combinations of config file vs CLI shared_state values.
+
+    This test validates that CLI arguments properly override config file values
+    by using the actual Molecule shell.main entry point with a TestConfig that
+    captures Config objects during CLI execution.
+
+    Args:
+        tmp_path: pytest temporary directory fixture.
+        monkeypatch: pytest monkeypatch fixture.
+        cli_args: CLI arguments to pass (e.g., ["--shared-state"]).
+        config_value: Value to set in the config file.
+        expected: Expected final shared_state value.
+    """
+    # 1. Create molecule.yml with or without shared_state
+    molecule_dir = tmp_path / "molecule" / "default"
+    molecule_dir.mkdir(parents=True)
+    molecule_file = molecule_dir / "molecule.yml"
+
+    config_content = "scenario:\n  name: default\n"
+    if config_value is not None:
+        config_content += f"shared_state: {str(config_value).lower()}\n"
+
+    molecule_file.write_text(config_content)
+
+    # 2. Capture configs and exit after _apply_cli_overrides
+    captured_configs: list[config.Config] = []
+
+    # Store the original method before patching
+    original_apply_cli_overrides = config.Config._apply_cli_overrides
+
+    def mock_apply_cli_overrides(self: config.Config) -> None:
+        original_apply_cli_overrides(self)
+        captured_configs.append(self)
+        msg = "Test capture complete"
+        raise ImmediateExit(msg, 0)
+
+    monkeypatch.setattr("molecule.config.Config._apply_cli_overrides", mock_apply_cli_overrides)
+    monkeypatch.chdir(tmp_path)
+
+    argv = ["molecule", "test", *cli_args]
+    monkeypatch.setattr("sys.argv", argv)
+
+    captured_configs.clear()
+
+    with pytest.raises(SystemExit) as exc_info:
+        main.main()
+
+    # 6. Assert results
+    assert exc_info.value.code == 0
+    assert len(captured_configs) >= 1  # At least one config was created
+    assert captured_configs[0].shared_state is expected  # CLI override logic worked correctly
+
+
+@pytest.mark.parametrize(
+    ("env_var_value", "cli_args", "expected_report", "expected_borders"),
+    (
+        # Env var only cases - report
+        ("true", [], True, True),
+        ("false", [], False, False),
+        ("1", [], True, True),
+        ("0", [], False, False),
+        ("yes", [], True, True),
+        ("no", [], False, False),
+        ("True", [], True, True),
+        ("FALSE", [], False, False),
+        # CLI overrides env var cases
+        (
+            "false",
+            ["--report"],
+            True,
+            False,
+        ),  # CLI --report overrides env false for report, but env still sets borders
+        (
+            "false",
+            ["--command-borders"],
+            False,
+            True,
+        ),  # CLI --command-borders overrides env false for borders, but env still sets report
+        # CLI overrides both
+        ("false", ["--report", "--command-borders"], True, True),  # CLI overrides both env vars
+        # No env vars, no CLI (defaults)
+        (None, [], False, False),
+    ),
+    ids=(
+        "env_both_true_no_cli",
+        "env_both_false_no_cli",
+        "env_both_1_no_cli",
+        "env_both_0_no_cli",
+        "env_both_yes_no_cli",
+        "env_both_no_no_cli",
+        "env_both_True_no_cli",
+        "env_both_FALSE_no_cli",
+        "env_false_cli_report_true",
+        "env_false_cli_borders_true",
+        "env_false_cli_both_true",
+        "no_env_no_cli_defaults",
+    ),
+)
+def test_apply_env_overrides_comprehensive(  # noqa: PLR0913
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    env_var_value: str | None,
+    cli_args: list[str],
+    *,
+    expected_report: bool,
+    expected_borders: bool,
+) -> None:
+    """Test all combinations of environment variables vs CLI arguments for report and command_borders.
+
+    This test validates that environment variables are applied before CLI overrides,
+    creating the precedence: defaults → env vars → CLI args.
+
+    Args:
+        tmp_path: pytest temporary directory fixture.
+        monkeypatch: pytest monkeypatch fixture.
+        env_var_value: Value to set in MOLECULE_REPORT/MOLECULE_COMMAND_BORDERS env vars.
+        cli_args: CLI arguments to pass (e.g., ["--report"]).
+        expected_report: Expected final report value.
+        expected_borders: Expected final command_borders value.
+    """
+    # 1. Create basic molecule.yml
+    molecule_dir = tmp_path / "molecule" / "default"
+    molecule_dir.mkdir(parents=True)
+    molecule_file = molecule_dir / "molecule.yml"
+    molecule_file.write_text("scenario:\n  name: default\n")
+
+    # 2. Set up environment variables
+    env_vars = {}
+    if env_var_value is not None:
+        env_vars["MOLECULE_REPORT"] = env_var_value
+        env_vars["MOLECULE_COMMAND_BORDERS"] = env_var_value
+
+    # 3. Capture configs and exit after _apply_cli_overrides
+    captured_configs: list[config.Config] = []
+
+    # Store the original method before patching
+    original_apply_cli_overrides = config.Config._apply_cli_overrides
+
+    def mock_apply_cli_overrides(self: config.Config) -> None:
+        original_apply_cli_overrides(self)
+        captured_configs.append(self)
+        msg = "Test capture complete"
+        raise ImmediateExit(msg, 0)
+
+    monkeypatch.setattr("molecule.config.Config._apply_cli_overrides", mock_apply_cli_overrides)
+    monkeypatch.chdir(tmp_path)
+
+    # 4. Set environment variables BEFORE calling main (so they exist during Config.__init__)
+    for env_var, env_value in env_vars.items():
+        monkeypatch.setenv(env_var, env_value)
+
+    argv = ["molecule", "test", *cli_args]
+    monkeypatch.setattr("sys.argv", argv)
+
+    captured_configs.clear()
+
+    with pytest.raises(SystemExit) as exc_info:
+        main.main()
+
+    # 5. Assert results
+    assert exc_info.value.code == 0
+    assert len(captured_configs) >= 1  # At least one config was created
+
+    config_obj = captured_configs[0]
+    assert config_obj.command_args.get("report", False) is expected_report
+    assert config_obj.command_args.get("command_borders", False) is expected_borders
+
+
+@pytest.mark.parametrize(
+    ("env_report", "env_borders", "cli_args", "expected_report", "expected_borders"),
+    (
+        # Test precedence: CLI overrides env vars
+        ("true", "false", ["--report", "--command-borders"], True, True),  # CLI overrides both
+        ("false", "true", ["--report"], True, True),  # CLI overrides report, env borders remains
+        (
+            "true",
+            "false",
+            ["--command-borders"],
+            True,
+            True,
+        ),  # CLI overrides borders, env report remains
+        # Test different boolean formats
+        ("1", "yes", [], True, True),  # Different truthy formats
+        ("0", "no", [], False, False),  # Different falsy formats
+        ("on", "off", [], True, False),  # More boolean formats
+        # Test partial env vars (only one set)
+        ("true", None, [], True, False),  # Only report env var set
+        (None, "true", [], False, True),  # Only borders env var set
+        (None, None, ["--report"], True, False),  # No env vars, only CLI
+    ),
+    ids=(
+        "cli_overrides_both_env_vars",
+        "cli_overrides_report_env_borders_remains",
+        "cli_overrides_borders_env_report_remains",
+        "env_mixed_truthy_formats",
+        "env_mixed_falsy_formats",
+        "env_on_off_formats",
+        "env_report_only",
+        "env_borders_only",
+        "no_env_cli_report_only",
+    ),
+)
+def test_env_var_cli_precedence(  # noqa: PLR0913
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    env_report: str | None,
+    env_borders: str | None,
+    cli_args: list[str],
+    *,
+    expected_report: bool,
+    expected_borders: bool,
+) -> None:
+    """Test precedence between environment variables and CLI arguments.
+
+    This test specifically validates that CLI arguments take precedence over
+    environment variables, and that different boolean formats work correctly.
+
+    Args:
+        tmp_path: Temporary directory for test files.
+        monkeypatch: Pytest fixture for patching.
+        env_report: Environment variable value for MOLECULE_REPORT.
+        env_borders: Environment variable value for MOLECULE_COMMAND_BORDERS.
+        cli_args: CLI arguments to test.
+        expected_report: Expected value for report flag.
+        expected_borders: Expected value for command_borders flag.
+    """
+    # 1. Create basic molecule.yml
+    molecule_dir = tmp_path / "molecule" / "default"
+    molecule_dir.mkdir(parents=True)
+    molecule_file = molecule_dir / "molecule.yml"
+    molecule_file.write_text("scenario:\n  name: default\n")
+
+    # 2. Set up environment variables (only if not None)
+    env_vars = {}
+    if env_report is not None:
+        env_vars["MOLECULE_REPORT"] = env_report
+    if env_borders is not None:
+        env_vars["MOLECULE_COMMAND_BORDERS"] = env_borders
+
+    # 3. Same capture pattern as other tests
+    captured_configs: list[config.Config] = []
+    original_apply_cli_overrides = config.Config._apply_cli_overrides
+
+    def mock_apply_cli_overrides(self: config.Config) -> None:
+        original_apply_cli_overrides(self)
+        captured_configs.append(self)
+        msg = "Test capture complete"
+        raise ImmediateExit(msg, 0)
+
+    monkeypatch.setattr("molecule.config.Config._apply_cli_overrides", mock_apply_cli_overrides)
+    monkeypatch.chdir(tmp_path)
+
+    # 4. Set environment variables BEFORE calling main (so they exist during Config.__init__)
+    for env_var, env_value in env_vars.items():
+        monkeypatch.setenv(env_var, env_value)
+
+    argv = ["molecule", "test", *cli_args]
+    monkeypatch.setattr("sys.argv", argv)
+
+    captured_configs.clear()
+
+    with pytest.raises(SystemExit) as exc_info:
+        main.main()
+
+    # 5. Assert results
+    assert exc_info.value.code == 0
+    assert len(captured_configs) >= 1
+
+    config_obj = captured_configs[0]
+    assert config_obj.command_args.get("report", False) is expected_report
+    assert config_obj.command_args.get("command_borders", False) is expected_borders
+
+
+def test_env_overrides_invalid_values(
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test that invalid environment variable values are logged and ignored.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        caplog: Pytest log capture fixture.
+    """
+    test_mapping = {
+        "MOLECULE_REPORT": {"attr": "report", "type": bool},
+        "MOLECULE_COMMAND_BORDERS": {"attr": "command_borders", "type": bool},
+        "TEST_INT_VAR": {"attr": "test_int", "type": int},
+    }
+    monkeypatch.setattr("molecule.config.ENV_VAR_CONFIG_MAPPING", test_mapping)
+
+    monkeypatch.setenv("TEST_INT_VAR", "not_a_number")
+
+    args: dict[str, None] = {"env_file": None}
+    command_args: dict[str, object] = {"subcommand": "test", "test_int": 0}
+
+    with click.Context(click.Command("test")):
+        config_obj = config.Config(molecule_file="", args=args, command_args=command_args)  # type: ignore[arg-type]
+
+    assert config_obj.command_args.get("test_int", 0) == 0
+
+    warning_messages = [
+        record.message for record in caplog.records if record.levelname == "WARNING"
+    ]
+    assert any(
+        "Invalid value for TEST_INT_VAR: not_a_number, ignoring" in msg for msg in warning_messages
+    )

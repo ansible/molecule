@@ -26,19 +26,21 @@ import os
 import warnings
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 from uuid import uuid4
+
+import click
 
 from ansible_compat.ports import cache, cached_property
 
 from molecule import api, interpolation, logger, platforms, scenario, state, util
 from molecule.app import get_app
+from molecule.constants import DEFAULT_CONFIG, ENV_VAR_CONFIG_MAPPING
 from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
-from molecule.exceptions import MoleculeError
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
-from molecule.util import boolean
+from molecule.util import boolean, sysexit_with_message
 
 
 if TYPE_CHECKING:
@@ -50,12 +52,17 @@ if TYPE_CHECKING:
     from molecule.dependency.base import Base as Dependency
     from molecule.driver.base import Driver
     from molecule.state import State
-    from molecule.types import CollectionData, CommandArgs, ConfigData, MoleculeArgs
+    from molecule.types import (
+        CollectionData,
+        CommandArgs,
+        ConfigData,
+        MoleculeArgs,
+    )
     from molecule.verifier.base import Verifier
 
 
-MOLECULE_PARALLEL: bool = boolean(os.environ.get("MOLECULE_PARALLEL", ""))
-MOLECULE_DEBUG: bool = boolean(os.environ.get("MOLECULE_DEBUG", "False"))
+MOLECULE_PARALLEL: bool = boolean(os.environ.get("MOLECULE_PARALLEL", ""), default=False)
+MOLECULE_DEBUG: bool = boolean(os.environ.get("MOLECULE_DEBUG", "False"), default=False)
 MOLECULE_VERBOSITY: int = int(os.environ.get("MOLECULE_VERBOSITY", "0"))
 MOLECULE_DIRECTORY = "molecule"
 MOLECULE_FILE = "molecule.yml"
@@ -129,12 +136,63 @@ class Config:
 
         # Former after_init() contents
         self.config = self._reget_config()
+        self._apply_env_overrides()
+        self._apply_cli_overrides()
         if self.molecule_file:
             self._validate()
 
     def write(self) -> None:
         """Write config file to filesystem."""
         util.write_file(self.config_file, util.safe_dump(self.config))
+
+    def _apply_cli_overrides(self) -> None:
+        """Apply CLI argument overrides to config.
+
+        This method modifies the config dictionary to include CLI overrides,
+        creating a single source of truth for configuration values.
+        """
+        # Apply shared_state CLI override ONLY if it was explicitly provided via CLI
+        ctx = click.get_current_context(silent=True)
+        if "shared_state" not in self.command_args or ctx is None:
+            return
+        source = ctx.get_parameter_source("shared_state")
+        if source == click.core.ParameterSource.COMMANDLINE:
+            self.config["shared_state"] = self.command_args["shared_state"]
+
+    def _apply_env_overrides(self) -> None:
+        """Apply environment variable overrides to command_args.
+
+        Precedence: defaults → env vars → CLI args.
+        Only applies env vars if the CLI argument wasn't set by the user.
+        Includes variables from both os.environ and env_file.
+        """
+        ctx = click.get_current_context(silent=True)
+        if ctx is None or not ENV_VAR_CONFIG_MAPPING or not hasattr(self, "command_args"):
+            return
+
+        # Build merged environment (os.environ + env_file) same as _reget_config
+        merged_env = util.merge_dicts(os.environ, self.env)
+        merged_env = set_env_from_file(merged_env, self.env_file)
+
+        for env_var, config in ENV_VAR_CONFIG_MAPPING.items():
+            env_value = merged_env.get(env_var)
+            if env_value is None:
+                continue
+
+            config_attr, expected_type = config["attr"], config["type"]
+
+            source = ctx.get_parameter_source(config_attr)
+            if source == click.core.ParameterSource.COMMANDLINE:
+                continue
+
+            try:
+                converted_value = (
+                    boolean(env_value) if expected_type is bool else expected_type(env_value)
+                )
+                self.command_args[config_attr] = converted_value
+            except (ValueError, TypeError):
+                msg = f"Invalid value for {env_var}: {env_value}, ignoring"
+                self._log.warning(msg)
 
     @property
     def config_file(self) -> str:
@@ -156,22 +214,13 @@ class Config:
         return self.command_args.get("parallel", False)
 
     @property
-    def shared_inventory(self) -> bool:
-        """Should molecule share ephemeral data.
+    def shared_state(self) -> bool:
+        """Should molecule share ephemeral state.
 
         Returns:
-            Whether molecule should share ephemeral data.
+            Whether molecule should share ephemeral state.
         """
-        return self.command_args.get("shared_inventory", False)
-
-    @property
-    def shared_data(self) -> bool:
-        """Should molecule share ephemeral data.
-
-        Returns:
-            Whether molecule should share ephemeral data.
-        """
-        return self.command_args.get("shared_state", False)
+        return self.config.get("shared_state", False)
 
     @property
     def command_borders(self) -> bool:
@@ -293,9 +342,6 @@ class Config:
 
         Returns:
             The driver for this scenario.
-
-        Raises:
-            MoleculeError: when the specified driver cannot be found.
         """
         driver_name = self._get_driver_name()
         driver = None
@@ -303,7 +349,7 @@ class Config:
         api_drivers = api.drivers(config=self)
         if driver_name not in api_drivers:
             msg = f"Failed to find driver {driver_name}. Please ensure that the driver is correctly installed."
-            raise MoleculeError(msg)
+            sysexit_with_message(msg, code=1)
 
         driver = api_drivers[driver_name]
         driver.name = driver_name
@@ -317,7 +363,7 @@ class Config:
         Returns:
             The executor backend.
         """
-        return self.config.get("executor", {}).get("backend", "ansible-playbook")
+        return self.config["ansible"]["executor"]["backend"]
 
     @property
     def env(self) -> dict[str, str]:
@@ -326,18 +372,12 @@ class Config:
         Returns:
             Total set of computed environment variables.
         """
-        shared_inventory_dir = (
-            self.scenario.inventory_directory
-            if self.shared_inventory and not self.is_parallel
-            else ""
-        )
         return {
             "MOLECULE_DEBUG": str(self.debug),
             "MOLECULE_FILE": self.config_file,
             "MOLECULE_ENV_FILE": str(self.env_file),
             "MOLECULE_STATE_FILE": self.state.state_file,
             "MOLECULE_INVENTORY_FILE": self.provisioner.inventory_file,  # type: ignore[union-attr]
-            "MOLECULE_SHARED_INVENTORY_DIR": shared_inventory_dir,
             "MOLECULE_EPHEMERAL_DIRECTORY": self.scenario.ephemeral_directory,
             "MOLECULE_SCENARIO_DIRECTORY": self.scenario.directory,
             "MOLECULE_PROJECT_DIRECTORY": self.project_directory,
@@ -415,7 +455,7 @@ class Config:
                     self.molecule_file,
                 )
 
-        return state.SharedState(self) if self.shared_data else state.State(self)
+        return state.SharedState(self) if self.shared_state else state.State(self)
 
     @cached_property
     def verifier(self) -> Verifier:
@@ -455,14 +495,14 @@ class Config:
                 f"Instance(s) were created with the '{driver_name}' driver, but the "
                 f"subcommand is using '{driver_from_cli}' driver."
             )
-            raise MoleculeError(msg)
+            sysexit_with_message(msg, code=1)
 
         if driver_from_state_file and driver_name not in api.drivers():
             msg = (
                 f"Driver '{driver_name}' from state-file "
                 f"'{self.state.state_file}' is not available."
             )
-            raise MoleculeError(msg)
+            sysexit_with_message(msg, code=1)
 
         if driver_from_scenario != driver_name:
             msg = (
@@ -504,15 +544,13 @@ class Config:
         env: MutableMapping[str, str] = os.environ,
         keep_string: str | None = None,
     ) -> ConfigData:
-        """Perform a prioritized recursive merge of config files.
+        """Get configuration with complete migration flow.
 
-        Returns a new dict.  Prior to merging the config files are interpolated with
-        environment variables.
-
-        1. Loads Molecule defaults.
-        2. Loads a base config (if provided) and merges on top of defaults.
-        3. Loads the scenario's ``molecule file`` and merges on top of previous
-           merge.
+        This single function handles the entire config resolution:
+        1. Get forward-looking defaults
+        2. Load and interpolate user config files
+        3. Migrate legacy keys in user config
+        4. Merge migrated user config on top of defaults
 
         Args:
             env: The current set of environment variables to consider.
@@ -521,27 +559,124 @@ class Config:
         Returns:
             dict: The merged config.
         """
+        # Step 1: Get forward-looking defaults
         defaults = self._get_defaults()
+
+        # Step 2: Load all user config files into a list of tuples (filename, config)
+        user_config_files: list[tuple[str, dict[str, Any]]] = []
+
+        # Load base configs
         base_configs = filter(os.path.exists, self.args.get("base_config", []))
         for base_config in base_configs:
             with open(base_config) as stream:  # noqa: PTH123
                 s = stream.read()
                 interpolated_config = self._interpolate(s, env, keep_string)
-                defaults = util.merge_dicts(
-                    defaults,
-                    util.safe_load(interpolated_config),
-                )
+                config_data = util.safe_load(interpolated_config)
+                user_config_files.append((base_config, config_data))
 
+        # Load molecule.yml
         if self.molecule_file:
             with open(self.molecule_file) as stream:  # noqa: PTH123
                 s = stream.read()
                 interpolated_config = self._interpolate(s, env, keep_string)
-                defaults = util.merge_dicts(
-                    defaults,
-                    util.safe_load(interpolated_config),
-                )
+                config_data = util.safe_load(interpolated_config)
+                user_config_files.append((self.molecule_file, config_data))
 
-        return defaults
+        # Step 3: Debug log legacy keys that will be migrated
+        legacy_keys = ["ansible_args", "config_options", "env", "playbooks"]
+        for file_name, config_data in user_config_files:
+            provisioner = config_data.get("provisioner", {})
+            for key in legacy_keys:
+                if key in provisioner:
+                    # Use temporary logger since self._log isn't available during init
+                    temp_log = logger.get_scenario_logger(__name__, "unknown", "config")
+                    temp_log.debug(
+                        f"provisioner.{key} found in {file_name}, this can be defined in ansible.{self._get_ansible_key_mapping(key)}",
+                    )
+
+        # Step 4: Merge all user configs in order (base configs first, molecule.yml last)
+        merged_user_config: dict[str, Any] = {}
+        for _file_name, config_data in user_config_files:
+            merged_user_config = util.merge_dicts(merged_user_config, config_data)
+
+        # Step 5: Migrate user config (legacy keys -> new ansible section)
+        migrated_user_config = self._migrate_user_config(merged_user_config)
+
+        # Step 6: Merge the migrated user config on top of defaults
+        return util.merge_dicts(  # type: ignore[type-var]
+            defaults,
+            cast("ConfigData", migrated_user_config),
+        )
+
+    def _get_ansible_key_mapping(self, legacy_key: str) -> str:
+        """Map legacy provisioner keys to their ansible section equivalents.
+
+        Args:
+            legacy_key: The legacy key name from provisioner section.
+
+        Returns:
+            The corresponding key path in ansible section.
+        """
+        mapping = {
+            "ansible_args": "executor.args.ansible_playbook",
+            "config_options": "cfg",
+            "env": "env",
+            "playbooks": "playbooks",
+        }
+        return mapping.get(legacy_key, legacy_key)
+
+    def _migrate_user_config(self, user_config: dict[str, Any]) -> dict[str, Any]:
+        """Migrate legacy provisioner keys to ansible section in user config.
+
+        Migrates the keys defined in _get_ansible_key_mapping() from provisioner
+        section to their corresponding locations in the ansible section.
+
+        Args:
+            user_config: Raw user configuration (may contain legacy keys)
+
+        Returns:
+            User config with legacy keys migrated to ansible section
+        """
+        # Work on a copy to avoid modifying input
+        config = copy.deepcopy(user_config)
+
+        provisioner = config.get("provisioner", {})
+        legacy_keys = ["ansible_args", "config_options", "env", "playbooks"]
+
+        # Check if migration is needed
+        if not any(key in provisioner for key in legacy_keys):
+            return config
+
+        # Create ansible section if it doesn't exist
+        if "ansible" not in config:
+            config["ansible"] = {}
+        ansible_config = config["ansible"]
+
+        # Migrate ansible_args -> ansible.executor.args.ansible_playbook
+        if "ansible_args" in provisioner:
+            if "executor" not in ansible_config:
+                ansible_config["executor"] = {}
+            if "args" not in ansible_config["executor"]:
+                ansible_config["executor"]["args"] = {}
+            ansible_config["executor"]["args"]["ansible_playbook"] = provisioner["ansible_args"]
+            del provisioner["ansible_args"]
+
+        # Migrate config_options -> ansible.cfg
+        if "config_options" in provisioner:
+            ansible_config["cfg"] = provisioner["config_options"]
+            del provisioner["config_options"]
+
+        # Migrate env -> ansible.env
+        if "env" in provisioner:
+            ansible_config["env"] = provisioner["env"]
+            del provisioner["env"]
+
+        # Migrate playbooks -> ansible.playbooks
+        if "playbooks" in provisioner:
+            ansible_config["playbooks"] = provisioner["playbooks"]
+            del provisioner["playbooks"]
+
+        return config
 
     def _interpolate(
         self,
@@ -557,10 +692,20 @@ class Config:
             return i.interpolate(stream, keep_string)
         except interpolation.InvalidInterpolation as e:
             msg = f"parsing config file '{self.molecule_file}'.\n\n{e.place}\n{e.string}"
-            raise MoleculeError(msg) from e
+            sysexit_with_message(msg, code=1)
         return ""
 
     def _get_defaults(self) -> ConfigData:
+        """Get default configuration with forward-looking structure.
+
+        Deepcopy here to avoid modifying the original DEFAULT_CONFIG.
+
+        Returns:
+            Default configuration from constants.
+        """
+        defaults = copy.deepcopy(DEFAULT_CONFIG)
+
+        # Handle scenario name dynamically
         if not self.molecule_file:
             scenario_name = "default"
         else:
@@ -568,100 +713,12 @@ class Config:
                 os.path.basename(os.path.dirname(self.molecule_file))  # noqa: PTH119, PTH120
                 or "default"
             )
-        return {
-            "dependency": {
-                "name": "galaxy",
-                "command": None,
-                "enabled": True,
-                "options": {},
-                "env": {},
-            },
-            "driver": {
-                "name": "default",
-                "provider": {"name": None},
-                "options": {"managed": True},
-                "ssh_connection_options": [],
-                "safe_files": [],
-            },
-            "executor": {
-                "backend": "ansible-playbook",
-            },
-            "platforms": [],
-            "prerun": True,
-            "role_name_check": 0,
-            "provisioner": {
-                "name": "ansible",
-                "config_options": {},
-                "ansible_args": [],
-                "connection_options": {},
-                "options": {},
-                "env": {},
-                "inventory": {
-                    "hosts": {},
-                    "host_vars": {},
-                    "group_vars": {},
-                    "links": {},
-                },
-                "children": {},
-                "playbooks": {
-                    "cleanup": "cleanup.yml",
-                    "create": "create.yml",
-                    "converge": "converge.yml",
-                    "destroy": "destroy.yml",
-                    "prepare": "prepare.yml",
-                    "side_effect": "side_effect.yml",
-                    "verify": "verify.yml",
-                },
-                "log": True,
-            },
-            "scenario": {
-                "name": scenario_name,
-                "check_sequence": [
-                    "dependency",
-                    "cleanup",
-                    "destroy",
-                    "create",
-                    "prepare",
-                    "converge",
-                    "check",
-                    "cleanup",
-                    "destroy",
-                ],
-                "cleanup_sequence": ["cleanup"],
-                "converge_sequence": ["dependency", "create", "prepare", "converge"],
-                "create_sequence": ["dependency", "create", "prepare"],
-                "destroy_sequence": ["dependency", "cleanup", "destroy"],
-                "test_sequence": [
-                    # dependency must be kept before lint to avoid errors
-                    "dependency",
-                    "cleanup",
-                    "destroy",
-                    "syntax",
-                    "create",
-                    "prepare",
-                    "converge",
-                    "idempotence",
-                    "side_effect",
-                    "verify",
-                    "cleanup",
-                    "destroy",
-                ],
-            },
-            "verifier": {
-                "name": "ansible",
-                "enabled": True,
-                "options": {},
-                "env": {},
-                "additional_files_or_dirs": [],
-            },
-        }
+
+        defaults["scenario"]["name"] = scenario_name
+        return defaults  # type: ignore[return-value]
 
     def _validate(self) -> None:
-        """Validate molecule file.
-
-        Raises:
-            MoleculeError: when config file fails to validate.
-        """
+        """Validate molecule file."""
         # Use scenario logger with hardcoded values since scenario property isn't available yet
         scenario_name = self.config["scenario"]["name"]
         validation_log = logger.get_scenario_logger(__name__, scenario_name, "validate")
@@ -672,7 +729,7 @@ class Config:
         errors = schema_v3.validate(self.config)
         if errors:
             msg = f"Failed to validate {self.molecule_file}\n\n{errors}"
-            raise MoleculeError(msg)
+            sysexit_with_message(msg, code=1)
 
 
 def molecule_directory(path: str | Path) -> str:

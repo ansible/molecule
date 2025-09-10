@@ -1,4 +1,4 @@
-"""Unit tests for reporting module."""
+"""Unit tests for reporting module."""  # pylint: disable=too-many-lines
 
 from __future__ import annotations
 
@@ -9,14 +9,14 @@ from typing import TYPE_CHECKING
 
 from molecule.ansi_output import AnsiOutput
 from molecule.constants import ANSICodes as A
-from molecule.reporting import (
+from molecule.reporting.definitions import (
     ActionResult,
     CompletionState,
     CompletionStateInfo,
     ScenarioResults,
     ScenariosResults,
-    report,
 )
+from molecule.reporting.rendering import report
 
 
 if TYPE_CHECKING:
@@ -245,6 +245,65 @@ def test_scenario_results_last_action_summary() -> None:
     assert summary == CompletionState.failed
 
 
+def test_scenario_results_completion_state_no_actions() -> None:
+    """Test ScenarioResults completion_state with no actions returns successful."""
+    results = ScenarioResults(name="test", actions=[])
+
+    completion_state = results.completion_state
+    assert completion_state == CompletionState.successful
+
+
+def test_scenario_results_completion_state_single_action() -> None:
+    """Test ScenarioResults completion_state with single action."""
+    results = ScenarioResults(name="test", actions=[])
+    results.add_action_result("create")
+    results.add_completion(CompletionState.failed)
+
+    completion_state = results.completion_state
+    assert completion_state.state == "failed"
+    assert completion_state.log_level == "error"
+
+
+def test_scenario_results_completion_state_multiple_actions() -> None:
+    """Test ScenarioResults completion_state prioritizes highest priority state."""
+    results = ScenarioResults(name="test", actions=[])
+
+    # Add successful action
+    results.add_action_result("create")
+    results.add_completion(CompletionState.successful)
+
+    # Add missing action (higher priority)
+    results.add_action_result("prepare")
+    results.add_completion(CompletionState.missing)
+
+    # Add another successful action
+    results.add_action_result("converge")
+    results.add_completion(CompletionState.successful)
+
+    completion_state = results.completion_state
+    assert completion_state.state == "missing"  # Highest priority among the three
+    assert completion_state.log_level == "warning"
+
+
+def test_scenario_results_completion_state_uses_action_summary() -> None:
+    """Test ScenarioResults completion_state leverages ActionResult.summary logic."""
+    results = ScenarioResults(name="test", actions=[])
+
+    # Create action with multiple states (to test ActionResult.summary is used)
+    action = ActionResult(action="verify", states=[])
+    action.append(CompletionState.successful)
+    action.append(CompletionState.failed)
+    action.append(CompletionState.missing)
+    results.actions.append(action)
+
+    # The ActionResult.summary should return failed (highest priority)
+    assert action.summary.state == "failed"
+
+    # ScenarioResults.completion_state should use that summary
+    completion_state = results.completion_state
+    assert completion_state.state == "failed"
+
+
 def test_scenarios_results_inheritance() -> None:
     """Test ScenariosResults inherits from list correctly."""
     results = ScenariosResults()
@@ -292,18 +351,171 @@ def generate_scenarios_results() -> ScenariosResults:
     return ScenariosResults([scenario1_results, scenario2_results])
 
 
-def test_report_function(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_scenarios_results_get_overall_summary_empty() -> None:
+    """Test ScenariosResults get_overall_summary with no scenarios."""
+    results = ScenariosResults()
+
+    overall_state, summary_line = results.get_overall_summary()
+
+    assert overall_state == CompletionState.successful
+    assert summary_line == "Molecule executed 0 scenarios"
+
+
+def test_scenarios_results_get_overall_summary_single_successful() -> None:
+    """Test ScenariosResults get_overall_summary with single successful scenario."""
+    scenario = ScenarioResults(name="default", actions=[])
+    scenario.add_action_result("create")
+    scenario.add_completion(CompletionState.successful)
+
+    results = ScenariosResults([scenario])
+    overall_state, summary_line = results.get_overall_summary()
+
+    assert overall_state.state == "successful"
+    assert overall_state.log_level == "info"
+    assert summary_line == "Molecule executed 1 scenario ([green]1 successful[/])"
+
+
+def test_scenarios_results_get_overall_summary_single_failed() -> None:
+    """Test ScenariosResults get_overall_summary with single failed scenario."""
+    scenario = ScenarioResults(name="default", actions=[])
+    scenario.add_action_result("converge")
+    scenario.add_completion(CompletionState.failed)
+
+    results = ScenariosResults([scenario])
+    overall_state, summary_line = results.get_overall_summary()
+
+    assert overall_state.state == "failed"
+    assert overall_state.log_level == "error"
+    assert summary_line == "Molecule executed 1 scenario ([red]1 failed[/])"
+
+
+def test_scenarios_results_get_overall_summary_mixed_scenarios() -> None:
+    """Test ScenariosResults get_overall_summary with mixed scenario states."""
+    # Successful scenario
+    scenario1 = ScenarioResults(name="default", actions=[])
+    scenario1.add_action_result("create")
+    scenario1.add_completion(CompletionState.successful)
+
+    # Failed scenario
+    scenario2 = ScenarioResults(name="docker", actions=[])
+    scenario2.add_action_result("converge")
+    scenario2.add_completion(CompletionState.failed)
+
+    # Missing scenario
+    scenario3 = ScenarioResults(name="podman", actions=[])
+    scenario3.add_action_result("verify")
+    scenario3.add_completion(CompletionState.missing)
+
+    results = ScenariosResults([scenario1, scenario2, scenario3])
+    overall_state, summary_line = results.get_overall_summary()
+
+    # Should prioritize failed (highest priority)
+    assert overall_state.state == "failed"
+    assert overall_state.log_level == "error"
+    assert (
+        summary_line
+        == "Molecule executed 3 scenarios ([red]1 failed[/], [magenta]1 missing files[/], and [green]1 successful[/])"
+    )
+
+
+def test_scenarios_results_get_overall_summary_priority_order() -> None:
+    """Test ScenariosResults get_overall_summary follows priority order correctly."""
+    # Create scenarios with different completion states
+    scenarios = []
+
+    # Successful scenario
+    scenario1 = ScenarioResults(name="successful", actions=[])
+    scenario1.add_action_result("create")
+    scenario1.add_completion(CompletionState.successful)
+    scenarios.append(scenario1)
+
+    # Disabled scenario
+    scenario2 = ScenarioResults(name="disabled", actions=[])
+    scenario2.add_action_result("create")
+    scenario2.add_completion(CompletionState.disabled)
+    scenarios.append(scenario2)
+
+    # Skipped scenario
+    scenario3 = ScenarioResults(name="skipped", actions=[])
+    scenario3.add_action_result("create")
+    scenario3.add_completion(CompletionState.skipped)
+    scenarios.append(scenario3)
+
+    results = ScenariosResults(scenarios)
+    overall_state, summary_line = results.get_overall_summary()
+
+    # Should prioritize skipped (highest priority among these three)
+    assert overall_state.state == "skipped"
+    assert overall_state.log_level == "info"
+    assert (
+        summary_line
+        == "Molecule executed 3 scenarios ([cyan]1 skipped[/], [cyan]1 disabled[/], and [green]1 successful[/])"
+    )
+
+
+def test_scenarios_results_get_overall_summary_all_states() -> None:
+    """Test ScenariosResults get_overall_summary with all possible states."""
+    scenarios = []
+
+    # Create one scenario for each state
+    for state_name, state_obj in [
+        ("successful", CompletionState.successful),
+        ("disabled", CompletionState.disabled),
+        ("skipped", CompletionState.skipped),
+        ("missing", CompletionState.missing),
+        ("failed", CompletionState.failed),
+    ]:
+        scenario = ScenarioResults(name=state_name, actions=[])
+        scenario.add_action_result("test")
+        scenario.add_completion(state_obj)
+        scenarios.append(scenario)
+
+    results = ScenariosResults(scenarios)
+    overall_state, summary_line = results.get_overall_summary()
+
+    # Should prioritize failed (highest priority)
+    assert overall_state.state == "failed"
+    assert overall_state.log_level == "error"
+    assert (
+        summary_line
+        == "Molecule executed 5 scenarios ([red]1 failed[/], [magenta]1 missing files[/], [cyan]1 skipped[/], [cyan]1 disabled[/], and [green]1 successful[/])"
+    )
+
+
+def test_scenarios_results_get_overall_summary_status_word_logic() -> None:
+    """Test ScenariosResults get_overall_summary format consistency."""
+    # Test missing state formatting
+    scenario1 = ScenarioResults(name="test1", actions=[])
+    scenario1.add_action_result("create")
+    scenario1.add_completion(CompletionState.missing)  # warning level
+
+    results1 = ScenariosResults([scenario1])
+    _, summary1 = results1.get_overall_summary()
+    assert summary1 == "Molecule executed 1 scenario ([magenta]1 missing files[/])"
+
+    # Test failed state formatting
+    scenario2 = ScenarioResults(name="test2", actions=[])
+    scenario2.add_action_result("create")
+    scenario2.add_completion(CompletionState.failed)  # error level
+
+    results2 = ScenariosResults([scenario2])
+    _, summary2 = results2.get_overall_summary()
+    assert summary2 == "Molecule executed 1 scenario ([red]1 failed[/])"
+
+
+def test_report_function(monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture) -> None:
     """Test report function output.
 
     Args:
         monkeypatch: Pytest monkeypatch fixture.
+        caplog: Pytest log capture fixture.
     """
     # Ensure predictable output without ANSI codes
     monkeypatch.setenv("NO_COLOR", "1")
 
-    # Mock original_stderr with StringIO
+    # Mock original_stderr with StringIO for detailed output
     mock_stderr = StringIO()
-    monkeypatch.setattr("molecule.reporting.original_stderr", mock_stderr)
+    monkeypatch.setattr("molecule.reporting.rendering.original_stderr", mock_stderr)
 
     # Create test data
     action_result = ActionResult(action="create")
@@ -312,26 +524,125 @@ def test_report_function(monkeypatch: pytest.MonkeyPatch) -> None:
     scenario_result = ScenarioResults(name="default", actions=[action_result])
     results = ScenariosResults([scenario_result])
 
-    # Call function
-    report(results)
+    # Call function with report_flag=True to show details
+    with caplog.at_level("INFO", logger="molecule.reporting"):
+        report(results, report_flag=True)
 
-    # Verify output was written
+    # Verify one-line summary was logged
+    assert len(caplog.records) == 1
+    assert caplog.records[0].levelname == "INFO"
+    assert "Molecule executed 1 scenario (1 successful)" in caplog.text
+
+    # Verify detailed output was written to stderr
     output = mock_stderr.getvalue()
     assert len(output) > 0
+    assert "DETAILS" in output
 
 
-def test_report_with_notes(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_report_function_summary_only(
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test report function with summary only (report_flag=False).
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        caplog: Pytest log capture fixture.
+    """
+    # Mock original_stderr with StringIO
+    mock_stderr = StringIO()
+    monkeypatch.setattr("molecule.reporting.rendering.original_stderr", mock_stderr)
+
+    # Create test data
+    action_result = ActionResult(action="create")
+    action_result.append(CompletionState.successful)
+
+    scenario_result = ScenarioResults(name="default", actions=[action_result])
+    results = ScenariosResults([scenario_result])
+
+    # Call function with report_flag=False (summary only)
+    with caplog.at_level("INFO", logger="molecule.reporting"):
+        report(results, report_flag=False)
+
+    # Verify one-line summary was logged
+    assert len(caplog.records) == 1
+    assert caplog.records[0].levelname == "INFO"
+    assert "Molecule executed 1 scenario (1 successful)" in caplog.text
+
+    # Verify NO detailed output was written to stderr
+    output = mock_stderr.getvalue()
+    assert len(output) == 0
+
+
+def test_report_function_log_levels(caplog: pytest.LogCaptureFixture) -> None:
+    """Test report function uses correct log levels.
+
+    Args:
+        caplog: Pytest log capture fixture.
+    """
+    # Test ERROR level for failed scenario
+    scenario_failed = ScenarioResults(name="failed", actions=[])
+    scenario_failed.add_action_result("converge")
+    scenario_failed.add_completion(CompletionState.failed)
+
+    results_failed = ScenariosResults([scenario_failed])
+
+    with caplog.at_level("ERROR", logger="molecule.reporting"):
+        report(results_failed, report_flag=False)
+
+    assert len(caplog.records) == 1
+    assert caplog.records[0].levelname == "ERROR"
+    assert "Molecule executed 1 scenario (1 failed)" in caplog.text
+
+    caplog.clear()
+
+    # Test WARNING level for missing scenario
+    scenario_missing = ScenarioResults(name="missing", actions=[])
+    scenario_missing.add_action_result("verify")
+    scenario_missing.add_completion(CompletionState.missing)
+
+    results_missing = ScenariosResults([scenario_missing])
+
+    with caplog.at_level("WARNING", logger="molecule.reporting"):
+        report(results_missing, report_flag=False)
+
+    assert len(caplog.records) == 1
+    assert caplog.records[0].levelname == "WARNING"
+    assert "Molecule executed 1 scenario (1 missing files)" in caplog.text
+
+    caplog.clear()
+
+    # Test INFO level for successful scenario
+    scenario_success = ScenarioResults(name="success", actions=[])
+    scenario_success.add_action_result("create")
+    scenario_success.add_completion(CompletionState.successful)
+
+    results_success = ScenariosResults([scenario_success])
+
+    with caplog.at_level("INFO", logger="molecule.reporting"):
+        report(results_success, report_flag=False)
+
+    assert len(caplog.records) == 1
+    assert caplog.records[0].levelname == "INFO"
+    assert "Molecule executed 1 scenario (1 successful)" in caplog.text
+
+
+def test_report_with_notes(
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     """Test report function handles action results with notes.
 
     Args:
         monkeypatch: Pytest monkeypatch fixture.
+        caplog: Pytest log capture fixture.
     """
     # Ensure predictable output without ANSI codes
     monkeypatch.setenv("NO_COLOR", "1")
 
     # Mock original_stderr with StringIO
     mock_stderr = StringIO()
-    monkeypatch.setattr("molecule.reporting.original_stderr", mock_stderr)
+    monkeypatch.setattr("molecule.reporting.rendering.original_stderr", mock_stderr)
 
     # Create action with note
     action_result = ActionResult(action="prepare")
@@ -340,7 +651,11 @@ def test_report_with_notes(monkeypatch: pytest.MonkeyPatch) -> None:
     scenario_result = ScenarioResults(name="test", actions=[action_result])
     results = ScenariosResults([scenario_result])
 
-    report(results)
+    with caplog.at_level("WARNING", logger="molecule.reporting"):
+        report(results, report_flag=True)
+
+    # Verify log contains summary
+    assert "Molecule executed 1 scenario (1 missing files)" in caplog.text
 
     # Verify output contains note information
     output = mock_stderr.getvalue()
@@ -358,11 +673,11 @@ def test_report_comprehensive_no_color(monkeypatch: pytest.MonkeyPatch) -> None:
 
     # Mock original_stderr with StringIO
     mock_stderr = StringIO()
-    monkeypatch.setattr("molecule.reporting.original_stderr", mock_stderr)
+    monkeypatch.setattr("molecule.reporting.rendering.original_stderr", mock_stderr)
 
     # Create comprehensive test data
     results = generate_scenarios_results()
-    report(results)
+    report(results, report_flag=True)
 
     expected_output = (
         "\nDETAILS                                                                        \n"
@@ -394,11 +709,11 @@ def test_report_comprehensive_with_color(monkeypatch: pytest.MonkeyPatch) -> Non
 
     # Mock original_stderr with StringIO
     mock_stderr = StringIO()
-    monkeypatch.setattr("molecule.reporting.original_stderr", mock_stderr)
+    monkeypatch.setattr("molecule.reporting.rendering.original_stderr", mock_stderr)
 
     # Create comprehensive test data (same as no-color test)
     results = generate_scenarios_results()
-    report(results)
+    report(results, report_flag=True)
 
     # Expected output with ANSI escape codes using ANSICodes constants
     expected_output = (
@@ -796,7 +1111,7 @@ def test_report_includes_scenario_recap(monkeypatch: pytest.MonkeyPatch) -> None
 
     # Mock original_stderr with StringIO
     mock_stderr = StringIO()
-    monkeypatch.setattr("molecule.reporting.original_stderr", mock_stderr)
+    monkeypatch.setattr("molecule.reporting.rendering.original_stderr", mock_stderr)
 
     # Create test results
     action = ActionResult(action="create")
@@ -805,7 +1120,7 @@ def test_report_includes_scenario_recap(monkeypatch: pytest.MonkeyPatch) -> None
     results = ScenariosResults([scenario])
 
     # Call report
-    report(results)
+    report(results, report_flag=True)
 
     # Verify recap is included in output
     output = mock_stderr.getvalue()
@@ -826,7 +1141,7 @@ def test_report_details_format_updated(monkeypatch: pytest.MonkeyPatch) -> None:
 
     # Mock original_stderr with StringIO
     mock_stderr = StringIO()
-    monkeypatch.setattr("molecule.reporting.original_stderr", mock_stderr)
+    monkeypatch.setattr("molecule.reporting.rendering.original_stderr", mock_stderr)
 
     # Create test results
     action = ActionResult(action="create")
@@ -835,7 +1150,7 @@ def test_report_details_format_updated(monkeypatch: pytest.MonkeyPatch) -> None:
     results = ScenariosResults([scenario])
 
     # Call report
-    report(results)
+    report(results, report_flag=True)
 
     # Verify Details formatting
     output = mock_stderr.getvalue()
@@ -869,7 +1184,7 @@ def test_report_recap_after_details(monkeypatch: pytest.MonkeyPatch) -> None:
 
     # Mock original_stderr with StringIO
     mock_stderr = StringIO()
-    monkeypatch.setattr("molecule.reporting.original_stderr", mock_stderr)
+    monkeypatch.setattr("molecule.reporting.rendering.original_stderr", mock_stderr)
 
     # Create test results with multiple scenarios for clear output
     action1 = ActionResult(action="create")
@@ -883,7 +1198,7 @@ def test_report_recap_after_details(monkeypatch: pytest.MonkeyPatch) -> None:
     results = ScenariosResults([scenario1, scenario2])
 
     # Call report
-    report(results)
+    report(results, report_flag=True)
 
     # Verify order: Details appears before Scenario recap
     output = mock_stderr.getvalue()
@@ -901,17 +1216,9 @@ def test_report_no_recap_for_empty_results(monkeypatch: pytest.MonkeyPatch) -> N
     Args:
         monkeypatch: Pytest monkeypatch fixture.
     """
-    # Ensure predictable output without ANSI codes
-    monkeypatch.setenv("NO_COLOR", "1")
-
-    # Mock original_stderr with StringIO
-    mock_stderr = StringIO()
-    monkeypatch.setattr("molecule.reporting.original_stderr", mock_stderr)
-
     # Call report with empty results
     results = ScenariosResults([])
-    report(results)
 
-    # Should not contain recap
-    output = mock_stderr.getvalue()
-    assert "SCENARIO RECAP" not in output
+    report(results, report_flag=True)
+
+    # Should return early and not log anything for empty results

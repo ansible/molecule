@@ -1,0 +1,24 @@
+---
+ansible:
+  cfg:
+    defaults:
+      deprecation_warnings: false
+  executor:
+    backend: ansible-playbook
+    args:
+      ansible_playbook:
+        - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/inventory/
+
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+
+scenario:
+  test_sequence:
+    - dependency
+    - destroy
+    - create
+    - converge
+    - verify
+    - destroy

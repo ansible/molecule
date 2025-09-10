@@ -25,9 +25,8 @@ import logging
 
 from typing import TYPE_CHECKING
 
-from molecule import util
-from molecule.exceptions import MoleculeError
-from molecule.reporting import ScenariosResults
+from molecule import ansi_output, util
+from molecule.reporting.definitions import ScenariosResults
 
 
 if TYPE_CHECKING:
@@ -95,15 +94,24 @@ class Scenarios:
         scenarios.sort(key=lambda x: x.directory)
         return scenarios
 
-    def print_matrix(self) -> None:
-        """Show the test matrix for all scenarios."""
-        msg = "Test matrix"
-        LOG.info(msg)
+    @property
+    def shared_state(self) -> bool:
+        """Whether these scenarios require shared state infrastructure.
 
+        Returns:
+            True if any scenario in the current execution selection has shared_state: true.
+        """
+        return any(scenario.config.shared_state for scenario in self.all)
+
+    def print_matrix(self) -> None:
+        """Show the matrix for all scenarios."""
         tree = {}
         for scenario in self.all:
             tree[scenario.name] = list(scenario.sequence)
-        util.print_as_yaml(tree)
+
+        # Use the first scenario's config for playbook path resolution
+        config = self.all[0].config if self.all else None
+        ansi_output.print_matrix(tree, config)
 
     def sequence(self, scenario_name: str) -> list[str]:
         """Sequence for a given scenario.
@@ -125,11 +133,7 @@ class Scenarios:
         )
 
     def _verify(self) -> None:
-        """Verify the specified scenario was found.
-
-        Raises:
-            MoleculeError: when scenario is not found.
-        """
+        """Verify the specified scenario was found."""
         scenario_names = [c.scenario.name for c in self._configs]
         if missing_names := sorted(set(self._scenario_names).difference(scenario_names)):
             scenario = "Scenario"
@@ -137,7 +141,7 @@ class Scenarios:
                 scenario += "s"
             missing = ", ".join(missing_names)
             msg = f"{scenario} '{missing}' not found.  Exiting."
-            raise MoleculeError(msg)
+            util.sysexit_with_message(msg, code=1)
 
     def _filter_for_scenario(self) -> list[Scenario]:
         """Find the scenario matching the provided scenario name and returns a list.

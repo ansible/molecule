@@ -8,15 +8,18 @@
 [![Discussions](https://img.shields.io/badge/Discussions-silver.svg)](https://forum.ansible.com/tag/molecule)
 [![Repository License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
-Molecule project is designed to aid in the development and testing of
-[Ansible](https://ansible.com) roles.
+Molecule is an Ansible testing framework designed for developing and testing
+[Ansible](https://ansible.com) collections, playbooks, and roles.
 
-Molecule provides support for testing with multiple instances, operating
-systems and distributions, virtualization providers, test frameworks and
-testing scenarios.
+Molecule leverages standard Ansible features including inventory, playbooks,
+and collections to provide flexible testing workflows. Test scenarios can
+target any system or service reachable from Ansible, from containers and
+virtual machines to cloud infrastructure, hyperscaler services, APIs,
+databases, and network devices. Molecule can also validate inventory
+configurations and dynamic inventory sources.
 
 Molecule encourages an approach that results in consistently developed
-roles that are well-written, easily understood and maintained.
+Ansible content that is well-written, easily understood and maintained.
 
 Molecule supports only the latest two major versions of Ansible (N/N-1).
 

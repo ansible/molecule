@@ -22,6 +22,28 @@ class MoleculeError(Exception):
         self,
         message: str = "",
         code: int = 1,
+    ) -> None:
+        """Generic exception for molecule errors.
+
+        Args:
+            message: The message to display about the problem.
+            code: Exit code to use when exiting.
+        """
+        super().__init__()
+        self.code = code
+        self.message = message
+
+        if message:
+            LOG.critical(message, extra={"highlighter": False})
+
+
+class ScenarioFailureError(MoleculeError):
+    """Details about a scenario that failed."""
+
+    def __init__(
+        self,
+        message: str = "",
+        code: int = 1,
         warns: Sequence[WarningMessage] = (),
     ) -> None:
         """Custom exception to handle scenario run failures.
@@ -31,19 +53,10 @@ class MoleculeError(Exception):
             code: Exit code to use when exiting.
             warns: Warnings about the problem to issue.
         """
-        super().__init__()
-
-        if message:
-            LOG.critical(message, extra={"highlighter": False})
+        super().__init__(message, code)
 
         for warn in warns:
-            LOG.warning(warn.__dict__["message"].args[0])
-
-        self.code = code
-
-
-class ScenarioFailureError(MoleculeError):
-    """Details about a scenario that failed."""
+            LOG.warning(warn.message)
 
 
 class ImmediateExit(Exception):  # noqa: N818

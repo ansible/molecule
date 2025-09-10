@@ -32,10 +32,10 @@ from typing import TYPE_CHECKING
 from ansible_compat.ports import cached_property
 
 from molecule import logger, util
-from molecule.constants import RC_SETUP_ERROR
-from molecule.exceptions import ImmediateExit, MoleculeError
+from molecule.constants import DEFAULT_ANSIBLE_CFG_OPTIONS, RC_SETUP_ERROR
+from molecule.exceptions import MoleculeError
 from molecule.provisioner import ansible_playbook, ansible_playbooks, base
-from molecule.reporting import CompletionState
+from molecule.reporting.definitions import CompletionState
 
 
 if TYPE_CHECKING:
@@ -47,366 +47,7 @@ if TYPE_CHECKING:
 
 
 class Ansible(base.Base):
-    """`Ansible` is the default provisioner.  No other provisioner will be supported.
-
-    Molecule's provisioner manages the instances lifecycle.  However, the user
-    must provide the create, destroy, and converge playbooks.  Molecule's
-    ``init`` subcommand will provide the necessary files for convenience.
-
-    Molecule will skip tasks which are tagged with either `molecule-notest` or
-    `notest`. With the tag `molecule-idempotence-notest` tasks are only
-    skipped during the idempotence action step.
-
-    !!! warning
-
-        Reserve the create and destroy playbooks for provisioning.  Do not
-        attempt to gather facts or perform operations on the provisioned nodes
-        inside these playbooks.  Due to the gymnastics necessary to sync state
-        between Ansible and Molecule, it is best to perform these tasks in the
-        prepare or converge playbooks.
-
-        It is the developers responsibility to properly map the modules' fact
-        data into the instance_conf_dict fact in the create playbook.  This
-        allows Molecule to properly configure Ansible inventory.
-
-    Additional options can be passed to ``ansible-playbook`` through the options
-    dict.  Any option set in this section will override the defaults.
-
-    !!! note
-
-        Options do not affect the create and destroy actions.
-
-    !!! note
-
-        Molecule will remove any options matching `^[v]+$`, and pass ``-vvv``
-        to the underlying ``ansible-playbook`` command when executing
-        `molecule --debug`.
-
-    Molecule will silence log output, unless invoked with the ``--debug`` flag.
-    However, this results in quite a bit of output.  To enable Ansible log
-    output, add the following to the ``provisioner`` section of ``molecule.yml``.
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          log: True
-    ```
-
-    The create/destroy playbooks for Docker and Podman are bundled with
-    Molecule.  These playbooks have a clean API from `molecule.yml`, and
-    are the most commonly used.  The bundled playbooks can still be overridden.
-
-    The playbook loading order is:
-
-    1. provisioner.playbooks.$driver_name.$action
-    2. provisioner.playbooks.$action
-    3. bundled_playbook.$driver_name.$action
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          options:
-            vvv: True
-          playbooks:
-            create: create.yml
-            converge: converge.yml
-            destroy: destroy.yml
-    ```
-
-    Share playbooks between roles.
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          playbooks:
-            create: ../default/create.yml
-            destroy: ../default/destroy.yml
-            converge: converge.yml
-    ```
-
-    Multiple driver playbooks.  In some situations a developer may choose to
-    test the same role against different backends.  Molecule will choose driver
-    specific create/destroy playbooks, if the determined driver has a key in
-    the playbooks section of the provisioner's dict.
-
-    !!! note
-
-        If the determined driver has a key in the playbooks dict, Molecule will
-        use this dict to resolve all provisioning playbooks (create/destroy).
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          playbooks:
-            docker:
-              create: create.yml
-              destroy: destroy.yml
-            create: create.yml
-            destroy: destroy.yml
-            converge: converge.yml
-    ```
-
-    !!! note
-
-        Paths in this section are converted to absolute paths, where the
-        relative parent is the $scenario_directory.
-
-    The side effect playbook executes actions which produce side effects to the
-    instances(s).  Intended to test HA failover scenarios or the like.  It is
-    not enabled by default.  Add the following to the provisioner's ``playbooks``
-    section to enable.
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          playbooks:
-            side_effect: side_effect.yml
-    ```
-
-    !!! note
-
-        This feature should be considered experimental.
-
-    The prepare playbook executes actions which bring the system to a given
-    state prior to converge.  It is executed after create, and only once for
-    the duration of the instances life.
-
-    This can be used to bring instances into a particular state, prior to
-    testing.
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          playbooks:
-            prepare: prepare.yml
-    ```
-
-    The cleanup playbook is for cleaning up test infrastructure that may not
-    be present on the instance that will be destroyed. The primary use-case
-    is for "cleaning up" changes that were made outside of Molecule's test
-    environment. For example, remote database connections or user accounts.
-    Intended to be used in conjunction with `prepare` to modify external
-    resources when required.
-
-    The cleanup step is executed directly before every destroy step. Just like
-    the destroy step, it will be run twice. An initial clean before converge
-    and then a clean before the last destroy step. This means that the cleanup
-    playbook must handle failures to cleanup resources which have not
-    been created yet.
-
-    Add the following to the provisioner's `playbooks` section
-    to enable.
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          playbooks:
-            cleanup: cleanup.yml
-    ```
-
-    !!! note
-
-        This feature should be considered experimental.
-
-    Environment variables can be passed to the provisioner.  Variables in this
-    section which match the names above will be appended to the above defaults,
-    and converted to absolute paths, where the relative parent is the
-    $scenario_directory.
-
-    !!! note
-
-        Paths in this section are converted to absolute paths, where the
-        relative parent is the $scenario_directory.
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          env:
-            FOO: bar
-    ```
-
-    Modifying ansible.cfg.
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          config_options:
-            defaults:
-              fact_caching: jsonfile
-            ssh_connection:
-              scp_if_ssh: True
-    ```
-
-    !!! note
-
-        The following keys are disallowed to prevent Molecule from
-        improperly functioning.  They can be specified through the
-        provisioner's env setting described above, with the exception
-        of the `privilege_escalation`.
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          config_options:
-            defaults:
-              library: /path/to/library
-              filter_plugins: /path/to/filter_plugins
-            privilege_escalation: {}
-    ```
-
-    Roles which require host/groups to have certain variables set.  Molecule
-    uses the same `variables defined in a playbook`_ syntax as `Ansible`_.
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          inventory:
-            group_vars:
-              all:
-                bar: foo
-              group1:
-                foo: bar
-              group2:
-                foo: bar
-                baz:
-                  qux: zzyzx
-            host_vars:
-              group1-01:
-                foo: baz
-    ```
-
-    Molecule automatically generates the inventory based on the hosts defined
-    under `Platforms`_. Using the ``hosts`` key allows to add extra hosts to
-    the inventory that are not managed by Molecule.
-
-    A typical use case is if you want to access some variables from another
-    host in the inventory (using hostvars) without creating it.
-
-    !!! note
-
-        The content of ``hosts`` should follow the YAML based inventory syntax:
-        start with the ``all`` group and have hosts/vars/children entries.
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          inventory:
-            hosts:
-              all:
-                hosts:
-                  extra_host:
-                    foo: hello
-    ```
-
-    !!! note
-
-        The extra hosts added to the inventory using this key won't be
-        created/destroyed by Molecule. It is the developers responsibility
-        to target the proper hosts in the playbook. Only the hosts defined
-        under `Platforms`_ should be targeted instead of ``all``.
-
-
-    An alternative to the above is symlinking.  Molecule creates symlinks to
-    the specified directory in the inventory directory. This allows ansible to
-    converge utilizing its built in host/group_vars resolution. These two
-    forms of inventory management are mutually exclusive.
-
-    Like above, it is possible to pass an additional inventory file
-    (or even dynamic inventory script), using the ``hosts`` key. `Ansible`_ will
-    automatically merge this inventory with the one generated by molecule.
-    This can be useful if you want to define extra hosts that are not managed
-    by Molecule.
-
-    !!! note
-
-        Again, it is the developers responsibility to target the proper hosts
-        in the playbook. Only the hosts defined under
-        `Platforms`_ should be targeted instead of ``all``.
-
-    !!! note
-
-        The source directory linking is relative to the scenario's
-        directory.
-
-        The only valid keys are ``hosts``, ``group_vars`` and ``host_vars``.  Molecule's
-        schema validator will enforce this.
-
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          inventory:
-            links:
-              hosts: ../../../inventory/hosts
-              group_vars: ../../../inventory/group_vars/
-              host_vars: ../../../inventory/host_vars/
-    ```
-
-    !!! note
-
-        You can use either `hosts`/`group_vars`/`host_vars` sections of inventory OR `links`.
-        If you use both, links will win.
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          hosts:
-            all:
-              hosts:
-                ignored:
-                   important: this host is ignored
-          inventory:
-            links:
-              hosts: ../../../inventory/hosts
-    ```
-
-    Override connection options:
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          connection_options:
-            ansible_ssh_user: foo
-            ansible_ssh_common_args: -o IdentitiesOnly=no
-    ```
-
-    Override tags:
-
-    ``` yaml
-        provisioner:
-        name: ansible
-        config_options:
-          tags:
-            run: tag1,tag2,tag3
-    ```
-
-    A typical use case is if you want to use tags within a scenario.
-    Don't forget to add a tag `always` in `converge.yml` as below.
-
-    ``` yaml
-        ---
-        - name: Converge
-          hosts: all
-          tasks:
-            - name: "Include acme.my_role_name"
-              ansible.builtin.include_role:
-                name: "acme.my_role_name"
-              tags:
-                - always
-    ```
-
-    .. _`variables defined in a playbook`: https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#defining-variables-in-a-playbook
-
-    Add arguments to ansible-playbook when running converge:
-
-    ``` yaml
-        provisioner:
-          name: ansible
-          ansible_args:
-            - --inventory=mygroups.yml
-            - --limit=host1,host2
-    ```
-    """
+    """The Ansible provisioner."""
 
     @property
     def _log(self) -> logger.ScenarioLoggerAdapter:
@@ -426,21 +67,7 @@ class Ansible(base.Base):
         Returns:
             Default config options.
         """
-        return {
-            "defaults": {
-                "ansible_managed": "Ansible managed: Do NOT edit this file manually!",
-                "display_failed_stderr": True,
-                "forks": 50,
-                "retry_files_enabled": False,
-                "host_key_checking": False,
-                "nocows": 1,
-                "interpreter_python": "auto_silent",
-            },
-            "ssh_connection": {
-                "scp_if_ssh": True,
-                "control_path": "%(directory)s/%%h-%%p-%%r",
-            },
-        }
+        return DEFAULT_ANSIBLE_CFG_OPTIONS
 
     @property
     def default_options(self) -> dict[str, str | bool]:
@@ -487,23 +114,39 @@ class Ansible(base.Base):
 
     @property
     def ansible_args(self) -> list[str]:
-        """Provisioner ansible args.
+        """Get ansible args from config file based on executor backend.
+
+        If the executor is ansible-navigator, we need to combine the
+        ansible_navigator args with the ansible_playbook args.
+        For ansible-playbook, we only use the ansible_playbook args.
 
         Returns:
-            The provisioner ansible_args.
+            List of ansible arguments from config file for the current executor.
         """
-        return self._config.config["provisioner"]["ansible_args"]
+        ansible_config = self._config.config["ansible"]
+        executor_config = ansible_config["executor"]
+        backend = executor_config["backend"]
+
+        # Get executor-specific args from config file only
+        args_config = executor_config["args"]
+        if backend == "ansible-navigator":
+            playbook_args = args_config["ansible_playbook"]
+            navigator_args = args_config["ansible_navigator"]
+            # For navigator, we need both navigator args and playbook args (passed via --)
+            return navigator_args + (["--", *playbook_args] if playbook_args else [])
+        # For ansible-playbook, only use ansible_playbook args
+        return args_config["ansible_playbook"]
 
     @property
     def config_options(self) -> dict[str, Any]:
-        """Provisioner config options.
+        """Get ansible config options.
 
         Returns:
-            The provisioner config options.
+            The ansible config options.
         """
         return util.merge_dicts(
             self.default_config_options,
-            self._config.config["provisioner"]["config_options"],
+            self._config.config["ansible"]["cfg"],
         )
 
     @property
@@ -532,7 +175,7 @@ class Ansible(base.Base):
             Complete set of collected environment variables.
         """
         default_env = self.default_env
-        env = self._config.config["provisioner"]["env"].copy()
+        env = self._config.config["ansible"]["env"].copy()
         # ensure that all keys and values are strings
         env = {str(k): str(v) for k, v in env.items()}
         return util.merge_dicts(default_env, env)
@@ -598,29 +241,32 @@ class Ansible(base.Base):
         ```
         """
         dd = self._vivify()
+
+        # Always ensure basic inventory structure with molecule vars
+        molecule_vars = {
+            "molecule_file": "{{ lookup('env', 'MOLECULE_FILE') }}",
+            "molecule_ephemeral_directory": "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
+            "molecule_scenario_directory": "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
+            "molecule_yml": "{{ lookup('file', molecule_file) | from_yaml }}",
+            "molecule_instance_config": "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
+            "molecule_no_log": "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
+            "molecule_yml.provisioner.log|default(False) | bool }}",
+        }
+
+        # Initialize basic groups even if no platforms exist
+        dd["all"]["vars"] = molecule_vars
+        dd["ungrouped"]["vars"] = {}
+
         for platform in self._config.platforms.instances:
             for group in platform.get("groups", ["ungrouped"]):
                 instance_name = platform["name"]
                 connection_options = self.connection_options(instance_name)
-                molecule_vars = {
-                    "molecule_file": "{{ lookup('env', 'MOLECULE_FILE') }}",
-                    "molecule_ephemeral_directory": "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
-                    "molecule_scenario_directory": "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                    "molecule_shared_inventory_dir": "{{ lookup('env', 'MOLECULE_SHARED_INVENTORY_DIR') }}",
-                    "molecule_yml": "{{ lookup('file', molecule_file) | from_yaml }}",
-                    "molecule_instance_config": "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
-                    "molecule_no_log": "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
-                    "molecule_yml.provisioner.log|default(False) | bool }}",
-                }
 
                 # All group
                 dd["all"]["hosts"][instance_name] = connection_options
-                dd["all"]["vars"] = molecule_vars
                 # Named group
                 dd[group]["hosts"][instance_name] = connection_options
                 dd[group]["vars"] = molecule_vars
-                # Ungrouped
-                dd["ungrouped"]["vars"] = {}
                 # Children
                 for child_group in platform.get("children", []):
                     dd[group]["children"][child_group]["hosts"][instance_name] = connection_options
@@ -904,12 +550,13 @@ class Ansible(base.Base):
     def _verify_inventory(self) -> None:
         """Verify the inventory is valid and returns None.
 
-        Raises:
-            ImmediateExit: if inventory is missing.
+        Check if a specific platform was requested but doesn't exist.
+        The inventory property always returns a minimal valid structure
+        regardless of the platforms defined in the molecule.yml file.
         """
-        if not self.inventory:
+        if self._config.platform_name is not None and not self._config.platforms.instances:
             msg = "Instances missing from the 'platform' section of molecule.yml."
-            raise ImmediateExit(msg, code=RC_SETUP_ERROR)
+            util.sysexit_with_message(msg, code=RC_SETUP_ERROR)
 
     def _get_config_template(self) -> str:
         """Return a config template string.

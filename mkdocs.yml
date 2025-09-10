@@ -57,19 +57,24 @@ extra:
 
 nav:
   - Home: index.md
+  - philosophy.md
   - installation.md
   - Using:
-      - getting-started.md
+      - getting-started-playbooks.md
+      - getting-started-collections.md
       - usage.md
-      - next.md
+      - ansible-native.md
+      - workflow.md
       - configuration.md
       - ci.md
+      - pre-ansible-native.md
   - Collection:
       - collection.md
   - Examples:
       - examples/docker.md
       - examples/podman.md
       - examples/kubevirt.md
+      - examples/ansible_native_inventory.md
   - Guides:
       - guides/custom-image.md
       - guides/docker-rootless.md

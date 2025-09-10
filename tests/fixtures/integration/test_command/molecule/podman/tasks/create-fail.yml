@@ -1,14 +1,14 @@
+---
 - name: Retrieve container log
   ansible.builtin.command:
-    cmd: >-
-      {% raw %}
-      podman logs
-      {% endraw %}
-      {{ item.stdout_lines[0] }}
-    # podman inspect --format='{{.HostConfig.LogConfig.Path}}'
+    cmd: podman logs {{ item.container.Name }}
   changed_when: false
   register: logfile_cmd
 
-- name: Display container log
+- name: Display container log and fail
   ansible.builtin.fail:
-    msg: "{{ logfile_cmd.stderr }}"
+    msg: |
+      Container {{ item.container.Name }} failed to start properly.
+      Exit Code: {{ item.container.State.ExitCode }}
+      Running: {{ item.container.State.Running }}
+      Log output: {{ logfile_cmd.stdout | default('No logs available') }}

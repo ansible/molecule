@@ -25,7 +25,7 @@ from typing import TYPE_CHECKING
 
 from molecule.click_cfg import click_command_ex, common_options
 from molecule.command import base
-from molecule.reporting import CompletionState
+from molecule.reporting.definitions import CompletionState
 
 
 if TYPE_CHECKING:
@@ -125,7 +125,6 @@ def prepare(ctx: click.Context) -> None:  # pragma: no cover
         "command_borders": ctx.params["command_borders"],
         "force": ctx.params["force"],
         "report": ctx.params["report"],
-        "shared_inventory": ctx.params["shared_inventory"],
         "shared_state": ctx.params["shared_state"],
         "subcommand": subcommand,
     }

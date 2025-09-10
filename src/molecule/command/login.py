@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING
 from molecule import scenarios
 from molecule.click_cfg import click_command_ex, options
 from molecule.command import base
-from molecule.exceptions import MoleculeError
+from molecule.util import sysexit_with_message
 
 
 if TYPE_CHECKING:
@@ -78,11 +78,14 @@ class Login(base.Base):
                     "which with --host.\n\n"
                     f"Available hosts:\n{host_list}"
                 )
-                raise MoleculeError(msg)
+                sysexit_with_message(msg, code=1)
         match = [x for x in hosts if x.startswith(hostname)]
         if len(match) == 0:
-            msg = f"There are no hosts that match '{hostname}'.  You can only login to valid hosts."
-            raise MoleculeError(msg)
+            msg = (
+                f"Unable to find host '{hostname}'.\n"
+                "For more information: https://ansible.readthedocs.io/projects/molecule/usage/#molecule-login"
+            )
+            sysexit_with_message(msg, code=1)
         if len(match) != 1:
             # If there are multiple matches, but one of them is an exact string
             # match, assume this is the one they're looking for and use it.
@@ -94,7 +97,7 @@ class Login(base.Base):
                     "can only login to one at a time.\n\n"
                     f"Available hosts:\n{host_list}"
                 )
-                raise MoleculeError(msg)
+                sysexit_with_message(msg, code=1)
 
         return match[0]
 
@@ -127,7 +130,6 @@ def login(ctx: click.Context) -> None:  # pragma: no cover
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
-        "command_borders": ctx.params["command_borders"],
         "host": ctx.params["host"],
         "subcommand": subcommand,
     }

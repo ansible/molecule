@@ -4,8 +4,6 @@ dependency:
   options:
     requirements-file: requirements.yml
     role-file: requirements.yml
-executor:
-  backend: ansible-playbook
 platforms:
   - name: rhel9
     image: registry.redhat.io/rhel9/rhel-guest-image

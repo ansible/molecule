@@ -1,0 +1,4 @@
+all:
+  hosts:
+    container-devtools:
+      container_image: ghcr.io/ansible/community-ansible-dev-tools:latest

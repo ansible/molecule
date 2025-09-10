@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.  # noqa: D100
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -17,47 +17,37 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+"""Test the util module."""
+
+# pylint: disable=too-many-lines
+
 from __future__ import annotations
 
 import binascii
+import logging
 import os
 import tempfile
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import pytest
 import yaml
 
 from molecule import util
-from molecule.console import console
 from molecule.constants import MOLECULE_COLLECTION_GLOB, MOLECULE_HEADER
 from molecule.exceptions import MoleculeError
-from molecule.text import strip_ansi_escape
 
 
 if TYPE_CHECKING:
     from collections.abc import MutableMapping
-    from typing import Any
-    from unittest.mock import Mock
-
-    from pytest_mock import MockerFixture
 
     from molecule.app import App
     from molecule.types import Options
 
 
-def test_print_debug() -> None:  # noqa: D103
-    expected = "DEBUG: test_title:\ntest_data\n"
-    with console.capture() as capture:
-        util.print_debug("test_title", "test_data")
-
-    result = strip_ansi_escape(capture.get())
-    assert result == expected
-
-
 def test_print_environment_vars(  # noqa: D103
-    capsys: pytest.CaptureFixture[str],
+    caplog: pytest.LogCaptureFixture,
 ) -> None:
     env = {
         "ANSIBLE_FOO": "foo",
@@ -67,22 +57,18 @@ def test_print_environment_vars(  # noqa: D103
         "MOLECULE_BAR": "bar",
         "MOLECULE": "",
     }
-    expected = """DEBUG: ANSIBLE ENVIRONMENT:
-ANSIBLE_BAR: bar
-ANSIBLE_FOO: foo
 
-DEBUG: MOLECULE ENVIRONMENT:
-MOLECULE_BAR: bar
-MOLECULE_FOO: foo
-
-DEBUG: SHELL REPLAY:
-ANSIBLE_BAR=bar ANSIBLE_FOO=foo MOLECULE_BAR=bar MOLECULE_FOO=foo
-"""
-
-    with console.capture() as capture:
+    with caplog.at_level(logging.DEBUG):
         util.print_environment_vars(env)
-    result = strip_ansi_escape(capture.get())
-    assert result == expected
+
+    # Check that the expected debug messages were logged
+    assert "ANSIBLE ENVIRONMENT:" in caplog.text
+    assert "MOLECULE ENVIRONMENT:" in caplog.text
+    assert "SHELL REPLAY:" in caplog.text
+    assert "ANSIBLE_BAR: bar" in caplog.text
+    assert "ANSIBLE_FOO: foo" in caplog.text
+    assert "MOLECULE_BAR: bar" in caplog.text
+    assert "MOLECULE_FOO: foo" in caplog.text
 
 
 def test_sysexit() -> None:  # noqa: D103
@@ -99,6 +85,31 @@ def test_sysexit_with_custom_code() -> None:  # noqa: D103
     assert e.value.code == 2  # noqa: PLR2004
 
 
+def test_sysexit_with_message(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Tests the sysexit_with_message function.
+
+    Args:
+        caplog: The log capture fixture.
+    """
+    message = "This should appear in the logs."
+    with pytest.raises(SystemExit) as e:
+        util.sysexit_with_message(message, 0)
+
+    assert e.value.code == 0
+    assert message in caplog.text
+
+
+def test_sysexit_from_exception() -> None:
+    """Tests the sysexit_from_exception function."""
+    exc = MoleculeError(message="Test exception", code=3)
+    with pytest.raises(SystemExit) as e:
+        util.sysexit_from_exception(exc)
+
+    assert e.value.code == exc.code
+
+
 def test_run_command(app: App) -> None:  # noqa: D103
     cmd = ["ls"]
     x = app.run_command(cmd)
@@ -107,19 +118,19 @@ def test_run_command(app: App) -> None:  # noqa: D103
 
 
 def test_run_command_with_debug(  # noqa: D103
-    mocker: MockerFixture,
-    patched_print_debug: Mock,
+    caplog: pytest.LogCaptureFixture,
     app: App,
 ) -> None:
     env = {"ANSIBLE_FOO": "foo", "MOLECULE_BAR": "bar"}
-    app.run_command(["ls"], debug=True, env=env)
-    x = [
-        mocker.call("ANSIBLE ENVIRONMENT", "ANSIBLE_FOO: foo\n"),
-        mocker.call("MOLECULE ENVIRONMENT", "MOLECULE_BAR: bar\n"),
-        mocker.call("SHELL REPLAY", "ANSIBLE_FOO=foo MOLECULE_BAR=bar"),
-    ]
+    with caplog.at_level(logging.DEBUG):
+        app.run_command(["ls"], debug=True, env=env)
 
-    assert x == patched_print_debug.mock_calls
+    # Check that environment variables were logged
+    assert "ANSIBLE ENVIRONMENT:" in caplog.text
+    assert "ANSIBLE_FOO: foo" in caplog.text
+    assert "MOLECULE ENVIRONMENT:" in caplog.text
+    assert "MOLECULE_BAR: bar" in caplog.text
+    assert "SHELL REPLAY:" in caplog.text
 
 
 def test_run_command_baked_cmd_env(app: App) -> None:  # noqa: D103
@@ -138,16 +149,17 @@ def test_run_command_baked_cmd_env(app: App) -> None:  # noqa: D103
 
 
 def test_run_command_with_debug_handles_no_env(  # noqa: D103
-    mocker: MockerFixture,
-    patched_print_debug: Mock,
+    caplog: pytest.LogCaptureFixture,
     app: App,
 ) -> None:
     cmd = ["ls"]
-    app.run_command(cmd, debug=True)
-    # when env is empty we expect not to print anything
-    empty_list: list[Any] = []
+    with caplog.at_level(logging.DEBUG):
+        app.run_command(cmd, debug=True)
 
-    assert empty_list == patched_print_debug.mock_calls
+    # When env is empty, print_environment_vars should not log anything
+    # since the function has an early return when env is None/empty
+    assert "ANSIBLE ENVIRONMENT:" not in caplog.text
+    assert "MOLECULE ENVIRONMENT:" not in caplog.text
 
 
 def test_os_walk(test_cache_path: Path) -> None:  # noqa: D103
@@ -276,8 +288,7 @@ def test_verbose_flag_extra_verbose() -> None:  # noqa: D103
 def test_verbose_flag_preserves_verbose_option() -> None:  # noqa: D103
     options: Options = {"verbose": True}
 
-    # pylint: disable=use-implicit-booleaness-not-comparison
-    assert util.verbose_flag(options) == []
+    assert not util.verbose_flag(options)
     assert options == {"verbose": True}
 
 
@@ -931,3 +942,75 @@ def test_lookup_config_file_collection_no_extensions_dir(
 
     # Should fall back to home directory since collection extensions dir doesn't exist
     assert result == str(home_config)
+
+
+@pytest.mark.parametrize(
+    ("input_value", "expected"),
+    (
+        (True, True),
+        (False, False),
+        ("yes", True),
+        ("YES", True),
+        ("on", True),
+        ("ON", True),
+        ("1", True),
+        ("true", True),
+        ("TRUE", True),
+        ("no", False),
+        ("off", False),
+        ("0", False),
+        ("false", False),
+        (1, True),
+        (0, False),
+        ("", False),
+    ),
+)
+def test_boolean_valid_inputs(input_value: object, expected: bool) -> None:  # noqa: FBT001
+    """Test boolean function with valid inputs.
+
+    Args:
+        input_value: The input value to test.
+        expected: The expected boolean result.
+    """
+    assert util.boolean(input_value) is expected
+
+
+@pytest.mark.parametrize(
+    "input_value",
+    (
+        None,
+        "random",
+        42,
+        "invalid",
+    ),
+)
+def test_boolean_invalid_values(input_value: object) -> None:
+    """Test boolean function raises TypeError for invalid inputs.
+
+    Args:
+        input_value: The invalid input value to test.
+    """
+    with pytest.raises(TypeError):
+        util.boolean(input_value)
+
+
+@pytest.mark.parametrize(
+    ("input_value", "default_value", "expected"),
+    (
+        (None, False, False),
+        ("random", True, True),
+        (42, False, False),
+        ("invalid", True, True),
+        ("yes", False, True),  # Valid input should ignore default
+        ("no", True, False),  # Valid input should ignore default
+    ),
+)
+def test_boolean_with_default(input_value: object, default_value: bool, expected: bool) -> None:  # noqa: FBT001
+    """Test boolean function with default parameter.
+
+    Args:
+        input_value: The input value to test.
+        default_value: The default value to use for invalid inputs.
+        expected: The expected boolean result.
+    """
+    assert util.boolean(input_value, default=default_value) is expected
