@@ -159,5 +159,8 @@ virtenv
 virtualmachines
 webservers
 xdist
+yourcollection
+yournamespace
+yourrole
 zceos
 zzyzx

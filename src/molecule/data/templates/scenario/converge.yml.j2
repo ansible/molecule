@@ -1,8 +1,10 @@
 ---
+# Purpose: bring the instance to the desired state by running the role under test.
+# Molecule calls this playbook with `molecule converge`.
 - name: Converge
   hosts: all
-  gather_facts: false
+  gather_facts: true # Disable if your role does not rely on facts
   tasks:
-    - name: Replace this task with one that validates your content
-      ansible.builtin.debug:
-        msg: "This is the effective test"
+    - name: Apply role under test
+      ansible.builtin.include_role:
+        name: yournamespace.yourcollection.yourrole

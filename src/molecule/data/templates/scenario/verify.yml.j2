@@ -1,0 +1,10 @@
+---
+# Purpose: assert that the instance really ended up in the expected state.
+# Molecule calls this playbook with `molecule verify`.
+- name: Verify
+  hosts: instance
+  gather_facts: false # Quicker, if you do not need facts
+  tasks:
+    - name: Assert something
+      ansible.builtin.assert:
+        that: true
