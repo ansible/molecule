@@ -107,7 +107,7 @@ plugins:
             docstring_style: sphinx
             merge_init_into_class: yes
             show_submodules: yes
-          import:
+          inventories:
             - url: https://docs.ansible.com/ansible/latest/objects.inv
               domains: [py, std, "std:doc", "std:label"]
             - url: https://pip.pypa.io/en/latest/objects.inv

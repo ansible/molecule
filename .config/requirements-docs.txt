@@ -1,2 +1,0 @@
-mkdocs-ansible>=24.3.0
-linkchecker>=10.4.0
