@@ -54,7 +54,7 @@ repos:
           - prettier-plugin-sort-json
 
   - repo: https://github.com/pappasam/toml-sort
-    rev: v0.24.2
+    rev: v0.24.3
     hooks:
       - id: toml-sort-fix
 
@@ -64,7 +64,7 @@ repos:
       - id: tox-ini-fmt
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.11
+    rev: v0.13.0
     hooks:
       - id: ruff
         entry: sh -c 'ruff check --fix --force-exclude && ruff format --force-exclude'
@@ -75,7 +75,7 @@ repos:
         name: Spell check with cspell
 
   - repo: https://github.com/jsh9/pydoclint
-    rev: "0.6.11"
+    rev: "0.7.3"
     hooks:
       - id: pydoclint
         # This allows automatic reduction of the baseline file when needed.
@@ -101,7 +101,7 @@ repos:
           - wcmatch
 
   - repo: https://github.com/pre-commit/mirrors-mypy.git
-    rev: v1.17.1
+    rev: v1.18.1
     hooks:
       - id: mypy
         additional_dependencies:
@@ -146,7 +146,7 @@ repos:
         additional_dependencies:
           - uv>=0.5.21
   - repo: https://github.com/ansible/ansible-lint
-    rev: v25.8.2
+    rev: v25.9.0
     hooks:
       - id: ansible-lint
         stages: [manual]

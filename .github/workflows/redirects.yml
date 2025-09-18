@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
 
       - name: Upgrade Python toolchain
         run: python3 -m pip install --upgrade pip setuptools wheel
