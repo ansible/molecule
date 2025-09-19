@@ -521,7 +521,7 @@ class Ansible(base.Base):
                 os.remove(target)  # noqa: PTH107
             msg = f"Inventory {source} linked to {target}"
             self._log.debug(msg)
-            os.symlink(source, target)  # noqa: PTH211
+            os.symlink(source, target)
 
     def _get_ansible_playbook(
         self,
