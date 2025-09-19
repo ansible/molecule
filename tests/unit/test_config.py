@@ -266,7 +266,7 @@ def test_verifier_property_invalid(config_instance: config.Config) -> None:  # n
     config_instance.config["verifier"]["name"] = "missing"
     del config_instance.verifier
 
-    with pytest.raises(RuntimeError, match="Unable to find 'missing' verifier driver."):
+    with pytest.raises(RuntimeError, match=r"Unable to find 'missing' verifier driver."):
         config_instance.verifier  # noqa: B018
 
 

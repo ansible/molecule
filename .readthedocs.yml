@@ -8,18 +8,17 @@ mkdocs:
 build:
   os: ubuntu-24.04
   tools:
-    python: "3.12"
+    python: "3.13"
   commands:
-    - pip install --user tox
-    - python3 -m tox -e docs
-python:
-  install:
-    - method: pip
-      path: tox
-    - method: pip
-      path: .
-      extra_requirements:
-        - docs
+    - curl https://mise.run | sh
+    - ~/.local/bin/mise settings experimental=true
+    - ~/.local/bin/mise settings python.compile=false
+    - ~/.local/bin/mise settings python.uv_venv_auto=true
+    - ~/.local/bin/mise trust
+    - ~/.local/bin/mise install
+    - PATH=~/.local/share/mise/shims:$PATH ~/.local/bin/mise doctor || true
+    - PATH=~/.local/share/mise/shims:$PATH ~/.local/bin/mise exec --command "python3 -m pip install tox"
+    - PATH=~/.local/share/mise/shims:$PATH ~/.local/bin/mise exec --command "python3 -m tox -e docs"
 submodules:
   include: all
   recursive: true

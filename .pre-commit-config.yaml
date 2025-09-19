@@ -1,14 +1,8 @@
 ---
 ci:
-  # format compatible with commitlint
-  autoupdate_commit_msg: "chore: pre-commit autoupdate"
-  # we rely on renovate to update it but there is no way to fully disable it
+  # We rely on renovate to update it but there is no way to fully disable it
+  # https://github.com/pre-commit-ci/issues/issues/83
   autoupdate_schedule: quarterly
-  autofix_commit_msg: "chore: auto fixes from pre-commit.com hooks"
-
-  skip:
-    # https://github.com/pre-commit-ci/issues/issues/55
-    - pip-compile
 default_language_version:
   python: python3.10 # minimal we support officially for consistent results
 
@@ -43,25 +37,20 @@ repos:
             .config/pydoclint-baseline.txt
           )$
 
-  - repo: https://github.com/pycontribs/mirrors-prettier
+  - repo: https://github.com/rbubley/mirrors-prettier
     rev: v3.6.2
     hooks:
       - id: prettier
         always_run: true
         additional_dependencies:
           - prettier
-          - prettier-plugin-toml
           - prettier-plugin-sort-json
 
   - repo: https://github.com/pappasam/toml-sort
-    rev: v0.24.2
+    rev: v0.24.3
     hooks:
       - id: toml-sort-fix
-
-  - repo: https://github.com/tox-dev/tox-ini-fmt
-    rev: 1.6.0
-    hooks:
-      - id: tox-ini-fmt
+        alias: toml
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.12.11
@@ -121,30 +110,6 @@ repos:
         # Override default pre-commit '--ignore-missing-imports'
         args: [--strict]
 
-  # Keep last due to being considerably slower than the others:
-  - repo: local
-    hooks:
-      - id: pip-compile-upgrade
-        # To run it execute: `pre-commit run pip-compile-upgrade --hook-stage manual`
-        name: Upgrade constraints files and requirements
-        files: ^(pyproject\.toml|.config/.*)$
-        always_run: true
-        language: python
-        entry: python3 -m uv pip compile -q --all-extras --output-file=.config/constraints.txt pyproject.toml --upgrade
-        pass_filenames: false
-        stages:
-          - manual
-        additional_dependencies:
-          - uv>=0.5.21
-      - id: pip-compile
-        name: "pip-compile: check constraints files and requirements"
-        always_run: true
-        files: ^(pyproject\.toml|\.config/.*)$
-        language: python
-        entry: python3 -m uv pip compile --refresh --all-extras --output-file=.config/constraints.txt pyproject.toml
-        pass_filenames: false
-        additional_dependencies:
-          - uv>=0.5.21
   - repo: https://github.com/ansible/ansible-lint
     rev: v25.8.2
     hooks:

@@ -1,4 +1,6 @@
+---
 comment: false
 coverage:
   status:
-    patch: true
+    patch: false
+    project: true

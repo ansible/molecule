@@ -684,8 +684,12 @@ def test_remove_vars_symlinks(instance):  # type: ignore[no-untyped-def]  # noqa
 
     source_group_vars = os.path.join(inventory_dir, os.path.pardir, "group_vars")  # noqa: PTH118
     target_group_vars = os.path.join(inventory_dir, "group_vars")  # noqa: PTH118
-    os.mkdir(source_group_vars)  # noqa: PTH102
-    os.symlink(source_group_vars, target_group_vars)
+    path = Path(source_group_vars)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if not path.is_symlink():
+        if path.exists():
+            path.unlink()
+        path.symlink_to(target_group_vars)
 
     instance._remove_vars()
 
