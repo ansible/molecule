@@ -5,6 +5,53 @@ requires = [
   "setuptools_scm[toml] >= 7.0.5" # required for "no-local-version" scheme
 ]
 
+[dependency-groups]
+collection = [
+  "tox-ansible>=25.8.0"
+]
+dev = [
+  "ansi2html>=1.8.0",
+  "ansible-lint>=6.12.1",
+  "ansible-navigator>=25.8.0",
+  "coverage[toml]>=7.10.6",
+  "docker>=7.1.0",
+  "filelock>=3.9.0",
+  "mypy>=1.17.1",
+  "pexpect>=4.9.0,<5",
+  "pre-commit>=4.3.0",
+  "pydoclint>=0.7.1",
+  "pylint>=3.3.8",
+  "pytest>=8.4.1",
+  "pytest-instafail>=0.5.0",
+  "pytest-mock>=3.10.0",
+  "pytest-plus>=0.7.0",
+  "pytest-xdist>=3.8.0",
+  "requests!=2.32.0",
+  "ruff>=0.12.11",
+  "toml-sort>=0.24.2",
+  "tox>=4.29.0",
+  "types-jsonschema>=4.25.1.20250822",
+  "types-pexpect>=4.9.0.20250809",
+  "types-pyyaml>=6.0.12.20250822"
+]
+docs = [
+  "linkchecker>=10.4.0",
+  "mkdocs-ansible>=24.3.0"
+]
+lint = [
+  "pip>=25.2",
+  "pre-commit-uv>=4.1.4",
+  "pre-commit>=4.1",
+  "pytest>=7.2.2",
+  "setuptools>=51.1.1"
+]
+pkg = [
+  "build>=0.9",
+  "pip>=25.2",
+  "pipx>=1.7.1",
+  "twine>=4.0.2"
+]
+
 [project]
 authors = [{"email" = "info@ansible.com", "name" = "Ansible by Red Hat"}]
 classifiers = [
@@ -13,7 +60,6 @@ classifiers = [
   "Intended Audience :: Developers",
   "Intended Audience :: Information Technology",
   "Intended Audience :: System Administrators",
-  "License :: OSI Approved :: MIT License",
   "Operating System :: MacOS",
   "Operating System :: POSIX",
   "Programming Language :: Python :: 3",
@@ -28,10 +74,24 @@ classifiers = [
   "Topic :: Software Development :: Testing",
   "Topic :: Utilities"
 ]
+dependencies = [
+  "ansible-compat>=25.1.4",
+  "ansible-core>=2.15.0",
+  "click>=8.0,<9",
+  "click-help-colors>=0.9.4",
+  "enrich>=1.2.7",
+  "jinja2>=2.11.3",
+  "jsonschema>=4.9.1",
+  "packaging>=25.0",
+  "pluggy>=0.7.1,<2.0",
+  "pyyaml>=5.1",
+  "rich>=9.5.1",
+  "wcmatch>=8.1.2"
+]
 description = "Molecule aids in the development and testing of Ansible roles"
-dynamic = ["version", "dependencies", "optional-dependencies"]
+dynamic = ["version"]
 keywords = ["ansible", "roles", "testing", "molecule"]
-license = {text = "MIT"}
+license = "MIT"
 maintainers = [{"email" = "info@ansible.com", "name" = "Ansible by Red Hat"}]
 name = "molecule"
 readme = "README.md"
@@ -55,19 +115,19 @@ repository = "https://github.com/ansible-community/molecule"
 
 [tool.coverage.report]
 exclude_also = ["if TYPE_CHECKING:", "pragma: no cover"]
-fail_under = 90
+fail_under = 89
 ignore_errors = false # avoid spamming the console if there are no errors
 show_missing = true
 skip_covered = true
 skip_empty = true
-sort = "Cover"
 
 [tool.coverage.run]
-branch = false # https://github.com/nedbat/coveragepy/issues/605
+# branch is more reliable than lines, protects against false positives
+branch = true
 concurrency = ["multiprocessing", "thread"]
 omit = ["types.py", "_version.py"]
 parallel = true
-source_pkgs = ["molecule"]
+source = ["src"]
 
 [tool.mypy]
 cache_dir = "./.cache/.mypy"
@@ -343,7 +403,7 @@ fail-on = [
 [tool.pytest.ini_options]
 addopts = "-ra --showlocals --durations=10"
 cache_dir = "./.cache/.pytest"
-junit_family = "legacy" # see https://docs.codecov.com/docs/test-analytics
+junit_family = "xunit2"
 markers = [
   "serial: Run this test serially via filelock.",
   "extensive: marks tests that we want to skip by default, as they are indirectly covered by other tests"
@@ -389,12 +449,6 @@ required-imports = ["from __future__ import annotations"]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.setuptools.dynamic]
-dependencies = {file = [".config/requirements.in"]}
-optional-dependencies.docs = {file = [".config/requirements-docs.txt"]}
-optional-dependencies.test = {file = [".config/requirements-test.txt"]}
-optional-dependencies.testinfra = {file = [".config/requirements-testinfra.txt"]}
-
 [tool.setuptools_scm]
 # To prevent accidental pick of mobile version tags such 'v6'
 git_describe_command = [
@@ -408,21 +462,215 @@ git_describe_command = [
 ]
 local_scheme = "no-local-version"
 tag_regex = "^(?P<prefix>v)?(?P<version>\\d+[^\\+]*)(?P<suffix>.*)?$"
-write_to = "src/molecule/_version.py"
+version_file = "src/molecule/_version.py"
 
 [tool.tomlsort]
 in_place = true
 sort_inline_tables = true
 sort_table_keys = true
 
-[tool.uv.pip]
-annotation-style = "line"
-custom-compile-command = "tox run -e deps"
-no-emit-package = [
-  "ansible-core",
-  "pip",
-  "resolvelib",
-  "ruamel-yaml-clib",
-  "typing_extensions",
+[tool.tox]
+env_list = [
+  "py",
+  "collection",
+  "deps",
+  "docs",
+  "lint",
+  "milestone",
+  "pkg",
+  "eco"
+]
+requires = [
+  "tox>=4.23.2",
+  "tox-extra>=2.0.2",
+  "tox-uv>=1.20.2"
+]
+skip_missing_interpreters = true
+
+[tool.tox.env.collection]
+commands = [
+  ["tox", "--ansible", "-c", "community.molecule/tox-ansible.ini"]
+]
+commands_post = []
+commands_pre = []
+dependency_groups = ["collection"]
+description = "Test community.molecule collection"
+
+[tool.tox.env.deps]
+commands = [
+  [
+    "pre-commit",
+    "run",
+    "--all-files",
+    "--show-diff-on-failure",
+    "--hook-stage",
+    "manual",
+    "deps"
+  ],
+  ["pre-commit", "autoupdate"],
+  ["tox", "-e", "lint"]
+]
+commands_pre = []
+description = "Bump all test dependencies"
+env_dir = "{work_dir}/lint"
+skip_install = true
+
+[tool.tox.env.devel]
+dependency_groups = ["dev"]
+deps = [
+  "ansible-core @ git+https://github.com/ansible/ansible.git"
+]
+description = "Run the tests with newest dependencies (no lock and allowing prereleases)"
+runner = "uv-venv-runner"
+uv_sync_flags = ["--upgrade", "--prerelease=allow"]
+uv_sync_locked = false
+
+[tool.tox.env.docs]
+commands = [
+  [
+    "mkdocs",
+    {default = ["build", "--strict", "--site-dir=_readthedocs/html/"], extend = true, replace = "posargs"}
+  ]
+]
+commands_post = []
+commands_pre = []
+dependency_groups = ["docs"]
+description = "Builds docs"
+skip_install = false
+set_env.DYLD_FALLBACK_LIBRARY_PATH = "/opt/homebrew/lib:{env:LD_LIBRARY_PATH}"
+set_env.NO_COLOR = "1"
+set_env.TERM = "dump"
+
+[tool.tox.env.eco]
+commands = [
+  ["uv", "pip", "check"],
+  ["uv", "pip", "tree", "--invert"],
+  ["molecule", "--version"],
+  ["molecule", "drivers"]
+]
+deps = [
+  "molecule-plugins[azure,containers,docker,ec2,gce,podman,vagrant]>=23",
+  "tox-ansible>=25.5.5",
   "uv"
 ]
+description = "Smoketest of combining all known to be maintained plugins (ecosystem)"
+pip_pre = true
+
+[tool.tox.env.lint]
+commands = [["pre-commit", "run", "--all-files", "--show-diff-on-failure"]]
+commands_pre = []
+dependency_groups = ["lint"]
+description = "Run all linters"
+skip_install = true
+
+[tool.tox.env.lower]
+base_python = ["python3.10"]
+dependency_groups = ["dev"]
+description = "Install using lowest constraints possible."
+runner = "uv-venv-runner"
+uv_resolution = "lowest"
+
+[tool.tox.env.milestone]
+dependency_groups = ["dev"]
+deps = [
+  "ansible-core@ https://github.com/ansible/ansible/archive/milestone.tar.gz"
+]
+description = "Run tests with ansible-core milestone branch and without dependencies constraints"
+runner = "uv-venv-runner"
+uv_sync_locked = false
+
+[tool.tox.env.pkg]
+commands = [
+  ["rm", "-rf", "{tox_root}/dist/"],
+  [
+    "python",
+    "-m",
+    "build",
+    "--outdir",
+    "{tox_root}/dist/",
+    "{tox_root}"
+  ],
+  ["sh", "-c", "python -m twine check --strict {tox_root}/dist/*"]
+]
+commands_post = []
+commands_pre = []
+dependency_groups = ["pkg"]
+description = """
+Build package, verify metadata, install package and assert behavior when ansible is missing.
+"""
+skip_install = true
+
+[tool.tox.env_run_base]
+allowlist_externals = [
+  "./tools/report-coverage",
+  "rm",
+  "sh"
+]
+commands = [
+  ["python", "-c", "import pathlib; pathlib.Path(\"{env_site_packages_dir}/cov.pth\").write_text(\"import coverage; coverage.process_startup()\")"],
+  [
+    "python",
+    "-m",
+    "coverage",
+    "run",
+    "-m",
+    "pytest",
+    {default = [
+      "-ra",
+      "-n",
+      "auto",
+      "--showlocals",
+      "--doctest-modules",
+      "--durations=10",
+      "--junitxml=./junit.xml"
+    ], extend = true, replace = "posargs"}
+  ],
+  ["./tools/report-coverage"]
+]
+commands_pre = [
+  ["sh", "-c", "rm -f {env_dir}/.coverage* coverage.xml 2>/dev/null || true"],
+  ["coverage", "erase"]
+]
+description = """Run the tests: py{py_dot_ver}"""
+package = "editable"
+pass_env = [
+  "CI",
+  "CONTAINER_*",
+  "CURL_CA_BUNDLE",
+  "FORCE_COLOR",
+  "DOCKER_*",
+  "GITHUB_*",
+  "HOME",
+  "LANG",
+  "LC_*",
+  "NO_COLOR",
+  "MOLECULE_UPDATE_FIXTURES",
+  "PRE_COMMIT_HOME",
+  "PYTEST_*",
+  "PYTHON*",
+  "PYTHONBREAKPOINT",
+  "PYTHONIOENCODING",
+  "PYTHONPYCACHEPREFIX",
+  "PY_COLORS",
+  "REQUESTS_CA_BUNDLE",
+  "RTD_TOKEN",
+  "SETUPTOOLS_SCM_DEBUG",
+  "SSH_AUTH_SOCK",
+  "TERM",
+  "USER",
+  "SSL_CERT_FILE",
+  "UV_*"
+]
+runner = "uv-venv-lock-runner"
+
+[tool.tox.env_run_base.set_env]
+ANSIBLE_HOME = "{tox_root}/.ansible"
+COVERAGE_COMBINED = "{env_dir}/.coverage"
+COVERAGE_FILE = "{env:COVERAGE_FILE:{env_dir}/.coverage.{env_name}}"
+COVERAGE_PROCESS_START = "{tox_root}/pyproject.toml"
+FORCE_COLOR = "1"
+PRE_COMMIT_COLOR = "always"
+TERM = "xterm-256color"
+
+[tool.uv]
+package = true
