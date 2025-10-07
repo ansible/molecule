@@ -24,6 +24,7 @@ concurrency:
 jobs:
   tox:
     uses: ansible/team-devtools/.github/workflows/tox.yml@main
+    secrets: inherit
     with:
       default_python: "3.10" # for lint
       max_python: "3.13"
