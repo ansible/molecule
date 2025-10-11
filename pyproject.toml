@@ -113,6 +113,11 @@ documentation = "https://molecule.readthedocs.io/"
 homepage = "https://github.com/ansible-community/molecule"
 repository = "https://github.com/ansible-community/molecule"
 
+# Keep this default because xml/report do not know to use load it from config file:
+# data_file = ".coverage"
+[tool.coverage.paths]
+source = ["src", "tests", ".tox/*/site-packages"]
+
 [tool.coverage.report]
 exclude_also = ["if TYPE_CHECKING:", "pragma: no cover"]
 fail_under = 89
@@ -120,11 +125,6 @@ ignore_errors = false # avoid spamming the console if there are no errors
 show_missing = true
 skip_covered = true
 skip_empty = true
-
-# Keep this default because xml/report do not know to use load it from config file:
-# data_file = ".coverage"
-[tool.coverage.paths]
-source = ["src", "tests"]
 
 [tool.coverage.run]
 # branch is more reliable than lines, protects against false positives
