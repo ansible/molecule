@@ -128,7 +128,7 @@ concurrency = ["multiprocessing", "thread"]
 omit = ["types.py", "_version.py"]
 parallel = true
 relative_files = true
-source = ["src"]
+source_pkgs = ["molecule"]
 
 [tool.mypy]
 cache_dir = "./.cache/.mypy"
