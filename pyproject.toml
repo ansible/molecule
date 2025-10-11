@@ -127,6 +127,7 @@ branch = true
 concurrency = ["multiprocessing", "thread"]
 omit = ["types.py", "_version.py"]
 parallel = true
+relative_files = true
 source = ["src"]
 
 [tool.mypy]
