@@ -121,14 +121,18 @@ show_missing = true
 skip_covered = true
 skip_empty = true
 
+# Keep this default because xml/report do not know to use load it from config file:
+# data_file = ".coverage"
+[tool.coverage.paths]
+source = ["src", "tests"]
+
 [tool.coverage.run]
 # branch is more reliable than lines, protects against false positives
 branch = true
 concurrency = ["multiprocessing", "thread"]
 omit = ["types.py", "_version.py"]
 parallel = true
-relative_files = true
-source_pkgs = ["molecule"]
+source = ["src"]
 
 [tool.mypy]
 cache_dir = "./.cache/.mypy"
