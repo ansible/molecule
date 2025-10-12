@@ -120,9 +120,9 @@ source = [
   "src",
   "tests",
   ".tox/*/site-packages",
-  "*/site-packages",
-  "*/molecule/src",
-  "*/work/molecule/molecule/src"
+  "**/site-packages",
+  "**/molecule/src",
+  "**/work/molecule/molecule/src"
 ]
 
 [tool.coverage.report]
