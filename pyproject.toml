@@ -116,14 +116,7 @@ repository = "https://github.com/ansible-community/molecule"
 # Keep this default because xml/report do not know to use load it from config file:
 # data_file = ".coverage"
 [tool.coverage.paths]
-source = [
-  "src",
-  "tests",
-  ".tox/*/site-packages",
-  "**/site-packages",
-  "**/molecule/src",
-  "**/work/molecule/molecule/src"
-]
+source = ["src", "tests", ".tox/*/site-packages"]
 
 [tool.coverage.report]
 exclude_also = ["if TYPE_CHECKING:", "pragma: no cover"]
@@ -139,6 +132,7 @@ branch = true
 concurrency = ["multiprocessing", "thread"]
 omit = ["types.py", "_version.py"]
 parallel = true
+relative_files = true
 source = ["src"]
 
 [tool.mypy]
