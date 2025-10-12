@@ -116,7 +116,14 @@ repository = "https://github.com/ansible-community/molecule"
 # Keep this default because xml/report do not know to use load it from config file:
 # data_file = ".coverage"
 [tool.coverage.paths]
-source = ["src", "tests", ".tox/*/site-packages"]
+source = [
+  "src",
+  "tests",
+  ".tox/*/site-packages",
+  "*/site-packages",
+  "*/molecule/src",
+  "*/work/molecule/molecule/src"
+]
 
 [tool.coverage.report]
 exclude_also = ["if TYPE_CHECKING:", "pragma: no cover"]
