@@ -1,6 +1,9 @@
 {
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "[json]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "[python]": {
     "editor.codeActionsOnSave": {
@@ -9,6 +12,9 @@
     },
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.formatOnSave": true
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tombi-toml.tombi"
   },
   "flake8.importStrategy": "fromEnvironment",
   "markiscodecoverage.searchCriteria": ".cache/.coverage/lcov.info",

@@ -3,6 +3,10 @@ ci:
   # We rely on renovate to update it but there is no way to fully disable it
   # https://github.com/pre-commit-ci/issues/issues/83
   autoupdate_schedule: quarterly
+  skip:
+    # https://github.com/pre-commit-ci/issues/issues/55
+    - tombi-format
+    - tombi-lint
 default_language_version:
   # minimal version we support officially as this will impact mypy, pylint
   # minimal version determined by minimal version required by ansible-core, but
@@ -22,7 +26,28 @@ repos:
         alias: deps
         args: ["--upgrade"]
         stages: [manual]
-  - repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/biomejs/pre-commit
+    rev: "v2.2.5"
+    hooks:
+      - id: biome-check
+        name: biome
+        alias: biome
+        args: [--unsafe]
+  - repo: https://github.com/streetsidesoftware/cspell-cli
+    rev: v9.2.0
+    hooks:
+      - id: cspell
+        entry: bash
+        pass_filenames: false
+        args:
+          [
+            "-euo",
+            "pipefail",
+            "-c",
+            "cspell-cli . --relative --no-progress --no-summary && cspell-cli . --disable-dictionary=words --no-exit-code --words-only --quiet --unique | LC_ALL=C sort > .config/dictionary.txt",
+          ]
+        name: cspell + remove unused and sort dictionary
+  - repo: https://github.com/pre-commit/pre-commit-hooks.git
     rev: v6.0.0
     hooks:
       - id: check-added-large-files
@@ -51,33 +76,21 @@ repos:
           (?x)^(
             .config/pydoclint-baseline.txt
           )$
-
-  - repo: https://github.com/rbubley/mirrors-prettier
-    rev: v3.6.2
+  - repo: https://github.com/tombi-toml/tombi-pre-commit
+    rev: v0.6.21
     hooks:
-      - id: prettier
-        always_run: true
-        additional_dependencies:
-          - prettier
-          - prettier-plugin-sort-json
-
-  - repo: https://github.com/pappasam/toml-sort
-    rev: v0.24.3
-    hooks:
-      - id: toml-sort-fix
+      - id: tombi-format
+        alias: toml
+      - id: tombi-lint
         alias: toml
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.13.3
     hooks:
-      - id: ruff
-        entry: sh -c 'ruff check --fix --force-exclude && ruff format --force-exclude'
-  - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v9.2.0
-    hooks:
-      - id: cspell
-        name: Spell check with cspell
-
+      - id: ruff-format
+        alias: ruff
+      - id: ruff-check
+        alias: ruff
   - repo: https://github.com/jsh9/pydoclint
     rev: "0.7.3"
     hooks:
