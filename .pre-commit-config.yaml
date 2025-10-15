@@ -9,6 +9,19 @@ default_language_version:
   # we might keep a backwards compatibility version for older ones
   python: "3.11"
 repos:
+  - repo: meta
+    hooks:
+      - id: check-useless-excludes
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.8.23
+    hooks:
+      - id: uv-sync
+      - id: uv-lock
+      - id: uv-lock
+        name: "deps: upgrade via uv sync --upgrade"
+        alias: deps
+        args: ["--upgrade"]
+        stages: [manual]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:

@@ -512,8 +512,10 @@ commands = [
   ["tox", "-e", "lint"]
 ]
 commands_pre = []
+dependency_groups = ["lint"]
 description = "Bump all test dependencies"
 env_dir = "{work_dir}/lint"
+runner = "uv-venv-runner"
 skip_install = true
 
 [tool.tox.env.devel]
@@ -674,4 +676,8 @@ PRE_COMMIT_COLOR = "always"
 TERM = "xterm-256color"
 
 [tool.uv]
+constraint-dependencies = [
+  "ansible-core>=2.20.0.dev0; python_version >= '3.14'"
+]
+default-groups = ["dev", "docs", "lint", "pkg"]
 package = true
