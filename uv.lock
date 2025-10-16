@@ -598,18 +598,6 @@ wheels = [
 ]
 
 [[package]]
-name = "click-help-colors"
-version = "0.9.4"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "click" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/6f/50/76f51d9c7fcd72a12da466801f7c1fa3884424c947787333c74327b4fcf3/click-help-colors-0.9.4.tar.gz", hash = "sha256:f4cabe52cf550299b8888f4f2ee4c5f359ac27e33bcfe4d61db47785a5cc936c", size = 8048, upload-time = "2023-11-18T11:55:15.554Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/99/f8/8768f803151714640cb6f06fd9de490ce7db632d351da05f42f77330d2fd/click_help_colors-0.9.4-py3-none-any.whl", hash = "sha256:b33c5803eeaeb084393b1ab5899dc5476c7196b87a18713045afe76f840b42db", size = 6437, upload-time = "2023-11-18T11:55:09.775Z" },
-]
-
-[[package]]
 name = "codespell"
 version = "2.4.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1699,7 +1687,6 @@ dependencies = [
     { name = "ansible-core", version = "2.19.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
     { name = "ansible-core", version = "2.20.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "click" },
-    { name = "click-help-colors" },
     { name = "enrich" },
     { name = "jinja2" },
     { name = "jsonschema" },
@@ -1768,7 +1755,6 @@ requires-dist = [
     { name = "ansible-compat", specifier = ">=25.1.4" },
     { name = "ansible-core", specifier = ">=2.15.0" },
     { name = "click", specifier = ">=8.0,<9" },
-    { name = "click-help-colors", specifier = ">=0.9.4" },
     { name = "enrich", specifier = ">=1.2.7" },
     { name = "jinja2", specifier = ">=2.11.3" },
     { name = "jsonschema", specifier = ">=4.9.1" },

@@ -31,7 +31,6 @@ dependencies = [
   "ansible-compat>=25.1.4",
   "ansible-core>=2.15.0",
   "click>=8.0,<9",
-  "click-help-colors>=0.9.4",
   "enrich>=1.2.7",
   "jinja2>=2.11.3",
   "jsonschema>=4.9.1",
@@ -142,7 +141,6 @@ strict = true
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
 module = [
-  "click_help_colors",  # https://github.com/click-contrib/click-help-colors/issues/20
   "testinfra.*",  # https://github.com/pytest-dev/pytest-testinfra/issues/619
 ]
 
