@@ -30,7 +30,7 @@ jobs:
       - name: Switch to using Python 3.12 by default
         uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: "3.14"
 
       - name: Install tox
         run: python3 -m pip install --user "tox>=4.0.0"
