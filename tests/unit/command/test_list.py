@@ -28,23 +28,7 @@ from molecule.status import Status
 
 
 if TYPE_CHECKING:
-    from typing import Any
-
     from molecule import config
-
-
-@pytest.fixture
-def _molecule_data_native() -> dict[str, Any]:
-    """Provide a default molecule data dictionary.
-
-    This version removes options unused in ansible-native configs.
-    """
-    return {
-        "ansible": {"executor": {"backend": "ansible-playbook"}},
-        "driver": {},
-        "platforms": [],
-        "provisioner": {},
-    }
 
 
 def test_list_execute(  # noqa: D103
@@ -86,7 +70,7 @@ def test_list_execute_native(  # noqa: D103
     l = list.List(config_instance)  # noqa: E741
     x = [
         Status(
-            instance_name=None,
+            instance_name="",
             driver_name="default",
             provisioner_name="ansible",
             scenario_name="default",

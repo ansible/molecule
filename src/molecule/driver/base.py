@@ -235,7 +235,7 @@ class Driver(ABC):
 
         if not instances:
             # an ansible-native scenario
-            instances.append({"name": None})
+            instances.append({"name": ""})
 
         for platform in instances:
             instance_name = platform["name"]
