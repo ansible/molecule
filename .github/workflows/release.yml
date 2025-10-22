@@ -27,7 +27,7 @@ jobs:
       PY_COLORS: 1
 
     steps:
-      - name: Switch to using Python 3.12 by default
+      - name: Switch to using latest Python by default
         uses: actions/setup-python@v6
         with:
           python-version: "3.14"
