@@ -231,7 +231,13 @@ class Driver(ABC):
             Status for each instance.
         """
         status_list = []
-        for platform in self._config.platforms.instances:
+        instances = self._config.platforms.instances
+
+        if not instances:
+            # an ansible-native scenario
+            instances.append({"name": ""})
+
+        for platform in instances:
             instance_name = platform["name"]
             driver_name = self.name
             provisioner_name = self._config.provisioner.name if self._config.provisioner else ""

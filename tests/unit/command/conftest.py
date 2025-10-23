@@ -19,7 +19,13 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import pytest
+
+
+if TYPE_CHECKING:
+    from molecule.types import ConfigData
 
 
 @pytest.fixture
@@ -45,3 +51,20 @@ def command_driver_delegated_section_data():  # type: ignore[no-untyped-def]  # 
 @pytest.fixture
 def command_driver_delegated_managed_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     return {"driver": {"name": "default", "managed": True}}
+
+
+@pytest.fixture
+def _molecule_data_native() -> ConfigData:
+    """Provide a default molecule data dictionary.
+
+    This version removes options unused in ansible-native configs.
+
+    Returns:
+      A molecule config dictionary.
+    """
+    return {
+        "ansible": {"executor": {"backend": "ansible-playbook"}},
+        "driver": {},
+        "platforms": [],
+        "provisioner": {},
+    }
