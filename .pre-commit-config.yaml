@@ -17,7 +17,7 @@ repos:
     hooks:
       - id: check-useless-excludes
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.9.4
+    rev: 0.9.5
     hooks:
       - id: uv-sync
       - id: uv-lock
@@ -27,7 +27,7 @@ repos:
         args: ["--upgrade"]
         stages: [manual]
   - repo: https://github.com/biomejs/pre-commit
-    rev: "v2.2.6"
+    rev: "v2.3.1"
     hooks:
       - id: biome-check
         name: biome
@@ -77,7 +77,7 @@ repos:
             .config/pydoclint-baseline.txt
           )$
   - repo: https://github.com/tombi-toml/tombi-pre-commit
-    rev: v0.6.35
+    rev: v0.6.39
     hooks:
       - id: tombi-format
         alias: toml
@@ -85,14 +85,14 @@ repos:
         alias: toml
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.1
+    rev: v0.14.2
     hooks:
       - id: ruff-format
         alias: ruff
       - id: ruff-check
         alias: ruff
   - repo: https://github.com/jsh9/pydoclint
-    rev: "0.7.3"
+    rev: "0.7.6"
     hooks:
       - id: pydoclint
         # This allows automatic reduction of the baseline file when needed.
@@ -100,7 +100,7 @@ repos:
         pass_filenames: false
 
   - repo: https://github.com/pycqa/pylint.git
-    rev: v4.0.1
+    rev: v4.0.2
     hooks:
       - id: pylint
         args:
