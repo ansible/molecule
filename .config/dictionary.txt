@@ -10,7 +10,6 @@ Lifecycle
 Multibranch
 NOPASSWD
 Nocows
-PYTHONPATH
 Prerun
 Rolebinding
 Sbarnea
@@ -50,7 +49,6 @@ dbadmin
 decentral
 delenv
 dependee
-devel
 dind
 emptydisk
 endgroup
@@ -143,7 +141,6 @@ tsoh
 ulimits
 urandom
 usefixtures
-usermod
 vfoo
 virtenv
 virtualmachines
