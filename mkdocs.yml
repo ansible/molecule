@@ -1,6 +1,6 @@
 ---
 site_name: Ansible Molecule
-site_url: https://ansible.readthedocs.io/projects/molecule/
+site_url: https://docs.ansible.com/projects/molecule/
 repo_url: https://github.com/ansible/molecule
 edit_uri: blob/main/docs/
 copyright: Copyright © Red Hat, Inc.
@@ -108,7 +108,7 @@ plugins:
             merge_init_into_class: yes
             show_submodules: yes
           inventories:
-            - url: https://docs.ansible.com/ansible/latest/objects.inv
+            - url: https://docs.ansible.com/projects/ansible/latest/objects.inv
               domains: [py, std, "std:doc", "std:label"]
             - url: https://pip.pypa.io/en/latest/objects.inv
               domains: [py, std]
