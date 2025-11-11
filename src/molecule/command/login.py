@@ -83,7 +83,7 @@ class Login(base.Base):
         if len(match) == 0:
             msg = (
                 f"Unable to find host '{hostname}'.\n"
-                "For more information: https://ansible.readthedocs.io/projects/molecule/usage/#molecule-login"
+                "For more information: https://docs.ansible.com/projects/molecule/usage/#molecule-login"
             )
             sysexit_with_message(msg, code=1)
         if len(match) != 1:

@@ -1,10 +1,10 @@
 # About Ansible Molecule
 
 [![PyPI Package](https://img.shields.io/pypi/v/molecule)](https://pypi.org/project/molecule/)
-[![Documentation Status](https://readthedocs.org/projects/molecule/badge/?version=latest)](https://ansible.readthedocs.io/projects/molecule)
+[![Documentation Status](https://readthedocs.org/projects/molecule/badge/?version=latest)](https://docs.ansible.com/projects/molecule/)
 [![image](https://github.com/ansible-community/molecule/workflows/tox/badge.svg)](https://github.com/ansible-community/molecule/actions)
 [![Python Black Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
-[![Ansible Code of Conduct](https://img.shields.io/badge/Code%20of%20Conduct-silver.svg)](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html)
+[![Ansible Code of Conduct](https://img.shields.io/badge/Code%20of%20Conduct-silver.svg)](https://docs.ansible.com/projects/ansible/latest/community/code_of_conduct.html)
 [![Discussions](https://img.shields.io/badge/Discussions-silver.svg)](https://forum.ansible.com/tag/molecule)
 [![Repository License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
@@ -33,14 +33,14 @@ python3 -m molecule ...  # python module calling method
 
 # Documentation
 
-Read the documentation and more at <https://ansible.readthedocs.io/projects/molecule/>.
+Read the documentation and more at <https://docs.ansible.com/projects/molecule//>.
 
 # Get Involved
 
-See the [Talk to us](https://ansible.readthedocs.io/projects/molecule/contributing/#talk-to-us) section of the documentation to ask questions, find help, and join the conversation.
+See the [Talk to us](https://docs.ansible.com/projects/molecule//contributing/#talk-to-us) section of the documentation to ask questions, find help, and join the conversation.
 
 For complete details, see the
-[Ansible communication guide](https://docs.ansible.com/ansible/devel/community/communication.html).
+[Ansible communication guide](https://docs.ansible.com/projects/ansible/devel/community/communication.html).
 
 If you want to get moving fast and make a quick patch:
 

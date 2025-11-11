@@ -45,7 +45,7 @@ dynamic = ["version"]
 
 [project.urls]
 changelog = "https://github.com/ansible-community/molecule/releases"
-documentation = "https://molecule.readthedocs.io/"
+documentation = "https://docs.ansible.com/projects/molecule/"
 homepage = "https://github.com/ansible-community/molecule"
 repository = "https://github.com/ansible-community/molecule"
 
