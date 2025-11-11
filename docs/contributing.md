@@ -37,10 +37,10 @@ community.
   announcements including social events.
 
 To get release announcements and important changes from the community, see the
-[Bullhorn newsletter](https://docs.ansible.com/ansible/devel/community/communication.html#the-bullhorn).
+[Bullhorn newsletter](https://docs.ansible.com/projects/ansible/devel/community/communication.html#the-bullhorn).
 
 You can find more information in the
-[Ansible communication guide](https://docs.ansible.com/ansible/devel/community/communication.html).
+[Ansible communication guide](https://docs.ansible.com/projects/ansible/devel/community/communication.html).
 
 Possible security bugs should be reported via email to
 <mailto:security@ansible.com>.

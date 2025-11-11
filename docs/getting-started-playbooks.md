@@ -6,9 +6,9 @@ This guide demonstrates testing Ansible playbooks using Molecule within an ansib
 
 Before starting, ensure you have the following installed:
 
-- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) (ansible-core)
-- [Molecule](https://molecule.readthedocs.io/en/latest/installation/)
-- [ansible-creator](https://ansible.readthedocs.io/projects/creator/) for scaffolding
+- [Ansible](https://docs.ansible.com/projects/ansible/latest/installation_guide/intro_installation.html) (ansible-core)
+- [Molecule](https://docs.ansible.com/projects/molecule/installation/)
+- [ansible-creator](https://docs.ansible.com/projects/creator/) for scaffolding
 - [Podman](https://podman.io/getting-started/installation) for container testing
 
 ```bash

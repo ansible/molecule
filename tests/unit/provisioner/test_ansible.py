@@ -146,7 +146,7 @@ def test_default_config_options_property(instance):  # type: ignore[no-untyped-d
             "display_failed_stderr": True,
             "forks": 50,
             "host_key_checking": False,
-            # https://docs.ansible.com/ansible/devel/reference_appendices/interpreter_discovery.html
+            # https://docs.ansible.com/projects/ansible/devel/reference_appendices/interpreter_discovery.html
             "interpreter_python": "auto_silent",
             "nocows": 1,
             "retry_files_enabled": False,

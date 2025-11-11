@@ -30,9 +30,9 @@ If the computed fully qualified role name does not follow current galaxy
 requirements, you can ignore it by adding `role_name_check:1` inside the configuration file.
 
 It is strongly recommended to follow the name standard of
-[namespace](https://docs.ansible.com/ansible/latest/dev_guide/collections_galaxy_meta.html#structure)
+[namespace](https://docs.ansible.com/projects/ansible/latest/dev_guide/collections_galaxy_meta.html#structure)
 and
-[role](https://ansible.readthedocs.io/projects/lint/rules/role-name/#role-name).
+[role](https://docs.ansible.com/projects/lint/rules/role-name/#role-name).
 A `computed fully qualified role name` may further contain the dot character.
 
 ## Shared State
@@ -201,8 +201,8 @@ managers.
 
 ### Ansible Galaxy
 
-[DEFAULT_ROLES_PATH]: https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html#cmdoption-ansible-galaxy-role-remove-p
-[ANSIBLE_HOME]: https://docs.ansible.com/ansible/latest/reference_appendices/config.html#ansible-home
+[DEFAULT_ROLES_PATH]: https://docs.ansible.com/projects/ansible/latest/cli/ansible-galaxy.html#cmdoption-ansible-galaxy-role-remove-p
+[ANSIBLE_HOME]: https://docs.ansible.com/projects/ansible/latest/reference_appendices/config.html#ansible-home
 
 Galaxy is the default dependency manager.
 
@@ -506,7 +506,7 @@ data, and the developer's destroy playbook must reset the instance-config.
 ```
 
 This article covers how to configure and use WinRM with Ansible:
-https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html
+https://docs.ansible.com/projects/ansible/latest/user_guide/windows_winrm.html
 
 Molecule can also skip the provisioning/deprovisioning steps. It is the
 developers responsibility to manage the instances, and properly configure
@@ -975,7 +975,7 @@ Don't forget to add a tag `always` in `converge.yml` as below.
             - always
 ```
 
-.. \_`variables defined in a playbook`: https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#defining-variables-in-a-playbook
+.. \_`variables defined in a playbook`: https://docs.ansible.com/projects/ansible/latest/user_guide/playbooks_variables.html#defining-variables-in-a-playbook
 
 Add arguments to ansible-playbook when running converge:
 

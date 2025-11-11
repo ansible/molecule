@@ -17,7 +17,7 @@ confirm that Ansible itself is reporting task idempotence (changed=0).
 ## Why does Molecule make so many shell calls?
 
 Ansible provides a Python API. However, it is not intended for [direct
-consumption](https://docs.ansible.com/ansible/latest/dev_guide/developing_api.html).
+consumption](https://docs.ansible.com/projects/ansible/latest/dev_guide/developing_api.html).
 We wanted to focus on making Molecule useful, so our efforts were spent
 consuming Ansible's CLI.
 
@@ -52,7 +52,7 @@ the scenario's molecule.yml.
 ## Are there similar tools to Molecule?
 
 - Ansible's own [Testing
-  Strategies](https://docs.ansible.com/ansible/latest/reference_appendices/test_strategies.html)
+  Strategies](https://docs.ansible.com/projects/ansible/latest/reference_appendices/test_strategies.html)
 - [RoleSpec](https://github.com/nickjj/rolespec)
 
 ## Can I run Molecule processes in parallel?
@@ -86,7 +86,7 @@ working order by running `molecule list`.
 
 ## Where can I configure my `roles-path` and `collections-paths`?
 
-As of molecule v6, users are expected to make use of [`ansible.cfg`](https://docs.ansible.com/ansible/latest/reference_appendices/config.html) file to
+As of molecule v6, users are expected to make use of [`ansible.cfg`](https://docs.ansible.com/projects/ansible/latest/reference_appendices/config.html) file to
 alter them when needed.
 
 ## Does Molecule support monorepos?

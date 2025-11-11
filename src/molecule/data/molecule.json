@@ -413,7 +413,7 @@
         },
         "interpreter_python": {
           "default": "auto_silent",
-          "description": "See https://docs.ansible.com/ansible/devel/reference_appendices/interpreter_discovery.html",
+          "description": "See https://docs.ansible.com/projects/ansible/devel/reference_appendices/interpreter_discovery.html",
           "title": "Interpreter Python",
           "type": "string"
         },

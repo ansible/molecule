@@ -292,7 +292,7 @@ pipeline {
 }
 ```
 
-The following Jenkinsfile uses the [Ansible Dev Tools](https://ansible.readthedocs.io/projects/dev-tools/container/) image.
+The following Jenkinsfile uses the [Ansible Dev Tools](https://docs.ansible.com/projects/dev-tools/container/) image.
 
 ```groovy
 pipeline {

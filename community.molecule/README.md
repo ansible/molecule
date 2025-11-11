@@ -26,9 +26,9 @@ See the [changelog](https://github.com/ansible/molecule/tree/main/community.mole
 
 - [Ansible Developers](https://docs.ansible.com/developers.html)
 - [Ansible User guide](https://docs.ansible.com/users.html)
-- [Ansible Developer guide](https://docs.ansible.com/ansible/latest/dev_guide/index.html)
-- [Ansible Collections Checklist](https://docs.ansible.com/ansible/devel/community/collection_contributors/collection_requirements.html)
-- [Ansible Community code of conduct](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html)
+- [Ansible Developer guide](https://docs.ansible.com/projects/ansible/latest/dev_guide/index.html)
+- [Ansible Collections Checklist](https://docs.ansible.com/projects/ansible/devel/community/collection_contributors/collection_requirements.html)
+- [Ansible Community code of conduct](https://docs.ansible.com/projects/ansible/latest/community/code_of_conduct.html)
 - [The Bullhorn (the Ansible Contributor newsletter)](https://forum.ansible.com/c/news/bullhorn/17)
 
 ## Licensing
