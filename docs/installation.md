@@ -104,7 +104,7 @@ has some benefits:
 ## Container
 
 `Molecule` is built into a [container image for Ansible Development Tools
-(ADT)](https://ansible.readthedocs.io/projects/dev-tools/container/)
+(ADT)](https://docs.ansible.com/projects/dev-tools/container/)
 
 Any questions or bugs related to the use of Molecule from within a container
 should be addressed by the ADT project.

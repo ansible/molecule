@@ -1,4 +1,4 @@
-# See https://docs.ansible.com/ansible/latest/dev_guide/collections_galaxy_meta.html
+# See https://docs.ansible.com/projects/ansible/latest/dev_guide/collections_galaxy_meta.html
 # cspell: ignore Sorin Sbarnea
 namespace: community
 name: molecule

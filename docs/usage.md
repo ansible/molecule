@@ -64,9 +64,9 @@ are available.
 
 Options leveraging the resources defined in the ansible inventory include:
 
-- [ansible adhoc commands](https://docs.ansible.com/ansible/latest/command_guide/intro_adhoc.html)
+- [ansible adhoc commands](https://docs.ansible.com/projects/ansible/latest/command_guide/intro_adhoc.html)
 
-- [ansible-console](https://docs.ansible.com/ansible/latest/cli/ansible-console.html)
+- [ansible-console](https://docs.ansible.com/projects/ansible/latest/cli/ansible-console.html)
 
 Resource native connection options include:
 
