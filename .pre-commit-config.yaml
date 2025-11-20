@@ -17,7 +17,7 @@ repos:
     hooks:
       - id: check-useless-excludes
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.9.8
+    rev: 0.9.10
     hooks:
       - id: uv-sync
       - id: uv-lock
@@ -27,14 +27,14 @@ repos:
         args: ["--upgrade"]
         stages: [manual]
   - repo: https://github.com/biomejs/pre-commit
-    rev: "v2.3.4"
+    rev: "v2.3.6"
     hooks:
       - id: biome-check
         name: biome
         alias: biome
         args: [--unsafe]
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v9.2.1
+    rev: v9.3.3
     hooks:
       - id: cspell
         entry: bash
@@ -77,7 +77,7 @@ repos:
             .config/pydoclint-baseline.txt
           )$
   - repo: https://github.com/tombi-toml/tombi-pre-commit
-    rev: v0.6.41
+    rev: v0.6.50
     hooks:
       - id: tombi-format
         alias: toml
@@ -85,7 +85,7 @@ repos:
         alias: toml
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.4
+    rev: v0.14.5
     hooks:
       - id: ruff-format
         alias: ruff
@@ -100,7 +100,7 @@ repos:
         pass_filenames: false
 
   - repo: https://github.com/pycqa/pylint.git
-    rev: v4.0.2
+    rev: v4.0.3
     hooks:
       - id: pylint
         args:
@@ -139,7 +139,7 @@ repos:
         args: [--strict]
 
   - repo: https://github.com/ansible/ansible-lint
-    rev: v25.9.2
+    rev: v25.11.0
     hooks:
       - id: ansible-lint
         stages: [manual]
