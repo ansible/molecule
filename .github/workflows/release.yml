@@ -36,7 +36,7 @@ jobs:
         run: python3 -m pip install --user "tox>=4.0.0"
 
       - name: Check out src from Git
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0 # needed by setuptools-scm
 
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Build the collection
         run: ansible-galaxy collection build -v --force community.molecule
       - name: Publish the collection on Galaxy
