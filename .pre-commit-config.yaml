@@ -77,7 +77,7 @@ repos:
             .config/pydoclint-baseline.txt
           )$
   - repo: https://github.com/tombi-toml/tombi-pre-commit
-    rev: v0.6.53
+    rev: v0.7.0
     hooks:
       - id: tombi-format
         alias: toml
