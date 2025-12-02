@@ -1634,7 +1634,7 @@ requires-dist = [
     { name = "enrich", specifier = ">=1.2.7" },
     { name = "jinja2", specifier = ">=2.11.3" },
     { name = "jsonschema", specifier = ">=4.9.1" },
-    { name = "packaging", specifier = ">=25.0" },
+    { name = "packaging", specifier = ">=23.2" },
     { name = "pluggy", specifier = ">=0.7.1,<2.0" },
     { name = "pyyaml", specifier = ">=5.1" },
     { name = "rich", specifier = ">=9.5.1" },
