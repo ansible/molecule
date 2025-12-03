@@ -1,11 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Propose a new feature or behavior change
-    url: https://github.com/ansible/molecule/discussions/categories/ideas
-    about: Always check for existing threads before adding a new one
-  - name: Ask a question on Discussions area
-    url: https://github.com/ansible/molecule/discussions
-    about: Recommended place for questions, debates, consultation.
+  - name: Ask a question on the Ansible Forum
+    url: https://forum.ansible.com/tags/c/project/7/molecule
+    about: Recommended place for questions, debates, consultation, and new feature ideas.
   - name: Ask a question on StackOverflow
     url: https://stackoverflow.com/questions/tagged/molecule
     about: For well defined questions and answers use StackOverflow
