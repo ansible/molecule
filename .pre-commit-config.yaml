@@ -17,7 +17,7 @@ repos:
     hooks:
       - id: check-useless-excludes
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.9.13
+    rev: 0.9.16
     hooks:
       - id: uv-sync
       - id: uv-lock
@@ -77,7 +77,7 @@ repos:
             .config/pydoclint-baseline.txt
           )$
   - repo: https://github.com/tombi-toml/tombi-pre-commit
-    rev: v0.7.0
+    rev: v0.7.3
     hooks:
       - id: tombi-format
         alias: toml
@@ -85,7 +85,7 @@ repos:
         alias: toml
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.7
+    rev: v0.14.8
     hooks:
       - id: ruff-format
         alias: ruff
@@ -139,7 +139,7 @@ repos:
         args: [--strict]
 
   - repo: https://github.com/ansible/ansible-lint
-    rev: v25.11.1
+    rev: v25.12.0
     hooks:
       - id: ansible-lint
         stages: [manual]
