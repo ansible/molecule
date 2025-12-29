@@ -34,7 +34,7 @@ repos:
         alias: biome
         args: [--unsafe]
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v9.3.3
+    rev: v9.4.0
     hooks:
       - id: cspell
         entry: bash
@@ -77,7 +77,7 @@ repos:
             .config/pydoclint-baseline.txt
           )$
   - repo: https://github.com/tombi-toml/tombi-pre-commit
-    rev: v0.7.8
+    rev: v0.7.11
     hooks:
       - id: tombi-format
         alias: toml
@@ -139,7 +139,7 @@ repos:
         args: [--strict]
 
   - repo: https://github.com/ansible/ansible-lint
-    rev: v25.12.1
+    rev: v25.12.2
     hooks:
       - id: ansible-lint
         stages: [manual]
