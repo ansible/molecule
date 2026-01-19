@@ -13,7 +13,12 @@
       "matchPackageNames": ["cffi"]
     },
     {
-      "allowedVersions": "<4.3",
+      "allowedVersions": "<38",
+      "description": "Platform compatibility constraint",
+      "matchPackageNames": ["cryptography"]
+    },
+    {
+      "allowedVersions": "<6.0",
       "description": "Platform compatibility constraint",
       "matchPackageNames": ["django"]
     },
