@@ -1,78 +1,56 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "github>ansible/actions//config/renovate.json"
-  ],
+  "extends": ["github>ansible/actions//config/renovate.json"],
   "packageRules": [
     {
-      "matchPackageNames": [
-        "ansible-core"
-      ],
       "allowedVersions": "<2.17",
-      "description": "Platform compatibility constraint"
+      "description": "Platform compatibility constraint",
+      "matchPackageNames": ["ansible-core"]
     },
     {
-      "matchPackageNames": [
-        "cffi"
-      ],
       "allowedVersions": "<1.16",
-      "description": "Platform compatibility constraint"
+      "description": "Platform compatibility constraint",
+      "matchPackageNames": ["cffi"]
     },
     {
-      "matchPackageNames": [
-        "cryptography"
-      ],
       "allowedVersions": "<38",
-      "description": "Platform compatibility constraint"
+      "description": "Platform compatibility constraint",
+      "matchPackageNames": ["cryptography"]
     },
     {
-      "matchPackageNames": [
-        "django"
-      ],
       "allowedVersions": "<6.0",
-      "description": "Platform compatibility constraint"
+      "description": "Platform compatibility constraint",
+      "matchPackageNames": ["django"]
     },
     {
-      "matchPackageNames": [
-        "importlib-metadata"
-      ],
       "allowedVersions": "<6.1",
-      "description": "Platform compatibility constraint"
+      "description": "Platform compatibility constraint",
+      "matchPackageNames": ["importlib-metadata"]
     },
     {
-      "matchPackageNames": [
-        "jsonschema"
-      ],
       "allowedVersions": "<4.22",
-      "description": "Platform compatibility constraint"
+      "description": "Platform compatibility constraint",
+      "matchPackageNames": ["jsonschema"]
     },
     {
-      "matchPackageNames": [
-        "packaging"
-      ],
       "allowedVersions": "<25.0",
-      "description": "Platform compatibility constraint"
+      "description": "Platform compatibility constraint",
+      "matchPackageNames": ["packaging"]
     },
     {
-      "matchPackageNames": [
-        "pyyaml"
-      ],
       "allowedVersions": "<6.0.2",
-      "description": "Platform compatibility constraint"
+      "description": "Platform compatibility constraint",
+      "matchPackageNames": ["pyyaml"]
     },
     {
-      "matchPackageNames": [
-        "python-gnupg"
-      ],
       "allowedVersions": "<0.5.3",
-      "description": "Platform compatibility constraint"
+      "description": "Platform compatibility constraint",
+      "matchPackageNames": ["python-gnupg"]
     },
     {
-      "matchPackageNames": [
-        "setuptools"
-      ],
       "allowedVersions": "<65.6",
-      "description": "Platform compatibility constraint"
+      "description": "Platform compatibility constraint",
+      "matchPackageNames": ["setuptools"]
     }
   ]
 }
