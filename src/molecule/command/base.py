@@ -490,4 +490,4 @@ def _get_subcommand(string: str) -> str:
     Returns:
         A string representing the subcommand.
     """
-    return string.split(".")[-1]
+    return string.rsplit(".", maxsplit=1)[-1]
