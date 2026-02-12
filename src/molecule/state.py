@@ -184,7 +184,7 @@ class State:
         Returns:
             The timestamp of the last modification date of molecule.yml.
         """
-        return self._data["molecule_yml_date_modified"]
+        return self._data.get("molecule_yml_date_modified")
 
     @marshal
     def reset(self) -> None:
