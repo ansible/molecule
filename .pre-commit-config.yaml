@@ -108,7 +108,6 @@ repos:
         additional_dependencies:
           - ansible-compat>=25.1.4
           - click
-          - click-help-colors
           - enrich>=1.2.7
           - filelock
           - jsonschema
@@ -124,7 +123,6 @@ repos:
         additional_dependencies:
           - ansible-compat>=25.1.4
           - click
-          - click-help-colors
           - enrich
           - pytest
           - pytest-mock
