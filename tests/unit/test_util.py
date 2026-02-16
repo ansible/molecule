@@ -944,6 +944,31 @@ def test_lookup_config_file_collection_no_extensions_dir(
     assert result == str(home_config)
 
 
+def test_find_vcs_root_skips_fake_git_dir(tmp_path: Path) -> None:
+    """Ensure find_vcs_root ignores .git dirs without HEAD (e.g. GitKraken).
+
+    Args:
+        tmp_path: pytest fixture for temporary directory.
+    """
+    # Real repo at top level
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    git_dir = repo / ".git"
+    git_dir.mkdir()
+    (git_dir / "HEAD").write_text("ref: refs/heads/main\n")
+
+    # Subdirectory with a spurious .git created by GitKraken
+    subdir = repo / "infra"
+    subdir.mkdir()
+    fake_git = subdir / ".git"
+    fake_git.mkdir()
+    (fake_git / "gk").mkdir()
+
+    util.find_vcs_root.cache_clear()
+    result = util.find_vcs_root(location=str(subdir))
+    assert result == str(repo)
+
+
 @pytest.mark.parametrize(
     ("input_value", "expected"),
     (

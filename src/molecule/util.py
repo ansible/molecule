@@ -439,6 +439,27 @@ def _filter_platforms(
     return []
 
 
+def _is_valid_vcs_dir(path: Path, name: str) -> bool:
+    """Check if a VCS directory is a genuine repository root.
+
+    Args:
+        path: Parent directory to check.
+        name: VCS directory name (e.g. ".git", ".hg", ".svn").
+
+    Returns:
+        Whether the VCS directory is a genuine repository root.
+    """
+    vcs_dir = path / name
+    if not vcs_dir.is_dir():
+        return False
+    # A real .git directory always contains a HEAD file.
+    # Bare repos, worktrees, and regular repos all have it.
+    # Spurious .git dirs (e.g. created by GitKraken) do not.
+    if name == ".git":
+        return (vcs_dir / "HEAD").exists()
+    return True
+
+
 @cache
 def find_vcs_root(
     location: str | Path = "",
@@ -462,7 +483,7 @@ def find_vcs_root(
 
     prev, location = None, location.absolute()
     while prev != location:
-        if any((location / d).is_dir() for d in dirs):
+        if any(_is_valid_vcs_dir(location, d) for d in dirs):
             return str(location)
         prev, location = (location, location.parent)
     return default
