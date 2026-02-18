@@ -30,7 +30,8 @@
 ### -s, --scenario-name
 
 Target a specific scenario by name. In collection mode, nested scenarios can
-be targeted using a `/` separator (e.g., `-s appliance_vlans/merged`).
+be targeted using a `/` separator (e.g., `-s appliance_vlans/merged`), and
+wildcards can target an entire group (e.g., `-s "appliance_vlans/*"`).
 See [Nested Scenarios](configuration.md#nested-scenarios-collections) for details.
 
 ### --parallel / --no-parallel

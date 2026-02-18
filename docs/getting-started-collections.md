@@ -547,10 +547,12 @@ extensions/molecule/
 │       └── molecule.yml
 ```
 
-Target nested scenarios with a `/` in the name:
+Target nested scenarios with a `/` in the name, or use wildcards to run an
+entire group:
 
 ```bash
 molecule test -s appliance_vlans/merged
+molecule test -s "appliance_vlans/*"
 ```
 
 To discover all nested scenarios with `--all`, set `MOLECULE_GLOB` to a

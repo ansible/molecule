@@ -50,6 +50,12 @@ from molecule.constants import MOLECULE_COLLECTION_GLOB
             id="collection_recursive_glob_nested",
         ),
         pytest.param(
+            "extensions/molecule/*/molecule.yml",
+            "appliance_vlans/*",
+            os.path.join("extensions/molecule/", "appliance_vlans/*", "molecule.yml"),
+            id="collection_wildcard_in_scenario_name",
+        ),
+        pytest.param(
             "molecule/*/molecule.yml",
             "default",
             "molecule/default/molecule.yml",
@@ -225,6 +231,51 @@ def test_get_configs_all_discovers_nested_with_recursive_glob(
     )
     names = sorted(c.scenario.name for c in configs)
     assert names == ["appliance_vlans/merged", "appliance_vlans/replaced", "default"]
+
+
+def test_resolve_scenario_glob_wildcard_preserved(
+    collection_project: Path,
+) -> None:
+    """Wildcard in scenario name produces a glob that discovers multiple scenarios."""
+    glob_str = base._resolve_scenario_glob(
+        MOLECULE_COLLECTION_GLOB,
+        "appliance_vlans/*",
+    )
+    assert glob_str == os.path.join(
+        "extensions/molecule/",
+        "appliance_vlans/*",
+        "molecule.yml",
+    )
+    configs = base.get_configs({}, {"subcommand": "test"}, glob_str=glob_str)
+    names = sorted(c.scenario.name for c in configs)
+    assert names == ["appliance_vlans/merged", "appliance_vlans/replaced"]
+
+
+def test_wildcard_scenario_names_expanded_for_scenarios_verify(
+    collection_project: Path,
+) -> None:
+    """Scenarios._verify passes when scenario_names are expanded from wildcard results.
+
+    This covers the scenario_names replacement in execute_cmdline_scenarios:
+    after get_configs expands a wildcard like 'appliance_vlans/*' into multiple
+    configs, scenario_names must be replaced with the actual discovered names
+    so Scenarios(..., scenario_names) does not fail verification.
+    """
+    from molecule.scenarios import Scenarios
+
+    glob_str = base._resolve_scenario_glob(
+        MOLECULE_COLLECTION_GLOB,
+        "appliance_vlans/*",
+    )
+    configs = base.get_configs({}, {"subcommand": "test"}, glob_str=glob_str)
+
+    expanded_names = [c.scenario.name for c in configs]
+    scenarios = Scenarios(configs, expanded_names)
+    assert len(scenarios.all) == 2
+    assert sorted(s.name for s in scenarios.all) == [
+        "appliance_vlans/merged",
+        "appliance_vlans/replaced",
+    ]
 
 
 def test_scenario_name_roundtrip(collection_project: Path) -> None:

@@ -415,6 +415,12 @@ molecule test -s appliance_vlans/replaced
 molecule test -s wireless_ssid/merged
 ```
 
+You can also use wildcards to target all scenarios under a group:
+
+```bash
+molecule test -s "appliance_vlans/*"
+```
+
 Flat scenarios continue to work exactly as before:
 
 ```bash

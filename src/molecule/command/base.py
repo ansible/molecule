@@ -178,6 +178,11 @@ def execute_cmdline_scenarios(
         except ScenarioFailureError as exc:
             util.sysexit_from_exception(exc)
 
+        # When -s used glob wildcards (e.g. "appliance_vlans/*"), the resolved
+        # configs may have expanded to multiple scenarios. Replace the original
+        # names with the actual discovered names so Scenarios._verify matches.
+        scenario_names = [c.scenario.name for c in configs]
+
     default_glob = _resolve_scenario_glob(effective_base_glob, MOLECULE_DEFAULT_SCENARIO_NAME)
     default_config = None
     try:
