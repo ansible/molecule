@@ -1,8 +1,27 @@
+#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to
+#  deal in the Software without restriction, including without limitation the
+#  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+#  sell copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in
+#  all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#  DEALINGS IN THE SOFTWARE.
 """Tests for nested scenario support in collection mode."""
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from pathlib import Path
 
 import pytest
 
@@ -10,11 +29,8 @@ from molecule import config
 from molecule.command import base
 from molecule.constants import MOLECULE_COLLECTION_GLOB
 from molecule.exceptions import ScenarioFailureError
+from molecule.scenario import Scenario
 from molecule.scenarios import Scenarios
-
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 
 # --- _resolve_scenario_glob (targeting) ---
@@ -382,18 +398,29 @@ def test_get_configs_nonexistent_scenarios(
     assert "glob failed" in exc_info.value.message
 
 
-def test_ephemeral_directory_safe_with_nested_name(tmp_path: Path) -> None:
-    """Verify nested scenario names produce valid single-component directory names.
+def test_ephemeral_directory_safe_with_nested_name(
+    collection_project: Path,
+) -> None:
+    """Verify the Scenario ephemeral directory is a flat path for nested scenario names.
+
+    When a scenario name contains '/', the ephemeral directory must not create
+    nested subdirectories. The '/' is replaced with '--' to keep it as a single
+    path component.
 
     Args:
-        tmp_path: Pytest temporary directory fixture.
+        collection_project: The collection project fixture (used for side effects).
     """
-    name_with_slash = "appliance_vlans/merged"
-    safe_name = name_with_slash.replace("/", "--")
-    assert "/" not in safe_name
-    assert safe_name == "appliance_vlans--merged"
+    glob_str = base._resolve_scenario_glob(
+        MOLECULE_COLLECTION_GLOB,
+        "appliance_vlans/merged",
+    )
+    configs = base.get_configs({}, {"subcommand": "test"}, glob_str=glob_str)
+    assert len(configs) == 1
 
-    ephemeral = tmp_path / f"molecule.abcd.{safe_name}"
-    ephemeral.mkdir(parents=True)
-    assert ephemeral.is_dir()
-    assert ephemeral.name == "molecule.abcd.appliance_vlans--merged"
+    scenario = Scenario(configs[0])
+    assert scenario.name == "appliance_vlans/merged"
+
+    eph_dir = scenario.ephemeral_directory
+    eph_name = Path(eph_dir).name
+    assert "/" not in eph_name
+    assert "appliance_vlans--merged" in eph_name
