@@ -129,7 +129,7 @@ def _resolve_scenario_glob(effective_base_glob: str, scenario_name: str) -> str:
     """
     is_collection = MOLECULE_COLLECTION_ROOT in effective_base_glob
     if is_collection:
-        base_dir = effective_base_glob.split("*")[0]
+        base_dir = effective_base_glob.split("*", maxsplit=1)[0]
         return os.path.join(base_dir, scenario_name, "molecule.yml")
     return effective_base_glob.replace("*", scenario_name)
 

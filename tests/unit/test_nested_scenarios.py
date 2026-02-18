@@ -10,7 +10,7 @@ import pytest
 
 from molecule import config
 from molecule.command import base
-from molecule.constants import MOLECULE_COLLECTION_GLOB, MOLECULE_COLLECTION_ROOT
+from molecule.constants import MOLECULE_COLLECTION_GLOB
 
 
 # --- _resolve_scenario_glob (targeting) ---
