@@ -115,19 +115,20 @@ class Base(abc.ABC):
 def _resolve_scenario_glob(effective_base_glob: str, scenario_name: str) -> str:
     """Resolve a scenario name to a glob pattern for molecule.yml discovery.
 
-    When the scenario name contains '/' and the glob is for a collection layout,
-    treats the name as a nested path under the scenarios root directory.
-    Otherwise, uses the existing str.replace behavior for backwards compatibility.
+    In collection mode (glob contains MOLECULE_COLLECTION_ROOT), uses path-based
+    resolution to correctly handle both nested names ('appliance_vlans/merged')
+    and flat names ('default') without corrupting multi-star globs like '**'.
+    Outside collection mode, uses the existing str.replace behavior.
 
     Args:
-        effective_base_glob: The base glob pattern (e.g., 'extensions/molecule/*/molecule.yml').
-        scenario_name: The scenario name from -s (e.g., 'merged' or 'appliance_vlans/merged').
+        effective_base_glob: The base glob pattern (e.g., 'extensions/molecule/**/molecule.yml').
+        scenario_name: The scenario name from -s (e.g., 'default' or 'appliance_vlans/merged').
 
     Returns:
         A glob string targeting the specific scenario's molecule.yml.
     """
     is_collection = MOLECULE_COLLECTION_ROOT in effective_base_glob
-    if is_collection and "/" in scenario_name:
+    if is_collection:
         base_dir = effective_base_glob.split("*")[0]
         return os.path.join(base_dir, scenario_name, "molecule.yml")
     return effective_base_glob.replace("*", scenario_name)
