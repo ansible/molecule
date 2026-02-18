@@ -126,9 +126,19 @@ def _resolve_scenario_glob(effective_base_glob: str, scenario_name: str) -> str:
 
     Returns:
         A glob string targeting the specific scenario's molecule.yml.
+
+    Raises:
+        ScenarioFailureError: If the scenario name contains path traversal sequences.
     """
+    if ".." in scenario_name or scenario_name.startswith("/"):
+        msg = f"Invalid scenario name '{scenario_name}': path traversal is not allowed."
+        raise ScenarioFailureError(message=msg)
+
     is_collection = MOLECULE_COLLECTION_ROOT in effective_base_glob
     if is_collection:
+        # Split on the first wildcard to get the scenarios root directory.
+        # Assumes the glob follows the pattern <root>*<suffix> where the
+        # first '*' marks the scenario placeholder.
         base_dir = effective_base_glob.split("*", maxsplit=1)[0]
         return str(Path(base_dir) / scenario_name / "molecule.yml")
     return effective_base_glob.replace("*", scenario_name)

@@ -733,6 +733,8 @@ class Config:
             rel = norm_dir[idx + len(collection_marker) :]
             if rel:
                 return rel
+            # molecule.yml directly under extensions/molecule/ with no scenario
+            # subdirectory; fall through to basename which returns "molecule".
 
         return (
             os.path.basename(scenario_dir) or "default"  # noqa: PTH119

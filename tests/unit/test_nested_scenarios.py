@@ -9,6 +9,7 @@ import pytest
 from molecule import config
 from molecule.command import base
 from molecule.constants import MOLECULE_COLLECTION_GLOB
+from molecule.exceptions import ScenarioFailureError
 from molecule.scenarios import Scenarios
 
 
@@ -333,3 +334,66 @@ def test_scenario_name_roundtrip(collection_project: Path) -> None:
     roundtrip_configs = base.get_configs({}, {"subcommand": "test"}, glob_str=roundtrip_glob)
     assert len(roundtrip_configs) == 1
     assert roundtrip_configs[0].scenario.name == discovered_name
+
+
+# --- Edge cases and validation ---
+
+
+@pytest.mark.parametrize(
+    "scenario_name",
+    (
+        pytest.param("../etc/passwd", id="path_traversal_parent"),
+        pytest.param("appliance_vlans/../merged", id="path_traversal_middle"),
+        pytest.param("..", id="path_traversal_dotdot"),
+        pytest.param("/absolute/path", id="absolute_path"),
+    ),
+)
+def test_resolve_scenario_glob_rejects_path_traversal(scenario_name: str) -> None:
+    """Verify path traversal sequences in scenario names are rejected.
+
+    Args:
+        scenario_name: A scenario name containing path traversal.
+    """
+    with pytest.raises(ScenarioFailureError) as exc_info:
+        base._resolve_scenario_glob(MOLECULE_COLLECTION_GLOB, scenario_name)
+    assert "path traversal" in exc_info.value.message
+
+
+@pytest.mark.parametrize(
+    "scenario_name",
+    (
+        pytest.param("appliance_vlans/nonexistent", id="nonexistent_nested"),
+        pytest.param("a/b/c/d/e/f/g", id="deeply_nested"),
+    ),
+)
+def test_get_configs_nonexistent_scenarios(
+    collection_project: Path,
+    scenario_name: str,
+) -> None:
+    """Verify nonexistent or deeply nested scenarios raise ScenarioFailureError.
+
+    Args:
+        collection_project: The collection project fixture (used for side effects).
+        scenario_name: A scenario name that does not exist in the project.
+    """
+    glob_str = base._resolve_scenario_glob(MOLECULE_COLLECTION_GLOB, scenario_name)
+    with pytest.raises(ScenarioFailureError) as exc_info:
+        base.get_configs({}, {"subcommand": "test"}, glob_str=glob_str)
+    assert "glob failed" in exc_info.value.message
+
+
+def test_ephemeral_directory_safe_with_nested_name(tmp_path: Path) -> None:
+    """Verify nested scenario names produce valid single-component directory names.
+
+    Args:
+        tmp_path: Pytest temporary directory fixture.
+    """
+    name_with_slash = "appliance_vlans/merged"
+    safe_name = name_with_slash.replace("/", "--")
+    assert "/" not in safe_name
+    assert safe_name == "appliance_vlans--merged"
+
+    ephemeral = tmp_path / f"molecule.abcd.{safe_name}"
+    ephemeral.mkdir(parents=True)
+    assert ephemeral.is_dir()
+    assert ephemeral.name == "molecule.abcd.appliance_vlans--merged"
