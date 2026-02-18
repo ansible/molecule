@@ -140,7 +140,8 @@ class Scenario:
             if self.config.is_parallel:
                 project_directory = f"{project_directory}-{self.config._run_uuid}"  # noqa: SLF001
 
-            project_scenario_directory = f"molecule.{checksum(project_directory, 4)}.{self.name}"
+            safe_name = self.name.replace("/", "--")
+            project_scenario_directory = f"molecule.{checksum(project_directory, 4)}.{safe_name}"
             path = self.config.runtime.cache_dir / "tmp" / project_scenario_directory
         else:
             path = Path(os.getenv("MOLECULE_EPHEMERAL_DIRECTORY", ""))
