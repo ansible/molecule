@@ -27,10 +27,10 @@ import contextlib
 import copy
 import importlib
 import logging
-import os
 import shutil
 import subprocess
 
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import wcmatch.pathlib
@@ -130,7 +130,7 @@ def _resolve_scenario_glob(effective_base_glob: str, scenario_name: str) -> str:
     is_collection = MOLECULE_COLLECTION_ROOT in effective_base_glob
     if is_collection:
         base_dir = effective_base_glob.split("*", maxsplit=1)[0]
-        return os.path.join(base_dir, scenario_name, "molecule.yml")
+        return str(Path(base_dir) / scenario_name / "molecule.yml")
     return effective_base_glob.replace("*", scenario_name)
 
 

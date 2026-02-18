@@ -705,10 +705,7 @@ class Config:
         """
         defaults = copy.deepcopy(DEFAULT_CONFIG)
 
-        if not self.molecule_file:
-            scenario_name = "default"
-        else:
-            scenario_name = self._derive_scenario_name()
+        scenario_name = "default" if not self.molecule_file else self._derive_scenario_name()
 
         defaults["scenario"]["name"] = scenario_name
         return defaults  # type: ignore[return-value]
