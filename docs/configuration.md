@@ -376,6 +376,87 @@ scenario:
     - destroy
 ```
 
+### Nested Scenarios (Collections)
+
+When testing Ansible collections with many components, a flat scenario layout
+can become difficult to navigate. For example, a collection with 48 resource
+modules and 4 states each would produce ~200 flat directories under
+`extensions/molecule/`.
+
+Molecule supports **nested scenario directories** in collection mode, allowing
+you to group related scenarios under a parent directory:
+
+```
+extensions/molecule/
+├── config.yml
+├── default/
+│   └── molecule.yml
+├── appliance_vlans/
+│   ├── merged/
+│   │   └── molecule.yml
+│   ├── replaced/
+│   │   └── molecule.yml
+│   └── deleted/
+│       └── molecule.yml
+├── wireless_ssid/
+│   ├── merged/
+│   │   └── molecule.yml
+│   └── replaced/
+│       └── molecule.yml
+```
+
+#### Targeting nested scenarios
+
+Use a `/` in the `-s` flag to target nested scenarios:
+
+```bash
+molecule test -s appliance_vlans/merged
+molecule test -s appliance_vlans/replaced
+molecule test -s wireless_ssid/merged
+```
+
+Flat scenarios continue to work exactly as before:
+
+```bash
+molecule test -s default
+```
+
+No changes to `molecule.yml` files are required. The directory path relative
+to the collection molecule root (`extensions/molecule/`) becomes the scenario
+name automatically.
+
+#### Discovery
+
+To discover nested scenarios with `molecule list` or `molecule test --all`,
+set `MOLECULE_GLOB` to a recursive pattern:
+
+```bash
+export MOLECULE_GLOB="extensions/molecule/**/molecule.yml"
+```
+
+This finds `molecule.yml` files at any depth under `extensions/molecule/`.
+
+#### Scenario naming
+
+In collection mode, Molecule derives the scenario name from the relative path
+between `extensions/molecule/` and the directory containing `molecule.yml`:
+
+| Directory                                          | Scenario name             |
+|----------------------------------------------------|---------------------------|
+| `extensions/molecule/default/`                     | `default`                 |
+| `extensions/molecule/appliance_vlans/merged/`      | `appliance_vlans/merged`  |
+| `extensions/molecule/appliance_vlans/replaced/`    | `appliance_vlans/replaced`|
+
+The name shown by `molecule list` is exactly what you pass to `-s`, giving
+round-trip consistency. Role-mode scenarios (under `molecule/`) are unaffected
+and continue to use the directory basename.
+
+!!! note
+
+    Nested scenario support is only available in collection mode
+    (projects with `extensions/molecule/`). Standard role-mode testing
+    is unchanged.
+
 ## Advanced testing
 
 If needed, Molecule can run multiple side effects and tests within a scenario.

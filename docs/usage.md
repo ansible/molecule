@@ -29,6 +29,10 @@
 
 ### -s, --scenario-name
 
+Target a specific scenario by name. In collection mode, nested scenarios can
+be targeted using a `/` separator (e.g., `-s appliance_vlans/merged`).
+See [Nested Scenarios](configuration.md#nested-scenarios-collections) for details.
+
 ### --parallel / --no-parallel
 
 ### Passing extra arguments to the provisioner

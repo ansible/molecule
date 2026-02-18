@@ -530,6 +530,40 @@ molecule test --all --command-borders --report
 
 **Note:** Since `shared_state: true` is configured in the base `config.yml`, the `--shared-state` command-line flag is not required. However, it can still be used to override the configuration if needed.
 
+### Nested Scenarios
+
+As collections grow, a flat scenario layout can become unwieldy. Molecule
+supports organizing scenarios into subdirectories:
+
+```
+extensions/molecule/
+├── config.yml
+├── default/
+│   └── molecule.yml
+├── appliance_vlans/
+│   ├── merged/
+│   │   └── molecule.yml
+│   └── replaced/
+│       └── molecule.yml
+```
+
+Target nested scenarios with a `/` in the name:
+
+```bash
+molecule test -s appliance_vlans/merged
+```
+
+To discover all nested scenarios with `--all`, set `MOLECULE_GLOB` to a
+recursive pattern:
+
+```bash
+export MOLECULE_GLOB="extensions/molecule/**/molecule.yml"
+molecule test --all
+```
+
+See [Nested Scenarios (Collections)](configuration.md#nested-scenarios-collections) in
+the configuration guide for full details.
+
 ### Understanding the Output
 
 The execution flow with `--all` when shared state is enabled is:
