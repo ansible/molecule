@@ -73,7 +73,19 @@ from molecule.scenarios import Scenarios
             "extensions/molecule/*/molecule.yml",
             "appliance_vlans/*",
             "extensions/molecule/appliance_vlans/*/molecule.yml",
-            id="collection_wildcard_in_scenario_name",
+            id="collection_wildcard_nonrecursive_glob",
+        ),
+        pytest.param(
+            "extensions/molecule/**/molecule.yml",
+            "camera_*",
+            "extensions/molecule/camera_*/**/molecule.yml",
+            id="collection_wildcard_recursive_glob",
+        ),
+        pytest.param(
+            "extensions/molecule/**/molecule.yml",
+            "appliance_vlans/*",
+            "extensions/molecule/appliance_vlans/*/**/molecule.yml",
+            id="collection_wildcard_nested_recursive_glob",
         ),
         pytest.param(
             "molecule/*/molecule.yml",

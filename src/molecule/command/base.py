@@ -156,6 +156,12 @@ def _resolve_scenario_glob(effective_base_glob: str, scenario_name: str) -> str:
         # Assumes the glob follows the pattern <root>*<suffix> where the
         # first '*' marks the scenario placeholder.
         base_dir = effective_base_glob.split("*", maxsplit=1)[0]
+        has_wildcard = any(c in scenario_name for c in ("*", "?", "["))
+        is_recursive = "**" in effective_base_glob
+        if has_wildcard and is_recursive:
+            # Preserve recursive matching so -s "camera_*" finds scenarios
+            # at any depth under matching directories.
+            return str(Path(base_dir) / scenario_name / "**" / "molecule.yml")
         return str(Path(base_dir) / scenario_name / "molecule.yml")
     return effective_base_glob.replace("*", scenario_name)
 
