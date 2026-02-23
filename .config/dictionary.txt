@@ -97,8 +97,8 @@ netcommon
 nitz
 nocows
 nodev
-nonrecursive
 nofile
+nonrecursive
 notest
 ntlm
 overlayfs
