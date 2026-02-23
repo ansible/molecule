@@ -97,6 +97,7 @@ netcommon
 nitz
 nocows
 nodev
+nonrecursive
 nofile
 notest
 ntlm
