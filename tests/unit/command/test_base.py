@@ -914,3 +914,63 @@ def test_env_overrides_invalid_values(
     assert any(
         "Invalid value for TEST_INT_VAR: not_a_number, ignoring" in msg for msg in warning_messages
     )
+
+
+@pytest.mark.parametrize(
+    ("name", "excludes", "expected"),
+    (
+        pytest.param("default", ["default"], True, id="exact_match"),
+        pytest.param("default", ["other"], False, id="no_match"),
+        pytest.param("default", [], False, id="empty_excludes"),
+        pytest.param(
+            "appliance_vlans/merged",
+            ["appliance_vlans/*"],
+            True,
+            id="wildcard_nested",
+        ),
+        pytest.param(
+            "appliance_vlans/merged",
+            ["wireless_ssid/*"],
+            False,
+            id="wildcard_no_match",
+        ),
+        pytest.param(
+            "appliance_vlans/replaced",
+            ["appliance_vlans/*"],
+            True,
+            id="wildcard_nested_other",
+        ),
+        pytest.param(
+            "appliance_vlans/merged",
+            ["appliance_*/*"],
+            True,
+            id="wildcard_group_prefix",
+        ),
+        pytest.param(
+            "default",
+            ["appliance_vlans/*", "default"],
+            True,
+            id="mixed_exact_and_wildcard",
+        ),
+        pytest.param(
+            "appliance_vlans/merged",
+            ["*/merged"],
+            True,
+            id="wildcard_leaf_name",
+        ),
+    ),
+)
+def test_is_excluded(
+    name: str,
+    excludes: list[str],
+    *,
+    expected: bool,
+) -> None:
+    """Verify _is_excluded matches exact names and glob patterns.
+
+    Args:
+        name: Scenario name to check.
+        excludes: List of exclude patterns.
+        expected: Whether the name should be excluded.
+    """
+    assert base._is_excluded(name, excludes) == expected
