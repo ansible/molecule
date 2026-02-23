@@ -35,7 +35,7 @@ from ansible_compat.ports import cache, cached_property
 
 from molecule import api, interpolation, logger, platforms, scenario, state, util
 from molecule.app import get_app
-from molecule.constants import DEFAULT_CONFIG, ENV_VAR_CONFIG_MAPPING
+from molecule.constants import DEFAULT_CONFIG, ENV_VAR_CONFIG_MAPPING, MOLECULE_COLLECTION_ROOT
 from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
@@ -705,17 +705,40 @@ class Config:
         """
         defaults = copy.deepcopy(DEFAULT_CONFIG)
 
-        # Handle scenario name dynamically
-        if not self.molecule_file:
-            scenario_name = "default"
-        else:
-            scenario_name = (
-                os.path.basename(os.path.dirname(self.molecule_file))  # noqa: PTH119, PTH120
-                or "default"
-            )
+        scenario_name = "default" if not self.molecule_file else self._derive_scenario_name()
 
         defaults["scenario"]["name"] = scenario_name
         return defaults  # type: ignore[return-value]
+
+    def _derive_scenario_name(self) -> str:
+        """Derive the scenario name from the molecule file path.
+
+        For collection-mode scenarios (molecule file under extensions/molecule/),
+        returns the relative path from the collection root. This supports nested
+        scenarios like 'appliance_vlans/merged' while producing identical results
+        to basename for flat scenarios like 'default'.
+
+        For role-mode scenarios, returns the parent directory basename
+        (existing behavior).
+
+        Returns:
+            The derived scenario name.
+        """
+        scenario_dir = os.path.dirname(self.molecule_file)  # noqa: PTH120
+        norm_dir = scenario_dir.replace(os.sep, "/")
+        collection_marker = f"{MOLECULE_COLLECTION_ROOT}/"
+
+        idx = norm_dir.rfind(collection_marker)
+        if idx != -1:
+            rel = norm_dir[idx + len(collection_marker) :]
+            if rel:
+                return rel
+            # molecule.yml directly under extensions/molecule/ with no scenario
+            # subdirectory; fall through to basename which returns "molecule".
+
+        return (
+            os.path.basename(scenario_dir) or "default"  # noqa: PTH119
+        )
 
     def _validate(self) -> None:
         """Validate molecule file."""
