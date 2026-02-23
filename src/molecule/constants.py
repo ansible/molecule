@@ -24,7 +24,7 @@ MOLECULE_HEADER = "# Molecule managed"
 MOLECULE_ROOT = "molecule"
 MOLECULE_GLOB = f"{MOLECULE_ROOT}/*/molecule.yml"
 MOLECULE_COLLECTION_ROOT = "extensions/molecule"
-MOLECULE_COLLECTION_GLOB = f"{MOLECULE_COLLECTION_ROOT}/*/molecule.yml"
+MOLECULE_COLLECTION_GLOB = f"{MOLECULE_COLLECTION_ROOT}/**/molecule.yml"
 
 # Default values
 MOLECULE_DEFAULT_SCENARIO_NAME = "default"

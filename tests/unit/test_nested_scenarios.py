@@ -315,7 +315,7 @@ def test_resolve_scenario_glob_wildcard_preserved(
         MOLECULE_COLLECTION_GLOB,
         "appliance_vlans/*",
     )
-    assert glob_str == "extensions/molecule/appliance_vlans/*/molecule.yml"
+    assert glob_str == "extensions/molecule/appliance_vlans/*/**/molecule.yml"
     configs = base.get_configs({}, {"subcommand": "test"}, glob_str=glob_str)
     names = sorted(c.scenario.name for c in configs)
     assert names == ["appliance_vlans/merged", "appliance_vlans/replaced"]
