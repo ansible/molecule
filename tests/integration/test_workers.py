@@ -66,7 +66,7 @@ def _playbook(step: str, scenario: str) -> str:
           tasks:
             - name: "{step} debug"
               ansible.builtin.debug:
-                msg: "{step} running in {scenario}"
+                msg: "STEP_{step.upper()}_SCENARIO_{scenario}"
     """)
 
 
@@ -126,17 +126,21 @@ class TestWorkersIntegration:
     """Integration tests for worker-based parallel execution."""
 
     def test_workers_serial_baseline(self, collection_dir: Path) -> None:
-        """Verify the generated collection works with serial execution."""
+        """Verify the generated collection works with serial execution and prepare runs for each."""
         result = _run_molecule(collection_dir, ["test", "--all"])
 
         assert result.returncode == 0, (
             f"Serial execution failed.\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
         )
         for i in range(SCENARIO_COUNT):
-            assert f"scenario_{i}" in result.stderr
+            name = f"scenario_{i}"
+            assert name in result.stderr
+            assert f"STEP_PREPARE_SCENARIO_{name}" in result.stdout, (
+                f"prepare did not run for {name}.\nstdout:\n{result.stdout}"
+            )
 
     def test_workers_parallel(self, collection_dir: Path) -> None:
-        """Verify parallel execution with --workers 2 completes successfully."""
+        """Verify parallel execution with --workers 2 and prepare runs for each scenario."""
         result = _run_molecule(
             collection_dir,
             ["test", "--all", "--workers", "2"],
@@ -147,7 +151,11 @@ class TestWorkersIntegration:
         )
         assert "Starting parallel execution with 2 workers" in result.stderr
         for i in range(SCENARIO_COUNT):
-            assert f"scenario_{i}" in result.stderr
+            name = f"scenario_{i}"
+            assert name in result.stderr
+            assert f"STEP_PREPARE_SCENARIO_{name}" in result.stdout, (
+                f"prepare did not run for {name} in parallel mode.\nstdout:\n{result.stdout}"
+            )
 
     def test_workers_all_scenarios_complete(self, collection_dir: Path) -> None:
         """Verify all scenarios produce output when run in parallel."""

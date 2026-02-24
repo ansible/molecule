@@ -62,11 +62,15 @@ def run_one_scenario(
     os.environ["MOLECULE_PROJECT_DIRECTORY"] = project_directory
     os.chdir(project_directory)
 
+    # Each worker must run its own prepare regardless of shared state's
+    # "prepared" flag — different scenarios seed different test data.
+    worker_command_args = {**command_args, "force": True}
+
     logger.configure()
     cfg = config_module.Config(
         molecule_file=molecule_file,
         args=args,
-        command_args=command_args,
+        command_args=worker_command_args,
         ansible_args=ansible_args,
     )
     scenario = cfg.scenario

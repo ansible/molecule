@@ -98,7 +98,7 @@ class TestRunOneScenario:
         mock_config_cls.assert_called_once_with(
             molecule_file="/path/to/molecule.yml",
             args=args,
-            command_args=command_args,
+            command_args={**command_args, "force": True},
             ansible_args=(),
         )
         mock_execute.assert_called_once_with(mock_scenario, shared_state=True)
