@@ -125,7 +125,12 @@ def _is_excluded(name: str, excludes: list[str]) -> bool:
     Returns:
         True if the name matches any exclude pattern.
     """
-    return any(fnmatch.fnmatch(name, pattern) for pattern in excludes)
+    for pattern in excludes:
+        if pattern == name:
+            return True
+        if fnmatch.fnmatchcase(name, pattern):
+            return True
+    return False
 
 
 def _resolve_scenario_glob(effective_base_glob: str, scenario_name: str) -> str:
@@ -156,11 +161,11 @@ def _resolve_scenario_glob(effective_base_glob: str, scenario_name: str) -> str:
         # Assumes the glob follows the pattern <root>*<suffix> where the
         # first '*' marks the scenario placeholder.
         base_dir = effective_base_glob.split("*", maxsplit=1)[0]
-        has_wildcard = any(c in scenario_name for c in ("*", "?", "["))
+        has_wildcard = glob.is_magic(scenario_name, flags=glob.BRACE)
         is_recursive = "**" in effective_base_glob
         if has_wildcard and is_recursive:
-            # Preserve recursive matching so -s "camera_*" finds scenarios
-            # at any depth under matching directories.
+            # Preserve recursive matching so -s "camera_*" or -s "{camera,router}_*"
+            # finds scenarios at any depth under matching directories.
             return str(Path(base_dir) / scenario_name / "**" / "molecule.yml")
         return str(Path(base_dir) / scenario_name / "molecule.yml")
     return effective_base_glob.replace("*", scenario_name)
