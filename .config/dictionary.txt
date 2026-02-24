@@ -98,6 +98,7 @@ nitz
 nocows
 nodev
 nofile
+nonrecursive
 notest
 ntlm
 overlayfs

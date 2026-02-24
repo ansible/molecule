@@ -73,7 +73,19 @@ from molecule.scenarios import Scenarios
             "extensions/molecule/*/molecule.yml",
             "appliance_vlans/*",
             "extensions/molecule/appliance_vlans/*/molecule.yml",
-            id="collection_wildcard_in_scenario_name",
+            id="collection_wildcard_nonrecursive_glob",
+        ),
+        pytest.param(
+            "extensions/molecule/**/molecule.yml",
+            "camera_*",
+            "extensions/molecule/camera_*/**/molecule.yml",
+            id="collection_wildcard_recursive_glob",
+        ),
+        pytest.param(
+            "extensions/molecule/**/molecule.yml",
+            "appliance_vlans/*",
+            "extensions/molecule/appliance_vlans/*/**/molecule.yml",
+            id="collection_wildcard_nested_recursive_glob",
         ),
         pytest.param(
             "molecule/*/molecule.yml",
@@ -303,7 +315,7 @@ def test_resolve_scenario_glob_wildcard_preserved(
         MOLECULE_COLLECTION_GLOB,
         "appliance_vlans/*",
     )
-    assert glob_str == "extensions/molecule/appliance_vlans/*/molecule.yml"
+    assert glob_str == "extensions/molecule/appliance_vlans/*/**/molecule.yml"
     configs = base.get_configs({}, {"subcommand": "test"}, glob_str=glob_str)
     names = sorted(c.scenario.name for c in configs)
     assert names == ["appliance_vlans/merged", "appliance_vlans/replaced"]
