@@ -62,8 +62,13 @@ def run_one_scenario(
     os.environ["MOLECULE_PROJECT_DIRECTORY"] = project_directory
     os.chdir(project_directory)
 
-    # Each worker must run its own prepare regardless of shared state's
-    # "prepared" flag — different scenarios seed different test data.
+    # Force prepare to always run. With shared_state, all scenarios share
+    # one state file and a single "prepared" flag. In sequential mode this
+    # isn't a problem because all Config/State objects are created before
+    # any scenario executes, so they all snapshot prepared=False in memory.
+    # In worker mode each Config is created on-demand; later workers read
+    # the file after earlier workers already wrote prepared=True, causing
+    # their per-scenario prepare playbooks to be skipped.
     worker_command_args = {**command_args, "force": True}
 
     logger.configure()
