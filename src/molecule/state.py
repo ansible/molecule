@@ -210,7 +210,11 @@ class State:
 
     def _get_data(self) -> StateData:
         if self._state_file.is_file():
-            return self._load_file()
+            loaded = self._load_file()
+            if loaded:
+                defaults = self._default_data()
+                defaults.update(loaded)
+                return defaults
         return self._default_data()
 
     def _default_data(self) -> StateData:

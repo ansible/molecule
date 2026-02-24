@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import functools
 import logging
+import os
 
 from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING, Any
@@ -271,11 +272,22 @@ class CliOptions:
         )
 
     @property
+    def continue_on_failure(self) -> CliOption:
+        """Continue on failure option for worker mode."""
+        return CliOption(
+            name="continue-on-failure",
+            help="When using --workers, continue running remaining scenarios after a failure instead of stopping.",
+            is_flag=True,
+            default=False,
+            experimental=True,
+        )
+
+    @property
     def parallel(self) -> CliOption:
-        """Parallel execution option."""
+        """Parallel execution option (deprecated)."""
         return CliOption(
             name="parallel",
-            help="Enable or disable parallel mode.",
+            help="DEPRECATED: Use --workers instead. Enable or disable parallel isolation mode.",
             is_flag=True,
             default=MOLECULE_PARALLEL,
         )
@@ -387,6 +399,46 @@ class CliOptions:
             is_argument=True,
             nargs=1,
         )
+
+    @property
+    def workers(self) -> CliOption:
+        """Worker count for concurrent scenario execution."""
+        return CliOption(
+            name="workers",
+            help="Number of concurrent worker processes. Accepts an integer, 'cpus', or 'cpus-1'.",
+            default="1",
+            experimental=True,
+        )
+
+
+def resolve_workers(value: str) -> int:
+    """Resolve a --workers value to an integer.
+
+    Args:
+        value: The raw string from the CLI. Accepts a positive integer, 'cpus', or 'cpus-1'.
+
+    Returns:
+        Resolved number of workers as an integer (minimum 1).
+
+    Raises:
+        click.BadParameter: If the value is not a valid worker specification.
+    """
+    normalized = value.strip().lower()
+    if normalized == "cpus":
+        count = os.cpu_count() or 1
+        return max(1, count)
+    if normalized == "cpus-1":
+        count = os.cpu_count() or 2
+        return max(1, count - 1)
+    try:
+        n = int(normalized)
+    except ValueError:
+        msg = f"Invalid --workers value '{value}'. Must be a positive integer, 'cpus', or 'cpus-1'."
+        raise click.BadParameter(msg) from None
+    if n < 1:
+        msg = f"--workers must be at least 1, got {n}."
+        raise click.BadParameter(msg)
+    return n
 
 
 def options(option_names: list[str]) -> Callable[..., Any]:

@@ -331,20 +331,23 @@ class CommandArgs(TypedDict, total=False):
     These arguments may or may not be passed depending on the command being called.
 
     Attributes:
+        continue_on_failure: Whether to continue running scenarios after a failure in worker mode.
         destroy: Destroy strategy to use.
         driver_name: Name of driver to use.
         force: Whether to enable force mode.
         format: Output format
         host: Host to access.
-        parallel: Whether to enable parallel mode.
+        parallel: Whether to enable parallel mode (deprecated, use workers).
         platform_name: Name of the platform to target.
         report: Whether to show an after-run summary report.
         scenario_name: Name of the scenario to target.
         shared_state: Whether (some) state should be shared between scenarios.
         subcommand: Name of subcommand being run.
+        workers: Number of concurrent worker processes for parallel scenario execution.
         command_borders: Whether to enable borders around command output.
     """
 
+    continue_on_failure: bool
     destroy: Literal["always", "never"]
     driver_name: str
     force: bool
@@ -356,4 +359,5 @@ class CommandArgs(TypedDict, total=False):
     scenario_name: str
     shared_state: bool
     subcommand: str
+    workers: int
     command_borders: bool

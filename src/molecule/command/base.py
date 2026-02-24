@@ -285,6 +285,14 @@ def _run_scenarios(
     Raises:
         ScenarioFailureError: when a scenario fails prematurely.
     """
+    num_workers = command_args.get("workers", 1)
+    if num_workers > 1:
+        from molecule.worker import run_scenarios_parallel, validate_worker_args
+
+        validate_worker_args(command_args)
+        run_scenarios_parallel(scenarios, command_args, default_config, num_workers)
+        return
+
     # Run initial create
     create_results = execute_subcommand_default(
         default_config,
