@@ -106,6 +106,8 @@ def _run_molecule(
     env = os.environ.copy()
     env["ANSIBLE_FORCE_COLOR"] = "0"
     env["PY_COLORS"] = "0"
+    env.pop("MOLECULE_PROJECT_DIRECTORY", None)
+    env.pop("MOLECULE_EPHEMERAL_DIRECTORY", None)
     return subprocess.run(
         cmd,
         capture_output=True,

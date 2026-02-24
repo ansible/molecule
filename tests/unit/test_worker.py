@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import os
 
 from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
@@ -69,6 +70,7 @@ class TestValidateWorkerArgs:
 class TestRunOneScenario:
     """Tests for run_one_scenario."""
 
+    @patch.dict(os.environ, {}, clear=False)
     @patch("molecule.worker.os.chdir")
     @patch("molecule.worker.execute_scenario")
     @patch("molecule.worker.config_module.Config")
@@ -105,6 +107,7 @@ class TestRunOneScenario:
         assert result.name == "test_scenario"
         assert error is None
 
+    @patch.dict(os.environ, {}, clear=False)
     @patch("molecule.worker.os.chdir")
     @patch("molecule.worker.execute_scenario")
     @patch("molecule.worker.config_module.Config")
