@@ -5,9 +5,9 @@ The docker driver supports using pre-built images and `docker build`
 image used by a scenario is governed by the following configuration
 items:
 
-1.  `platforms[*].image`: Docker image name:tag to use as base image.
+1. `platforms[*].image`: Docker image name:tag to use as base image.
 
-2.  `platforms[*].pre_build_image`: Whether to customize base image or
+2. `platforms[*].pre_build_image`: Whether to customize base image or
     use as-is[^1].
 
     > - When `true`, use the specified `platform[].image` as-is.

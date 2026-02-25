@@ -27,7 +27,7 @@ cd /tmp/my-playbooks
 
 This creates the following structure:
 
-```
+```text
 my-playbooks/
 ├── ansible.cfg
 ├── ansible-navigator.yml

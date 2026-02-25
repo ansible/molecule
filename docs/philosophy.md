@@ -265,7 +265,7 @@ ansible:
         - --limit=staging_environment
 ```
 
-**Benefits of native inventory integration**
+### Benefits of native inventory integration
 
 - **Single source of truth**: Reuse existing inventory definitions that contain both production and lab/staging/test systems, eliminating inventory duplication and ensuring consistency across environments
 - **Production parity**: Test using the same inventory systems and patterns as production deployments while targeting appropriate lab or staging systems, ensuring that test environments accurately reflect real-world usage patterns

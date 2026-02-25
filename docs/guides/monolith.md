@@ -27,8 +27,8 @@ dependencies.
 Molecule can test complex scenarios leveraging this technique.
 
 ```bash
-$ cd monolith-repo/roles/baz
-$ molecule test
+cd monolith-repo/roles/baz
+molecule test
 ```
 
 Molecule is simply setting the `ANSIBLE_*` environment variables. To

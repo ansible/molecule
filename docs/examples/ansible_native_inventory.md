@@ -116,7 +116,7 @@ Traditional Molecule scenarios define infrastructure in the `platforms` section 
 
 Ansible loads inventory sources **alphabetically**, so naming is important:
 
-```
+```text
 inventory/
 ├── 01-inventory.yml    # Loaded first (static hosts)
 ├── 02-constructed.yml  # Loaded second (dynamic grouping)
