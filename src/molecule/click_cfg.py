@@ -15,8 +15,6 @@ from typing import TYPE_CHECKING, Any
 
 import click
 
-from click_help_colors import HelpColorsCommand, HelpColorsGroup
-
 from molecule import util
 from molecule.ansi_output import should_do_markup
 from molecule.api import drivers
@@ -524,14 +522,6 @@ class FirstLineHelpMixin:
             self.help = first_line
 
 
-class FirstLineHelpCommand(FirstLineHelpMixin, HelpColorsCommand):
-    """Override the default help generation to remove the args section."""
-
-
-class FirstLineHelpGroup(FirstLineHelpMixin, HelpColorsGroup):
-    """Override the default help generation to remove the args section."""
-
-
 def click_group_ex() -> ClickGroup:
     """Return extended version of click.group().
 
@@ -544,24 +534,12 @@ def click_group_ex() -> ClickGroup:
     # blue : molecule own command, not dependent on scenario
     # yellow : special commands, like full test sequence, or login
     return click.group(
-        cls=FirstLineHelpGroup,
         # Workaround to disable click help line truncation to ~80 chars
         # https://github.com/pallets/click/issues/486
         context_settings={
             "max_content_width": 9999,
             "color": should_do_markup(),
             "help_option_names": ["-h", "--help"],
-        },
-        help_headers_color="yellow",
-        help_options_color="green",
-        help_options_custom_colors={
-            "drivers": "blue",
-            "init": "blue",
-            "list": "blue",
-            "matrix": "blue",
-            "login": "bright_yellow",
-            "reset": "blue",
-            "test": "bright_yellow",
         },
     )
 
@@ -605,10 +583,7 @@ def click_command_ex(name: str | None = None) -> Callable[[Callable[..., Any]], 
 
         # Apply the click.command decorator to the wrapper
         return click.command(
-            cls=FirstLineHelpCommand,
             name=name,
-            help_headers_color="yellow",
-            help_options_color="green",
         )(wrapper)
 
     return decorator
