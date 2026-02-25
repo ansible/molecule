@@ -7,7 +7,7 @@ requires-python = ">=3.11"
 dependencies = []
 
 [dependency-groups]
-dev = ["tox-ansible>=25.5.5", "tox-extra>=2.1.0", "tox-uv>=1.20.1"]
+dev = ["tox-ansible>=26.2.1", "tox-extra>=2.1.0", "tox-uv>=1.20.1"]
 
 [tool.codespell]
 # indention is a typo in ruamel.yaml's API

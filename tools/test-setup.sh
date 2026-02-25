@@ -8,7 +8,7 @@ set -euxo pipefail
 # non-sudo mode.
 PYTHON=$(command -v python3 python | head -n1)
 
-sudo "$PYTHON" -m pip install "tox>=3.14.6"
+sudo "$PYTHON" -m pip install "tox>=4.46.0"
 #
 # Bootstrapping of services needed for testing, like docker or podman, is done
 # via pre.yaml playbook from ansible-tox-molecule job:

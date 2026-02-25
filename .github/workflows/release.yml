@@ -33,7 +33,7 @@ jobs:
           python-version: "3.14"
 
       - name: Install tox
-        run: python3 -m pip install --user "tox>=4.0.0"
+        run: python3 -m pip install --user "tox>=4.46.0"
 
       - name: Check out src from Git
         uses: actions/checkout@v6
