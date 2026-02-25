@@ -1,0 +1,8 @@
+---
+- name: create for default
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: "create debug"
+      ansible.builtin.debug:
+        msg: "STEP_CREATE_SCENARIO_default"

@@ -1,0 +1,5 @@
+---
+scenario:
+  test_sequence:
+    - create
+    - destroy

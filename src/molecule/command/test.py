@@ -21,9 +21,11 @@
 
 from __future__ import annotations
 
+import warnings
+
 from typing import TYPE_CHECKING
 
-from molecule.click_cfg import click_command_ex, common_options
+from molecule.click_cfg import click_command_ex, common_options, resolve_workers
 from molecule.command import base
 
 
@@ -46,10 +48,12 @@ class Test(base.Base):
 
 @click_command_ex()
 @common_options(
+    "continue_on_failure",
     "destroy",
     "driver_name_with_choices",
     "platform_name_with_default",
     "parallel",
+    "workers",
     "ansible_args",
 )
 def test(ctx: click.Context) -> None:  # pragma: no cover
@@ -58,16 +62,26 @@ def test(ctx: click.Context) -> None:  # pragma: no cover
     Args:
         ctx: Click context object holding commandline arguments.
     """
+    if ctx.params.get("parallel"):
+        warnings.warn(
+            "--parallel is deprecated and will be removed in a future release. "
+            "Use --workers instead.",
+            DeprecationWarning,
+            stacklevel=1,
+        )
+
     args: MoleculeArgs = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)  # noqa: SLF001
     command_args: CommandArgs = {
         "command_borders": ctx.params["command_borders"],
+        "continue_on_failure": ctx.params["continue_on_failure"],
         "destroy": ctx.params["destroy"],
         "driver_name": ctx.params["driver_name"],
         "platform_name": ctx.params["platform_name"],
         "report": ctx.params["report"],
         "shared_state": ctx.params["shared_state"],
         "subcommand": subcommand,
+        "workers": resolve_workers(ctx.params["workers"]),
     }
 
     __all = ctx.params["all"]

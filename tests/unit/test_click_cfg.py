@@ -9,7 +9,7 @@ import pytest
 
 from click.testing import CliRunner
 
-from molecule.click_cfg import CliOption, CliOptions, _sort_options, common_options
+from molecule.click_cfg import CliOption, CliOptions, _sort_options, common_options, resolve_workers
 
 
 def test_basic_option_creation() -> None:
@@ -880,3 +880,119 @@ def test_option_sort_order() -> None:
     ]
 
     assert sorted_names == expected_order, f"Expected {expected_order}, got {sorted_names}"
+
+
+# --- resolve_workers tests ---
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    (
+        ("1", 1),
+        ("4", 4),
+        ("16", 16),
+        (" 2 ", 2),
+    ),
+    ids=("one", "four", "sixteen", "whitespace"),
+)
+def test_resolve_workers_integers(value: str, expected: int) -> None:
+    """Test resolve_workers with valid integer inputs.
+
+    Args:
+        value: The string value to resolve.
+        expected: The expected resolved integer.
+    """
+    assert resolve_workers(value) == expected
+
+
+def test_resolve_workers_cpus(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test resolve_workers with 'cpus' value.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    cpu_count = 8
+    monkeypatch.setattr("molecule.click_cfg.os.cpu_count", lambda: cpu_count)
+    assert resolve_workers("cpus") == cpu_count
+
+
+def test_resolve_workers_cpus_minus_1(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test resolve_workers with 'cpus-1' value.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    cpu_count = 8
+    monkeypatch.setattr("molecule.click_cfg.os.cpu_count", lambda: cpu_count)
+    assert resolve_workers("cpus-1") == cpu_count - 1
+
+
+def test_resolve_workers_cpus_case_insensitive(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test resolve_workers is case-insensitive for cpu values.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    cpu_count = 4
+    monkeypatch.setattr("molecule.click_cfg.os.cpu_count", lambda: cpu_count)
+    assert resolve_workers("CPUs") == cpu_count
+    assert resolve_workers("CPUS-1") == cpu_count - 1
+
+
+def test_resolve_workers_cpus_none_fallback(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test resolve_workers when os.cpu_count() returns None.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    monkeypatch.setattr("molecule.click_cfg.os.cpu_count", lambda: None)
+    assert resolve_workers("cpus") == 1
+    assert resolve_workers("cpus-1") == 1
+
+
+def test_resolve_workers_invalid_string() -> None:
+    """Test resolve_workers raises on invalid string."""
+    with pytest.raises(click.BadParameter, match="Invalid --workers"):
+        resolve_workers("abc")
+
+
+def test_resolve_workers_zero() -> None:
+    """Test resolve_workers raises on zero."""
+    with pytest.raises(click.BadParameter, match="at least 1"):
+        resolve_workers("0")
+
+
+def test_resolve_workers_negative() -> None:
+    """Test resolve_workers raises on negative value."""
+    with pytest.raises(click.BadParameter, match="at least 1"):
+        resolve_workers("-1")
+
+
+# --- New CLI option tests ---
+
+
+def test_workers_option() -> None:
+    """Test the workers option properties."""
+    options = CliOptions()
+    workers = options.workers
+    assert workers.name == "workers"
+    assert workers.default == "1"
+    assert workers.experimental is True
+    assert "EXPERIMENTAL:" in workers._generate_help_text()
+
+
+def test_continue_on_failure_option() -> None:
+    """Test the continue_on_failure option properties."""
+    options = CliOptions()
+    cof = options.continue_on_failure
+    assert cof.name == "continue-on-failure"
+    assert cof.is_flag is True
+    assert cof.default is False
+    assert cof.experimental is True
+
+
+def test_parallel_deprecation_help_text() -> None:
+    """Test that parallel option help text mentions deprecation."""
+    options = CliOptions()
+    parallel = options.parallel
+    assert "DEPRECATED" in parallel.help
