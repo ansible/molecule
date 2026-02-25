@@ -163,6 +163,7 @@ no-docstring-rgx = "__.*__"
 [tool.pylint.messages_control]
 disable = [
   "unknown-option-value",
+  "R0401",  # cyclic-import — lazy imports in base.py -> worker.py are intentional
   # https://gist.github.com/cidrblock/ec3412bacfeb34dbc2d334c1d53bef83
   "C0103",  # invalid-name / ruff N815
   "C0105",  # typevar-name-incorrect-variance / ruff PLC0105

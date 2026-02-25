@@ -1,0 +1,6 @@
+namespace: test_ns
+name: test_collection
+version: 1.0.0
+authors:
+  - test
+readme: README.md

@@ -896,31 +896,55 @@ def test_option_sort_order() -> None:
     ids=("one", "four", "sixteen", "whitespace"),
 )
 def test_resolve_workers_integers(value: str, expected: int) -> None:
-    """Test resolve_workers with valid integer inputs."""
+    """Test resolve_workers with valid integer inputs.
+
+    Args:
+        value: The string value to resolve.
+        expected: The expected resolved integer.
+    """
     assert resolve_workers(value) == expected
 
 
 def test_resolve_workers_cpus(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test resolve_workers with 'cpus' value."""
-    monkeypatch.setattr("molecule.click_cfg.os.cpu_count", lambda: 8)
-    assert resolve_workers("cpus") == 8
+    """Test resolve_workers with 'cpus' value.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    cpu_count = 8
+    monkeypatch.setattr("molecule.click_cfg.os.cpu_count", lambda: cpu_count)
+    assert resolve_workers("cpus") == cpu_count
 
 
 def test_resolve_workers_cpus_minus_1(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test resolve_workers with 'cpus-1' value."""
-    monkeypatch.setattr("molecule.click_cfg.os.cpu_count", lambda: 8)
-    assert resolve_workers("cpus-1") == 7
+    """Test resolve_workers with 'cpus-1' value.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    cpu_count = 8
+    monkeypatch.setattr("molecule.click_cfg.os.cpu_count", lambda: cpu_count)
+    assert resolve_workers("cpus-1") == cpu_count - 1
 
 
 def test_resolve_workers_cpus_case_insensitive(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test resolve_workers is case-insensitive for cpu values."""
-    monkeypatch.setattr("molecule.click_cfg.os.cpu_count", lambda: 4)
-    assert resolve_workers("CPUs") == 4
-    assert resolve_workers("CPUS-1") == 3
+    """Test resolve_workers is case-insensitive for cpu values.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    cpu_count = 4
+    monkeypatch.setattr("molecule.click_cfg.os.cpu_count", lambda: cpu_count)
+    assert resolve_workers("CPUs") == cpu_count
+    assert resolve_workers("CPUS-1") == cpu_count - 1
 
 
 def test_resolve_workers_cpus_none_fallback(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Test resolve_workers when os.cpu_count() returns None."""
+    """Test resolve_workers when os.cpu_count() returns None.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+    """
     monkeypatch.setattr("molecule.click_cfg.os.cpu_count", lambda: None)
     assert resolve_workers("cpus") == 1
     assert resolve_workers("cpus-1") == 1

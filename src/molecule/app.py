@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+
 from functools import lru_cache
 from pathlib import Path
 from subprocess import CalledProcessError, CompletedProcess
@@ -62,8 +64,10 @@ class App:
         if debug:
             print_environment_vars(env)
 
+        quiet_ansible = os.environ.get("MOLECULE_QUIET_ANSIBLE", "") == "1"
+
         borders = None
-        if command_borders:
+        if command_borders and not quiet_ansible:
             borders = CommandBorders(
                 cmd=cmd,
                 original_stderr=original_stderr,
@@ -73,7 +77,7 @@ class App:
             args=cmd,
             env=env,
             cwd=cwd,
-            tee=True,
+            tee=not quiet_ansible,
             set_acp=False,
         )
 

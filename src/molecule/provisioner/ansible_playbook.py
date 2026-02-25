@@ -184,10 +184,12 @@ class AnsiblePlaybook:
             err = f"Ansible return code was {result.returncode}, command was: {escape(shlex.join(result.args))}"
             self._config.scenario.results.add_completion(CompletionState.failed(note=err))
 
+            ansible_output = (result.stdout or "") + (result.stderr or "")
             raise ScenarioFailureError(
                 err,
                 code=result.returncode,
                 warns=warns,
+                ansible_output=ansible_output,
             )
 
         self._config.scenario.results.add_completion(CompletionState.successful)

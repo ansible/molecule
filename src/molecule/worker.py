@@ -13,6 +13,7 @@ import os
 import shutil
 
 from concurrent.futures import Future, ProcessPoolExecutor, as_completed
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from molecule import config as config_module
@@ -22,7 +23,7 @@ from molecule.command.base import (
     execute_subcommand_default,
 )
 from molecule.exceptions import ScenarioFailureError
-from molecule.reporting.definitions import ScenarioResults
+from molecule.reporting.definitions import ScenarioResults  # noqa: TC001
 
 
 if TYPE_CHECKING:
@@ -38,7 +39,7 @@ def run_one_scenario(
     command_args: CommandArgs,
     ansible_args: tuple[str, ...],
     project_directory: str,
-) -> tuple[ScenarioResults, str | None]:
+) -> tuple[ScenarioResults, str | None, str, str]:
     """Execute a single scenario in a worker process.
 
     Reconstructs a Config from picklable arguments and runs the scenario's
@@ -56,11 +57,18 @@ def run_one_scenario(
         project_directory: Absolute path to the project directory.
 
     Returns:
-        A tuple of (ScenarioResults, error_message). error_message is None
-        on success, or a string describing the failure.
+        A 4-tuple of (ScenarioResults, error_message, ansible_output, failed_step).
+        error_message is None on success. ansible_output contains captured
+        ansible stdout+stderr for the failing step. failed_step is the name
+        of the action that failed (e.g. "verify", "converge").
     """
     os.environ["MOLECULE_PROJECT_DIRECTORY"] = project_directory
     os.chdir(project_directory)
+
+    verbose = args.get("verbose", 0)
+    debug = args.get("debug", False)
+    if not verbose and not debug:
+        os.environ["MOLECULE_QUIET_ANSIBLE"] = "1"
 
     # Force prepare to always run. With shared_state, all scenarios share
     # one state file and a single "prepared" flag. In sequential mode this
@@ -69,7 +77,7 @@ def run_one_scenario(
     # In worker mode each Config is created on-demand; later workers read
     # the file after earlier workers already wrote prepared=True, causing
     # their per-scenario prepare playbooks to be skipped.
-    worker_command_args = {**command_args, "force": True}
+    worker_command_args: CommandArgs = {**command_args, "force": True}
 
     logger.configure()
     cfg = config_module.Config(
@@ -82,13 +90,35 @@ def run_one_scenario(
 
     try:
         execute_scenario(scenario, shared_state=True)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         error_msg = getattr(exc, "message", None) or str(exc)
-        return copy.deepcopy(scenario.results), error_msg
-    return copy.deepcopy(scenario.results), None
+        ansible_output = getattr(exc, "ansible_output", "") or ""
+        failed_step = getattr(cfg, "action", "") or ""
+        return copy.deepcopy(scenario.results), error_msg, ansible_output, failed_step
+    return copy.deepcopy(scenario.results), None, "", ""
 
 
-def run_scenarios_parallel(
+def _print_failed_output(failed_outputs: list[tuple[str, str, str]]) -> None:
+    """Print captured ansible output for failed scenarios using bordered blocks.
+
+    Args:
+        failed_outputs: List of (scenario_name, ansible_output, failed_step) tuples.
+    """
+    from molecule.ansi_output import write_bordered_block  # noqa: PLC0415
+    from molecule.console import original_stderr  # noqa: PLC0415
+    from molecule.constants import ANSICodes as A  # noqa: PLC0415
+
+    for name, output, step in failed_outputs:
+        title = f"Failed: {name} > {step}" if step else f"Failed: {name}"
+        write_bordered_block(
+            stream=original_stderr,
+            content=output,
+            title=title,
+            color=A.RED,
+        )
+
+
+def run_scenarios_parallel(  # noqa: C901, PLR0912, PLR0915
     scenarios: Scenarios,
     command_args: CommandArgs,
     default_config: config_module.Config | None,
@@ -146,27 +176,37 @@ def run_scenarios_parallel(
         return
 
     failed_scenarios: list[str] = []
+    failed_outputs: list[tuple[str, str, str]] = []
 
-    project_dir = scenarios.all[0].config.project_directory if scenarios.all else os.getcwd()
+    project_dir = scenarios.all[0].config.project_directory if scenarios.all else str(Path.cwd())
 
-    LOG.info("Starting parallel execution with %d workers for %d scenarios", num_workers, len(scenarios.all))
+    LOG.info(
+        "Starting parallel execution with %d workers for %d scenarios",
+        num_workers,
+        len(scenarios.all),
+    )
 
     with ProcessPoolExecutor(max_workers=num_workers) as executor:
-        future_to_name: dict[Future[tuple[ScenarioResults, str | None]], str] = {}
+        future_to_name: dict[Future[tuple[ScenarioResults, str | None, str, str]], str] = {}
         for scenario in scenarios.all:
             mol_file = scenario.config.molecule_file
             mol_args = scenario.config.args
             ans_args = scenario.config.ansible_args
             future = executor.submit(
-                run_one_scenario, mol_file, mol_args, command_args, ans_args, project_dir,
+                run_one_scenario,
+                mol_file,
+                mol_args,
+                command_args,
+                ans_args,
+                project_dir,
             )
             future_to_name[future] = scenario.config.scenario.name
 
         for future in as_completed(future_to_name):
             scenario_name = future_to_name[future]
             try:
-                result, error = future.result()
-            except Exception as exc:
+                result, error, ansible_output, failed_step = future.result()
+            except Exception as exc:  # noqa: BLE001
                 failed_scenarios.append(scenario_name)
                 LOG.error("Scenario '%s' worker crashed: %s", scenario_name, exc)  # noqa: TRY400
                 if not continue_on_failure:
@@ -182,7 +222,9 @@ def run_scenarios_parallel(
 
             if error:
                 failed_scenarios.append(scenario_name)
-                LOG.error("Scenario '%s' failed: %s", scenario_name, error)  # noqa: TRY400
+                LOG.error("Scenario '%s' failed: %s", scenario_name, error)
+                if ansible_output and ansible_output.strip():
+                    failed_outputs.append((scenario_name, ansible_output.strip(), failed_step))
 
                 if not continue_on_failure:
                     LOG.warning(
@@ -202,6 +244,9 @@ def run_scenarios_parallel(
     if destroy_results is not None:
         scenarios.results.append(destroy_results)
 
+    if failed_outputs:
+        _print_failed_output(failed_outputs)
+
     if failed_scenarios:
         names = ", ".join(failed_scenarios)
         msg = f"Scenarios failed: {names}"
@@ -217,7 +262,7 @@ def validate_worker_args(command_args: CommandArgs) -> None:
     Raises:
         MoleculeError: If workers is used in an unsupported configuration.
     """
-    from molecule.exceptions import MoleculeError
+    from molecule.exceptions import MoleculeError  # noqa: PLC0415
 
     workers = command_args.get("workers", 1)
     if workers <= 1:

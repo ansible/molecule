@@ -1,6 +1,7 @@
 CEOS
 CLICOLOR
 CMDB
+CPUS
 Cfmpr
 DOTGLOB
 Dequènes
@@ -102,7 +103,6 @@ nonrecursive
 notest
 ntlm
 overlayfs
-parallelizable
 passenv
 passwordless
 prepender

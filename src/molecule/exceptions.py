@@ -45,6 +45,7 @@ class ScenarioFailureError(MoleculeError):
         message: str = "",
         code: int = 1,
         warns: Sequence[WarningMessage] = (),
+        ansible_output: str = "",
     ) -> None:
         """Custom exception to handle scenario run failures.
 
@@ -52,8 +53,10 @@ class ScenarioFailureError(MoleculeError):
             message: The message to display about the problem.
             code: Exit code to use when exiting.
             warns: Warnings about the problem to issue.
+            ansible_output: Captured ansible stdout+stderr (populated when quiet).
         """
         super().__init__(message, code)
+        self.ansible_output = ansible_output
 
         for warn in warns:
             LOG.warning(warn.message)

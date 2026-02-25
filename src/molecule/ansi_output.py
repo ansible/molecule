@@ -509,6 +509,78 @@ class BorderedStream:
         return self.buffer.getvalue()
 
 
+def create_border_header(text: str = "", width: int = DEFAULT_BORDER_WIDTH) -> str:
+    """Create a top border line with optional centered text.
+
+    Args:
+        text: Text to include in header (empty for plain border).
+        width: Total border width.
+
+    Returns:
+        Formatted header line using box drawing characters.
+    """
+    if text:
+        content_len = len(text) + 2  # spaces around text
+        padding = (width - content_len - 1) // 2  # -1 for corner
+        remaining = width - content_len - padding - 1
+        return f"{A.BOX_TOP_LEFT}{A.BOX_HORIZONTAL * padding} {text} {A.BOX_HORIZONTAL * remaining}"
+    return f"{A.BOX_TOP_LEFT}{A.BOX_HORIZONTAL * (width - 1)}"
+
+
+def create_border_footer(text: str = "", width: int = DEFAULT_BORDER_WIDTH) -> str:
+    """Create a bottom border line with optional text.
+
+    Args:
+        text: Text to include in footer (empty for plain border).
+        width: Total border width.
+
+    Returns:
+        Formatted footer line using box drawing characters.
+    """
+    if text:
+        footer_text = f" {text} "
+        padding = width - len(footer_text) - 2  # 2 = corner + dash
+        return f"{A.BOX_BOTTOM_LEFT}{A.BOX_HORIZONTAL}{footer_text}{A.BOX_HORIZONTAL * padding}"
+    return f"{A.BOX_BOTTOM_LEFT}{A.BOX_HORIZONTAL * (width - 1)}"
+
+
+def write_bordered_block(  # noqa: PLR0913
+    stream: TextIO,
+    content: str,
+    title: str = "",
+    footer_text: str = "",
+    color: str = "",
+    width: int = DEFAULT_BORDER_WIDTH,
+) -> None:
+    """Write a bordered text block to a stream.
+
+    Produces output like CommandBorders: a top border with optional title,
+    content lines prefixed with a vertical bar, and a bottom border.
+
+    Args:
+        stream: Stream to write to (typically original_stderr).
+        content: Multi-line string to display inside the border.
+        title: Optional text for the header line.
+        footer_text: Optional text for the footer line.
+        color: ANSI color code for the border chrome (empty for default dim).
+        width: Total border width.
+    """
+    markup = should_do_markup()
+    dim = A.DIM if markup else ""
+    reset = A.RESET if markup else ""
+    clr = color if markup else ""
+
+    header = create_border_header(title, width)
+    stream.write(f"  {dim}{clr}{header}{reset}\n")
+
+    for line in content.splitlines():
+        styled_prefix = f"{dim}{clr}{A.BOX_VERTICAL}{reset} " if markup else f"{A.BOX_VERTICAL} "
+        stream.write(f"  {styled_prefix}{line}\n")
+
+    footer = create_border_footer(footer_text, width)
+    stream.write(f"  {dim}{clr}{footer}{reset}\n")
+
+
 class CommandBorders:
     """Manages command execution with visual borders."""
 
@@ -545,11 +617,9 @@ class CommandBorders:
         Args:
             cmd: Command to display
         """
-        # Print header to stderr (bypassing rich) using ANSI line drawing
-        header = self._create_header_line("")
+        header = create_border_header("", self.width)
         self.original_stderr.write(f"  {A.DIM}{header}{A.RESET}\n")
 
-        # Format and display command
         command_lines = self._format_command_lines(cmd)
         for line in command_lines:
             self.original_stderr.write(
@@ -627,48 +697,14 @@ class CommandBorders:
                 wrapped.append(line)
         return wrapped
 
-    def _create_header_line(self, text: str) -> str:
-        """Create header line with text.
-
-        Args:
-            text: Text to include in header
-
-        Returns:
-            Formatted header line using ANSI drawing characters
-        """
-        if text:
-            # Calculate padding for centered text
-            content_len = len(text) + 2  # Add 2 for spaces around text
-            padding = (self.width - content_len - 1) // 2  # -1 for corner
-            remaining = self.width - content_len - padding - 1
-            return f"{A.BOX_TOP_LEFT}{A.BOX_HORIZONTAL * padding} {text} {A.BOX_HORIZONTAL * remaining}"
-        # Header without text
-        return f"{A.BOX_TOP_LEFT}{A.BOX_HORIZONTAL * (self.width - 1)}"
-
-    def _create_footer_line(self, return_code: int) -> str:
-        """Create footer line with return code.
-
-        Args:
-            return_code: Command return code
-
-        Returns:
-            Formatted footer line using ANSI drawing characters
-        """
-        footer_text = f" Return code: {return_code} "
-        padding = self.width - len(footer_text) - 2  # 2 = "└" + "─"
-        return f"{A.BOX_BOTTOM_LEFT}{A.BOX_HORIZONTAL}{footer_text}" + A.BOX_HORIZONTAL * padding
-
     def _print_footer(self, return_code: int) -> None:
         """Print footer with return code.
 
         Args:
             return_code: Command return code
         """
-        # Use simple color format to match extracted colors from get_line_style
         footer_color = A.GREEN if return_code == 0 else A.RED
-
-        # Footer line to stderr (bypassing rich) using ANSI line drawing
-        footer = self._create_footer_line(return_code)
+        footer = create_border_footer(f"Return code: {return_code}", self.width)
         self.original_stderr.write(f"  {A.DIM}{footer_color}{footer}{A.RESET}\n")
 
     def finalize(self, return_code: int) -> None:

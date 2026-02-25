@@ -270,7 +270,7 @@ def _generate_scenarios(
     return scenarios
 
 
-def _run_scenarios(
+def _run_scenarios(  # noqa: C901
     scenarios: Scenarios,
     command_args: CommandArgs,
     default_config: config.Config | None,
@@ -287,7 +287,7 @@ def _run_scenarios(
     """
     num_workers = command_args.get("workers", 1)
     if num_workers > 1:
-        from molecule.worker import run_scenarios_parallel, validate_worker_args
+        from molecule.worker import run_scenarios_parallel, validate_worker_args  # noqa: PLC0415
 
         validate_worker_args(command_args)
         run_scenarios_parallel(scenarios, command_args, default_config, num_workers)
