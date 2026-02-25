@@ -80,12 +80,20 @@ dev = [
   "requests!=2.32.0",
   "ruff>=0.12.11",
   "toml-sort>=0.24.2",
-  "tox>=4.29.0",
+  "tox>=4.46.0",
   "types-jsonschema>=4.25.1.20250822",
   "types-pexpect>=4.9.0.20250809",
   "types-pyyaml>=6.0.12.20250822",
 ]
-collection = ["tox-ansible>=25.8.0"]
+collection = [
+  "molecule>=6.0.0",
+  "pip>=2.20.3",
+  "pytest-ansible>=26.2.0",
+  "tox>=4.46.0",
+  "tox-ansible>=26.2.1",
+  "tox-extra>=2.2.0",
+  "tox-uv>=1.32.1"
+]
 docs = ["linkchecker>=10.4.0", "mkdocs-ansible>=24.3.0"]
 lint = [
   "pip>=25.2",
@@ -466,7 +474,7 @@ env_list = [
   "pkg",
   "eco",
 ]
-requires = ["tox>=4.23.2", "tox-extra>=2.0.2", "tox-uv>=1.20.2"]
+requires = ["tox>=4.46.0", "tox-extra>=2.2.0", "tox-uv>=1.32.1"]
 skip_missing_interpreters = true
 
 [tool.tox.env.collection]
@@ -530,7 +538,7 @@ commands = [
 ]
 deps = [
   "molecule-plugins[azure,containers,docker,ec2,gce,podman,vagrant]>=23",
-  "tox-ansible>=25.5.5",
+  "tox-ansible>=26.2.1",
   "uv",
 ]
 description = "Smoketest of combining all known to be maintained plugins (ecosystem)"
