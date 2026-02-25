@@ -31,7 +31,6 @@ dependencies = [
   "ansible-compat>=25.1.4",
   "ansible-core>=2.15.0",
   "click>=8.0,<9",
-  "click-help-colors>=0.9.4",
   "enrich>=1.2.7",
   "jinja2>=2.11.3",
   "jsonschema>=4.9.1",
@@ -62,37 +61,44 @@ testinfra = "molecule.verifier.testinfra:Testinfra"
 [dependency-groups]
 dev = [
   "ansi2html>=1.8.0",
-  "ansible-lint>=6.12.1",
   "ansible-navigator>=25.8.0",
   "coverage[toml]>=7.10.6",
   "docker>=7.1.0",
   "filelock>=3.9.0",
-  "mypy>=1.17.1",
   "pexpect>=4.9.0,<5",
-  "pre-commit>=4.3.0",
-  "pydoclint>=0.7.1",
-  "pylint>=3.3.8",
   "pytest>=9",
   "pytest-instafail>=0.5.0",
   "pytest-mock>=3.10.0",
   "pytest-plus>=0.7.0",
   "pytest-xdist>=3.8.0",
   "requests!=2.32.0",
-  "ruff>=0.12.11",
-  "toml-sort>=0.24.2",
-  "tox>=4.29.0",
+  "tox>=4.46.0",
   "types-jsonschema>=4.25.1.20250822",
   "types-pexpect>=4.9.0.20250809",
   "types-pyyaml>=6.0.12.20250822",
 ]
-collection = ["tox-ansible>=25.8.0"]
+collection = [
+  "molecule>=6.0.0",
+  "pip>=2.20.3",
+  "pytest-ansible>=26.2.0",
+  "tox>=4.46.0",
+  "tox-ansible>=26.2.1",
+  "tox-extra>=2.2.0",
+  "tox-uv>=1.32.1"
+]
 docs = ["linkchecker>=10.4.0", "mkdocs-ansible>=24.3.0"]
 lint = [
+  "ansible-lint>=6.12.1",
+  "codespell>=2.4.1",
+  "mypy>=1.17.1",
   "pip>=25.2",
-  "pre-commit>=4.1",
-  "pre-commit-uv>=4.1.4",
+  "prek>=0.3.3",
+  "pydoclint>=0.7.1",
+  "pylint>=3.3.8",
   "pytest>=9",
+  "ruff>=0.12.11",
   "setuptools>=51.1.1",
+  "tombi>=0.7.32",
 ]
 pkg = ["build>=0.9", "pip>=25.2", "pipx>=1.7.1", "twine>=4.0.2"]
 
@@ -102,6 +108,10 @@ requires = [
   "setuptools >= 65.3.0",  # required by pyproject+setuptools_scm integration and editable installs
 ]
 build-backend = "setuptools.build_meta"
+
+[tool.codespell]
+ignore-words-list = "indention"
+skip = ".cache,.yarn,dist,node_modules,.mypy_cache,.ruff_cache,site,.git,dictionary.txt,.venv,media,.ansible,_readthedocs,uv.lock"
 
 [tool.coverage.report]
 exclude_also = ["if TYPE_CHECKING:", "pragma: no cover"]
@@ -131,7 +141,6 @@ strict = true
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
 module = [
-  "click_help_colors",  # https://github.com/click-contrib/click-help-colors/issues/20
   "testinfra.*",  # https://github.com/pytest-dev/pytest-testinfra/issues/619
 ]
 
@@ -467,7 +476,7 @@ env_list = [
   "pkg",
   "eco",
 ]
-requires = ["tox>=4.23.2", "tox-extra>=2.0.2", "tox-uv>=1.20.2"]
+requires = ["tox>=4.46.0", "tox-extra>=2.2.0", "tox-uv>=1.32.1"]
 skip_missing_interpreters = true
 
 [tool.tox.env.collection]
@@ -480,7 +489,7 @@ description = "Test community.molecule collection"
 [tool.tox.env.deps]
 commands = [
   [
-    "pre-commit",
+    "prek",
     "run",
     "--all-files",
     "--show-diff-on-failure",
@@ -488,7 +497,7 @@ commands = [
     "manual",
     "deps",
   ],
-  ["pre-commit", "autoupdate"],
+  ["prek", "autoupdate"],
   ["tox", "-e", "lint"],
 ]
 commands_pre = []
@@ -531,14 +540,14 @@ commands = [
 ]
 deps = [
   "molecule-plugins[azure,containers,docker,ec2,gce,podman,vagrant]>=23",
-  "tox-ansible>=25.5.5",
+  "tox-ansible>=26.2.1",
   "uv",
 ]
 description = "Smoketest of combining all known to be maintained plugins (ecosystem)"
 pip_pre = true
 
 [tool.tox.env.lint]
-commands = [["pre-commit", "run", "--all-files", "--show-diff-on-failure"]]
+commands = [["prek", "run", "--all-files", "--show-diff-on-failure"]]
 commands_pre = []
 dependency_groups = ["lint"]
 description = "Run all linters"

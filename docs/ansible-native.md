@@ -60,7 +60,7 @@ ansible:
 - `backend`: Execution backend (ansible-playbook or ansible-navigator)
 - `args`: Command-line arguments passed to the executor
 
-### Environment Variables
+### Executor Environment Variables
 
 ```yaml
 ansible:

@@ -38,7 +38,7 @@ See [Nested Scenarios](configuration.md#nested-scenarios-collections) for detail
 
 ### Passing extra arguments to the provisioner
 
-```
+```shell
 ... -- -vvv --tags foo,bar
 
     Providing additional command line arguments to the `ansible-playbook`
@@ -55,7 +55,7 @@ See [Nested Scenarios](configuration.md#nested-scenarios-collections) for detail
 
 List command shows information about current scenarios.
 
-```
+```shell
 molecule list
 ```
 

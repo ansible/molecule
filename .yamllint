@@ -1,0 +1,7 @@
+rules:
+  document-start: disable
+  indentation:
+    level: error
+    indent-sequences: true
+ignore: |
+  .tox

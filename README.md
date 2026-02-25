@@ -31,11 +31,11 @@ molecule ...
 python3 -m molecule ...  # python module calling method
 ```
 
-# Documentation
+## Documentation
 
 Read the documentation and more at <https://docs.ansible.com/projects/molecule//>.
 
-# Get Involved
+## Get Involved
 
 See the [Talk to us](https://docs.ansible.com/projects/molecule//contributing/#talk-to-us) section of the documentation to ask questions, find help, and join the conversation.
 
@@ -45,20 +45,20 @@ For complete details, see the
 If you want to get moving fast and make a quick patch:
 
 ```bash
-$ git clone https://github.com/ansible-community/molecule && cd molecule
-$ python3 -m venv .venv && source .venv/bin/activate
-$ python3 -m pip install -U setuptools pip tox
+git clone https://github.com/ansible-community/molecule && cd molecule
+python3 -m venv .venv && source .venv/bin/activate
+python3 -m pip install -U setuptools pip tox
 ```
 
 And you're ready to make your changes!
 
-# Authors
+## Authors
 
 Molecule project was created by [Retr0h](https://github.com/retr0h) and
 it is now community-maintained as part of the
 [Ansible](https://ansible.com) by Red Hat project.
 
-# License
+## License
 
 The
 [MIT](https://github.com/ansible-community/molecule/blob/main/LICENSE)

@@ -535,7 +535,7 @@ molecule test --all --command-borders --report
 As collections grow, a flat scenario layout can become unwieldy. Molecule
 supports organizing scenarios into subdirectories:
 
-```
+```text
 extensions/molecule/
 ├── config.yml
 ├── default/
@@ -592,7 +592,7 @@ Each step shows detailed ansible-playbook output with command borders, making it
 
 At the end of execution, Molecule provides a comprehensive summary:
 
-```
+```shell
 DETAILS
 default ➜ create: Executed: Successful
 

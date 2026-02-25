@@ -32,7 +32,7 @@ molecule test
 
 This executes the `test` sequence:
 
-```
+```text
 dependency → cleanup → destroy → syntax → create → prepare → converge → idempotence → side_effect → verify → cleanup → destroy
 ```
 
