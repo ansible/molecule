@@ -114,6 +114,6 @@ repos:
       - id: ansible-lint
         stages: [manual]
   - repo: https://github.com/ansible/team-devtools
-    rev: v26.1.0
+    rev: v26.2.0
     hooks:
       - id: check-platform-constraints
