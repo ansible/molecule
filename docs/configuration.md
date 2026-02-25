@@ -386,7 +386,7 @@ modules and 4 states each would produce ~200 flat directories under
 Molecule supports **nested scenario directories** in collection mode, allowing
 you to group related scenarios under a parent directory:
 
-```
+```text
 extensions/molecule/
 ├── config.yml
 ├── default/
@@ -593,7 +593,7 @@ data, and the developer's destroy playbook must reset the instance-config.
 ```
 
 This article covers how to configure and use WinRM with Ansible:
-https://docs.ansible.com/projects/ansible/latest/user_guide/windows_winrm.html
+<https://docs.ansible.com/projects/ansible/latest/user_guide/windows_winrm.html>
 
 Molecule can also skip the provisioning/deprovisioning steps. It is the
 developers responsibility to manage the instances, and properly configure
@@ -924,7 +924,7 @@ provisioner:
 ```
 
 Roles which require host/groups to have certain variables set. Molecule
-uses the same `variables defined in a playbook`_ syntax as `Ansible`_.
+uses the same `variables defined in a playbook`_syntax as `Ansible`_.
 
 ```yaml
 provisioner:
@@ -1062,7 +1062,7 @@ Don't forget to add a tag `always` in `converge.yml` as below.
             - always
 ```
 
-.. \_`variables defined in a playbook`: https://docs.ansible.com/projects/ansible/latest/user_guide/playbooks_variables.html#defining-variables-in-a-playbook
+.. \_`variables defined in a playbook`: <https://docs.ansible.com/projects/ansible/latest/user_guide/playbooks_variables.html#defining-variables-in-a-playbook>
 
 Add arguments to ansible-playbook when running converge:
 
@@ -1084,7 +1084,7 @@ provisioner:
 
 Molecule handles role testing by invoking configurable verifiers.
 
-### Ansible
+### Ansible Verifier
 
 `Ansible`\_ is the default test verifier.
 
@@ -1170,4 +1170,4 @@ verifier:
     - ../path/to/directory/*
 ```
 
-.. \_`Testinfra`: https://testinfra.readthedocs.io
+.. \_`Testinfra`: <https://testinfra.readthedocs.io>

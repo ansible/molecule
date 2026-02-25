@@ -1,0 +1,8 @@
+# Markdown Lint Rules
+# https://github.com/mivok/markdownlint/blob/master/docs/RULES.md
+
+MD014: false # Dollar signs used before commands without showing output (we use mkdocs-material to add the real output)
+MD013: false # Line length (we should only use reformatting tool for this, like prettier)
+MD041: false # first-line-heading/first-line-h1
+MD046: false # raises false possibilities with mkdocs-material admonitions https://squidfunk.github.io/mkdocs-material/reference/admonitions/
+MD060: false # Table column style - tables are valid even if not perfectly aligned
