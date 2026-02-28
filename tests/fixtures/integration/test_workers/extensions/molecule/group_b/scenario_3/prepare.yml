@@ -1,8 +1,8 @@
 ---
-- name: prepare for scenario_1
+- name: prepare for group_b/scenario_3
   hosts: all
   gather_facts: false
   tasks:
     - name: "prepare debug"
       ansible.builtin.debug:
-        msg: "STEP_PREPARE_SCENARIO_scenario_1"
+        msg: "STEP_PREPARE_SCENARIO_group_b/scenario_3"

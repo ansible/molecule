@@ -103,6 +103,17 @@ class Scenarios:
         """
         return any(scenario.config.shared_state for scenario in self.all)
 
+    @property
+    def slice(self) -> int:
+        """Directory depth for grouping scenarios into worker units.
+
+        Returns:
+            The configured slice depth from the first scenario's config (default 1).
+        """
+        if self.all:
+            return self.all[0].config.slice
+        return 1
+
     def print_matrix(self) -> None:
         """Show the matrix for all scenarios."""
         tree = {}
