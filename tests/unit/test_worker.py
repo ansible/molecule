@@ -11,13 +11,110 @@ import pytest
 
 from molecule.exceptions import MoleculeError, ScenarioFailureError
 from molecule.reporting.definitions import ScenarioResults
-from molecule.worker import run_one_scenario, run_scenarios_parallel, validate_worker_args
+from molecule.worker import (
+    _group_scenarios_by_slice,
+    _slice_key,
+    run_one_scenario,
+    run_scenario_slice,
+    run_scenarios_parallel,
+    validate_worker_args,
+)
 
 
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
     from molecule.types import CommandArgs, MoleculeArgs
+
+
+# --- _slice_key ---
+
+
+def test_slice_key_depth_1() -> None:
+    """Depth 1 returns first path segment."""
+    assert _slice_key("appliance_vlans/gathered", 1) == "appliance_vlans"
+
+
+def test_slice_key_depth_2() -> None:
+    """Depth 2 returns full two-segment name."""
+    assert _slice_key("appliance_vlans/gathered", 2) == "appliance_vlans/gathered"
+
+
+def test_slice_key_flat_name() -> None:
+    """Single-segment name returns itself at any depth."""
+    assert _slice_key("default", 1) == "default"
+    assert _slice_key("default", 2) == "default"
+
+
+def test_slice_key_deep_path() -> None:
+    """Three-segment name grouped at depth 1 and 2."""
+    assert _slice_key("network/vlans/gathered", 1) == "network"
+    assert _slice_key("network/vlans/gathered", 2) == "network/vlans"
+
+
+# --- _group_scenarios_by_slice ---
+
+
+def _mock_scenario(name: str) -> MagicMock:
+    """Create a minimal mock scenario with a name.
+
+    Args:
+        name: The scenario name.
+
+    Returns:
+        A MagicMock scenario object.
+    """
+    s = MagicMock()
+    s.config.scenario.name = name
+    return s
+
+
+def test_group_by_slice_depth_1() -> None:
+    """Depth 1 groups scenarios by top-level resource."""
+    scenarios = [
+        _mock_scenario("res_a/gathered"),
+        _mock_scenario("res_a/merged"),
+        _mock_scenario("res_b/gathered"),
+    ]
+    groups = _group_scenarios_by_slice(scenarios, 1)  # type: ignore[arg-type]
+
+    assert list(groups.keys()) == ["res_a", "res_b"]
+    assert len(groups["res_a"]) == 2  # noqa: PLR2004
+    assert len(groups["res_b"]) == 1
+
+
+def test_group_by_slice_depth_2() -> None:
+    """Depth 2 treats each leaf as its own group."""
+    scenarios = [
+        _mock_scenario("res_a/gathered"),
+        _mock_scenario("res_a/merged"),
+    ]
+    groups = _group_scenarios_by_slice(scenarios, 2)  # type: ignore[arg-type]
+
+    assert len(groups) == 2  # noqa: PLR2004
+    assert "res_a/gathered" in groups
+    assert "res_a/merged" in groups
+
+
+def test_group_preserves_order() -> None:
+    """Scenarios within a group maintain their original order."""
+    scenarios = [
+        _mock_scenario("res/a"),
+        _mock_scenario("res/b"),
+        _mock_scenario("res/c"),
+    ]
+    groups = _group_scenarios_by_slice(scenarios, 1)  # type: ignore[arg-type]
+
+    names = [s.config.scenario.name for s in groups["res"]]
+    assert names == ["res/a", "res/b", "res/c"]
+
+
+def test_group_flat_names() -> None:
+    """Single-segment names each form their own group."""
+    scenarios = [_mock_scenario("alpha"), _mock_scenario("beta")]
+    groups = _group_scenarios_by_slice(scenarios, 1)  # type: ignore[arg-type]
+
+    assert list(groups.keys()) == ["alpha", "beta"]
 
 
 # --- validate_worker_args ---
@@ -32,6 +129,20 @@ def test_validate_workers_1_passes() -> None:
 def test_validate_workers_missing_passes() -> None:
     """No validation error when workers is not set."""
     command_args: CommandArgs = {"subcommand": "test"}
+    validate_worker_args(command_args)
+
+
+def test_validate_slice_without_workers_raises() -> None:
+    """Error when --slice is set but --workers is not > 1."""
+    command_args: CommandArgs = {"workers": 1, "slice": 2, "subcommand": "test"}
+    with pytest.raises(MoleculeError) as exc_info:
+        validate_worker_args(command_args)
+    assert "--slice requires --workers" in exc_info.value.message
+
+
+def test_validate_slice_default_with_workers_1_passes() -> None:
+    """No error when slice is at its default value of 1 with workers=1."""
+    command_args: CommandArgs = {"workers": 1, "slice": 1, "subcommand": "test"}
     validate_worker_args(command_args)
 
 
@@ -253,6 +364,99 @@ def test_run_one_does_not_set_quiet_ansible_when_verbose(
     assert os.environ.get("MOLECULE_QUIET_ANSIBLE") is None
 
 
+# --- run_scenario_slice ---
+
+
+def test_slice_runs_all_scenarios_on_success(
+    monkeypatch: pytest.MonkeyPatch,
+    mocker: MockerFixture,
+) -> None:
+    """Slice runs all scenarios sequentially and returns results for each.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        mocker: Pytest mocker fixture.
+    """
+    monkeypatch.setattr("molecule.worker.os.chdir", lambda _p: None)
+    mocker.patch("molecule.worker.logger.configure")
+    mocker.patch("molecule.worker.execute_scenario")
+
+    configs = []
+    for name in ("res/gathered", "res/merged"):
+        mock_config = MagicMock()
+        mock_config.scenario.results = ScenarioResults(name=name, actions=[])
+        configs.append(mock_config)
+
+    mocker.patch(
+        "molecule.worker.config_module.Config",
+        side_effect=configs,
+    )
+
+    entries = [
+        ("/path/res/gathered/molecule.yml", "res/gathered"),
+        ("/path/res/merged/molecule.yml", "res/merged"),
+    ]
+    args: MoleculeArgs = {}
+    command_args: CommandArgs = {"subcommand": "test"}
+
+    results = run_scenario_slice(entries, args, command_args, (), "/path/to")
+
+    assert len(results) == 2  # noqa: PLR2004
+    assert results[0][0] == "res/gathered"
+    assert results[0][2] is None
+    assert results[1][0] == "res/merged"
+    assert results[1][2] is None
+
+
+def test_slice_stops_on_first_failure(
+    monkeypatch: pytest.MonkeyPatch,
+    mocker: MockerFixture,
+) -> None:
+    """Slice stops executing after the first scenario failure.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        mocker: Pytest mocker fixture.
+    """
+    monkeypatch.setattr("molecule.worker.os.chdir", lambda _p: None)
+    mocker.patch("molecule.worker.logger.configure")
+
+    mock_execute = mocker.patch("molecule.worker.execute_scenario")
+    mock_execute.side_effect = [
+        None,
+        ScenarioFailureError(message="verify failed"),
+    ]
+
+    configs = []
+    for name in ("res/gathered", "res/merged", "res/deleted"):
+        mock_config = MagicMock()
+        mock_config.scenario.results = ScenarioResults(name=name, actions=[])
+        mock_config.action = "verify"
+        configs.append(mock_config)
+
+    mocker.patch(
+        "molecule.worker.config_module.Config",
+        side_effect=configs,
+    )
+
+    entries = [
+        ("/path/res/gathered/molecule.yml", "res/gathered"),
+        ("/path/res/merged/molecule.yml", "res/merged"),
+        ("/path/res/deleted/molecule.yml", "res/deleted"),
+    ]
+    args: MoleculeArgs = {}
+    command_args: CommandArgs = {"subcommand": "test"}
+
+    results = run_scenario_slice(entries, args, command_args, (), "/path/to")
+
+    assert len(results) == 2  # noqa: PLR2004
+    assert results[0][0] == "res/gathered"
+    assert results[0][2] is None
+    assert results[1][0] == "res/merged"
+    assert results[1][2] is not None
+    assert "verify failed" in results[1][2]
+
+
 # --- run_scenarios_parallel ---
 
 
@@ -349,7 +553,7 @@ def test_parallel_collects_results(mocker: MockerFixture) -> None:
 
     future = MagicMock()
     result = ScenarioResults(name="scenario_a", actions=[])
-    future.result.return_value = (result, None, "", "")
+    future.result.return_value = [("scenario_a", result, None, "", "")]
     mocker.patch("molecule.worker.as_completed", return_value=[future])
 
     _make_mock_pool(mocker, futures=[future])
@@ -372,12 +576,9 @@ def test_parallel_fail_fast_on_failure(mocker: MockerFixture) -> None:
 
     future = MagicMock()
     failed_result = ScenarioResults(name="failing_scenario", actions=[])
-    future.result.return_value = (
-        failed_result,
-        "converge failed",
-        "fatal: FAILED!",
-        "converge",
-    )
+    future.result.return_value = [
+        ("failing_scenario", failed_result, "converge failed", "fatal: FAILED!", "converge"),
+    ]
     mocker.patch("molecule.worker.as_completed", return_value=[future])
 
     mock_pool = _make_mock_pool(mocker, futures=[future])
@@ -407,10 +608,12 @@ def test_parallel_continue_on_failure(mocker: MockerFixture) -> None:
 
     future_fail = MagicMock()
     failed_result = ScenarioResults(name="failing", actions=[])
-    future_fail.result.return_value = (failed_result, "converge failed", "", "converge")
+    future_fail.result.return_value = [
+        ("failing", failed_result, "converge failed", "", "converge"),
+    ]
     future_ok = MagicMock()
     ok_result = ScenarioResults(name="ok", actions=[])
-    future_ok.result.return_value = (ok_result, None, "", "")
+    future_ok.result.return_value = [("passing", ok_result, None, "", "")]
     mocker.patch("molecule.worker.as_completed", return_value=[future_fail, future_ok])
 
     mock_pool = _make_mock_pool(mocker, futures=[future_fail, future_ok])

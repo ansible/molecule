@@ -50,7 +50,7 @@ class Check(base.Base):
 
 
 @click_command_ex()
-@common_options("continue_on_failure", "parallel", "workers")
+@common_options("continue_on_failure", "parallel", "slice", "workers")
 def check(ctx: click.Context) -> None:  # pragma: no cover
     """Use the provisioner to perform a Dry-Run (destroy, dependency, create, prepare, converge).
 
@@ -74,6 +74,7 @@ def check(ctx: click.Context) -> None:  # pragma: no cover
         "parallel": parallel,
         "report": ctx.params["report"],
         "shared_state": ctx.params["shared_state"],
+        "slice": int(ctx.params["slice"]),
         "subcommand": subcommand,
         "workers": resolve_workers(ctx.params["workers"]),
     }
