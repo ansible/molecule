@@ -45,7 +45,7 @@ repos:
       - id: shellcheck
         priority: 0
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.10.6
+    rev: 0.10.7
 
     hooks:
       - id: uv-sync
@@ -109,7 +109,7 @@ repos:
           - wcmatch
 
   - repo: https://github.com/ansible/ansible-lint
-    rev: v26.1.1
+    rev: v26.2.0
     hooks:
       - id: ansible-lint
         stages: [manual]
