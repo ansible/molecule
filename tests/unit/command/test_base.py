@@ -31,7 +31,7 @@ import pytest
 
 from molecule import config, util
 from molecule.command import base
-from molecule.exceptions import ImmediateExit, ScenarioFailureError
+from molecule.exceptions import ImmediateExit, MoleculeError, ScenarioFailureError
 from molecule.shell import main
 
 
@@ -359,6 +359,22 @@ def test_execute_subcommand(config_instance: config.Config) -> None:
     assert config_instance.action != "list"
     assert base.execute_subcommand(config_instance, "list")
     assert config_instance.action == "list"
+
+
+def test_execute_subcommand_invalid(config_instance: config.Config) -> None:
+    """Ensure execute_subcommand raises MoleculeError for invalid subcommands.
+
+    Args:
+        config_instance: Mocked config_instance fixture.
+
+    Returns:
+        None
+    """
+    with pytest.raises(MoleculeError, match="Invalid subcommand name"):
+        base.execute_subcommand(config_instance, "invalid.command")
+
+    with pytest.raises(MoleculeError, match="Invalid subcommand name"):
+        base.execute_subcommand(config_instance, "../../malicious")
 
 
 def test_execute_scenario(
