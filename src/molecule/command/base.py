@@ -28,6 +28,7 @@ import copy
 import fnmatch
 import importlib
 import logging
+import re
 import shutil
 import subprocess
 
@@ -416,10 +417,18 @@ def execute_subcommand(
         current_config: An instance of a Molecule config.
         subcommand_and_args: A string representing the subcommand and arguments.
 
+    Raises:
+        MoleculeError: If an invalid subcommand name is provided.
+
     Returns:
         The result of the subcommand.
     """
     (subcommand, *args) = subcommand_and_args.split(" ")
+
+    if not re.fullmatch(r"[a-zA-Z0-9_-]+", subcommand):
+        msg = f"Invalid subcommand name: {subcommand}"
+        raise MoleculeError(msg)
+
     command_module = importlib.import_module(f"molecule.command.{subcommand}")
     command = getattr(command_module, text.camelize(subcommand))
 

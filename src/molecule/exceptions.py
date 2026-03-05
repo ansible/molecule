@@ -29,7 +29,7 @@ class MoleculeError(Exception):
             message: The message to display about the problem.
             code: Exit code to use when exiting.
         """
-        super().__init__()
+        super().__init__(message)
         self.code = code
         self.message = message
 
