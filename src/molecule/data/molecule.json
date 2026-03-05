@@ -771,6 +771,13 @@
       "title": "Shared State",
       "type": "boolean"
     },
+    "slice": {
+      "default": 1,
+      "description": "Directory depth for grouping scenarios into worker units. 1 groups by top-level resource, 2 treats each leaf scenario independently.",
+      "minimum": 1,
+      "title": "Slice",
+      "type": "integer"
+    },
     "verifier": {
       "$ref": "#/$defs/VerifierModel"
     }

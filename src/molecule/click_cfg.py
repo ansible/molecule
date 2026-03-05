@@ -399,6 +399,17 @@ class CliOptions:
         )
 
     @property
+    def slice(self) -> CliOption:
+        """Scenario grouping depth for worker dispatch."""
+        return CliOption(
+            name="slice",
+            help="Directory depth at which scenarios are grouped into worker units. "
+            "1 groups by top-level resource, 2 treats each leaf scenario independently.",
+            default="1",
+            experimental=True,
+        )
+
+    @property
     def workers(self) -> CliOption:
         """Worker count for concurrent scenario execution."""
         return CliOption(
