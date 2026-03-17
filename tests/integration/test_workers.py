@@ -182,7 +182,7 @@ def test_workers_fail_fast(collection_dir: Path) -> None:
 
 
 def test_workers_slice_groups_by_resource(collection_dir: Path) -> None:
-    """With --slice=1, scenarios are grouped by top-level directory (2 slices).
+    """With --slice=1, scenarios are grouped by top-level directory (3 slices incl. default).
 
     Args:
         collection_dir: Path to the temporary collection fixture.
@@ -195,7 +195,7 @@ def test_workers_slice_groups_by_resource(collection_dir: Path) -> None:
     assert result.returncode == 0, (
         f"Slice execution failed.\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
     )
-    expected_slices = 2
+    expected_slices = 3
     assert f"{expected_slices} slices" in result.stderr
     assert "depth=1" in result.stderr
     for name in SCENARIO_NAMES:
@@ -203,7 +203,7 @@ def test_workers_slice_groups_by_resource(collection_dir: Path) -> None:
 
 
 def test_workers_slice_depth_2(collection_dir: Path) -> None:
-    """With --slice=2, each scenario is its own slice (6 slices).
+    """With --slice=2, each scenario is its own slice (7 slices incl. default).
 
     Args:
         collection_dir: Path to the temporary collection fixture.
@@ -216,6 +216,6 @@ def test_workers_slice_depth_2(collection_dir: Path) -> None:
     assert result.returncode == 0, (
         f"Slice depth-2 execution failed.\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}"
     )
-    expected_slices = 6
+    expected_slices = 7
     assert f"{expected_slices} slices" in result.stderr
     assert "depth=2" in result.stderr
