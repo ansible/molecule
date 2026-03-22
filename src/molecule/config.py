@@ -751,7 +751,8 @@ class Config:
 
         errors = schema_v3.validate(self.config)
         if errors:
-            msg = f"Failed to validate {self.molecule_file}\n\n{errors}"
+            errors_resolved = "\n".join(errors)
+            msg = f"Failed to validate {self.molecule_file}\n\n{errors_resolved}"
             sysexit_with_message(msg, code=1)
 
 
