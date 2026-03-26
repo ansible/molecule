@@ -24,7 +24,7 @@ This guide covers:
 Start by creating a new collection using ansible-creator:
 
 ```bash
-ansible-creator init collection test_namespace.test_collection test_namespace.test_collection
+ansible-creator init collection test_namespace.test_collection 
 cd test_namespace.test_collection
 ```
 
