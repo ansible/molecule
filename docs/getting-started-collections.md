@@ -16,7 +16,7 @@ This guide covers:
 
 ## Prerequisites
 
-- ansible-creator installed
+- ansible-creator installed (v26.3.2)
 - Basic familiarity with Ansible and collections
 
 ## Creating the Collection Structure
@@ -24,7 +24,7 @@ This guide covers:
 Start by creating a new collection using ansible-creator:
 
 ```bash
-ansible-creator init collection test_namespace.test_collection
+ansible-creator init collection test_namespace.test_collection test_namespace.test_collection
 cd test_namespace.test_collection
 ```
 
