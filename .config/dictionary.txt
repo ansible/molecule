@@ -108,7 +108,6 @@ passwordless
 prepender
 prerun
 profisioner
-psql
 pycolors
 reget
 resetall
