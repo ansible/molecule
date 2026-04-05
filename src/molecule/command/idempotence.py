@@ -104,7 +104,7 @@ class Idempotence(base.Base):
         res = []
         task_line = ""
         for _, line in enumerate(output_lines):
-            if line.startswith("TASK"):
+            if line.startswith(("TASK", "RUNNING HANDLER")):
                 task_line = line
             elif line.startswith("changed"):
                 host_name = re.search(r"\[(.*)\]", line).groups()[0]  # type: ignore[union-attr]
