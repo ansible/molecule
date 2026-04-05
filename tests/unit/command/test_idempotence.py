@@ -166,3 +166,27 @@ check-command-02: ok=2    changed=1    unreachable=0    failed=0
         "* [check-command-01] => Idempotence test",
         "* [check-command-02] => Idempotence test",
     ]
+
+
+def test_non_idempotent_tasks_handler(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+    output = """
+PLAY [all] ***********************************************************
+
+TASK [Gathering Facts] ***********************************************
+ok: [instance]
+
+TASK [Test task] *****************************************************
+changed: [instance]
+
+RUNNING HANDLER [some handler] ***************************************
+changed: [instance]
+
+PLAY RECAP ***********************************************************
+instance: ok=3    changed=2    unreachable=0    failed=0
+"""
+    result = _instance._non_idempotent_tasks(output)
+
+    assert result == [
+        "* [instance] => Test task",
+        "* [instance] => some handler",
+    ]
