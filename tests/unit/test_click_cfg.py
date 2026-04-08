@@ -1,4 +1,5 @@
 """Tests for the new Click configuration system with CliOption architecture."""
+# pylint: disable=too-many-lines
 
 from __future__ import annotations
 
@@ -996,3 +997,13 @@ def test_parallel_deprecation_help_text() -> None:
     options = CliOptions()
     parallel = options.parallel
     assert "DEPRECATED" in parallel.help
+
+
+def test_slice_option() -> None:
+    """Test the slice option properties."""
+    options = CliOptions()
+    s = options.slice
+    assert s.name == "slice"
+    assert s.default == "1"
+    assert s.experimental is True
+    assert "EXPERIMENTAL:" in s._generate_help_text()

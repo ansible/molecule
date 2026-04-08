@@ -1,8 +1,8 @@
 ---
-- name: converge for scenario_1
+- name: converge for group_a/scenario_0
   hosts: all
   gather_facts: false
   tasks:
     - name: "converge debug"
       ansible.builtin.debug:
-        msg: "STEP_CONVERGE_SCENARIO_scenario_1"
+        msg: "STEP_CONVERGE_SCENARIO_group_a/scenario_0"
