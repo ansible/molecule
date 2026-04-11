@@ -24,7 +24,7 @@ repos:
     hooks:
       - id: check-useless-excludes
   - repo: https://github.com/ansible/actions
-    rev: v0.5.1
+    rev: v1.1.1
     hooks:
       - id: toml
         priority: 0
@@ -45,7 +45,7 @@ repos:
       - id: shellcheck
         priority: 0
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.10.7
+    rev: 0.11.6
 
     hooks:
       - id: uv-sync
@@ -56,7 +56,7 @@ repos:
         args: ["--upgrade"]
         stages: [manual]
   - repo: https://github.com/biomejs/pre-commit
-    rev: "v2.4.4"
+    rev: "v2.4.10"
     hooks:
       - id: biome-check
         name: biome
@@ -75,7 +75,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.11
+    rev: v1.7.12
     hooks:
       - id: actionlint
         priority: 0
@@ -109,11 +109,11 @@ repos:
           - wcmatch
 
   - repo: https://github.com/ansible/ansible-lint
-    rev: v26.2.0
+    rev: v26.4.0
     hooks:
       - id: ansible-lint
         stages: [manual]
   - repo: https://github.com/ansible/team-devtools
-    rev: v26.2.0
+    rev: v26.4.0
     hooks:
       - id: check-platform-constraints
