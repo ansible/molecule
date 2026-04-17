@@ -490,28 +490,28 @@ The destroy playbook removes the containerized network devices and networks, com
 
 ```bash
 # Test the complete lifecycle
-molecule test --scenario-name linux --report --command-borders
+molecule test --scenario-name linux
 
 # Run specific actions
-molecule create --scenario-name linux --report --command-borders
-molecule converge --scenario-name linux --report --command-borders
-molecule verify --scenario-name linux --report --command-borders
+molecule create --scenario-name linux
+molecule converge --scenario-name linux
+molecule verify --scenario-name linux
 ```
 
 **Network Scenario:**
 
 ```bash
 # Test the network scenario
-molecule test --scenario-name network --report --command-borders
+molecule test --scenario-name network
 
 # Converge only
-molecule converge --scenario-name network --report --command-borders
+molecule converge --scenario-name network
 ```
 
 ### Expected Output
 
 ```bash
-$ molecule test --scenario-name linux --report --command-borders
+$ molecule test --scenario-name linux
 
 INFO     linux ➜ discovery: scenario test matrix: dependency, create, prepare, converge, idempotence, verify, cleanup, destroy
 INFO     linux ➜ dependency: Executing
@@ -579,7 +579,7 @@ Test playbooks with different inventory configurations:
 
 ```bash
 # Test with specific inventory
-molecule converge --scenario-name linux --inventory inventory/production.yml --report --command-borders
+molecule converge --scenario-name linux --inventory inventory/production.yml
 ```
 
 ### Multiple Playbook Testing
@@ -591,7 +591,7 @@ Create scenarios to test different playbook combinations:
 molecule init scenario site-testing
 
 # Test the complete site playbook
-molecule test --scenario-name site-testing --report --command-borders
+molecule test --scenario-name site-testing
 ```
 
 ### Parallel Testing
@@ -600,7 +600,7 @@ Run multiple scenarios simultaneously:
 
 ```bash
 # Test both scenarios in parallel
-molecule test --parallel --report --command-borders
+molecule test --parallel
 ```
 
 ## Summary
