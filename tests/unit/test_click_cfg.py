@@ -472,12 +472,10 @@ def test_output_options() -> None:
     report = options.report
     assert report.name == "report"
     assert report.is_flag is True
-    assert report.experimental is True
+    assert report.experimental is False
     help_text = report._generate_help_text()
-    assert "EXPERIMENTAL:" in help_text
-    assert "(default: disabled)" in help_text
-
-    assert "(default: disabled)" in help_text
+    assert "EXPERIMENTAL:" not in help_text
+    assert "(default: enabled)" in help_text
 
     shared_state = options.shared_state
     assert shared_state.name == "shared-state"
@@ -856,7 +854,7 @@ def test_option_sort_order() -> None:
     test_options = [
         cli_options.force,  # Short form, non-experimental
         cli_options.scenario_name_with_default,  # Should be first (scenario-name)
-        cli_options.report,  # Experimental
+        cli_options.report,  # Long form, non-experimental
         cli_options.exclude,  # Should be second
         cli_options.all_scenarios,  # Should be third (all)
         cli_options.parallel,  # Long form, non-experimental
@@ -875,7 +873,7 @@ def test_option_sort_order() -> None:
         "driver-name",  # Section 2: short forms (alphabetical): driver-name
         "force",  # Section 2: short forms (alphabetical): force
         "parallel",  # Section 3: long forms (alphabetical)
-        "report",  # Section 4: experimental (alphabetical): report
+        "report",  # Section 3: long forms (alphabetical)
         "shared-state",  # Section 4: experimental (alphabetical): shared-state
     ]
 
