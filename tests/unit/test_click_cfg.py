@@ -548,7 +548,6 @@ def test_experimental_flag_functionality() -> None:
 
     # Test experimental options
     experimental_options = [
-        options.report,
         options.shared_state,
     ]
 
@@ -562,6 +561,8 @@ def test_experimental_flag_functionality() -> None:
         options.parallel,
         options.force,
         options.destroy,
+        options.report,
+        options.command_borders,
     ]
 
     for option in non_experimental_options:
