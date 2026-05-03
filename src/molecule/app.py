@@ -13,6 +13,7 @@ from ansible_compat.runtime import Runtime
 
 from molecule.ansi_output import CommandBorders
 from molecule.console import original_stderr
+from molecule import logger, util
 from molecule.util import print_environment_vars
 
 
@@ -72,6 +73,11 @@ class App:
                 cmd=cmd,
                 original_stderr=original_stderr,
             )
+
+        if env is None:
+            env = self.runtime.environ
+        else:
+            env = util.merge_dicts(self.runtime.environ, env)
 
         result = self.runtime.run(
             args=cmd,
