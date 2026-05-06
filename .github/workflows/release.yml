@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - name: Retreive the forum post script from team-devtools
+      - name: Retrieve the forum post script from team-devtools
         run: curl -O https://raw.githubusercontent.com/ansible/team-devtools/main/.github/workflows/forum_post.py
 
       - name: Run the forum post script
