@@ -20,7 +20,7 @@ Agent skills for development and maintenance workflow automation in Ansible Devt
 
 ## Skill Structure
 
-```
+```text
 skills/
 ├── README.md                   ← You are here
 ├── pr-new/
