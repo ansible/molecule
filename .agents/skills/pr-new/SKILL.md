@@ -58,7 +58,7 @@ Check whether your changes affect areas covered by existing docs. Update any tha
 
 Use the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format:
 
-```
+```text
 <type>[optional scope]: <description>
 
 [optional body]

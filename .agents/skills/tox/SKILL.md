@@ -16,7 +16,7 @@ metadata:
 
 ## Usage
 
-```
+```text
 /tox                  # Show full environment reference
 /tox lint             # How to run lint
 /tox py               # How to run tests
