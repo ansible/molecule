@@ -123,11 +123,13 @@ import is intentionally side-effect only.
    reviewing or pushing fixes, rebase or merge `upstream/main` into the PR
    branch. A stale base causes misleading CI results, merge conflicts, and
    wasted review cycles. If the branch is behind, update it first:
+
    ```bash
    git fetch upstream
    git rebase upstream/main   # or: git merge upstream/main
    git push --force-with-lease
    ```
+
 2. After pushing a PR, wait for both CI and Copilot review.
 3. Check CI status and read all review comments.
 4. Fix all issues in a single commit (or minimal commits).
@@ -221,8 +223,8 @@ for tid in "THREAD_ID_1" "THREAD_ID_2"; do
 done
 ```
 
-7. Update the PR description to include the new commit(s).
-8. If CI failure is unrelated to your changes (e.g., flaky test, transient
+1. Update the PR description to include the new commit(s).
+2. If CI failure is unrelated to your changes (e.g., flaky test, transient
    network issue), fix it anyway — the PR owns the green build.
 
 ### After pushing fixes: check for a new Copilot review

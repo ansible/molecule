@@ -35,7 +35,7 @@ skills/
 
 ## SKILL.md Format
 
-Each skill has YAML frontmatter:
+Each skill has YAML front matter:
 
 ```yaml
 ---
