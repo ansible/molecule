@@ -258,6 +258,7 @@ gh pr view PR_NUMBER --repo OWNER/REPO \
 - The fix is one of these safe categories ONLY: lockfile regeneration, formatter/linter auto-fix, removing unused imports, or adding a type annotation on a single line
 
 **NEEDS HUMAN REVIEW** — ANY of these:
+
 1. Multiple major version bumps in one PR
 2. Any major version bump that requires source code changes (not just
    lockfile/config)
