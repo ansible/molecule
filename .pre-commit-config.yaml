@@ -45,7 +45,7 @@ repos:
       - id: shellcheck
         priority: 0
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.11.8
+    rev: 0.11.14
 
     hooks:
       - id: uv-sync
@@ -56,7 +56,7 @@ repos:
         args: ["--upgrade"]
         stages: [manual]
   - repo: https://github.com/biomejs/pre-commit
-    rev: "v2.4.14"
+    rev: "v2.4.15"
     hooks:
       - id: biome-check
         name: biome
