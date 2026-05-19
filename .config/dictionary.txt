@@ -22,6 +22,7 @@ Ulimits
 Unittests
 Virt
 Virt's
+Worktree
 XDIST
 antsibull
 anyconfig
@@ -63,6 +64,8 @@ followlinks
 fooo
 frob
 getfixturevalue
+gitdir
+gitfile
 goss
 hookwrapper
 hostvars
@@ -144,6 +147,7 @@ vfoo
 virtenv
 virtualmachines
 webservers
+worktree
 worktrees
 yourcollection
 yournamespace

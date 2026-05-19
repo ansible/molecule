@@ -525,23 +525,36 @@ def _filter_platforms(
 
 
 def _is_valid_vcs_dir(path: Path, name: str) -> bool:
-    """Check if a VCS directory is a genuine repository root.
+    """Check if a VCS entry marks a genuine repository root.
 
     Args:
         path: Parent directory to check.
-        name: VCS directory name (e.g. ".git", ".hg", ".svn").
+        name: VCS entry name (e.g. ".git", ".hg", ".svn").
 
     Returns:
-        Whether the VCS directory is a genuine repository root.
+        Whether the VCS entry marks a genuine repository root.
     """
-    vcs_dir = path / name
-    if not vcs_dir.is_dir():
+    vcs_entry = path / name
+    # In a git worktree (or a submodule) the ".git" entry is a file
+    # containing a "gitdir: <path>" pointer rather than a directory.
+    # Git itself requires the exact "gitdir: " prefix (colon + space) followed
+    # by a non-empty path; anything else is rejected with "invalid gitfile
+    # format" or "no path in gitfile". Mirror that so we don't treat a
+    # malformed pointer as a valid repository root.
+    if name == ".git" and vcs_entry.is_file():
+        try:
+            pointer = vcs_entry.read_text(encoding="utf-8")
+        except OSError:
+            return False
+        prefix = "gitdir: "
+        return pointer.startswith(prefix) and bool(pointer[len(prefix) :].strip())
+    if not vcs_entry.is_dir():
         return False
     # A real .git directory always contains a HEAD file.
-    # Bare repos, worktrees, and regular repos all have it.
+    # Bare repos and regular repos all have it.
     # Spurious .git dirs (e.g. created by GitKraken) do not.
     if name == ".git":
-        return (vcs_dir / "HEAD").exists()
+        return (vcs_entry / "HEAD").exists()
     return True
 
 
