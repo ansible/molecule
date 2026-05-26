@@ -87,11 +87,13 @@ Use frozen/locked install to match CI:
 **TypeScript:**
 
 If `pnpm-lock.yaml` was modified (e.g., lockfile regen fix), use:
+
 ```bash
 pnpm install
 ```
 
 Otherwise:
+
 ```bash
 pnpm install --frozen-lockfile
 ```
@@ -100,11 +102,13 @@ The frozen check is CI's job. Verify-local's job is "will build/lint/pkg
 pass," not "is the lockfile in sync."
 
 **Python/tox:**
+
 ```bash
 uv sync --no-progress -q
 ```
 
 **Python/uv:**
+
 ```bash
 uv sync --no-progress -q
 ```
