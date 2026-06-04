@@ -79,7 +79,7 @@ Create `extensions/molecule/inventory.yml`:
 ---
 all:
   vars:
-    tmp_dir: "{% raw %}{{ lookup('env', 'TMPDIR') | default('/tmp') }}{% endraw %}"
+    tmp_dir: "{% raw %}{{ lookup('env', 'TMPDIR') | default('/tmp/', true) }}{% endraw %}"
   children:
     test_resources:
       hosts:
@@ -340,8 +340,6 @@ Each scenario gets the same set of playbooks, each is a unique test.
       ansible.builtin.copy:
         dest: "{% raw %}{{ tmp_dir }}{{ inventory_hostname }}.txt{% endraw %}"
         content: Molecule is running on {% raw %}{{ inventory_hostname }}{% endraw %}
-      vars:
-        tmp_dir: "{% raw %}{{ ansible_env.TMPDIR | default('/tmp') }}/{% endraw %}"
 
     - name: Include the collection component
       include_role:
@@ -386,8 +384,6 @@ Each scenario gets the same set of playbooks, each is a unique test.
       ansible.builtin.file:
         path: "{% raw %}{{ tmp_dir }}{{ inventory_hostname }}.txt{% endraw %}"
         state: absent
-      vars:
-        tmp_dir: "{% raw %}{{ ansible_env.TMPDIR | default('/tmp') }}/{% endraw %}"
 ```
 
 ## Understanding Scenario Types
@@ -519,14 +515,12 @@ Run all scenarios together for complete collection testing:
 
 ```bash
 # All scenarios with shared testing resources (configured via shared_state: true)
-molecule test --all --command-borders --report
+molecule test --all
 ```
 
 **Command options:**
 
 - `--all`: Run all scenarios found in extensions/molecule/
-- `--command-borders`: Visual separation of ansible-playbook executions
-- `--report`: Summary report at the end
 
 **Note:** Since `shared_state: true` is configured in the base `config.yml`, the `--shared-state` command-line flag is not required. However, it can still be used to override the configuration if needed.
 
