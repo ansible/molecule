@@ -111,7 +111,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.codespell]
 ignore-words-list = "indention"
-skip = ".cache,.yarn,dist,node_modules,.mypy_cache,.ruff_cache,site,.git,dictionary.txt,.venv,media,.ansible,_readthedocs,uv.lock"
+skip = ".cache,.yarn,dist,node_modules,.mypy_cache,.ruff_cache,site,.git,dictionary.txt,.venv,media,.ansible,_readthedocs,uv.lock,.tox"
 
 [tool.coverage.report]
 exclude_also = ["if TYPE_CHECKING:", "pragma: no cover"]
