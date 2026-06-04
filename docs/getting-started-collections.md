@@ -519,14 +519,12 @@ Run all scenarios together for complete collection testing:
 
 ```bash
 # All scenarios with shared testing resources (configured via shared_state: true)
-molecule test --all --command-borders --report
+molecule test --all
 ```
 
 **Command options:**
 
 - `--all`: Run all scenarios found in extensions/molecule/
-- `--command-borders`: Visual separation of ansible-playbook executions
-- `--report`: Summary report at the end
 
 **Note:** Since `shared_state: true` is configured in the base `config.yml`, the `--shared-state` command-line flag is not required. However, it can still be used to override the configuration if needed.
 

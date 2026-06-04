@@ -168,7 +168,7 @@ def test_collections_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D
         "patched-command",
         debug=False,
         check=True,
-        command_borders=False,
+        command_borders=True,
     )
 
     msg = "Dependency completed successfully."
