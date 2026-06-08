@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 from ansible_compat.runtime import Runtime
 
+from molecule import util
 from molecule.ansi_output import CommandBorders
 from molecule.console import original_stderr
 from molecule.util import print_environment_vars
@@ -72,6 +73,8 @@ class App:
                 cmd=cmd,
                 original_stderr=original_stderr,
             )
+
+        env = self.runtime.environ if env is None else util.merge_dicts(self.runtime.environ, env)
 
         result = self.runtime.run(
             args=cmd,
