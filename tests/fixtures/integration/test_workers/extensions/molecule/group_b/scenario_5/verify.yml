@@ -1,8 +1,8 @@
 ---
-- name: verify for scenario_1
+- name: verify for group_b/scenario_5
   hosts: all
   gather_facts: false
   tasks:
     - name: "verify debug"
       ansible.builtin.debug:
-        msg: "STEP_VERIFY_SCENARIO_scenario_1"
+        msg: "STEP_VERIFY_SCENARIO_group_b/scenario_5"

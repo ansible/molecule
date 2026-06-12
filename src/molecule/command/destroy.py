@@ -55,7 +55,7 @@ class Destroy(base.Base):
 
 
 @click_command_ex()
-@common_options("continue_on_failure", "driver_name_with_choices", "parallel", "workers")
+@common_options("continue_on_failure", "driver_name_with_choices", "parallel", "slice", "workers")
 def destroy(ctx: click.Context) -> None:  # pragma: no cover
     """Use the provisioner to destroy the instances.
 
@@ -78,6 +78,7 @@ def destroy(ctx: click.Context) -> None:  # pragma: no cover
         "driver_name": ctx.params["driver_name"],
         "report": ctx.params["report"],
         "shared_state": ctx.params["shared_state"],
+        "slice": int(ctx.params["slice"]),
         "subcommand": subcommand,
         "workers": resolve_workers(ctx.params["workers"]),
     }
