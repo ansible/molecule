@@ -28,11 +28,25 @@ Agent skills for development and maintenance workflow automation in Ansible Devt
 |-------|---------|-----------|
 | `tox` | tox environment reference (lint, test, docs, pkg) | `[environment-name]` |
 
+### Ansible Developer Tools
+
+| Skill | Purpose | Arguments |
+|-------|---------|-----------|
+| `ansible-creator` | Scaffold collections, playbooks, EEs, plugins | `[subcommand]` |
+| `ansible-lint` | Ansible playbook/role/collection linting reference | `[options]` |
+| `ade` | Development environment setup with ansible-dev-environment | `[subcommand]` |
+
 ## Skill Structure
 
 ```text
 skills/
 ├── README.md                   ← You are here
+├── ade/
+│   └── SKILL.md
+├── ansible-creator/
+│   └── SKILL.md
+├── ansible-lint/
+│   └── SKILL.md
 ├── diagnose-ci/
 │   └── SKILL.md
 ├── fix-bot-prs/
