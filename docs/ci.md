@@ -27,11 +27,11 @@ jobs:
         python-version: ["3.10", "3.11"]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           path: molecule_demo
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -83,7 +83,7 @@ script:
   - molecule test
 ```
 
-A `.travis.yml` using [Tox](https://tox.readthedocs.io/en/latest) as
+A `.travis.yml` using [Tox](https://tox.wiki/en/latest/) as
 described below.
 
 ```yaml
@@ -187,7 +187,7 @@ trigger:
   - main
 
 pool:
-  vmImage: ubuntu-16.04
+  vmImage: ubuntu-22.04
 
 steps:
   - checkout: git://project-name/role-name
