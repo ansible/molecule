@@ -134,7 +134,10 @@ class Scenario:
             MoleculeError: If lock cannot be acquired before timeout.
         """
         path: Path
-        if "MOLECULE_EPHEMERAL_DIRECTORY" not in os.environ:
+        if self.config.shared_state:
+            path = Path(self.shared_ephemeral_directory)
+
+        elif "MOLECULE_EPHEMERAL_DIRECTORY" not in os.environ:
             project_directory = Path(self.config.project_directory).name
 
             if self.config.is_parallel:
