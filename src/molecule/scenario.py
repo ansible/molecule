@@ -127,6 +127,9 @@ class Scenario:
     def ephemeral_directory(self) -> str:
         """Acquire the ephemeral directory.
 
+        When shared_state is enabled, returns the shared ephemeral directory
+        so all scenarios use the same working directory.
+
         Returns:
             The ephemeral directory for this scenario.
 
@@ -134,10 +137,8 @@ class Scenario:
             MoleculeError: If lock cannot be acquired before timeout.
         """
         path: Path
-        if self.config.shared_state:
-            path = Path(self.shared_ephemeral_directory)
 
-        elif "MOLECULE_EPHEMERAL_DIRECTORY" not in os.environ:
+        if "MOLECULE_EPHEMERAL_DIRECTORY" not in os.environ:
             project_directory = Path(self.config.project_directory).name
 
             if self.config.is_parallel:
@@ -146,6 +147,9 @@ class Scenario:
             safe_name = self.name.replace("/", "--")
             project_scenario_directory = f"molecule.{checksum(project_directory, 4)}.{safe_name}"
             path = self.config.runtime.cache_dir / "tmp" / project_scenario_directory
+
+            if self.config.shared_state:
+                path = Path(self.shared_ephemeral_directory)
         else:
             path = Path(os.getenv("MOLECULE_EPHEMERAL_DIRECTORY", ""))
         path.mkdir(parents=True, exist_ok=True)
