@@ -969,6 +969,52 @@ def test_find_vcs_root_skips_fake_git_dir(tmp_path: Path) -> None:
     assert result == str(repo)
 
 
+def test_find_vcs_root_in_git_worktree(tmp_path: Path) -> None:
+    """Ensure find_vcs_root recognizes a worktree where .git is a file.
+
+    In a git worktree the ".git" entry is a file containing a
+    "gitdir: <path>" pointer rather than a directory.
+
+    Args:
+        tmp_path: pytest fixture for temporary directory.
+    """
+    # Worktree root: .git is a file pointing at the main repo's gitdir.
+    worktree = tmp_path / "worktree"
+    worktree.mkdir()
+    git_file = worktree / ".git"
+    git_file.write_text(f"gitdir: {tmp_path / 'main' / '.git' / 'worktrees' / 'wt'}\n")
+
+    subdir = worktree / "infra"
+    subdir.mkdir()
+
+    util.find_vcs_root.cache_clear()
+    result = util.find_vcs_root(location=str(subdir))
+    assert result == str(worktree)
+
+
+def test_find_vcs_root_skips_bogus_git_file(tmp_path: Path) -> None:
+    """Ensure find_vcs_root ignores a .git file without a gitdir pointer.
+
+    Args:
+        tmp_path: pytest fixture for temporary directory.
+    """
+    # Real repo at top level.
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    git_dir = repo / ".git"
+    git_dir.mkdir()
+    (git_dir / "HEAD").write_text("ref: refs/heads/main\n")
+
+    # Subdirectory with a spurious .git file that is not a worktree pointer.
+    subdir = repo / "infra"
+    subdir.mkdir()
+    (subdir / ".git").write_text("not a gitdir pointer\n")
+
+    util.find_vcs_root.cache_clear()
+    result = util.find_vcs_root(location=str(subdir))
+    assert result == str(repo)
+
+
 @pytest.mark.parametrize(
     ("input_value", "expected"),
     (
