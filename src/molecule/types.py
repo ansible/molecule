@@ -294,6 +294,7 @@ class ConfigData(TypedDict, total=False):
         provisioner: Provisioner config.
         scenario: Scenario config.
         shared_state: Should state be shared between scenarios.
+        slice: Directory depth for grouping scenarios into worker units.
         verifier: Verifier config.
     """
 
@@ -306,6 +307,7 @@ class ConfigData(TypedDict, total=False):
     provisioner: ProvisionerData
     scenario: ScenarioData
     shared_state: bool
+    slice: int
     verifier: VerifierData
 
 
@@ -342,6 +344,7 @@ class CommandArgs(TypedDict, total=False):
         report: Whether to show an after-run summary report.
         scenario_name: Name of the scenario to target.
         shared_state: Whether (some) state should be shared between scenarios.
+        slice: Directory depth for grouping scenarios into worker units.
         subcommand: Name of subcommand being run.
         workers: Number of concurrent worker processes for parallel scenario execution.
         command_borders: Whether to enable borders around command output.
@@ -358,6 +361,7 @@ class CommandArgs(TypedDict, total=False):
     report: bool
     scenario_name: str
     shared_state: bool
+    slice: int
     subcommand: str
     workers: int
     command_borders: bool
