@@ -239,6 +239,28 @@ def test_setup_creates_ephemeral_and_inventory_directories(  # noqa: D103
     assert os.access(ephemeral_dir, os.W_OK)
 
 
+def test_shared_ephemeral_directory_with_shared_state(  # noqa: D103
+) -> None:
+    cfg = config.Config("")
+    cfg.config["shared_state"] = True
+    scenario = Scenario(cfg)
+
+    assert scenario.config.shared_state
+    assert scenario.ephemeral_directory == scenario.shared_ephemeral_directory
+
+
+def test_shared_state_respects_env_var(  # noqa: D103
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", str(tmp_path / "custom"))
+    cfg = config.Config("")
+    cfg.config["shared_state"] = True
+    scenario = Scenario(cfg)
+
+    assert scenario.ephemeral_directory == scenario.shared_ephemeral_directory
+    assert "custom" in scenario.ephemeral_directory
+
+
 def test_ephemeral_directory_overridden_via_env_var(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
