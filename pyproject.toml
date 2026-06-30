@@ -669,6 +669,7 @@ TERM = "xterm-256color"
 [tool.uv]
 constraint-dependencies = [
   "ansible-core>=2.20.0.dev0; python_version >= '3.14'",
+  "cairosvg>=2.9.0",
 ]
 default-groups = ["dev", "docs", "lint", "pkg"]
 package = true
