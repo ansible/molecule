@@ -45,7 +45,7 @@ repos:
       - id: shellcheck
         priority: 0
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.11.19
+    rev: 0.11.25
 
     hooks:
       - id: uv-sync
@@ -56,7 +56,7 @@ repos:
         args: ["--upgrade"]
         stages: [manual]
   - repo: https://github.com/biomejs/pre-commit
-    rev: "v2.4.16"
+    rev: "v2.5.1"
     hooks:
       - id: biome-check
         name: biome
@@ -81,7 +81,7 @@ repos:
         priority: 0
 
   - repo: https://github.com/jsh9/pydoclint
-    rev: "0.8.6"
+    rev: "0.9.0"
     hooks:
       - id: pydoclint
         # This allows automatic reduction of the baseline file when needed.
@@ -90,7 +90,7 @@ repos:
         priority: 1
 
   - repo: https://github.com/pycqa/pylint.git
-    rev: v4.0.5
+    rev: v4.0.6
     hooks:
       - id: pylint
         priority: 1
@@ -109,7 +109,7 @@ repos:
           - wcmatch
 
   - repo: https://github.com/ansible/ansible-lint
-    rev: v26.4.0
+    rev: v26.6.0
     hooks:
       - id: ansible-lint
         stages: [manual]
