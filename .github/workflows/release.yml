@@ -50,6 +50,8 @@ jobs:
     if: "${{ github.event_name == 'release' || inputs.galaxy_publish }}"
     runs-on: ubuntu-latest
     environment: release
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v6
       - name: Build the collection
@@ -67,6 +69,7 @@ jobs:
     if: "${{ github.event_name == 'release' }}"
     needs: release
     runs-on: ubuntu-24.04
+    permissions: {}
 
     steps:
       - name: Retrieve the forum post script from team-devtools
