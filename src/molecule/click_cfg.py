@@ -326,8 +326,7 @@ class CliOptions:
             name="report",
             help="Enable or disable end-of-run summary report.",
             is_flag=True,
-            default=False,
-            experimental=True,
+            default=True,
         )
 
     @property
@@ -384,8 +383,7 @@ class CliOptions:
             name="command-borders",
             help="Enable or disable borders around command output.",
             is_flag=True,
-            default=False,
-            experimental=True,
+            default=True,
         )
 
     @property

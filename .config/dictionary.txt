@@ -3,7 +3,6 @@ CLICOLOR
 CMDB
 CPUS
 Cfmpr
-DOTGLOB
 Dequènes
 ENVNAME
 Kubevirt

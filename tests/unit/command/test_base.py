@@ -705,7 +705,7 @@ def test_apply_cli_overrides_comprehensive(
         # CLI overrides both
         ("false", ["--report", "--command-borders"], True, True),  # CLI overrides both env vars
         # No env vars, no CLI (defaults)
-        (None, [], False, False),
+        (None, [], True, True),
     ),
     ids=(
         "env_both_true_no_cli",
@@ -788,8 +788,8 @@ def test_apply_env_overrides_comprehensive(  # noqa: PLR0913
     assert len(captured_configs) >= 1  # At least one config was created
 
     config_obj = captured_configs[0]
-    assert config_obj.command_args.get("report", False) is expected_report
-    assert config_obj.command_args.get("command_borders", False) is expected_borders
+    assert config_obj.command_args.get("report", True) is expected_report
+    assert config_obj.command_args.get("command_borders", True) is expected_borders
 
 
 @pytest.mark.parametrize(
@@ -810,9 +810,9 @@ def test_apply_env_overrides_comprehensive(  # noqa: PLR0913
         ("0", "no", [], False, False),  # Different falsy formats
         ("on", "off", [], True, False),  # More boolean formats
         # Test partial env vars (only one set)
-        ("true", None, [], True, False),  # Only report env var set
-        (None, "true", [], False, True),  # Only borders env var set
-        (None, None, ["--report"], True, False),  # No env vars, only CLI
+        ("true", None, [], True, True),  # Only report env var set, borders uses default
+        (None, "true", [], True, True),  # Only borders env var set, report uses default
+        (None, None, ["--report"], True, True),  # No env vars, CLI report (borders uses default)
     ),
     ids=(
         "cli_overrides_both_env_vars",
@@ -893,8 +893,8 @@ def test_env_var_cli_precedence(  # noqa: PLR0913
     assert len(captured_configs) >= 1
 
     config_obj = captured_configs[0]
-    assert config_obj.command_args.get("report", False) is expected_report
-    assert config_obj.command_args.get("command_borders", False) is expected_borders
+    assert config_obj.command_args.get("report", True) is expected_report
+    assert config_obj.command_args.get("command_borders", True) is expected_borders
 
 
 def test_env_overrides_invalid_values(

@@ -225,7 +225,7 @@ class Config:
     @property
     def command_borders(self) -> bool:
         """Return if command borders are enabled."""
-        return self.command_args.get("command_borders", False)
+        return self.command_args.get("command_borders", True)
 
     @property
     def platform_name(self) -> str | None:

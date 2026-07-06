@@ -20,5 +20,8 @@ build_ignore:
   - .ansible
   - .gitignore
   - .github
+  - .tox
+  - .venv
   - changelogs/.plugin-cache.yaml
+  - collections
   - Makefile

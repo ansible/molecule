@@ -237,7 +237,7 @@ def execute_cmdline_scenarios(
     except ScenarioFailureError as exc:
         util.sysexit_from_exception(exc)
     finally:
-        report(scenarios.results, report_flag=command_args.get("report", False))
+        report(scenarios.results, report_flag=command_args.get("report", True))
 
 
 def _generate_scenarios(
