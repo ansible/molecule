@@ -359,7 +359,7 @@ def test_parallel_collects_results(mocker: MockerFixture) -> None:
 
     run_scenarios_parallel(scenarios, command_args, None, num_workers=2)
 
-    scenarios.results.append.assert_called_with(result)  # pylint: disable=no-member
+    scenarios.results.append.assert_called_with(result)
 
 
 def test_parallel_fail_fast_on_failure(mocker: MockerFixture) -> None:
@@ -394,7 +394,7 @@ def test_parallel_fail_fast_on_failure(mocker: MockerFixture) -> None:
     assert "Scenarios failed" in exc_info.value.message
 
     mock_pool.shutdown.assert_called_once_with(wait=True, cancel_futures=True)
-    scenarios.results.append.assert_called_with(failed_result)  # pylint: disable=no-member
+    scenarios.results.append.assert_called_with(failed_result)
 
 
 def test_parallel_continue_on_failure(mocker: MockerFixture) -> None:
