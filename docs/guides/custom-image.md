@@ -19,7 +19,7 @@ items:
     >   >   scenario dir)
 
 The `Dockerfile.j2` template is generated at
-`molecule init scenario`-time when `--driver-name` is `docker`. The
+`molecule init scenario`-time. The
 template can be customized as needed to create the desired modifications
 to the Docker image used in the scenario.
 
