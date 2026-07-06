@@ -427,4 +427,4 @@ def test_parallel_continue_on_failure(mocker: MockerFixture) -> None:
     assert "Scenarios failed" in exc_info.value.message
 
     mock_pool.shutdown.assert_not_called()
-    assert scenarios.results.append.call_count >= 2  # noqa: PLR2004  # pylint: disable=no-member
+    assert scenarios.results.append.call_count >= 2  # noqa: PLR2004
