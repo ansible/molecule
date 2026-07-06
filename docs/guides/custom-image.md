@@ -18,13 +18,21 @@ items:
     >   > - Dockerfile rendered from `Dockerfile.j2` template (in
     >   >   scenario dir)
 
-The `Dockerfile.j2` template is generated at
-`molecule init scenario`-time. The
-template can be customized as needed to create the desired modifications
-to the Docker image used in the scenario.
+To customize the Docker image, create a `Dockerfile.j2` template file in your scenario directory. Molecule renders this template to build the image for the scenario.
+
+Here is a commonly used example `Dockerfile.j2` that substitutes the base image defined in `molecule.yml` and installs basic dependencies:
+
+```jinja
+# The `item` variable contains the platform configuration from molecule.yml
+FROM {{ item.image }}
+
+# Install basic dependencies (example for Debian/Ubuntu based images)
+RUN apt-get update && apt-get install -y python3 sudo bash \
+    && rm -rf /var/lib/apt/lists/*
+```
 
 Note: `platforms[*].pre_build_image` defaults to `true` in each
-scenario's generated `molecule.yml` file.
+scenario's generated `molecule.yml` file. You must set it to `false` in your platform configuration to instruct Molecule to build the custom image.
 
 [^1]:
     [Implementation in molecule docker
