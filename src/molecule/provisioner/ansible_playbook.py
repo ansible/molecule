@@ -68,7 +68,7 @@ class AnsiblePlaybook:
         if verify:
             self._env = util.merge_dicts(
                 self._config.verifier.env,
-                self._config.config["verifier"]["env"],
+                self._config.config_data["verifier"]["env"],
             )
         elif self._config.provisioner:
             self._env = self._config.provisioner.env

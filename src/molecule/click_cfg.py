@@ -12,7 +12,7 @@ import logging
 import os
 
 from dataclasses import dataclass, replace
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import click
 
@@ -209,10 +209,13 @@ class CliOptions:
     @property
     def driver_name_with_choices(self) -> CliOption:
         """Driver name option with available choices."""
-        return replace(
-            self.driver_name,
-            choices=[str(s) for s in drivers()],
-            help="Name of driver to use.",
+        return cast(  # type: ignore[redundant-cast]
+            "CliOption",
+            replace(
+                self.driver_name,
+                choices=[str(s) for s in drivers()],
+                help="Name of driver to use.",
+            ),
         )
 
     @property
@@ -300,11 +303,14 @@ class CliOptions:
     @property
     def platform_name_with_default(self) -> CliOption:
         """Platform name option with default."""
-        return replace(
-            self.platform_name,
-            default=MOLECULE_PLATFORM_NAME,
-            help="Name of the platform to target only.",
-            help_default="None",
+        return cast(  # type: ignore[redundant-cast]
+            "CliOption",
+            replace(
+                self.platform_name,
+                default=MOLECULE_PLATFORM_NAME,
+                help="Name of the platform to target only.",
+                help_default="None",
+            ),
         )
 
     @property
@@ -340,27 +346,36 @@ class CliOptions:
     @property
     def scenario_name_with_default(self) -> CliOption:
         """Scenario name option with default value (multiple)."""
-        return replace(
-            self.scenario_name,
-            default=[MOLECULE_DEFAULT_SCENARIO_NAME],
+        return cast(  # type: ignore[redundant-cast]
+            "CliOption",
+            replace(
+                self.scenario_name,
+                default=[MOLECULE_DEFAULT_SCENARIO_NAME],
+            ),
         )
 
     @property
     def scenario_name_single(self) -> CliOption:
         """Single scenario name option without default."""
-        return replace(
-            self.scenario_name,
-            multiple=False,
-            help="Name of the scenario to target.",
+        return cast(  # type: ignore[redundant-cast]
+            "CliOption",
+            replace(
+                self.scenario_name,
+                multiple=False,
+                help="Name of the scenario to target.",
+            ),
         )
 
     @property
     def scenario_name_single_with_default(self) -> CliOption:
         """Single scenario name option with default."""
-        return replace(
-            self.scenario_name_single,
-            default=MOLECULE_DEFAULT_SCENARIO_NAME,
-            help="Name of the scenario to target.",
+        return cast(  # type: ignore[redundant-cast]
+            "CliOption",
+            replace(
+                self.scenario_name_single,
+                default=MOLECULE_DEFAULT_SCENARIO_NAME,
+                help="Name of the scenario to target.",
+            ),
         )
 
     @property

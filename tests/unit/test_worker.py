@@ -285,7 +285,7 @@ def _make_mock_scenarios(
         scenario.config.args = {}
         scenario.config.command_args = {"subcommand": "test"}
         scenario.config.ansible_args = ()
-        scenario.config.config = {"prerun": prerun, "role_name_check": 0}
+        scenario.config.config_data = {"prerun": prerun, "role_name_check": 0}
         scenario.config.scenario.name = name
         scenario.ephemeral_directory = f"/tmp/{name}"  # noqa: S108
         scenario_list.append(scenario)

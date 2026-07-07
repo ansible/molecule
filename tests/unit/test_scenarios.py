@@ -32,7 +32,7 @@ def _instance(config_instance: config.Config) -> scenarios.Scenarios:
     config_instance_1 = copy.deepcopy(config_instance)
 
     config_instance_2 = copy.deepcopy(config_instance)
-    config_instance_2.config["scenario"]["name"] = "foo"
+    config_instance_2.config_data["scenario"]["name"] = "foo"
 
     return scenarios.Scenarios([config_instance_1, config_instance_2])
 

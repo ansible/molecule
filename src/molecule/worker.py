@@ -125,8 +125,8 @@ def _run_prerun_steps(scenarios: Scenarios) -> None:
         scenarios: The Scenarios object holding all scenario objects.
     """
     for scenario in scenarios.all:
-        if scenario.config.config["prerun"]:
-            role_name_check = scenario.config.config["role_name_check"]
+        if scenario.config.config_data["prerun"]:
+            role_name_check = scenario.config.config_data["role_name_check"]
             scenario_log = logger.get_scenario_logger(
                 __name__,
                 scenario.config.scenario.name,

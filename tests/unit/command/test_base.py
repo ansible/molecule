@@ -456,7 +456,7 @@ def test_get_configs(config_instance: config.Config) -> None:
         config_instance: Mocked config_instance fixture.
     """
     molecule_file = config_instance.molecule_file
-    data = config_instance.config
+    data = config_instance.config_data
     util.write_file(molecule_file, util.safe_dump(data))
 
     result = base.get_configs({}, {})

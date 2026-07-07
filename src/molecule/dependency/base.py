@@ -150,7 +150,7 @@ class Base(abc.ABC):
 
         :returns: str
         """
-        return self._config.config["dependency"]["name"]
+        return self._config.config_data["dependency"]["name"]
 
     @property
     def enabled(self) -> bool:
@@ -159,7 +159,7 @@ class Base(abc.ABC):
         Returns:
             Whether the dependency is enabled.
         """
-        return self._config.config["dependency"]["enabled"]
+        return self._config.config_data["dependency"]["enabled"]
 
     @property
     def options(self) -> MutableMapping[str, str | bool]:
@@ -170,7 +170,7 @@ class Base(abc.ABC):
         """
         return util.merge_dicts(
             self.default_options,
-            self._config.config["dependency"]["options"],
+            self._config.config_data["dependency"]["options"],
         )
 
     @property
@@ -182,5 +182,5 @@ class Base(abc.ABC):
         """
         return util.merge_dicts(
             self.default_env,
-            self._config.config["dependency"]["env"],
+            self._config.config_data["dependency"]["env"],
         )

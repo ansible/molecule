@@ -50,7 +50,7 @@ def _patched_scenario_factory() -> type[Any]:
                             "shared_ephemeral_directory": shared_ephemeral_dir or ephemeral_dir,
                         },
                     )(),
-                    "config": {"prerun": False},
+                    "config_data": {"prerun": False},
                 },
             )()
             self.ephemeral_directory = ephemeral_dir
