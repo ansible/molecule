@@ -31,14 +31,53 @@ molecule test --all --workers cpus-1
   `molecule.yml` so that the default scenario handles infrastructure
   create/destroy while workers run the test sequences.
 
+### Scenario slicing with `--slice`
+
+When scenario names contain directory separators (e.g.
+`appliance_vlans/gathered`, `appliance_vlans/merged`), the `--slice`
+flag controls how scenarios are grouped into work units dispatched to
+workers.
+
+| `--slice` | Behavior |
+|-----------|----------|
+| `1` (default) | Group by the first path segment — all CRUD states for a resource run sequentially on one worker. |
+| `2` | Each leaf scenario is an independent work unit (no grouping). |
+
+```bash
+# Group by resource (default when --workers is used)
+molecule test --all --workers 4
+
+# Treat each scenario independently
+molecule test --all --workers 4 --slice 2
+```
+
+`slice` can also be set in the config file (`config.yml` or
+`molecule.yml`) so it travels with the project:
+
+```yaml
+# extensions/molecule/config.yml
+shared_state: true
+slice: 1
+```
+
+The CLI flag overrides the config value when both are present.
+
+For example, with 186 scenarios across 37 resources, `slice: 1`
+produces 37 work units instead of 186, each containing ~5 scenarios
+that run sequentially within the worker.
+
+The CLI `--slice` flag requires `--workers` > 1. When defined only
+in the config file, `slice` is silently ignored in sequential mode.
+
 ### How it works
 
 1. The **default scenario's `create`** runs first (serial, main process).
 2. Prerun tasks run for all scenarios (serial, main process).
-3. Scenarios are submitted to a `ProcessPoolExecutor` with the specified
-   number of workers. Each worker reconstructs a `Config` from the
-   scenario's `molecule.yml` and runs the scenario's sequence, skipping
-   `create` and `destroy` (handled by the default scenario).
+3. Scenarios are grouped into slices according to `--slice` depth and
+   submitted to a `ProcessPoolExecutor` with the specified number of
+   workers. Each worker reconstructs a `Config` from each scenario's
+   `molecule.yml` and runs the scenario's sequence, skipping `create`
+   and `destroy` (handled by the default scenario).
 4. Results are collected as workers complete.
 5. The **default scenario's `destroy`** runs last (serial, main process).
 
@@ -58,6 +97,7 @@ molecule test --all --workers 4 --continue-on-failure
 ### Incompatible options
 
 - `--workers` > 1 cannot be combined with `--destroy=never`.
+- `--slice` cannot be used when `--workers` is 1 (no parallelism).
 
 ---
 

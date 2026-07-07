@@ -53,6 +53,7 @@ class Test(base.Base):
     "driver_name_with_choices",
     "platform_name_with_default",
     "parallel",
+    "slice",
     "workers",
     "ansible_args",
 )
@@ -80,6 +81,7 @@ def test(ctx: click.Context) -> None:  # pragma: no cover
         "platform_name": ctx.params["platform_name"],
         "report": ctx.params["report"],
         "shared_state": ctx.params["shared_state"],
+        "slice": int(ctx.params["slice"]),
         "subcommand": subcommand,
         "workers": resolve_workers(ctx.params["workers"]),
     }

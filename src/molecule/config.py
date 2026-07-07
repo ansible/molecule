@@ -151,13 +151,19 @@ class Config:
         This method modifies the config dictionary to include CLI overrides,
         creating a single source of truth for configuration values.
         """
-        # Apply shared_state CLI override ONLY if it was explicitly provided via CLI
         ctx = click.get_current_context(silent=True)
-        if "shared_state" not in self.command_args or ctx is None:
+        if ctx is None:
             return
-        source = ctx.get_parameter_source("shared_state")
-        if source == click.core.ParameterSource.COMMANDLINE:
-            self.config["shared_state"] = self.command_args["shared_state"]
+
+        if "shared_state" in self.command_args:
+            source = ctx.get_parameter_source("shared_state")
+            if source == click.core.ParameterSource.COMMANDLINE:
+                self.config["shared_state"] = self.command_args["shared_state"]
+
+        if "slice" in self.command_args:
+            source = ctx.get_parameter_source("slice")
+            if source == click.core.ParameterSource.COMMANDLINE:
+                self.config["slice"] = self.command_args["slice"]
 
     def _apply_env_overrides(self) -> None:
         """Apply environment variable overrides to command_args.
@@ -221,6 +227,15 @@ class Config:
             Whether molecule should share ephemeral state.
         """
         return self.config.get("shared_state", False)
+
+    @property
+    def slice(self) -> int:
+        """Directory depth for grouping scenarios into worker units.
+
+        Returns:
+            The slice depth (1 = group by top-level resource, 2 = each leaf independently).
+        """
+        return int(self.config.get("slice", 1))
 
     @property
     def command_borders(self) -> bool:

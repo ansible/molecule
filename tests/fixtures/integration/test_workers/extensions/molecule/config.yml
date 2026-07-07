@@ -11,3 +11,4 @@ scenario:
     - converge
     - verify
 shared_state: true
+slice: 1
