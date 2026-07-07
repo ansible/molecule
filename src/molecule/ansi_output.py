@@ -641,30 +641,38 @@ class CommandBorders:
         Returns:
             List of formatted command lines
         """
-        indent = "  "
         parts = split_command_to_strings(cmd)
         if not parts:
             return [""]
 
         decor = len("  | ")
-
-        max_width = (
+        effective_width = (
             shutil.get_terminal_size().columns - decor if max_width is None else max_width - decor
         )
 
-        lines, i = [], 0
+        lines = self._group_command_parts(parts)
+        return self._wrap_lines(lines, effective_width)
 
-        # First line: exec + first param/flag/value
+    @staticmethod
+    def _group_command_parts(parts: list[str]) -> list[str]:
+        """Group command parts into logical lines (flags with their values).
+
+        Args:
+            parts: Split command parts.
+
+        Returns:
+            Grouped command lines before wrapping.
+        """
+        lines: list[str] = []
+        i = 0
+
+        # First line: executable + first param/flag/value
         first = parts[i]
         i += 1
         if i < len(parts):
-            if parts[i].startswith("-"):
-                first += " " + parts[i]
-                i += 1
-                if i < len(parts) and not parts[i].startswith("-"):
-                    first += " " + parts[i]
-                    i += 1
-            else:
+            first += " " + parts[i]
+            i += 1
+            if parts[i - 1].startswith("-") and i < len(parts) and not parts[i].startswith("-"):
                 first += " " + parts[i]
                 i += 1
         lines.append(first)
@@ -679,17 +687,28 @@ class CommandBorders:
                 lines.append(part)
                 i += 1
 
-        # Now wrap all lines
-        wrapped = []
+        return lines
+
+    @staticmethod
+    def _wrap_lines(lines: list[str], max_width: int) -> list[str]:
+        """Wrap lines to fit within max_width, indenting continuation lines.
+
+        Args:
+            lines: Grouped command lines.
+            max_width: Maximum character width per line.
+
+        Returns:
+            Wrapped and indented lines.
+        """
+        indent = "  "
+        wrapped: list[str] = []
         for i, line in enumerate(lines):
             while len(line) > max_width:
                 k = line.rfind(" ", 0, max_width)
-                wrapped.append(line[: k if k != -1 else max_width])
-                line = line[(k + 1) if k != -1 else max_width :]  # noqa: PLW2901
-            if i > 0:
-                wrapped.append(indent + line)
-            else:
-                wrapped.append(line)
+                split_at = k if k != -1 else max_width
+                wrapped.append(line[:split_at])
+                line = line[split_at + 1 :] if k != -1 else line[split_at:]  # noqa: PLW2901
+            wrapped.append(indent + line if i > 0 else line)
         return wrapped
 
     def _print_footer(self, return_code: int) -> None:
