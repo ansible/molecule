@@ -79,8 +79,12 @@ class Base(abc.ABC):
         self._config.scenario.results.add_action_result(self._config.action or "unknown")
         self._setup()
 
-    def __init_subclass__(cls, **kwargs: Any) -> None:
-        """Decorate execute from all subclasses."""
+    def __init_subclass__(cls, **kwargs: object) -> None:
+        """Decorate execute from all subclasses.
+
+        Args:
+            **kwargs: Keyword arguments forwarded to parent classes in the MRO.
+        """
         super().__init_subclass__(**kwargs)
         for wrapper in logger.get_section_loggers():
             cls.execute = wrapper(cls.execute)  # type: ignore[method-assign,assignment]
