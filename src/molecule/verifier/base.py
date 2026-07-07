@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import abc
 
+from functools import total_ordering
 from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict
 
@@ -79,6 +80,7 @@ class Schema(TypedDict):
     verifier: VerifierDef
 
 
+@total_ordering
 class Verifier(abc.ABC):
     """Verifier Base Class."""
 

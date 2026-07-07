@@ -111,27 +111,10 @@ class TemplateWithDefaults(string.Template):
             The converted string.
         """
 
-        # Helper function for .sub()
-        def convert(mo: Match[str]) -> str | None:  # noqa: PLR0911
-            # Check the most common path first.
+        def convert(mo: Match[str]) -> str | None:
             named = mo.group("named") or mo.group("braced")
             if named is not None:
-                if keep_string and named.startswith(keep_string):
-                    return f"${named}"
-                if ":-" in named:
-                    var, _, default = named.partition(":-")
-                    # If default is also a variable
-                    if default.startswith("$"):
-                        default = mapping.get(default[1:], "")
-                    return mapping.get(var) or default
-                if "-" in named:
-                    var, _, default = named.partition("-")
-                    # If default is also a variable
-                    if default.startswith("$"):
-                        default = mapping.get(default[1:], "")
-                    return mapping.get(var, default)
-                val = mapping.get(named, "")
-                return f"{val}"
+                return self._resolve_named(named, mapping, keep_string)
             if mo.group("escaped") is not None:
                 return self.delimiter
             if mo.group("invalid") is not None:
@@ -140,3 +123,33 @@ class TemplateWithDefaults(string.Template):
             return None
 
         return self.pattern.sub(convert, self.template)  # type: ignore[arg-type]
+
+    @staticmethod
+    def _resolve_named(
+        named: str,
+        mapping: Mapping[str, str],
+        keep_string: str | None,
+    ) -> str:
+        """Resolve a named variable reference from a template substitution.
+
+        Args:
+            named: The variable name (possibly with default syntax).
+            mapping: The mapping to look up values from.
+            keep_string: Prefix for variables that should be preserved.
+
+        Returns:
+            The resolved value string.
+        """
+        if keep_string and named.startswith(keep_string):
+            return f"${named}"
+        if ":-" in named:
+            var, _, default = named.partition(":-")
+            if default.startswith("$"):
+                default = mapping.get(default[1:], "")
+            return mapping.get(var) or default
+        if "-" in named:
+            var, _, default = named.partition("-")
+            if default.startswith("$"):
+                default = mapping.get(default[1:], "")
+            return mapping.get(var, default)
+        return mapping.get(named, "")

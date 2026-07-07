@@ -99,13 +99,12 @@ def get_line_style(line: str) -> str:
         ANSI escape sequence from start of line without reset codes, or empty string if none
     """
     # Match ANSI escape sequences at the start of the line
-    # Patterns: \x1b[...m or \033[...m
-    match = re.match(r"^(\x1b\[[0-9;]*m|\033\[[0-9;]*m)", line)
+    match = re.match(r"^(\x1b\[[0-9;]*m)", line)
     if match:
         escape_seq = match.group(1)
 
-        # Skip pure reset sequences (just \x1b[0m)
-        if escape_seq in ["\x1b[0m", "\033[0m"]:
+        # Skip pure reset sequences
+        if escape_seq == "\x1b[0m":
             return ""
 
         # Extract color from reset+color sequences (e.g., \x1b[0;32m -> \x1b[32m)
@@ -186,8 +185,7 @@ class AnsiOutput:
         processed = re.sub(r"\[([^/\]]+)\]", replace_tag, text)
 
         # Process closing tags last (convert [/] to reset)
-        result = re.sub(r"\[/\]", A.RESET, processed)
-        return str(result)
+        return processed.replace("[/]", A.RESET)
 
     def format_log_level(self, level_name: str) -> tuple[str, str]:
         """Format a log level returning both colored and plain versions.
@@ -539,7 +537,7 @@ def create_border_footer(text: str = "", width: int = DEFAULT_BORDER_WIDTH) -> s
     """
     if text:
         footer_text = f" {text} "
-        padding = width - len(footer_text) - 2  # 2 = corner + dash
+        padding = width - len(footer_text) - 2
         return f"{A.BOX_BOTTOM_LEFT}{A.BOX_HORIZONTAL}{footer_text}{A.BOX_HORIZONTAL * padding}"
     return f"{A.BOX_BOTTOM_LEFT}{A.BOX_HORIZONTAL * (width - 1)}"
 
@@ -629,7 +627,7 @@ class CommandBorders:
         # Add blank line with pipe
         self.original_stderr.write(f"  {A.DIM}{A.BOX_VERTICAL}{A.RESET} \n")
 
-    def _format_command_lines(  # noqa: C901, PLR0912
+    def _format_command_lines(
         self,
         cmd: str | list[str],
         max_width: int | None = None,
@@ -643,30 +641,38 @@ class CommandBorders:
         Returns:
             List of formatted command lines
         """
-        indent = "  "
         parts = split_command_to_strings(cmd)
         if not parts:
             return [""]
 
         decor = len("  | ")
-
-        max_width = (
+        effective_width = (
             shutil.get_terminal_size().columns - decor if max_width is None else max_width - decor
         )
 
-        lines, i = [], 0
+        lines = self._group_command_parts(parts)
+        return self._wrap_lines(lines, effective_width)
 
-        # First line: exec + first param/flag/value
+    @staticmethod
+    def _group_command_parts(parts: list[str]) -> list[str]:
+        """Group command parts into logical lines (flags with their values).
+
+        Args:
+            parts: Split command parts.
+
+        Returns:
+            Grouped command lines before wrapping.
+        """
+        lines: list[str] = []
+        i = 0
+
+        # First line: executable + first param/flag/value
         first = parts[i]
         i += 1
         if i < len(parts):
-            if parts[i].startswith("-"):
-                first += " " + parts[i]
-                i += 1
-                if i < len(parts) and not parts[i].startswith("-"):
-                    first += " " + parts[i]
-                    i += 1
-            else:
+            first += " " + parts[i]
+            i += 1
+            if parts[i - 1].startswith("-") and i < len(parts) and not parts[i].startswith("-"):
                 first += " " + parts[i]
                 i += 1
         lines.append(first)
@@ -677,24 +683,32 @@ class CommandBorders:
             if part.startswith("-") and i + 1 < len(parts) and not parts[i + 1].startswith("-"):
                 lines.append(part + " " + parts[i + 1])
                 i += 2
-            elif not part.startswith("-"):
-                lines.append(part)
-                i += 1
             else:
                 lines.append(part)
                 i += 1
 
-        # Now wrap all lines
-        wrapped = []
+        return lines
+
+    @staticmethod
+    def _wrap_lines(lines: list[str], max_width: int) -> list[str]:
+        """Wrap lines to fit within max_width, indenting continuation lines.
+
+        Args:
+            lines: Grouped command lines.
+            max_width: Maximum character width per line.
+
+        Returns:
+            Wrapped and indented lines.
+        """
+        indent = "  "
+        wrapped: list[str] = []
         for i, line in enumerate(lines):
             while len(line) > max_width:
                 k = line.rfind(" ", 0, max_width)
-                wrapped.append(line[: k if k != -1 else max_width])
-                line = line[(k + 1) if k != -1 else max_width :]  # noqa: PLW2901
-            if i > 0:
-                wrapped.append(indent + line)
-            else:
-                wrapped.append(line)
+                split_at = k if k != -1 else max_width
+                wrapped.append(line[:split_at])
+                line = line[split_at + 1 :] if k != -1 else line[split_at:]  # noqa: PLW2901
+            wrapped.append(indent + line if i > 0 else line)
         return wrapped
 
     def _print_footer(self, return_code: int) -> None:

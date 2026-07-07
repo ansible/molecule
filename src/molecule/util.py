@@ -348,7 +348,7 @@ def filter_verbose_permutation(options: Options) -> Options:
     Returns:
         Dictionary of options without verbose options included.
     """
-    return {k: options[k] for k in options if not re.match(r"^[v]+$", k)}
+    return {k: options[k] for k in options if not re.match(r"^v+$", k)}
 
 
 @overload
@@ -579,11 +579,11 @@ def dict2args(data: MutableMapping[str, str | bool]) -> list[str]:
     return result
 
 
-def bool2args(data: bool | list[str]) -> list[str]:  # noqa: ARG001, FBT001
+def bool2args(_data: bool | list[str]) -> list[str]:  # noqa: FBT001
     """Convert a boolean value to command line argument (flag).
 
     Args:
-        data: A boolean value.
+        _data: A boolean value.
 
     Returns:
         An empty list
@@ -607,7 +607,7 @@ def oxford_comma(listed: Iterable[bool | str | Path], condition: str = "and") ->
         case [one, two]:
             return f"{one} {condition} {two}"
         case [*front, back]:
-            return f"{', '.join(s for s in front)}, {condition} {back}"
+            return f"{', '.join(front)}, {condition} {back}"
         case _:
             return ""
 

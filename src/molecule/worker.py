@@ -118,7 +118,46 @@ def _print_failed_output(failed_outputs: list[tuple[str, str, str]]) -> None:
         )
 
 
-def run_scenarios_parallel(  # noqa: C901, PLR0912, PLR0915
+def _run_prerun_steps(scenarios: Scenarios) -> None:
+    """Execute prerun steps for all scenarios that require them.
+
+    Args:
+        scenarios: The Scenarios object holding all scenario objects.
+    """
+    for scenario in scenarios.all:
+        if scenario.config.config["prerun"]:
+            role_name_check = scenario.config.config["role_name_check"]
+            scenario_log = logger.get_scenario_logger(
+                __name__,
+                scenario.config.scenario.name,
+                "prerun",
+            )
+            scenario_log.info(
+                f"Performing prerun with role_name_check={role_name_check}...",
+            )
+            scenario.config.runtime.prepare_environment(
+                install_local=True,
+                role_name_check=role_name_check,
+            )
+
+
+def _handle_reset(scenarios: Scenarios) -> None:
+    """Reset all scenarios by removing their ephemeral directories.
+
+    Args:
+        scenarios: The Scenarios object holding all scenario objects.
+    """
+    for scenario in scenarios.all:
+        reset_log = logger.get_scenario_logger(
+            __name__,
+            scenario.config.scenario.name,
+            "reset",
+        )
+        reset_log.info(f"Removing {scenario.ephemeral_directory}")
+        shutil.rmtree(scenario.ephemeral_directory)
+
+
+def run_scenarios_parallel(
     scenarios: Scenarios,
     command_args: CommandArgs,
     default_config: config_module.Config | None,
@@ -138,8 +177,6 @@ def run_scenarios_parallel(  # noqa: C901, PLR0912, PLR0915
     Raises:
         ScenarioFailureError: If any scenario fails during execution.
     """
-    continue_on_failure = command_args.get("continue_on_failure", False)
-
     create_results = execute_subcommand_default(
         default_config,
         "create",
@@ -148,36 +185,15 @@ def run_scenarios_parallel(  # noqa: C901, PLR0912, PLR0915
     if create_results is not None:
         scenarios.results.append(create_results)
 
-    for scenario in scenarios.all:
-        if scenario.config.config["prerun"]:
-            role_name_check = scenario.config.config["role_name_check"]
-            scenario_log = logger.get_scenario_logger(
-                __name__,
-                scenario.config.scenario.name,
-                "prerun",
-            )
-            scenario_log.info(
-                f"Performing prerun with role_name_check={role_name_check}...",
-            )
-            scenario.config.runtime.prepare_environment(
-                install_local=True,
-                role_name_check=role_name_check,
-            )
+    _run_prerun_steps(scenarios)
 
     if command_args.get("subcommand") == "reset":
-        for scenario in scenarios.all:
-            reset_log = logger.get_scenario_logger(
-                __name__,
-                scenario.config.scenario.name,
-                "reset",
-            )
-            reset_log.info(f"Removing {scenario.ephemeral_directory}")
-            shutil.rmtree(scenario.ephemeral_directory)
+        _handle_reset(scenarios)
         return
 
     failed_scenarios: list[str] = []
     failed_outputs: list[tuple[str, str, str]] = []
-
+    continue_on_failure = command_args.get("continue_on_failure", False)
     project_dir = scenarios.all[0].config.project_directory if scenarios.all else str(Path.cwd())
 
     LOG.info(
@@ -187,54 +203,21 @@ def run_scenarios_parallel(  # noqa: C901, PLR0912, PLR0915
     )
 
     with ProcessPoolExecutor(max_workers=num_workers) as executor:
-        future_to_name: dict[Future[tuple[ScenarioResults, str | None, str, str]], str] = {}
-        for scenario in scenarios.all:
-            mol_file = scenario.config.molecule_file
-            mol_args = scenario.config.args
-            ans_args = scenario.config.ansible_args
-            future = executor.submit(
-                run_one_scenario,
-                mol_file,
-                mol_args,
-                command_args,
-                ans_args,
-                project_dir,
-            )
-            future_to_name[future] = scenario.config.scenario.name
+        future_to_name = _submit_scenarios(executor, scenarios, command_args, project_dir)
 
         for future in as_completed(future_to_name):
             scenario_name = future_to_name[future]
-            try:
-                result, error, ansible_output, failed_step = future.result()
-            except Exception as exc:  # noqa: BLE001
-                failed_scenarios.append(scenario_name)
-                LOG.error("Scenario '%s' worker crashed: %s", scenario_name, exc)  # noqa: TRY400
-                if not continue_on_failure:
-                    LOG.warning(
-                        "Fail-fast: cancelling remaining scenarios. "
-                        "Use --continue-on-failure to run all scenarios.",
-                    )
-                    executor.shutdown(wait=True, cancel_futures=True)
-                    break
-                continue
-
-            scenarios.results.append(result)
-
-            if error:
-                failed_scenarios.append(scenario_name)
-                LOG.error("Scenario '%s' failed: %s", scenario_name, error)
-                if ansible_output and ansible_output.strip():
-                    failed_outputs.append((scenario_name, ansible_output.strip(), failed_step))
-
-                if not continue_on_failure:
-                    LOG.warning(
-                        "Fail-fast: cancelling remaining scenarios. "
-                        "Use --continue-on-failure to run all scenarios.",
-                    )
-                    executor.shutdown(wait=True, cancel_futures=True)
-                    break
-            else:
-                LOG.info("Scenario '%s' completed successfully", scenario_name)
+            should_break = _process_future_result(
+                future,
+                scenario_name,
+                scenarios,
+                failed_scenarios,
+                failed_outputs,
+                continue_on_failure=continue_on_failure,
+            )
+            if should_break:
+                executor.shutdown(wait=True, cancel_futures=True)
+                break
 
     destroy_results = execute_subcommand_default(
         default_config,
@@ -251,6 +234,94 @@ def run_scenarios_parallel(  # noqa: C901, PLR0912, PLR0915
         names = ", ".join(failed_scenarios)
         msg = f"Scenarios failed: {names}"
         raise ScenarioFailureError(message=msg)
+
+
+def _submit_scenarios(
+    executor: ProcessPoolExecutor,
+    scenarios: Scenarios,
+    command_args: CommandArgs,
+    project_dir: str,
+) -> dict[Future[tuple[ScenarioResults, str | None, str, str]], str]:
+    """Submit all scenarios to the executor pool.
+
+    Args:
+        executor: The process pool executor.
+        scenarios: The Scenarios object.
+        command_args: Dict of command arguments.
+        project_dir: Project directory path.
+
+    Returns:
+        Mapping of futures to scenario names.
+    """
+    future_to_name: dict[Future[tuple[ScenarioResults, str | None, str, str]], str] = {}
+    for scenario in scenarios.all:
+        future = executor.submit(
+            run_one_scenario,
+            scenario.config.molecule_file,
+            scenario.config.args,
+            command_args,
+            scenario.config.ansible_args,
+            project_dir,
+        )
+        future_to_name[future] = scenario.config.scenario.name
+    return future_to_name
+
+
+def _process_future_result(  # noqa: PLR0913
+    future: Future[tuple[ScenarioResults, str | None, str, str]],
+    scenario_name: str,
+    scenarios: Scenarios,
+    failed_scenarios: list[str],
+    failed_outputs: list[tuple[str, str, str]],
+    *,
+    continue_on_failure: bool,
+) -> bool:
+    """Process a completed future and return whether execution should stop.
+
+    Args:
+        future: The completed future to process.
+        scenario_name: Name of the scenario.
+        scenarios: The Scenarios object to append results to.
+        failed_scenarios: List to track failed scenario names.
+        failed_outputs: List to track failed outputs.
+        continue_on_failure: Whether to continue on failure.
+
+    Returns:
+        True if execution should stop (fail-fast triggered).
+    """
+    try:
+        result, error, ansible_output, failed_step = future.result()
+    except Exception:
+        failed_scenarios.append(scenario_name)
+        LOG.exception("Scenario '%s' worker crashed", scenario_name)
+        if not continue_on_failure:
+            _log_fail_fast()
+            return True
+        return False
+
+    scenarios.results.append(result)
+
+    if not error:
+        LOG.info("Scenario '%s' completed successfully", scenario_name)
+        return False
+
+    failed_scenarios.append(scenario_name)
+    LOG.error("Scenario '%s' failed: %s", scenario_name, error)
+    if ansible_output and ansible_output.strip():
+        failed_outputs.append((scenario_name, ansible_output.strip(), failed_step))
+
+    if not continue_on_failure:
+        _log_fail_fast()
+        return True
+    return False
+
+
+def _log_fail_fast() -> None:
+    """Log the fail-fast cancellation warning."""
+    LOG.warning(
+        "Fail-fast: cancelling remaining scenarios. "
+        "Use --continue-on-failure to run all scenarios.",
+    )
 
 
 def validate_worker_args(command_args: CommandArgs) -> None:

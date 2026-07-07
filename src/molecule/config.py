@@ -107,8 +107,8 @@ class Config:
     def __init__(
         self,
         molecule_file: str,  # pylint: disable=redefined-outer-name
-        args: MoleculeArgs = {},  # noqa: B006
-        command_args: CommandArgs = {},  # noqa: B006
+        args: MoleculeArgs | None = None,
+        command_args: CommandArgs | None = None,
         ansible_args: tuple[str, ...] = (),
     ) -> None:
         """Initialize a new config class and returns None.
@@ -120,8 +120,8 @@ class Config:
             ansible_args: An optional tuple of arguments provided to the `ansible-playbook` command.
         """
         self.molecule_file = molecule_file
-        self.args = args
-        self.command_args = command_args
+        self.args: MoleculeArgs = args if args is not None else {}
+        self.command_args: CommandArgs = command_args if command_args is not None else {}
         self.ansible_args = ansible_args
         self.config = self._get_config()
         self._action: str | None = None

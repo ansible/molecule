@@ -25,6 +25,7 @@ import inspect
 import os
 
 from abc import ABC, abstractmethod
+from functools import total_ordering
 from importlib.metadata import version
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -39,6 +40,7 @@ if TYPE_CHECKING:
     from molecule.types import DriverOptions
 
 
+@total_ordering
 class Driver(ABC):
     """Driver Class.
 

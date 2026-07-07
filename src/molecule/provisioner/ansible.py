@@ -463,25 +463,29 @@ class Ansible(base.Base):
         if self.hosts:
             util.write_file(hosts_file, util.safe_dump(self.hosts))
         # Create the host_vars and group_vars directories
-        for target in ["host_vars", "group_vars"]:
-            if target == "host_vars":
-                vars_target = copy.deepcopy(self.host_vars)
-                for instance_name in self.host_vars.keys():  # noqa: SIM118
-                    instance_key = instance_name
-                    vars_target[instance_key] = vars_target.pop(instance_name)
+        self._write_vars_directory("host_vars", copy.deepcopy(self.host_vars))
+        self._write_vars_directory("group_vars", self.group_vars)
 
-            elif target == "group_vars":
-                vars_target = self.group_vars
+    def _write_vars_directory(
+        self,
+        target_name: str,
+        vars_target: dict[str, Any],
+    ) -> None:
+        """Write variable files into the specified inventory subdirectory.
 
-            if vars_target:
-                target_vars_directory = util.abs_path(Path(self.inventory_directory) / target)
-                if not target_vars_directory.is_dir():
-                    target_vars_directory.mkdir()
+        Args:
+            target_name: Name of the target directory (host_vars or group_vars).
+            vars_target: Dictionary mapping names to variable content.
+        """
+        if not vars_target:
+            return
+        target_vars_directory = util.abs_path(Path(self.inventory_directory) / target_name)
+        if not target_vars_directory.is_dir():
+            target_vars_directory.mkdir()
 
-                for target in vars_target:  # noqa: PLW2901
-                    target_var_content = vars_target[target]
-                    path = target_vars_directory / target
-                    util.write_file(path, util.safe_dump(target_var_content))
+        for name, content in vars_target.items():
+            path = target_vars_directory / name
+            util.write_file(path, util.safe_dump(content))
 
     def _write_inventory(self) -> None:
         """Write the provisioner's inventory file to disk and returns None."""
