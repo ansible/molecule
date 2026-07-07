@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import os
 
-from pathlib import Path
 from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
@@ -16,6 +15,8 @@ from molecule.worker import run_one_scenario, run_scenarios_parallel, validate_w
 
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from pytest_mock import MockerFixture
 
     from molecule.types import CommandArgs, MoleculeArgs
@@ -491,7 +492,7 @@ def test_parallel_worker_crash_handled(mocker: MockerFixture) -> None:
 
     _make_mock_pool(mocker, futures=[future])
 
-    scenarios = _make_mock_scenarios(["crasher"])
+    scenarios = _make_mock_scenarios(["broken_worker"])
     command_args: CommandArgs = {
         "workers": 2,
         "continue_on_failure": False,
@@ -500,4 +501,4 @@ def test_parallel_worker_crash_handled(mocker: MockerFixture) -> None:
 
     with pytest.raises(ScenarioFailureError) as exc_info:
         run_scenarios_parallel(scenarios, command_args, None, num_workers=2)
-    assert "crasher" in exc_info.value.message
+    assert "broken_worker" in exc_info.value.message
