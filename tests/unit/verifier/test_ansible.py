@@ -115,7 +115,7 @@ def test_execute_does_not_execute(  # type: ignore[no-untyped-def]  # noqa: ANN2
     caplog: pytest.LogCaptureFixture,
     _instance,  # noqa: PT019
 ):
-    _instance._config.config["verifier"]["enabled"] = False
+    _instance._config.config_data["verifier"]["enabled"] = False
 
     with caplog.at_level(logging.INFO):
         _instance.execute()

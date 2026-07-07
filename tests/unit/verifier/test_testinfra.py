@@ -264,7 +264,7 @@ def test_testinfra_execute_does_not_execute(  # type: ignore[no-untyped-def]  # 
     caplog,
     _instance,  # noqa: PT019
 ):
-    _instance._config.config["verifier"]["enabled"] = False
+    _instance._config.config_data["verifier"]["enabled"] = False
     _instance.execute()
 
     assert not patched_run_command.called

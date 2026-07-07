@@ -110,7 +110,7 @@ class Ansible(base.Base):
         Returns:
             The provisioner name.
         """
-        return self._config.config["provisioner"]["name"]
+        return self._config.config_data["provisioner"]["name"]
 
     @property
     def ansible_args(self) -> list[str]:
@@ -123,7 +123,7 @@ class Ansible(base.Base):
         Returns:
             List of ansible arguments from config file for the current executor.
         """
-        ansible_config = self._config.config["ansible"]
+        ansible_config = self._config.config_data["ansible"]
         executor_config = ansible_config["executor"]
         backend = executor_config["backend"]
 
@@ -146,7 +146,7 @@ class Ansible(base.Base):
         """
         return util.merge_dicts(
             self.default_config_options,
-            self._config.config["ansible"]["cfg"],
+            self._config.config_data["ansible"]["cfg"],
         )
 
     @property
@@ -159,7 +159,7 @@ class Ansible(base.Base):
         if self._config.action in ["create", "destroy"]:
             return self.default_options
 
-        opts = self._config.config["provisioner"]["options"]
+        opts = self._config.config_data["provisioner"]["options"]
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
         if self._config.debug:
@@ -175,7 +175,7 @@ class Ansible(base.Base):
             Complete set of collected environment variables.
         """
         default_env = self.default_env
-        env = self._config.config["ansible"]["env"].copy()
+        env = self._config.config_data["ansible"]["env"].copy()
         # ensure that all keys and values are strings
         env = {str(k): str(v) for k, v in env.items()}
         return util.merge_dicts(default_env, env)
@@ -187,7 +187,7 @@ class Ansible(base.Base):
         Returns:
             Dictionary of host names.
         """
-        return self._config.config["provisioner"]["inventory"]["hosts"]
+        return self._config.config_data["provisioner"]["inventory"]["hosts"]
 
     @property
     def host_vars(self) -> dict[str, str]:
@@ -196,7 +196,7 @@ class Ansible(base.Base):
         Returns:
             Dictionary of host vars.
         """
-        return self._config.config["provisioner"]["inventory"]["host_vars"]
+        return self._config.config_data["provisioner"]["inventory"]["host_vars"]
 
     @property
     def group_vars(self) -> dict[str, str]:
@@ -205,7 +205,7 @@ class Ansible(base.Base):
         Returns:
             Dictionary of group vars.
         """
-        return self._config.config["provisioner"]["inventory"]["group_vars"]
+        return self._config.config_data["provisioner"]["inventory"]["group_vars"]
 
     @property
     def links(self) -> dict[str, str]:
@@ -214,7 +214,7 @@ class Ansible(base.Base):
         Returns:
             Dictionary of links.
         """
-        return self._config.config["provisioner"]["inventory"]["links"]
+        return self._config.config_data["provisioner"]["inventory"]["links"]
 
     @property
     def inventory(self) -> dict[str, Any]:
@@ -344,7 +344,7 @@ class Ansible(base.Base):
 
         return util.merge_dicts(
             d,
-            self._config.config["provisioner"]["connection_options"],
+            self._config.config_data["provisioner"]["connection_options"],
         )
 
     def check(self) -> None:

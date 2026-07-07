@@ -179,7 +179,7 @@ def test_roles_execute_does_not_execute_when_disabled(  # type: ignore[no-untype
     caplog,
     _instance,  # noqa: PT019
 ):
-    _instance._config.config["dependency"]["enabled"] = False
+    _instance._config.config_data["dependency"]["enabled"] = False
     _instance.execute()
 
     assert not patched_run_command.called

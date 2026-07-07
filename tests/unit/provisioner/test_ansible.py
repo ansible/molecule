@@ -550,7 +550,7 @@ def test_manage_inventory_with_links(  # type: ignore[no-untyped-def]  # noqa: A
     patched_add_or_update_vars,
     _patched_link_or_update_vars,  # noqa: PT019
 ):
-    c = instance._config.config
+    c = instance._config.config_data
     c["provisioner"]["inventory"]["links"] = {"foo": "bar"}
     instance.manage_inventory()
 
@@ -598,7 +598,7 @@ def test_add_or_update_vars(instance):  # type: ignore[no-untyped-def]  # noqa: 
     indirect=True,
 )
 def test_add_or_update_vars_without_host_vars(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    c = instance._config.config
+    c = instance._config.config_data
     c["provisioner"]["inventory"]["host_vars"] = {}
     inventory_dir = instance._config.scenario.inventory_directory
 
@@ -627,7 +627,7 @@ def test_add_or_update_vars_without_host_vars(instance):  # type: ignore[no-unty
 
 
 def test_add_or_update_vars_does_not_create_vars(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    c = instance._config.config
+    c = instance._config.config_data
     c["provisioner"]["inventory"]["hosts"] = {}
     c["provisioner"]["inventory"]["host_vars"] = {}
     c["provisioner"]["inventory"]["group_vars"] = {}
@@ -697,7 +697,7 @@ def test_remove_vars_symlinks(instance):  # type: ignore[no-untyped-def]  # noqa
 
 
 def test_link_vars(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    c = instance._config.config
+    c = instance._config.config_data
     c["provisioner"]["inventory"]["links"] = {
         "hosts": "../hosts",
         "group_vars": "../group_vars",
@@ -724,7 +724,7 @@ def test_link_vars(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D
 
 
 def test_link_vars_raises_when_source_not_found(instance: ansible.Ansible, caplog):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    c = instance._config.config
+    c = instance._config.config_data
     c["provisioner"]["inventory"]["links"] = {"foo": "../bar"}
 
     with pytest.raises(MoleculeError) as e:
@@ -792,7 +792,7 @@ def test_absolute_path_for_raises_with_missing_key(instance):  # type: ignore[no
 def test_ansible_args_property_with_ansible_playbook_backend() -> None:
     """Test ansible_args property with ansible-playbook backend (forward-looking config)."""
     c = config.Config(molecule_file="")
-    c.config = {
+    c.config_data = {
         "ansible": {
             "executor": {
                 "backend": "ansible-playbook",
@@ -814,7 +814,7 @@ def test_ansible_args_property_with_ansible_playbook_backend() -> None:
 def test_ansible_args_property_with_ansible_navigator_backend() -> None:
     """Test ansible_args property with ansible-navigator backend (forward-looking config)."""
     c = config.Config(molecule_file="")
-    c.config = {
+    c.config_data = {
         "ansible": {
             "executor": {
                 "backend": "ansible-navigator",
@@ -840,7 +840,7 @@ def test_ansible_args_property_with_ansible_navigator_backend() -> None:
 def test_config_options_property_uses_forward_looking_config() -> None:
     """Test config_options property with forward-looking ansible config structure."""
     c = config.Config(molecule_file="")
-    c.config = {
+    c.config_data = {
         "ansible": {
             "cfg": {"defaults": {"deprecation_warnings": False}},
             "executor": {
@@ -868,7 +868,7 @@ def test_config_options_property_uses_forward_looking_config() -> None:
 def test_config_options_property_merges_ansible_cfg_with_base() -> None:
     """Test config_options property merges ansible.cfg with base config."""
     c = config.Config(molecule_file="")
-    c.config = {
+    c.config_data = {
         "ansible": {
             "cfg": {
                 "defaults": {"deprecation_warnings": False},

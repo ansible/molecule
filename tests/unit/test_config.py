@@ -263,7 +263,7 @@ def test_verifier_property_is_ansible(config_instance: config.Config) -> None:  
 
 
 def test_verifier_property_invalid(config_instance: config.Config) -> None:  # noqa: D103
-    config_instance.config["verifier"]["name"] = "missing"
+    config_instance.config_data["verifier"]["name"] = "missing"
     del config_instance.verifier
 
     with pytest.raises(RuntimeError, match=r"Unable to find 'missing' verifier driver."):
@@ -452,7 +452,7 @@ def test_validate(  # noqa: D103
 
     # Verify mock was called once
     assert len(mock_calls) == 1
-    assert mock_calls[0] == config_instance.config
+    assert mock_calls[0] == config_instance.config_data
 
 
 def test_validate_exists_when_validation_fails(  # noqa: D103
@@ -538,7 +538,7 @@ def test_executor_property_uses_ansible_section() -> None:
         "ansible": {"executor": {"backend": "ansible-navigator"}},
     }
     config_instance = config.Config(molecule_file="")
-    config_instance.config = config_data  # type: ignore[assignment]
+    config_instance.config_data = config_data  # type: ignore[assignment]
 
     assert config_instance.executor == "ansible-navigator"
 

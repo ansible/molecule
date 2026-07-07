@@ -347,8 +347,8 @@ def _run_scenarios(
         scenarios.results.append(create_results)
 
     for scenario in scenarios.all:
-        if scenario.config.config["prerun"]:
-            role_name_check = scenario.config.config["role_name_check"]
+        if scenario.config.config_data["prerun"]:
+            role_name_check = scenario.config.config_data["role_name_check"]
             _log(
                 scenario.config.scenario.name,
                 "prerun",

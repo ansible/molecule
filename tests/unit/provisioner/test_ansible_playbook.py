@@ -161,7 +161,7 @@ def test_bake(_inventory_directory, _instance):  # type: ignore[no-untyped-def] 
 def test_bake_with_ansible_navigator(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
     pb = _instance._config.provisioner.playbooks.converge
     _instance._playbook = pb
-    _instance._config.config["ansible"]["executor"]["backend"] = "ansible-navigator"
+    _instance._config.config_data["ansible"]["executor"]["backend"] = "ansible-navigator"
     _instance.bake()
 
     args = [
@@ -200,7 +200,10 @@ def test_bake_removes_non_interactive_options_from_non_converge_playbooks(  # ty
 
 def test_bake_has_ansible_args(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
     _instance._config.ansible_args = ("foo", "bar")
-    _instance._config.config["ansible"]["executor"]["args"]["ansible_playbook"] = ["frob", "nitz"]
+    _instance._config.config_data["ansible"]["executor"]["args"]["ansible_playbook"] = [
+        "frob",
+        "nitz",
+    ]
     _instance.bake()
 
     args = [
@@ -256,7 +259,10 @@ def test_bake_create_destroy_smart_mode_user_provided(
     monkeypatch.setattr(_instance, "_should_provide_args", lambda _: True)
 
     _instance._config.ansible_args = ("foo", "bar")
-    _instance._config.config["ansible"]["executor"]["args"]["ansible_playbook"] = ["frob", "nitz"]
+    _instance._config.config_data["ansible"]["executor"]["args"]["ansible_playbook"] = [
+        "frob",
+        "nitz",
+    ]
     _instance._config.action = "create"
     _instance.bake()
 

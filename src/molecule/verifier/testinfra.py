@@ -99,7 +99,7 @@ class Testinfra(Verifier):
         Returns:
             The combined dictionary of default options and those specified in the config.
         """
-        o = self._config.config["verifier"]["options"]
+        o = self._config.config_data["verifier"]["options"]
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
         if self._config.debug:
@@ -129,7 +129,7 @@ class Testinfra(Verifier):
             List of files and directories to use with this verifier.
         """
         files_list = []
-        c = self._config.config
+        c = self._config.config_data
         for f in c["verifier"]["additional_files_or_dirs"]:
             escaped = glob.escape(self._config.verifier.directory)
             glob_path = os.path.join(escaped, f)  # noqa: PTH118

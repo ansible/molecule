@@ -132,7 +132,7 @@ def test_ansible_args_migration(tmp_path: Path, caplog: pytest.LogCaptureFixture
         config_obj = create_config_object(before_config, tmp_path)
 
     # Compare migrated config to expected for equality
-    assert config_obj.config == expected_final_config
+    assert config_obj.config_data == expected_final_config
 
     # Confirm DEBUG log statements exist for each migrated key
     for expected_log_message in expected_log_messages:
@@ -232,7 +232,7 @@ def test_config_options_migration(tmp_path: Path, caplog: pytest.LogCaptureFixtu
         config_obj = create_config_object(before_config, tmp_path)
 
     # Compare migrated config to expected for equality
-    assert config_obj.config == expected_final_config
+    assert config_obj.config_data == expected_final_config
 
     # Confirm DEBUG log statements exist for each migrated key
     for expected_log_message in expected_log_messages:
@@ -327,7 +327,7 @@ def test_env_migration(tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None
         config_obj = create_config_object(before_config, tmp_path)
 
     # Compare migrated config to expected for equality
-    assert config_obj.config == expected_final_config
+    assert config_obj.config_data == expected_final_config
 
     # Confirm DEBUG log statements exist for each migrated key
     for expected_log_message in expected_log_messages:
@@ -419,7 +419,7 @@ def test_playbooks_migration(tmp_path: Path, caplog: pytest.LogCaptureFixture) -
         config_obj = create_config_object(before_config, tmp_path)
 
     # Compare migrated config to expected for equality
-    assert config_obj.config == expected_final_config
+    assert config_obj.config_data == expected_final_config
 
     # Confirm DEBUG log statements exist for each migrated key
     for expected_log_message in expected_log_messages:
@@ -536,7 +536,7 @@ def test_multiple_keys_migration(tmp_path: Path, caplog: pytest.LogCaptureFixtur
         config_obj = create_config_object(before_config, tmp_path)
 
     # Compare migrated config to expected for equality
-    assert config_obj.config == expected_final_config
+    assert config_obj.config_data == expected_final_config
 
     # Confirm DEBUG log statements exist for each migrated key
     for expected_log_message in expected_log_messages:
