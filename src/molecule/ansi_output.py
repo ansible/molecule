@@ -99,13 +99,12 @@ def get_line_style(line: str) -> str:
         ANSI escape sequence from start of line without reset codes, or empty string if none
     """
     # Match ANSI escape sequences at the start of the line
-    # Patterns: \x1b[...m or \033[...m
-    match = re.match(r"^(\x1b\[[0-9;]*m|\033\[[0-9;]*m)", line)
+    match = re.match(r"^(\x1b\[[0-9;]*m)", line)
     if match:
         escape_seq = match.group(1)
 
-        # Skip pure reset sequences (just \x1b[0m)
-        if escape_seq in ["\x1b[0m", "\033[0m"]:
+        # Skip pure reset sequences
+        if escape_seq == "\x1b[0m":
             return ""
 
         # Extract color from reset+color sequences (e.g., \x1b[0;32m -> \x1b[32m)
@@ -186,8 +185,7 @@ class AnsiOutput:
         processed = re.sub(r"\[([^/\]]+)\]", replace_tag, text)
 
         # Process closing tags last (convert [/] to reset)
-        result = re.sub(r"\[/\]", A.RESET, processed)
-        return str(result)
+        return processed.replace("[/]", A.RESET)
 
     def format_log_level(self, level_name: str) -> tuple[str, str]:
         """Format a log level returning both colored and plain versions.
@@ -539,7 +537,7 @@ def create_border_footer(text: str = "", width: int = DEFAULT_BORDER_WIDTH) -> s
     """
     if text:
         footer_text = f" {text} "
-        padding = width - len(footer_text) - 2  # 2 = corner + dash
+        padding = width - len(footer_text) - 2
         return f"{A.BOX_BOTTOM_LEFT}{A.BOX_HORIZONTAL}{footer_text}{A.BOX_HORIZONTAL * padding}"
     return f"{A.BOX_BOTTOM_LEFT}{A.BOX_HORIZONTAL * (width - 1)}"
 
@@ -629,7 +627,7 @@ class CommandBorders:
         # Add blank line with pipe
         self.original_stderr.write(f"  {A.DIM}{A.BOX_VERTICAL}{A.RESET} \n")
 
-    def _format_command_lines(  # noqa: C901, PLR0912
+    def _format_command_lines(
         self,
         cmd: str | list[str],
         max_width: int | None = None,
@@ -677,9 +675,6 @@ class CommandBorders:
             if part.startswith("-") and i + 1 < len(parts) and not parts[i + 1].startswith("-"):
                 lines.append(part + " " + parts[i + 1])
                 i += 2
-            elif not part.startswith("-"):
-                lines.append(part)
-                i += 1
             else:
                 lines.append(part)
                 i += 1

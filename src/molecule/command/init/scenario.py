@@ -155,8 +155,8 @@ class Scenario(base.Base):
 
 
 def _role_exists(
-    ctx: click.Context,  # noqa: ARG001
-    param: str | None,  # noqa: ARG001
+    _ctx: click.Context,
+    _param: str | None,
     value: str,
 ) -> str:  # pragma: no cover
     # if role name was not mentioned we assume that current directory is the

@@ -164,7 +164,12 @@ class ActionResult:
 
         states = [state.state for state in self.states]
         notes = {state.note for state in self.states if state.note}
-        note = None if not notes else next(iter(notes)) if len(notes) == 1 else "See details above"
+        if not notes:
+            note = None
+        elif len(notes) == 1:
+            note = next(iter(notes))
+        else:
+            note = "See details above"
 
         for rank in COMPLETION_STATE_PRIORITY_ORDER:
             if rank in states:
@@ -253,53 +258,62 @@ class ScenariosResults(list[ScenarioResults]):
         if not self:
             return CompletionState.successful, "Molecule executed 0 scenarios"
 
-        # Get completion state for each scenario (let each scenario determine its own state)
         scenario_states = [scenario.completion_state for scenario in self]
+        highest_priority_state = self._find_highest_priority_state(scenario_states)
+        count_summary = self._build_count_summary(scenario_states)
 
-        # Find highest priority overall state
-        highest_priority_state = CompletionState.successful
-        for priority_state in COMPLETION_STATE_PRIORITY_ORDER:
-            if any(state.state == priority_state for state in scenario_states):
-                highest_priority_state = getattr(CompletionState, priority_state)
-                break
-
-        # Count scenario completion states
-        state_counts = Counter(state.state for state in scenario_states)
-
-        # Generate colored count parts using PRIORITY order (failed first, etc.)
-        count_parts = []
-        # Use COMPLETION_STATE_PRIORITY_ORDER to show most important issues first
-        for state_name in COMPLETION_STATE_PRIORITY_ORDER:
-            count = state_counts.get(state_name, 0)
-            if count > 0:
-                # Get the CompletionState object and its color tag
-                state_obj = getattr(CompletionState, state_name)
-                color_tag = state_obj.color.tag
-
-                if state_name == "missing":
-                    colored_part = f"[{color_tag}]{count} missing files[/]"
-                else:
-                    colored_part = f"[{color_tag}]{count} {state_name}[/]"
-                count_parts.append(colored_part)
-
-        # Format with proper oxford comma without quotes (oxford_comma adds quotes)
-        count_parts_len = len(count_parts)
-        if count_parts_len == 0:
-            count_summary = "[green]0 successful[/]"
-        elif count_parts_len == 1:
-            count_summary = count_parts[0]
-        elif count_parts_len == 2:  # noqa: PLR2004
-            count_summary = f"{count_parts[0]} and {count_parts[1]}"
-        else:
-            # Multiple items: "item1, item2, and item3"
-            front = ", ".join(count_parts[:-1])
-            count_summary = f"{front}, and {count_parts[-1]}"
-
-        # Generate final message with colored parts
         total_scenarios = len(self)
         scenario_word = "scenario" if total_scenarios == 1 else "scenarios"
-
-        # Main count in white/default, details in parentheses with colors
         summary = f"Molecule executed {total_scenarios} {scenario_word} ({count_summary})"
 
         return highest_priority_state, summary
+
+    @staticmethod
+    def _find_highest_priority_state(
+        scenario_states: list[CompletionStateInfo],
+    ) -> CompletionStateInfo:
+        """Find the highest priority state from a list of scenario states.
+
+        Args:
+            scenario_states: List of completion state info objects.
+
+        Returns:
+            The highest priority CompletionStateInfo.
+        """
+        for priority_state in COMPLETION_STATE_PRIORITY_ORDER:
+            if any(state.state == priority_state for state in scenario_states):
+                result: CompletionStateInfo = getattr(CompletionState, priority_state)
+                return result
+        return CompletionState.successful
+
+    @staticmethod
+    def _build_count_summary(scenario_states: list[CompletionStateInfo]) -> str:
+        """Build a colored count summary string from scenario states.
+
+        Args:
+            scenario_states: List of completion state info objects.
+
+        Returns:
+            Formatted count summary with color tags.
+        """
+        state_counts = Counter(state.state for state in scenario_states)
+
+        count_parts = []
+        for state_name in COMPLETION_STATE_PRIORITY_ORDER:
+            count = state_counts.get(state_name, 0)
+            if count > 0:
+                state_obj = getattr(CompletionState, state_name)
+                color_tag = state_obj.color.tag
+                label = "missing files" if state_name == "missing" else state_name
+                count_parts.append(f"[{color_tag}]{count} {label}[/]")
+
+        match count_parts:
+            case []:
+                return "[green]0 successful[/]"
+            case [single]:
+                return single
+            case [first, second]:
+                return f"{first} and {second}"
+            case _:
+                front = count_parts[:-1]
+                return f"{', '.join(front)}, and {count_parts[-1]}"

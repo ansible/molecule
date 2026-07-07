@@ -87,17 +87,15 @@ def test_prepare_execute_raises_when_provisioner_raises_an_exception(  # noqa: D
     patched_config_validate: Mock,
     config_instance: config.Config,
 ) -> None:
-    _patched_ansible_prepare.side_effect = Exception("foo")
+    _patched_ansible_prepare.side_effect = RuntimeError("foo")
 
     pb = os.path.join(config_instance.scenario.directory, "prepare.yml")  # noqa: PTH118
     util.write_file(pb, "")
 
     p = prepare.Prepare(config_instance)
 
-    with pytest.raises(Exception) as cm:  # noqa: PT011
+    with pytest.raises(RuntimeError, match="foo"):
         p.execute()
-
-    assert "foo" in str(cm.value)
 
 
 def test_prepare_execute_skips_when_playbook_not_configured(  # noqa: D103
