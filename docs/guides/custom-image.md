@@ -23,6 +23,7 @@ To customize the Docker image, create a `Dockerfile.j2` template file in your sc
 Here is a commonly used example `Dockerfile.j2` that substitutes the base image defined in `molecule.yml` and installs basic dependencies:
 
 {% raw %}
+
 ```jinja
 # The `item` variable contains the platform configuration from molecule.yml
 FROM {{ item.image }}
@@ -31,6 +32,7 @@ FROM {{ item.image }}
 RUN apt-get update && apt-get install -y python3 sudo bash \
     && rm -rf /var/lib/apt/lists/*
 ```
+
 {% endraw %}
 
 Note: `platforms[*].pre_build_image` defaults to `true` in each
