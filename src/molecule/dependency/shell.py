@@ -52,7 +52,7 @@ class Shell(base.Base):
         Returns:
             Command defined in Molecule config.
         """
-        return self._config.config["dependency"]["command"] or ""
+        return self._config.config_data["dependency"]["command"] or ""
 
     @property
     def default_options(self) -> MutableMapping[str, str | bool]:
@@ -85,4 +85,4 @@ class Shell(base.Base):
         self.execute_with_retries()
 
     def _has_command_configured(self) -> bool:
-        return "command" in self._config.config["dependency"]
+        return "command" in self._config.config_data["dependency"]

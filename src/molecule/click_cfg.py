@@ -12,7 +12,7 @@ import logging
 import os
 
 from dataclasses import dataclass, replace
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 import click
 
@@ -85,37 +85,35 @@ class CliOption:
         """
         help_text = self.help
 
-        # Add experimental prefix
         if self.experimental:
             help_text = f"EXPERIMENTAL: {help_text}"
 
-        # Early exit for arguments - they don't show default info
         if self.is_argument:
             return help_text
 
-        default_value = None
-
-        # Use custom help_default if provided
-        if self.help_default is not None:
-            default_value = self.help_default
-        # For flags, show disabled/enabled
-        elif self.is_flag and self.default is not None:
-            default_value = "enabled" if self.default else "disabled"
-        # For options with actual defaults
-        elif self.default is not None:
-            if self.multiple and isinstance(self.default, list) and self.default:
-                if len(self.default) == 1:
-                    default_value = str(self.default[0])
-                else:
-                    default_value = ", ".join(map(str, self.default))
-            else:
-                default_value = str(self.default)
-
-        # Append default info if we have a value
+        default_value = self._format_default_value()
         if default_value is not None:
             help_text += f" (default: {default_value})"
 
         return help_text
+
+    def _format_default_value(self) -> str | None:
+        """Determine the formatted default value string for help text.
+
+        Returns:
+            Formatted default value string, or None if no default applies.
+        """
+        if self.help_default is not None:
+            return self.help_default
+        if self.is_flag and self.default is not None:
+            return "enabled" if self.default else "disabled"
+        if self.default is None:
+            return None
+        if self.multiple and isinstance(self.default, list) and self.default:
+            if len(self.default) == 1:
+                return str(self.default[0])
+            return ", ".join(map(str, self.default))
+        return str(self.default)
 
     def as_click_option(self) -> Callable[..., Any]:
         """Convert to Click option decorator.
@@ -211,10 +209,13 @@ class CliOptions:
     @property
     def driver_name_with_choices(self) -> CliOption:
         """Driver name option with available choices."""
-        return replace(
-            self.driver_name,
-            choices=[str(s) for s in drivers()],
-            help="Name of driver to use.",
+        return cast(  # type: ignore[redundant-cast]
+            "CliOption",
+            replace(
+                self.driver_name,
+                choices=[str(s) for s in drivers()],
+                help="Name of driver to use.",
+            ),
         )
 
     @property
@@ -302,11 +303,14 @@ class CliOptions:
     @property
     def platform_name_with_default(self) -> CliOption:
         """Platform name option with default."""
-        return replace(
-            self.platform_name,
-            default=MOLECULE_PLATFORM_NAME,
-            help="Name of the platform to target only.",
-            help_default="None",
+        return cast(  # type: ignore[redundant-cast]
+            "CliOption",
+            replace(
+                self.platform_name,
+                default=MOLECULE_PLATFORM_NAME,
+                help="Name of the platform to target only.",
+                help_default="None",
+            ),
         )
 
     @property
@@ -342,27 +346,36 @@ class CliOptions:
     @property
     def scenario_name_with_default(self) -> CliOption:
         """Scenario name option with default value (multiple)."""
-        return replace(
-            self.scenario_name,
-            default=[MOLECULE_DEFAULT_SCENARIO_NAME],
+        return cast(  # type: ignore[redundant-cast]
+            "CliOption",
+            replace(
+                self.scenario_name,
+                default=[MOLECULE_DEFAULT_SCENARIO_NAME],
+            ),
         )
 
     @property
     def scenario_name_single(self) -> CliOption:
         """Single scenario name option without default."""
-        return replace(
-            self.scenario_name,
-            multiple=False,
-            help="Name of the scenario to target.",
+        return cast(  # type: ignore[redundant-cast]
+            "CliOption",
+            replace(
+                self.scenario_name,
+                multiple=False,
+                help="Name of the scenario to target.",
+            ),
         )
 
     @property
     def scenario_name_single_with_default(self) -> CliOption:
         """Single scenario name option with default."""
-        return replace(
-            self.scenario_name_single,
-            default=MOLECULE_DEFAULT_SCENARIO_NAME,
-            help="Name of the scenario to target.",
+        return cast(  # type: ignore[redundant-cast]
+            "CliOption",
+            replace(
+                self.scenario_name_single,
+                default=MOLECULE_DEFAULT_SCENARIO_NAME,
+                help="Name of the scenario to target.",
+            ),
         )
 
     @property
@@ -618,16 +631,10 @@ def click_command_ex(name: str | None = None) -> Callable[[Callable[..., Any]], 
                 if ctx and ctx.obj and isinstance(ctx.obj, dict):
                     debug_mode = ctx.obj.get("args", {}).get("debug", False)
 
-                # For success (code 0), always use info logging
-                # For failures (code != 0), use debug-aware logging
                 if exc.code == 0:
                     logger.info(exc.message)
-                elif debug_mode:
-                    # Show full traceback in debug mode for failures
-                    logger.exception(exc.message)
                 else:
-                    # Show only the error message in normal mode for failures
-                    logger.error(exc.message)  # noqa: TRY400
+                    logger.exception(exc.message, exc_info=debug_mode)
 
                 util.sysexit(code=exc.code)
 

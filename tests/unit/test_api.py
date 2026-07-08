@@ -20,7 +20,12 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+from unittest.mock import MagicMock, patch
+
 from molecule import api
+from molecule.driver.base import Driver
+from molecule.exceptions import MoleculeError
+from molecule.verifier.base import Verifier
 
 
 def test_api_drivers() -> None:  # noqa: D103
@@ -36,3 +41,50 @@ def test_api_verifiers() -> None:  # noqa: D103
     x = ["testinfra", "ansible"]
 
     assert all(elem in api.verifiers() for elem in x)
+
+
+def test_drivers_logs_exception_on_plugin_failure() -> None:
+    """Drivers that raise MoleculeError or TypeError are logged and skipped."""
+
+    class _BrokenDriver(Driver):
+        def __init__(self, config: object = None) -> None:  # noqa: ARG002  # pylint: disable=super-init-not-called
+            msg = "cannot initialize"
+            raise MoleculeError(msg)
+
+    mock_pm = MagicMock()
+    mock_pm.get_plugins.return_value = [_BrokenDriver]
+    mock_pm.get_name.return_value = "_BrokenDriver"
+
+    with (
+        patch("molecule.api.pluggy.PluginManager", return_value=mock_pm),
+        patch("molecule.api.LOG") as mock_log,
+    ):
+        api.drivers.cache_clear()
+        result = api.drivers.__wrapped__(None)
+
+    assert result == {}
+    mock_log.exception.assert_called_once()
+    assert "_BrokenDriver" in mock_log.exception.call_args[0][1]
+
+
+def test_verifiers_logs_exception_on_plugin_failure() -> None:
+    """Verifiers that raise an exception are logged and skipped."""
+
+    class _BrokenVerifier(Verifier):
+        def __init__(self, config: object = None) -> None:  # noqa: ARG002  # pylint: disable=super-init-not-called
+            msg = "boom"
+            raise RuntimeError(msg)
+
+    mock_pm = MagicMock()
+    mock_pm.get_plugins.return_value = [_BrokenVerifier]
+
+    with (
+        patch("molecule.api.pluggy.PluginManager", return_value=mock_pm),
+        patch("molecule.api.LOG") as mock_log,
+    ):
+        api.verifiers.cache_clear()
+        result = api.verifiers.__wrapped__(None)
+
+    assert result == {}
+    mock_log.exception.assert_called_once()
+    assert "_BrokenVerifier" in mock_log.exception.call_args[0][1]

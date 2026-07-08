@@ -39,8 +39,8 @@ class App:
         cwd: Path | None = None,
         *,
         debug: bool = False,
-        echo: bool = False,  # noqa: ARG002
-        quiet: bool = False,  # noqa: ARG002
+        echo: bool = False,
+        quiet: bool = False,
         check: bool = False,
         command_borders: bool = False,
     ) -> CompletedProcess[str]:
@@ -62,6 +62,7 @@ class App:
         Raises:
             CalledProcessError: If return code is nonzero and check is True.
         """
+        del echo, quiet
         if debug:
             print_environment_vars(env)
 

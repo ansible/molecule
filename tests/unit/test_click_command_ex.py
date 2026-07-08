@@ -81,10 +81,10 @@ def test_click_command_ex_with_immediate_exit_failure(mocker: MockerFixture) -> 
     runner = CliRunner()
     runner.invoke(test_command, [])
 
-    # Verify logging and sysexit were called correctly (error, not exception in non-debug mode)
+    # Verify logging and sysexit were called correctly (exception with exc_info=False in non-debug)
     mock_logger.assert_called_once()
-    mock_logger.return_value.error.assert_called_once_with("Operation failed")
-    mock_logger.return_value.exception.assert_not_called()
+    mock_logger.return_value.exception.assert_called_once_with("Operation failed", exc_info=False)
+    mock_logger.return_value.error.assert_not_called()
     mock_logger.return_value.info.assert_not_called()
     mock_sysexit.assert_called_once_with(code=42)
 
@@ -123,7 +123,7 @@ def test_click_command_ex_with_immediate_exit_failure_debug_mode(mocker: MockerF
 
     # Verify logging and sysexit were called correctly (exception with full traceback in debug mode)
     mock_logger.assert_called_once()
-    mock_logger.return_value.exception.assert_called_once_with("Operation failed")
+    mock_logger.return_value.exception.assert_called_once_with("Operation failed", exc_info=True)
     mock_logger.return_value.error.assert_not_called()
     mock_logger.return_value.info.assert_not_called()
     mock_sysexit.assert_called_once_with(code=42)
@@ -159,10 +159,10 @@ def test_click_command_ex_failure_no_context(mocker: MockerFixture) -> None:
     runner = CliRunner()
     runner.invoke(test_command, [])
 
-    # Verify it defaults to non-debug behavior (error, not exception)
+    # Verify it defaults to non-debug behavior (exception with exc_info=False)
     mock_logger.assert_called_once()
-    mock_logger.return_value.error.assert_called_once_with("Operation failed")
-    mock_logger.return_value.exception.assert_not_called()
+    mock_logger.return_value.exception.assert_called_once_with("Operation failed", exc_info=False)
+    mock_logger.return_value.error.assert_not_called()
     mock_logger.return_value.info.assert_not_called()
     mock_sysexit.assert_called_once_with(code=42)
 

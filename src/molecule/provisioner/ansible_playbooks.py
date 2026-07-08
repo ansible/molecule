@@ -149,7 +149,7 @@ class AnsiblePlaybooks:
         Returns:
             The playbook path, or none if one is not needed.
         """
-        c = self._config.config
+        c = self._config.config_data
 
         playbook: str | None = c["ansible"]["playbooks"][section]
 
@@ -183,14 +183,14 @@ class AnsiblePlaybooks:
         path = Path(
             self._get_playbook_directory(),
             self._config.driver.name,
-            self._config.config["ansible"]["playbooks"][section],
+            self._config.config_data["ansible"]["playbooks"][section],
         )
         if path.exists():
             return str(path)
         path = Path(
             self._config.driver._path,  # noqa: SLF001
             "playbooks",
-            self._config.config["ansible"]["playbooks"][section],
+            self._config.config_data["ansible"]["playbooks"][section],
         )
         return str(path)
 

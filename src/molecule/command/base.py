@@ -79,9 +79,13 @@ class Base(abc.ABC):
         self._config.scenario.results.add_action_result(self._config.action or "unknown")
         self._setup()
 
-    def __init_subclass__(cls) -> None:
-        """Decorate execute from all subclasses."""
-        super().__init_subclass__()
+    def __init_subclass__(cls, **kwargs: object) -> None:
+        """Decorate execute from all subclasses.
+
+        Args:
+            **kwargs: Keyword arguments forwarded to parent classes in the MRO.
+        """
+        super().__init_subclass__(**kwargs)
         for wrapper in logger.get_section_loggers():
             cls.execute = wrapper(cls.execute)  # type: ignore[method-assign,assignment]
 
@@ -271,7 +275,47 @@ def _generate_scenarios(
     return scenarios
 
 
-def _run_scenarios(  # noqa: C901
+def _handle_scenario_failure(
+    scenario: Scenario,
+    scenarios: Scenarios,
+    default_config: config.Config | None,
+    *,
+    shared_state: bool,
+) -> None:
+    """Handle cleanup and destroy when a scenario fails with destroy=always.
+
+    Args:
+        scenario: The failed scenario.
+        scenarios: The Scenarios collection for result tracking.
+        default_config: Config for the default scenario.
+        shared_state: Whether shared state is enabled.
+    """
+    msg = (
+        f"An error occurred during the {scenario.config.subcommand} sequence action: "
+        f"'{scenario.config.action}'. Cleaning up."
+    )
+    step_name = getattr(scenario.config, "action", "cleanup")
+    _log(scenario.config.scenario.name, step_name, msg, level="warning")
+    execute_subcommand(scenario.config, "cleanup")
+
+    destroy_results = execute_subcommand_default(
+        default_config,
+        "destroy",
+        shared_state=shared_state,
+    )
+    if destroy_results is not None:
+        scenarios.results.append(scenario.results)
+        scenarios.results.append(destroy_results)
+    else:
+        execute_subcommand(scenario.config, "destroy")
+        scenarios.results.append(scenario.results)
+
+    scenario.prune()
+    if scenario.config.is_parallel:
+        scenario._remove_scenario_state_directory()  # noqa: SLF001
+
+
+def _run_scenarios(
     scenarios: Scenarios,
     command_args: CommandArgs,
     default_config: config.Config | None,
@@ -294,7 +338,6 @@ def _run_scenarios(  # noqa: C901
         run_scenarios_parallel(scenarios, command_args, default_config, num_workers)
         return
 
-    # Run initial create
     create_results = execute_subcommand_default(
         default_config,
         "create",
@@ -304,8 +347,8 @@ def _run_scenarios(  # noqa: C901
         scenarios.results.append(create_results)
 
     for scenario in scenarios.all:
-        if scenario.config.config["prerun"]:
-            role_name_check = scenario.config.config["role_name_check"]
+        if scenario.config.config_data["prerun"]:
+            role_name_check = scenario.config.config_data["role_name_check"]
             _log(
                 scenario.config.scenario.name,
                 "prerun",
@@ -328,40 +371,15 @@ def _run_scenarios(  # noqa: C901
             execute_scenario(scenario, shared_state=scenarios.shared_state)
             scenarios.results.append(scenario.results)
         except ScenarioFailureError:
-            # if the command has a 'destroy' arg, like test does,
-            # handle that behavior here.
             if command_args.get("destroy") == "always":
-                msg = (
-                    f"An error occurred during the {scenario.config.subcommand} sequence action: "
-                    f"'{scenario.config.action}'. Cleaning up."
-                )
-                step_name = getattr(scenario.config, "action", "cleanup")
-                _log(
-                    scenario.config.scenario.name,
-                    step_name,
-                    msg,
-                    level="warning",
-                )
-                execute_subcommand(scenario.config, "cleanup")
-                destroy_results = execute_subcommand_default(
+                _handle_scenario_failure(
+                    scenario,
+                    scenarios,
                     default_config,
-                    "destroy",
                     shared_state=scenarios.shared_state,
                 )
-                if destroy_results is not None:
-                    scenarios.results.append(scenario.results)
-                    scenarios.results.append(destroy_results)
-                else:
-                    execute_subcommand(scenario.config, "destroy")
-                    scenarios.results.append(scenario.results)
-
-                # always prune ephemeral dir if destroying on failure
-                scenario.prune()
-                if scenario.config.is_parallel:
-                    scenario._remove_scenario_state_directory()  # noqa: SLF001
             raise
 
-    # Run final destroy if any scenario needed shared state
     destroy_results = execute_subcommand_default(
         default_config,
         "destroy",
