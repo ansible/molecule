@@ -43,10 +43,10 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-changelog = "https://github.com/ansible-community/molecule/releases"
+changelog = "https://github.com/ansible/molecule/releases"
 documentation = "https://docs.ansible.com/projects/molecule/"
-homepage = "https://github.com/ansible-community/molecule"
-repository = "https://github.com/ansible-community/molecule"
+homepage = "https://github.com/ansible/molecule"
+repository = "https://github.com/ansible/molecule"
 
 [project.scripts]
 molecule = "molecule.__main__:main"
