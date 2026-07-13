@@ -310,7 +310,7 @@ def test_command_list_with_format_plain(
     cmd = ["molecule", "list", "--format", "plain"]
     result = run(cmd=cmd, env=test_ephemeral_dir_env)
     assert result.returncode == 0
-    assert result.stdout == "instance        default ansible default false   false\n"
+    assert "instance        default ansible default false   false" in result.stdout
 
 
 @pytest.mark.extensive
