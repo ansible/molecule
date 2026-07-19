@@ -62,3 +62,46 @@ def test_molecule_schema(resources_folder_path: Path) -> None:
         f"{resources_folder_path}/schema_instance_files/invalid/molecule_delegated.yml",
     ]
     assert run(cmd).returncode != 0
+
+    # A fully-specified platform (restored MoleculePlatformModel) with the
+    # relaxed command/cpus/memory types must validate against molecule.json.
+    cmd = [
+        "uv",
+        "tool",
+        "run",
+        "check-jsonschema",
+        "-v",
+        "--schemafile",
+        "src/molecule/data/molecule.json",
+        f"{resources_folder_path}/schema_instance_files/valid/platforms.yml",
+    ]
+    assert run(cmd).returncode == 0
+
+    # A malformed platform (children as an int, missing name) must now be
+    # rejected by molecule.json; guards platforms.items against regressing
+    # back to an open object.
+    cmd = [
+        "uv",
+        "tool",
+        "run",
+        "check-jsonschema",
+        "-v",
+        "--schemafile",
+        "src/molecule/data/molecule.json",
+        f"{resources_folder_path}/schema_instance_files/invalid/molecule_platforms.yml",
+    ]
+    assert run(cmd).returncode != 0
+
+    # An array-form command with a non-string element must be rejected: the
+    # command items schema constrains argv entries to strings.
+    cmd = [
+        "uv",
+        "tool",
+        "run",
+        "check-jsonschema",
+        "-v",
+        "--schemafile",
+        "src/molecule/data/molecule.json",
+        f"{resources_folder_path}/schema_instance_files/invalid/molecule_command.yml",
+    ]
+    assert run(cmd).returncode != 0
