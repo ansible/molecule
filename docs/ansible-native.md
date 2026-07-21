@@ -370,7 +370,7 @@ in-memory facts for the duration of this play. `molecule login`/`molecule list` 
 `ansible-inventory` as a separate process later, so they only see connection details
 that were actually written to a file under the configured `--inventory` path, not
 facts that were merely registered or `add_host`-ed during `create.yml`. See
-[Logging Into / Listing Instances](#logging-into-listing-instances) below.
+[Logging Into and Listing Instances](#logging-into-and-listing-instances) below.
 
 ### Cloud Testing Resources
 
@@ -420,7 +420,7 @@ facts that were merely registered or `add_host`-ed during `create.yml`. See
 Like the container example above, `ec2_instance`'s assigned public/private IP only
 exists as an in-memory fact here - persist it to a `host_vars` file the same way if
 you want `molecule login`/`molecule list` to be able to find it. See
-[Logging Into / Listing Instances](#logging-into-listing-instances) below.
+[Logging Into and Listing Instances](#logging-into-and-listing-instances) below.
 
 ### Collection Dependencies
 
@@ -630,7 +630,7 @@ This configuration defines ansible-native testing with:
 
 In the ansible-native approach, Molecule generates only a supplemental inventory file containing molecule-specific variables that are made available to playbooks. This includes environment variables like `MOLECULE_SCENARIO_DIRECTORY`, `MOLECULE_EPHEMERAL_DIRECTORY`, and scenario metadata. The primary inventory comes from the sources specified in `ansible.executor.args.ansible_playbook`, allowing full integration with existing inventory management systems while maintaining Molecule's testing capabilities.
 
-## Logging Into / Listing Instances
+## Logging Into and Listing Instances
 
 Ansible-native scenarios declare no `platforms:` section, so Molecule has no static
 list of instance names to show in `molecule list` or connect to for `molecule login`.
