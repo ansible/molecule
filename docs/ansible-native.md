@@ -355,7 +355,22 @@ The ansible-native approach leverages ansible collections for testing resource m
         host: "{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}"
         delay: 5
       loop: "{% raw %}{{ groups['test_resources'] }}{% endraw %}"
+
+    - name: Persist connection details for molecule login/list
+      ansible.builtin.copy:
+        dest: "{% raw %}{{ molecule_scenario_directory }}{% endraw %}/inventory/host_vars/{% raw %}{{ item }}{% endraw %}/runtime.yml"
+        content: |
+          ansible_host: "{% raw %}{{ hostvars[item].ansible_host }}{% endraw %}"
+          ansible_port: "{% raw %}{{ hostvars[item].published_port }}{% endraw %}"
+      loop: "{% raw %}{{ groups['test_resources'] }}{% endraw %}"
 ```
+
+`podman_container` assigns the published port and IP at runtime - they only exist as
+in-memory facts for the duration of this play. `molecule login`/`molecule list` run
+`ansible-inventory` as a separate process later, so they only see connection details
+that were actually written to a file under the configured `--inventory` path, not
+facts that were merely registered or `add_host`-ed during `create.yml`. See
+[Logging Into / Listing Instances](#logging-into-listing-instances) below.
 
 ### Cloud Testing Resources
 
@@ -401,6 +416,11 @@ The ansible-native approach leverages ansible collections for testing resource m
         wait: true
       loop: "{% raw %}{{ groups['test_resources'] }}{% endraw %}"
 ```
+
+Like the container example above, `ec2_instance`'s assigned public/private IP only
+exists as an in-memory fact here - persist it to a `host_vars` file the same way if
+you want `molecule login`/`molecule list` to be able to find it. See
+[Logging Into / Listing Instances](#logging-into-listing-instances) below.
 
 ### Collection Dependencies
 
@@ -609,3 +629,43 @@ This configuration defines ansible-native testing with:
 ## Supplemental Inventory Generation
 
 In the ansible-native approach, Molecule generates only a supplemental inventory file containing molecule-specific variables that are made available to playbooks. This includes environment variables like `MOLECULE_SCENARIO_DIRECTORY`, `MOLECULE_EPHEMERAL_DIRECTORY`, and scenario metadata. The primary inventory comes from the sources specified in `ansible.executor.args.ansible_playbook`, allowing full integration with existing inventory management systems while maintaining Molecule's testing capabilities.
+
+## Logging Into / Listing Instances
+
+Ansible-native scenarios declare no `platforms:` section, so Molecule has no static
+list of instance names to show in `molecule list` or connect to for `molecule login`.
+Instead, both commands query the real inventory - the same sources configured under
+`ansible.executor.args.ansible_playbook` (e.g. `--inventory=inventory/`) - by running
+`ansible-inventory` against them:
+
+- `molecule list` calls `ansible-inventory --list` and reports every host key found
+  under `_meta.hostvars`, instead of a single blank instance name.
+- `molecule login [--host <name>]` calls `ansible-inventory --host <name>` for that
+  host and reads `ansible_host`, `ansible_user`, `ansible_port`, and
+  `ansible_ssh_private_key_file` off of it to build the SSH command. If `--host` is
+  omitted and exactly one host is found, that one is used automatically.
+
+This reuses whatever inventory sources `ansible-playbook` itself already resolves
+against - there is no separate, molecule-specific bookkeeping file to keep in sync.
+(If a create playbook happens to populate the older `instance_config.yml` convention,
+that is still consulted first; the inventory query is the fallback used when that file
+doesn't exist or has no entry for the instance - you do not need to choose one
+mechanism exclusively.)
+
+### Connection details must be written to disk, not just registered as facts
+
+`ansible-inventory` runs as a fresh, separate process each time `login`/`list` is
+invoked - it re-parses whatever is on disk at the configured `--inventory` path at
+that moment. It does **not** see anything a `create.yml` play added only in-memory at
+runtime, such as `ansible.builtin.add_host`, or facts registered from
+`podman_container`/`ec2_instance`/etc. and never persisted anywhere.
+
+This matters whenever a resource's connection details (an IP address, a published
+port) are only known after `create.yml` provisions it. To make `login`/`list` work for
+those hosts, `create.yml` needs to write the resolved values to a real inventory
+source under the `--inventory` path - typically a `host_vars/<name>.yml` file - as
+shown in the [Container Testing Resources](#container-testing-resources) and
+[Cloud Testing Resources](#cloud-testing-resources) examples above. A static inventory
+where `ansible_host`/`ansible_port`/etc. are already known ahead of time (e.g. the
+[Host-Based Testing](#host-based-testing) example) needs no such step - those values
+are already on disk.
