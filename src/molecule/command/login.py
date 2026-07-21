@@ -63,6 +63,12 @@ class Login(base.Base):
             base.execute_subcommand(c, "create")
 
         hosts = [d["name"] for d in self._config.platforms.instances]
+        if not hosts:
+            # ansible-native scenario (no `platforms` declared) - molecule
+            # has no static instance list to fall back on, so ask the
+            # driver to look in the real inventory instead (see
+            # Delegated.get_ansible_native_hosts()).
+            hosts = c.driver.get_ansible_native_hosts()
         hostname = self._get_hostname(hosts)
         self._get_login(hostname)
 
@@ -72,6 +78,17 @@ class Login(base.Base):
         if hostname is None:
             if len(hosts) == 1:
                 hostname = hosts[0]
+            elif not hosts:
+                # Either a non-ansible-native scenario with genuinely no
+                # instances, or an ansible-native one whose inventory query
+                # found nothing - either way, there's no list to suggest
+                # picking from.
+                msg = (
+                    "There are 0 running hosts, and none could be found in "
+                    "the configured inventory either. Specify the instance "
+                    "name directly with --host."
+                )
+                sysexit_with_message(msg, code=1)
             else:
                 msg = (
                     f"There are {len(hosts)} running hosts. Please specify "
@@ -79,6 +96,12 @@ class Login(base.Base):
                     f"Available hosts:\n{host_list}"
                 )
                 sysexit_with_message(msg, code=1)
+
+        if not hosts:
+            # Can't validate against a known list for ansible-native
+            # scenarios - trust the explicitly-provided --host value.
+            return hostname
+
         match = [x for x in hosts if x.startswith(hostname)]
         if len(match) == 0:
             msg = (
@@ -113,7 +136,21 @@ class Login(base.Base):
                 login_options["instance"],
             )
             return
-        login_cmd = self._config.driver.login_cmd_template.format(**login_options)
+        try:
+            login_cmd = self._config.driver.login_cmd_template.format(**login_options)
+        except KeyError as exc:
+            msg = (
+                f"Unable to determine connection details for instance "
+                f"'{hostname}': missing {exc}.\n"
+                "For ansible-native scenarios, molecule login needs either "
+                "an inventory entry for this host with ansible_host/"
+                "ansible_user/etc. set (resolved via the same --inventory "
+                "sources ansible-playbook uses), or your create playbook "
+                "can write this instance's connection details to "
+                "instance_config.yml (the {{ molecule_instance_config }} "
+                "path)."
+            )
+            sysexit_with_message(msg, code=1)
 
         cmd = shlex.split(f"/usr/bin/env {login_cmd}")
         subprocess.run(cmd, check=False)
