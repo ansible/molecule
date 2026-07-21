@@ -165,17 +165,23 @@ class Delegated(Driver):
             List of `ansible-inventory` CLI arguments selecting the same
             inventory sources ansible-playbook uses.
         """
+        extra_inventory_args = []
+        source_args = (*self._config.provisioner.ansible_args, *self._config.ansible_args)
+        take_next = False
+        for arg in source_args:
+            if take_next:
+                extra_inventory_args.append(arg)
+                take_next = False
+            elif arg.startswith(("--inventory=", "-i=")):
+                extra_inventory_args.append(arg)
+            elif arg in ("--inventory", "-i"):
+                extra_inventory_args.append(arg)
+                take_next = True
+
         return [
             "--inventory",
             self._config.provisioner.inventory_directory,
-            *[
-                arg
-                for arg in (
-                    *self._config.provisioner.ansible_args,
-                    *self._config.ansible_args,
-                )
-                if arg.startswith(("--inventory", "-i"))
-            ],
+            *extra_inventory_args,
         ]
 
     def _run_ansible_inventory(self, extra_args: list[str]) -> dict[str, Any] | None:
@@ -197,6 +203,7 @@ class Delegated(Driver):
                 capture_output=True,
                 text=True,
                 check=True,
+                timeout=30,
             )
             return json.loads(result.stdout)  # type: ignore[no-any-return]
         except subprocess.CalledProcessError as exc:
@@ -206,6 +213,9 @@ class Delegated(Driver):
                 exc.returncode,
                 exc.stderr.strip() if exc.stderr else "(no stderr)",
             )
+            return None
+        except subprocess.TimeoutExpired:
+            LOG.debug("ansible-inventory %s timed out after 30s", " ".join(extra_args))
             return None
         except (json.JSONDecodeError, OSError) as exc:
             LOG.debug("ansible-inventory %s failed: %s", " ".join(extra_args), exc)

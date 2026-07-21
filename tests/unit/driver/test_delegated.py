@@ -409,6 +409,68 @@ def test_ansible_inventory_args_includes_extra_inventory_args(  # type: ignore[n
     ]
 
 
+def test_ansible_inventory_args_includes_split_inventory_flag_and_value(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    mocker.patch.object(
+        type(_instance._config.provisioner),
+        "ansible_args",
+        new_callable=mocker.PropertyMock,
+        return_value=["--inventory", "/extra/inventory", "--diff"],
+    )
+
+    args = _instance._ansible_inventory_args()
+
+    assert args == [
+        "--inventory",
+        _instance._config.provisioner.inventory_directory,
+        "--inventory",
+        "/extra/inventory",
+    ]
+
+
+def test_ansible_inventory_args_includes_split_short_flag_and_value(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    mocker.patch.object(
+        type(_instance._config.provisioner),
+        "ansible_args",
+        new_callable=mocker.PropertyMock,
+        return_value=["-i", "/extra/inventory"],
+    )
+
+    args = _instance._ansible_inventory_args()
+
+    assert args == [
+        "--inventory",
+        _instance._config.provisioner.inventory_directory,
+        "-i",
+        "/extra/inventory",
+    ]
+
+
+def test_ansible_inventory_args_keeps_trailing_inventory_flag_with_no_value(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    mocker.patch.object(
+        type(_instance._config.provisioner),
+        "ansible_args",
+        new_callable=mocker.PropertyMock,
+        return_value=["--diff", "--inventory"],
+    )
+
+    args = _instance._ansible_inventory_args()
+
+    assert args == [
+        "--inventory",
+        _instance._config.provisioner.inventory_directory,
+        "--inventory",
+    ]
+
+
 def test_run_ansible_inventory_returns_parsed_json(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     mocker: MockerFixture,
     _instance,  # noqa: PT019
@@ -472,6 +534,33 @@ def test_run_ansible_inventory_returns_none_when_binary_missing(  # type: ignore
 
     assert result is None
     assert "ansible-inventory" in caplog.text
+
+
+def test_run_ansible_inventory_returns_none_on_timeout(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    caplog: pytest.LogCaptureFixture,
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    m = mocker.patch("subprocess.run")
+    m.side_effect = subprocess.TimeoutExpired(cmd=["ansible-inventory"], timeout=30)
+
+    with caplog.at_level("DEBUG"):
+        result = _instance._run_ansible_inventory(["--list"])
+
+    assert result is None
+    assert "timed out" in caplog.text
+
+
+def test_run_ansible_inventory_passes_timeout_to_subprocess_run(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    m = mocker.patch("subprocess.run")
+    m.return_value = subprocess.CompletedProcess(args=[], returncode=0, stdout="{}")
+
+    _instance._run_ansible_inventory(["--list"])
+
+    assert m.call_args.kwargs["timeout"] == 30  # noqa: PLR2004
 
 
 def test_get_inventory_login_options_maps_ansible_vars(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
