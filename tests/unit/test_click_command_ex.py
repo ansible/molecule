@@ -9,7 +9,7 @@ import click
 from click.testing import CliRunner
 
 from molecule.click_cfg import click_command_ex
-from molecule.exceptions import ImmediateExit
+from molecule.exceptions import ImmediateExit, MoleculeError
 
 
 if TYPE_CHECKING:
@@ -165,6 +165,108 @@ def test_click_command_ex_failure_no_context(mocker: MockerFixture) -> None:
     mock_logger.return_value.error.assert_not_called()
     mock_logger.return_value.info.assert_not_called()
     mock_sysexit.assert_called_once_with(code=42)
+
+
+def test_click_command_ex_with_molecule_error(mocker: MockerFixture) -> None:
+    """A MoleculeError exits with its code without an extra log line.
+
+    MoleculeError logs its message at CRITICAL on construction, so the handler
+    should not re-log it in non-debug mode.
+
+    Args:
+        mocker: pytest-mock fixture for mocking.
+    """
+    mock_logger = mocker.patch("logging.getLogger")
+    mock_sysexit = mocker.patch("molecule.util.sysexit")
+    mock_get_current_context = mocker.patch("click.get_current_context")
+
+    mock_ctx = mocker.MagicMock()
+    mock_ctx.obj = {"args": {"debug": False}}
+    mock_get_current_context.return_value = mock_ctx
+
+    @click_command_ex()
+    def test_command() -> None:
+        """Test command that raises MoleculeError.
+
+        Raises:
+            MoleculeError: Always raised for testing.
+        """
+        msg = "Unable to load molecule.yml"
+        raise MoleculeError(msg, code=3)
+
+    runner = CliRunner()
+    runner.invoke(test_command, [])
+
+    mock_logger.return_value.error.assert_not_called()
+    mock_logger.return_value.exception.assert_not_called()
+    mock_sysexit.assert_called_once_with(code=3)
+
+
+def test_click_command_ex_with_message_less_molecule_error(mocker: MockerFixture) -> None:
+    """A message-less MoleculeError still reports the failure before exiting.
+
+    Such an error (for example a lock timeout carrying only an exit code) logs
+    nothing on construction, so the handler must surface it.
+
+    Args:
+        mocker: pytest-mock fixture for mocking.
+    """
+    mock_logger = mocker.patch("logging.getLogger")
+    mock_sysexit = mocker.patch("molecule.util.sysexit")
+    mock_get_current_context = mocker.patch("click.get_current_context")
+
+    mock_ctx = mocker.MagicMock()
+    mock_ctx.obj = {"args": {"debug": False}}
+    mock_get_current_context.return_value = mock_ctx
+
+    @click_command_ex()
+    def test_command() -> None:
+        """Test command that raises a message-less MoleculeError.
+
+        Raises:
+            MoleculeError: Always raised for testing.
+        """
+        raise MoleculeError(code=7)
+
+    runner = CliRunner()
+    runner.invoke(test_command, [])
+
+    mock_logger.return_value.error.assert_called_once_with(
+        "Molecule failed with exit code %s.",
+        7,
+    )
+    mock_sysexit.assert_called_once_with(code=7)
+
+
+def test_click_command_ex_with_molecule_error_debug_mode(mocker: MockerFixture) -> None:
+    """In debug mode a MoleculeError shows the full traceback before exiting.
+
+    Args:
+        mocker: pytest-mock fixture for mocking.
+    """
+    mock_logger = mocker.patch("logging.getLogger")
+    mock_sysexit = mocker.patch("molecule.util.sysexit")
+    mock_get_current_context = mocker.patch("click.get_current_context")
+
+    mock_ctx = mocker.MagicMock()
+    mock_ctx.obj = {"args": {"debug": True}}
+    mock_get_current_context.return_value = mock_ctx
+
+    @click_command_ex()
+    def test_command() -> None:
+        """Test command that raises MoleculeError.
+
+        Raises:
+            MoleculeError: Always raised for testing.
+        """
+        msg = "Unable to load molecule.yml"
+        raise MoleculeError(msg, code=3)
+
+    runner = CliRunner()
+    runner.invoke(test_command, [])
+
+    mock_logger.return_value.exception.assert_called_once_with("Unable to load molecule.yml")
+    mock_sysexit.assert_called_once_with(code=3)
 
 
 def test_click_command_ex_normal_execution() -> None:

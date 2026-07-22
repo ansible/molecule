@@ -12,7 +12,7 @@ import logging
 import os
 
 from dataclasses import dataclass, replace
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, NoReturn, cast
 
 import click
 
@@ -21,7 +21,7 @@ from molecule.ansi_output import should_do_markup
 from molecule.api import drivers
 from molecule.config import MOLECULE_PARALLEL
 from molecule.constants import MOLECULE_DEFAULT_SCENARIO_NAME, MOLECULE_PLATFORM_NAME
-from molecule.exceptions import ImmediateExit
+from molecule.exceptions import ImmediateExit, MoleculeError
 
 
 if TYPE_CHECKING:
@@ -607,6 +607,42 @@ def click_group_ex() -> ClickGroup:
     )
 
 
+def _handle_immediate_exit(exc: ImmediateExit) -> NoReturn:
+    """Log an ``ImmediateExit`` and terminate with its exit code.
+
+    Args:
+        exc: The raised ImmediateExit carrying the message and exit code.
+    """
+    logger = logging.getLogger(__name__)
+    if exc.code == 0:
+        logger.info(exc.message)
+    else:
+        debug_mode = util.is_debug_mode(click.get_current_context(silent=True))
+        logger.exception(exc.message, exc_info=debug_mode)
+
+    util.sysexit(code=exc.code)
+
+
+def _handle_molecule_error(exc: MoleculeError) -> NoReturn:
+    """Log a ``MoleculeError`` cleanly and terminate with its exit code.
+
+    MoleculeError already logs its message at CRITICAL on construction, so this
+    exits without letting the exception bubble up as a traceback. The full
+    traceback is still surfaced under ``--debug`` to aid troubleshooting.
+
+    Args:
+        exc: The raised MoleculeError carrying an optional message and exit code.
+    """
+    logger = logging.getLogger(__name__)
+    if util.is_debug_mode(click.get_current_context(silent=True)):
+        logger.exception(exc.message or "Molecule encountered an error.")
+    elif not exc.message:
+        # A message-less MoleculeError (e.g. a lock timeout) logs nothing on construction.
+        logger.error("Molecule failed with exit code %s.", exc.code)
+
+    util.sysexit(code=exc.code)
+
+
 def click_command_ex(name: str | None = None) -> Callable[[Callable[..., Any]], click.Command]:
     """Return extended version of click.command() with immediate exit exception handling.
 
@@ -623,20 +659,9 @@ def click_command_ex(name: str | None = None) -> Callable[[Callable[..., Any]], 
             try:
                 return func(*args, **kwargs)
             except ImmediateExit as exc:
-                logger = logging.getLogger(__name__)
-
-                # Check if debug mode is enabled
-                ctx = click.get_current_context(silent=True)
-                debug_mode = False
-                if ctx and ctx.obj and isinstance(ctx.obj, dict):
-                    debug_mode = ctx.obj.get("args", {}).get("debug", False)
-
-                if exc.code == 0:
-                    logger.info(exc.message)
-                else:
-                    logger.exception(exc.message, exc_info=debug_mode)
-
-                util.sysexit(code=exc.code)
+                _handle_immediate_exit(exc)
+            except MoleculeError as exc:
+                _handle_molecule_error(exc)
 
         # Apply the click.command decorator to the wrapper
         return click.command(

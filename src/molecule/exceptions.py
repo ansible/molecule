@@ -37,6 +37,10 @@ class MoleculeError(Exception):
             LOG.critical(message, extra={"highlighter": False})
 
 
+class ConfigLoadError(MoleculeError):
+    """A configuration file was found but could not be parsed, distinct from a missing one."""
+
+
 class ScenarioFailureError(MoleculeError):
     """Details about a scenario that failed."""
 

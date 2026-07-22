@@ -43,7 +43,7 @@ from molecule.constants import (
     MOLECULE_HEADER,
     MOLECULE_ROOT,
 )
-from molecule.exceptions import MoleculeError
+from molecule.exceptions import ConfigLoadError, MoleculeError
 
 
 if TYPE_CHECKING:
@@ -136,19 +136,27 @@ def sysexit_with_message(
     sysexit(code)
 
 
+def is_debug_mode(ctx: click.Context | None) -> bool:
+    """Return whether ``--debug`` is set on the given click context.
+
+    Args:
+        ctx: The active click context, or None if unavailable.
+
+    Returns:
+        True when debug mode is enabled, otherwise False.
+    """
+    if ctx and ctx.obj and isinstance(ctx.obj, dict):
+        return bool(ctx.obj.get("args", {}).get("debug", False))
+    return False
+
+
 def sysexit_from_exception(exc: MoleculeError) -> NoReturn:
     """Wrapper for sysexit to display messages and use return code from an exception.
 
     Args:
         exc: The exception to determine exit values from.
     """
-    # Check if debug mode is enabled
-    ctx = click.get_current_context(silent=True)
-    debug_mode = False
-    if ctx and ctx.obj and isinstance(ctx.obj, dict):
-        debug_mode = ctx.obj.get("args", {}).get("debug", False)
-
-    if debug_mode:
+    if is_debug_mode(click.get_current_context(silent=True)):
         # Show full traceback in debug mode for failures
         LOG.exception(exc.message)
         sysexit(exc.code)
@@ -267,27 +275,56 @@ def safe_dump(data: object, explicit_start: bool = True) -> str:  # noqa: FBT001
     )
 
 
-def safe_load(string: str | TextIOWrapper):  # type: ignore[no-untyped-def]  # noqa: ANN201
+def _friendly_yaml_error(exc: yaml.YAMLError, filename: str | Path | None) -> str:
+    """Build a readable message for a YAML parse failure.
+
+    Args:
+        exc: The YAML error raised while parsing.
+        filename: Source file name, when known.
+
+    Returns:
+        An error message describing the file, location, and problem.
+    """
+    source = f"'{filename}'" if filename else "the YAML content"
+    mark = getattr(exc, "problem_mark", None)
+    location = f" (line {mark.line + 1}, column {mark.column + 1})" if mark else ""
+
+    problem = getattr(exc, "problem", "") or ""
+    if isinstance(exc, yaml.constructor.ConstructorError) and "constructor for the tag" in problem:
+        tag = problem.rsplit(" ", 1)[-1].strip("'\"")
+        return (
+            f"Unable to load {source}{location}: the '{tag}' YAML tag is not "
+            "supported in Molecule configuration files. Remove the tag from the file."
+        )
+
+    # PyYAML splits some reasons across context and problem; keep both.
+    context = getattr(exc, "context", "") or ""
+    detail = f"{context}, {problem}" if context and problem else (problem or context or str(exc))
+    return f"Unable to load {source}{location}: {detail}"
+
+
+def safe_load(string: str | TextIOWrapper, filename: str | Path | None = None) -> Any:  # noqa: ANN401
     """Parse the provided string returns a dict.
 
     Args:
         string: A string to be parsed.
+        filename: Optional source file name, used only to make the error
+            message point at the offending file when parsing fails.
 
     Returns:
-        A dict of the parsed string.
-
+        The parsed YAML (dict, list, scalar, or {} if empty).
 
     Raises:
-        MoleculeError: when YAML loading fails.
+        ConfigLoadError: when YAML loading fails.
     """
     try:
         return yaml.safe_load(string) or {}
-    except yaml.scanner.ScannerError as e:
-        raise MoleculeError(str(e)) from None
-    return {}
+    except yaml.YAMLError as e:
+        msg = _friendly_yaml_error(e, filename)
+        raise ConfigLoadError(msg) from e
 
 
-def safe_load_file(filename: str | Path):  # type: ignore[no-untyped-def]  # noqa: ANN201
+def safe_load_file(filename: str | Path) -> Any:  # noqa: ANN401
     """Parse the provided YAML file and returns a dict.
 
     Args:
@@ -300,7 +337,7 @@ def safe_load_file(filename: str | Path):  # type: ignore[no-untyped-def]  # noq
         filename = Path(filename)
 
     with filename.open() as stream:
-        return safe_load(stream)
+        return safe_load(stream, filename)
 
 
 def instance_with_scenario_name(instance_name: str, scenario_name: str) -> str:
