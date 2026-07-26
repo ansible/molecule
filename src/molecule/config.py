@@ -455,7 +455,7 @@ class Config:
                     self.molecule_file,
                 )
 
-        return state.State(self)
+        return my_state
 
     @cached_property
     def verifier(self) -> Verifier:
