@@ -242,7 +242,7 @@ def test_setup_creates_ephemeral_and_inventory_directories(  # noqa: D103
 def test_shared_ephemeral_directory_with_shared_state(  # noqa: D103
 ) -> None:
     cfg = config.Config("")
-    cfg.config["shared_state"] = True
+    cfg.config_data["shared_state"] = True
     scenario = Scenario(cfg)
 
     assert scenario.config.shared_state
@@ -254,7 +254,7 @@ def test_shared_state_respects_env_var(  # noqa: D103
 ) -> None:
     monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", str(tmp_path / "custom"))
     cfg = config.Config("")
-    cfg.config["shared_state"] = True
+    cfg.config_data["shared_state"] = True
     scenario = Scenario(cfg)
 
     assert scenario.ephemeral_directory == scenario.shared_ephemeral_directory
