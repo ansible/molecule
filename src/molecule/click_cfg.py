@@ -618,7 +618,7 @@ def _handle_immediate_exit(exc: ImmediateExit) -> NoReturn:
         logger.info(exc.message)
     else:
         debug_mode = util.is_debug_mode(click.get_current_context(silent=True))
-        logger.exception(exc.message, exc_info=debug_mode)
+        logger.error(exc.message, exc_info=debug_mode)
 
     util.sysexit(code=exc.code)
 
@@ -635,7 +635,7 @@ def _handle_molecule_error(exc: MoleculeError) -> NoReturn:
     """
     logger = logging.getLogger(__name__)
     if util.is_debug_mode(click.get_current_context(silent=True)):
-        logger.exception(exc.message or "Molecule encountered an error.")
+        logger.error(exc.message or "Molecule encountered an error.", exc_info=exc)
     elif not exc.message:
         # A message-less MoleculeError (e.g. a lock timeout) logs nothing on construction.
         logger.error("Molecule failed with exit code %s.", exc.code)
