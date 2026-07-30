@@ -87,7 +87,6 @@ metacopy
 mfoo
 minversion
 modifyitems
-mongosh
 mountopt
 myapp
 mygroups
