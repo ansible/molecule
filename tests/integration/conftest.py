@@ -37,7 +37,7 @@ LOG = logger.get_logger(__name__)
 
 
 @pytest.fixture(name="with_scenario")
-def _with_scenario(  # noqa: PLR0913
+def _with_scenario(  # noqa: PLR0913,PLR0917
     request: pytest.FixtureRequest,
     monkeypatch: pytest.MonkeyPatch,
     test_ephemeral_dir_env: dict[str, str],

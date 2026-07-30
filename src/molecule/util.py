@@ -158,7 +158,7 @@ def sysexit_from_exception(exc: MoleculeError) -> NoReturn:
     """
     if is_debug_mode(click.get_current_context(silent=True)):
         # Show full traceback in debug mode for failures
-        LOG.exception(exc.message)
+        LOG.exception(exc.message)  # noqa: LOG004
         sysexit(exc.code)
     else:
         sysexit_with_message(exc.message, exc.code)
