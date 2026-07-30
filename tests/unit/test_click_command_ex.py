@@ -23,7 +23,7 @@ def test_click_command_ex_with_immediate_exit_success(mocker: MockerFixture) -> 
         mocker: pytest-mock fixture for mocking.
     """
     # Mock the logger and util.sysexit
-    mock_logger = mocker.patch("logging.getLogger")
+    mock_logger = mocker.patch("molecule.click_cfg.logging.getLogger")
     mock_sysexit = mocker.patch("molecule.util.sysexit")
 
     # Create a command that raises ImmediateExit with success code
@@ -42,10 +42,8 @@ def test_click_command_ex_with_immediate_exit_success(mocker: MockerFixture) -> 
     runner.invoke(test_command, [])
 
     # Verify logging and sysexit were called correctly (info for success)
-    mock_logger.assert_called_once()
     mock_logger.return_value.info.assert_called_once_with("Operation completed successfully")
     mock_logger.return_value.error.assert_not_called()
-    mock_logger.return_value.exception.assert_not_called()
     mock_sysexit.assert_called_once_with(code=0)
 
 
@@ -56,14 +54,9 @@ def test_click_command_ex_with_immediate_exit_failure(mocker: MockerFixture) -> 
         mocker: pytest-mock fixture for mocking.
     """
     # Mock the logger and util.sysexit
-    mock_logger = mocker.patch("logging.getLogger")
+    mock_logger = mocker.patch("molecule.click_cfg.logging.getLogger")
     mock_sysexit = mocker.patch("molecule.util.sysexit")
-    mock_get_current_context = mocker.patch("click.get_current_context")
-
-    # Mock context without debug mode
-    mock_ctx = mocker.MagicMock()
-    mock_ctx.obj = {"args": {"debug": False}}
-    mock_get_current_context.return_value = mock_ctx
+    mocker.patch("molecule.click_cfg.util.is_debug_mode", return_value=False)
 
     # Create a command that raises ImmediateExit with failure code
     @click_command_ex()
@@ -81,10 +74,8 @@ def test_click_command_ex_with_immediate_exit_failure(mocker: MockerFixture) -> 
     runner = CliRunner()
     runner.invoke(test_command, [])
 
-    # Verify logging and sysexit were called correctly (exception with exc_info=False in non-debug)
-    mock_logger.assert_called_once()
-    mock_logger.return_value.exception.assert_called_once_with("Operation failed", exc_info=False)
-    mock_logger.return_value.error.assert_not_called()
+    # Verify logging and sysexit were called correctly (error with exc_info=False in non-debug)
+    mock_logger.return_value.error.assert_called_once_with("Operation failed", exc_info=False)
     mock_logger.return_value.info.assert_not_called()
     mock_sysexit.assert_called_once_with(code=42)
 
@@ -96,14 +87,9 @@ def test_click_command_ex_with_immediate_exit_failure_debug_mode(mocker: MockerF
         mocker: pytest-mock fixture for mocking.
     """
     # Mock the logger and util.sysexit
-    mock_logger = mocker.patch("logging.getLogger")
+    mock_logger = mocker.patch("molecule.click_cfg.logging.getLogger")
     mock_sysexit = mocker.patch("molecule.util.sysexit")
-    mock_get_current_context = mocker.patch("click.get_current_context")
-
-    # Mock context with debug mode enabled
-    mock_ctx = mocker.MagicMock()
-    mock_ctx.obj = {"args": {"debug": True}}
-    mock_get_current_context.return_value = mock_ctx
+    mocker.patch("molecule.click_cfg.util.is_debug_mode", return_value=True)
 
     # Create a command that raises ImmediateExit with failure code
     @click_command_ex()
@@ -121,10 +107,8 @@ def test_click_command_ex_with_immediate_exit_failure_debug_mode(mocker: MockerF
     runner = CliRunner()
     runner.invoke(test_command, [])
 
-    # Verify logging and sysexit were called correctly (exception with full traceback in debug mode)
-    mock_logger.assert_called_once()
-    mock_logger.return_value.exception.assert_called_once_with("Operation failed", exc_info=True)
-    mock_logger.return_value.error.assert_not_called()
+    # Verify logging and sysexit were called correctly (error with full traceback in debug mode)
+    mock_logger.return_value.error.assert_called_once_with("Operation failed", exc_info=True)
     mock_logger.return_value.info.assert_not_called()
     mock_sysexit.assert_called_once_with(code=42)
 
@@ -136,12 +120,9 @@ def test_click_command_ex_failure_no_context(mocker: MockerFixture) -> None:
         mocker: pytest-mock fixture for mocking.
     """
     # Mock the logger and util.sysexit
-    mock_logger = mocker.patch("logging.getLogger")
+    mock_logger = mocker.patch("molecule.click_cfg.logging.getLogger")
     mock_sysexit = mocker.patch("molecule.util.sysexit")
-    mock_get_current_context = mocker.patch("click.get_current_context")
-
-    # Mock no context available
-    mock_get_current_context.return_value = None
+    mocker.patch("molecule.click_cfg.util.is_debug_mode", return_value=False)
 
     # Create a command that raises ImmediateExit with failure code
     @click_command_ex()
@@ -159,10 +140,8 @@ def test_click_command_ex_failure_no_context(mocker: MockerFixture) -> None:
     runner = CliRunner()
     runner.invoke(test_command, [])
 
-    # Verify it defaults to non-debug behavior (exception with exc_info=False)
-    mock_logger.assert_called_once()
-    mock_logger.return_value.exception.assert_called_once_with("Operation failed", exc_info=False)
-    mock_logger.return_value.error.assert_not_called()
+    # Verify it defaults to non-debug behavior (error with exc_info=False)
+    mock_logger.return_value.error.assert_called_once_with("Operation failed", exc_info=False)
     mock_logger.return_value.info.assert_not_called()
     mock_sysexit.assert_called_once_with(code=42)
 
@@ -176,13 +155,9 @@ def test_click_command_ex_with_molecule_error(mocker: MockerFixture) -> None:
     Args:
         mocker: pytest-mock fixture for mocking.
     """
-    mock_logger = mocker.patch("logging.getLogger")
+    mock_logger = mocker.patch("molecule.click_cfg.logging.getLogger")
     mock_sysexit = mocker.patch("molecule.util.sysexit")
-    mock_get_current_context = mocker.patch("click.get_current_context")
-
-    mock_ctx = mocker.MagicMock()
-    mock_ctx.obj = {"args": {"debug": False}}
-    mock_get_current_context.return_value = mock_ctx
+    mocker.patch("molecule.click_cfg.util.is_debug_mode", return_value=False)
 
     @click_command_ex()
     def test_command() -> None:
@@ -198,7 +173,6 @@ def test_click_command_ex_with_molecule_error(mocker: MockerFixture) -> None:
     runner.invoke(test_command, [])
 
     mock_logger.return_value.error.assert_not_called()
-    mock_logger.return_value.exception.assert_not_called()
     mock_sysexit.assert_called_once_with(code=3)
 
 
@@ -211,13 +185,9 @@ def test_click_command_ex_with_message_less_molecule_error(mocker: MockerFixture
     Args:
         mocker: pytest-mock fixture for mocking.
     """
-    mock_logger = mocker.patch("logging.getLogger")
+    mock_logger = mocker.patch("molecule.click_cfg.logging.getLogger")
     mock_sysexit = mocker.patch("molecule.util.sysexit")
-    mock_get_current_context = mocker.patch("click.get_current_context")
-
-    mock_ctx = mocker.MagicMock()
-    mock_ctx.obj = {"args": {"debug": False}}
-    mock_get_current_context.return_value = mock_ctx
+    mocker.patch("molecule.click_cfg.util.is_debug_mode", return_value=False)
 
     @click_command_ex()
     def test_command() -> None:
@@ -244,13 +214,9 @@ def test_click_command_ex_with_molecule_error_debug_mode(mocker: MockerFixture) 
     Args:
         mocker: pytest-mock fixture for mocking.
     """
-    mock_logger = mocker.patch("logging.getLogger")
+    mock_logger = mocker.patch("molecule.click_cfg.logging.getLogger")
     mock_sysexit = mocker.patch("molecule.util.sysexit")
-    mock_get_current_context = mocker.patch("click.get_current_context")
-
-    mock_ctx = mocker.MagicMock()
-    mock_ctx.obj = {"args": {"debug": True}}
-    mock_get_current_context.return_value = mock_ctx
+    mocker.patch("molecule.click_cfg.util.is_debug_mode", return_value=True)
 
     @click_command_ex()
     def test_command() -> None:
@@ -265,7 +231,10 @@ def test_click_command_ex_with_molecule_error_debug_mode(mocker: MockerFixture) 
     runner = CliRunner()
     runner.invoke(test_command, [])
 
-    mock_logger.return_value.exception.assert_called_once_with("Unable to load molecule.yml")
+    mock_logger.return_value.error.assert_called_once()
+    call_args = mock_logger.return_value.error.call_args
+    assert call_args[0][0] == "Unable to load molecule.yml"
+    assert isinstance(call_args[1]["exc_info"], MoleculeError)
     mock_sysexit.assert_called_once_with(code=3)
 
 
