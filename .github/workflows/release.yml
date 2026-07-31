@@ -14,13 +14,24 @@ on:
         type: boolean
         description: Publish on pypi.org
         default: false
+
+permissions:
+  contents: read
+
 jobs:
+  security:
+    uses: ./.github/workflows/security.yml
+    permissions:
+      contents: read
+
   release:
     if: "${{ github.event_name == 'release' || inputs.pypi_publish }}"
+    needs: [security]
     environment: release
     runs-on: ubuntu-24.04
     permissions:
       id-token: write
+      attestations: write
 
     env:
       FORCE_COLOR: 1
@@ -28,7 +39,7 @@ jobs:
 
     steps:
       - name: Switch to using latest Python by default
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.14"
 
@@ -36,26 +47,61 @@ jobs:
         run: python3 -m pip install --user "tox>=4.46.0"
 
       - name: Check out src from Git
-        uses: actions/checkout@v7
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0 # needed by setuptools-scm
+          persist-credentials: false
 
       - name: Build dists
         run: python3 -m tox -e pkg
 
+      - name: Generate SBOM for dists
+        run: |
+          uvx --from cyclonedx-bom cyclonedx-py environment \
+            --output-format json --outfile dist/sbom.cdx.json || \
+          uvx cyclonedx-py environment -o dist/sbom.cdx.json
+      - name: Attest build provenance for dists
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
+        with:
+          subject-path: "dist/*.tar.gz, dist/*.whl"
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: sbom-dists
+          path: dist/sbom.cdx.json
+
       - name: Publish to pypi.org
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
 
   publish-collection:
     if: "${{ github.event_name == 'release' || inputs.galaxy_publish }}"
+    needs: [security]
     runs-on: ubuntu-latest
     environment: release
     permissions:
       contents: read
+      id-token: write
+      attestations: write
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Build the collection
         run: ansible-galaxy collection build -v --force community.molecule
+      - name: Generate SBOM for collection
+        run: |
+          uvx --from cyclonedx-bom cyclonedx-py requirements \
+            community.molecule/requirements.txt \
+            -o community.molecule-sbom.cdx.json || true
+      - name: Attest collection tarball provenance
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
+        with:
+          subject-path: "./community.molecule-*.tar.gz"
+      - name: Upload collection SBOM artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: sbom-collection
+          path: community.molecule-sbom.cdx.json
       - name: Publish the collection on Galaxy
         if: env.ANSIBLE_GALAXY_API_KEY != ''
         env:
@@ -76,4 +122,9 @@ jobs:
         run: curl -O https://raw.githubusercontent.com/ansible/team-devtools/main/.github/workflows/forum_post.py
 
       - name: Run the forum post script
-        run: python3 forum_post.py ${{ github.event.repository.full_name }} ${{ github.event.release.tag_name }} ${{ secrets.FORUM_KEY }} ${{ secrets.FORUM_USER }}
+        env:
+          REPO: ${{ github.event.repository.full_name }}
+          TAG: ${{ github.event.release.tag_name }}
+          FORUM_KEY: ${{ secrets.FORUM_KEY }}
+          FORUM_USER: ${{ secrets.FORUM_USER }}
+        run: python3 forum_post.py "$REPO" "$TAG" "$FORUM_KEY" "$FORUM_USER"
