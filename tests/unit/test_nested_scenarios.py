@@ -25,7 +25,7 @@ from pathlib import Path
 
 import pytest
 
-from molecule import config
+from molecule import config, util
 from molecule.command import base
 from molecule.constants import MOLECULE_COLLECTION_GLOB
 from molecule.exceptions import ScenarioFailureError
@@ -251,10 +251,6 @@ def fixture_collection_project(
     (nested_dir2 / "molecule.yml").write_text("---\n")
 
     monkeypatch.chdir(project)
-    monkeypatch.setattr(
-        "molecule.command.base.filter_ignored_scenarios",
-        lambda paths: paths,
-    )
 
     return project
 
@@ -301,6 +297,41 @@ def test_get_configs_all_discovers_nested_with_recursive_glob(
     )
     names = sorted(c.scenario.name for c in configs)
     assert names == ["appliance_vlans/merged", "appliance_vlans/replaced", "default"]
+
+
+def test_get_configs_default_glob_ignores_vendored_venv_scenarios(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Default discovery does not descend into an installed virtualenv.
+
+    Args:
+        tmp_path: Pytest temporary directory fixture.
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    monkeypatch.delenv("MOLECULE_GLOB", raising=False)
+    util.get_collection_metadata.cache_clear()
+    util.get_effective_molecule_glob.cache_clear()
+    _make_molecule_file(tmp_path, "molecule", "default")
+    _make_molecule_file(
+        tmp_path,
+        "venv",
+        "lib",
+        "python3.12",
+        "site-packages",
+        "molecule",
+        "test",
+        "scenarios",
+        "cleanup",
+        "molecule",
+        "default",
+    )
+
+    monkeypatch.chdir(tmp_path)
+    configs = base.get_configs({}, {"subcommand": "test"})
+
+    assert [c.scenario.name for c in configs] == ["default"]
+    assert all("site-packages" not in c.molecule_file for c in configs)
 
 
 def test_resolve_scenario_glob_wildcard_preserved(

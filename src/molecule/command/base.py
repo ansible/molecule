@@ -23,14 +23,12 @@ from __future__ import annotations
 
 import abc
 import collections
-import contextlib
 import copy
 import fnmatch
 import importlib
 import logging
 import re
 import shutil
-import subprocess
 
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -483,35 +481,6 @@ def execute_scenario(scenario: Scenario, *, shared_state: bool = False) -> None:
             scenario._remove_scenario_state_directory()  # noqa: SLF001
 
 
-def filter_ignored_scenarios(scenario_paths: list[str]) -> list[str]:
-    """Filter out candidate scenario paths that are ignored by git.
-
-    Args:
-        scenario_paths: List of candidate scenario paths.
-
-    Returns:
-        Filtered list of scenario paths.
-    """
-    command = ["git", "check-ignore", *scenario_paths]
-
-    with contextlib.suppress(subprocess.CalledProcessError, FileNotFoundError):
-        proc = subprocess.run(
-            args=command,
-            capture_output=True,
-            check=True,
-            text=True,
-            shell=False,
-        )
-
-    try:
-        ignored = proc.stdout.splitlines()
-        paths = [candidate for candidate in scenario_paths if str(candidate) not in ignored]
-    except NameError:
-        paths = scenario_paths
-
-    return paths
-
-
 def get_configs(
     args: MoleculeArgs,
     command_args: CommandArgs,
@@ -540,7 +509,6 @@ def get_configs(
         flags=wcmatch.pathlib.GLOBSTAR | wcmatch.pathlib.BRACE | wcmatch.pathlib.DOTGLOB,
     )
 
-    scenario_paths = filter_ignored_scenarios(scenario_paths)
     configs = [
         config.Config(
             molecule_file=util.abs_path(c),

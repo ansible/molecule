@@ -384,44 +384,27 @@ def test_sample_collection(
 
 
 @pytest.mark.usefixtures("test_cache_path")
-@pytest.mark.parametrize(("scenario_name"), (("test_w_gitignore"), ("test_wo_gitignore")))
-def test_with_and_without_gitignore(
+def test_gitignored_scenario_is_discovered(
     monkeypatch: pytest.MonkeyPatch,
-    scenario_name: str,
     resources_folder_path: Path,
 ) -> None:
-    """Test with and without gitignore.
+    """A scenario under a git-ignored directory is discovered, not dropped.
 
     Args:
         monkeypatch: Pytest fixture.
-        scenario_name: The scenario name.
         resources_folder_path: Path to the resources folder.
     """
-    if scenario_name == "test_wo_gitignore":
-
-        def mock_return(scenario_paths: list[str]) -> list[str]:
-            return scenario_paths
-
-        monkeypatch.setattr(
-            "molecule.command.base.filter_ignored_scenarios",
-            mock_return,
-        )
-
     monkeypatch.chdir(resources_folder_path)
 
+    scenario_name = "gitignored"
     scenario_dir = resources_folder_path / ".extensions" / "molecule" / scenario_name
     scenario_dir.mkdir(parents=True, exist_ok=True)
-
-    molecule_file = scenario_dir / "molecule.yml"
-    molecule_file.touch()
+    (scenario_dir / "molecule.yml").touch()
 
     op = base.get_configs({}, {}, glob_str="**/molecule/*/molecule.yml")
 
-    names = [config.scenario.name for config in op]
-    if scenario_name == "test_w_gitignore":
-        assert scenario_name not in names
-    elif scenario_name == "test_wo_gitignore":
-        assert scenario_name in names
+    names = [cfg.scenario.name for cfg in op]
+    assert scenario_name in names
 
 
 @mac_on_gh
