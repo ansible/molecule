@@ -26,6 +26,7 @@ import logging
 import os
 import re
 import sys
+import tempfile
 
 from pathlib import Path
 from typing import TYPE_CHECKING, overload
@@ -205,6 +206,26 @@ def render_template(template: str, **kwargs: str | dict[str, str]) -> str:
     return t.from_string(template).render(kwargs)
 
 
+def _prepare_write(
+    filename: str | Path,
+    content: str,
+    header: str | None,
+) -> tuple[Path, str]:
+    """Apply the default header and coerce ``filename`` to ``Path``.
+
+    Args:
+        filename: The target file.
+        content: The data to be written.
+        header: When None, prepend the default header; else leave content as-is.
+
+    Returns:
+        The target as a ``Path`` and the content to write.
+    """
+    if header is None:
+        content = MOLECULE_HEADER + "\n\n" + content
+    return Path(filename), content
+
+
 def write_file(filename: str | Path, content: str, header: str | None = None) -> None:
     """Write a file with the given filename and content.
 
@@ -213,13 +234,40 @@ def write_file(filename: str | Path, content: str, header: str | None = None) ->
         content: A string containing the data to be written.
         header: A header, if None it will use default header.
     """
-    if header is None:
-        content = MOLECULE_HEADER + "\n\n" + content
-
-    if isinstance(filename, str):
-        filename = Path(filename)
+    filename, content = _prepare_write(filename, content, header)
     filename.parent.mkdir(exist_ok=True)
     filename.write_text(content)
+
+
+def atomic_write_file(filename: str | Path, content: str, header: str | None = None) -> None:
+    """Write a file atomically: temp file in the target's dir, then ``Path.replace``.
+
+    A concurrent reader always sees the whole old or new file, never a partial
+    one. The file is created mode 0600 (via mkstemp), not umask-derived.
+
+    Args:
+        filename: The target file.
+        content: A string containing the data to be written.
+        header: A header, if None it will use default header.
+    """
+    filename, content = _prepare_write(filename, content, header)
+    filename.parent.mkdir(exist_ok=True)
+
+    fd, tmp_name = tempfile.mkstemp(
+        dir=filename.parent,
+        prefix=f".{filename.name}.",
+        suffix=".tmp",
+    )
+    tmp_path = Path(tmp_name)
+    replaced = False
+    try:
+        with os.fdopen(fd, "w") as f:
+            f.write(content)
+        tmp_path.replace(filename)
+        replaced = True
+    finally:
+        if not replaced:
+            tmp_path.unlink(missing_ok=True)
 
 
 def molecule_prepender(content: str) -> str:
