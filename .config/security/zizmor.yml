@@ -1,0 +1,19 @@
+---
+# Zizmor configuration for GitHub Actions hardening.
+# We CANNOT fix findings that originate from the upstream
+# `ansible/team-devtools` reusable workflows (they are referenced by @main by
+# design and inherit secrets). Those specific findings are ignored here WITH a
+# justification. Findings in our own workflow steps must be fixed, not ignored.
+rules:
+  unpinned-uses:
+    ignore:
+      # Upstream reusable workflows are referenced by branch by project policy.
+      - tox.yml
+      - ack.yml
+      - finalize.yml
+      - push.yml
+  secrets-inherit:
+    ignore:
+      # `secrets: inherit` is required by the team-devtools reusable workflows.
+      - tox.yml
+      - ack.yml

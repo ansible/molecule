@@ -1,0 +1,14 @@
+# Gitleaks configuration for Molecule secret scanning.
+# Extends the upstream default ruleset, then applies a repo allowlist.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Molecule repo allowlist — test fixtures contain no real secrets"
+paths = [
+  '''tests/.*''',
+  '''community\.molecule/tests/.*''',
+]
+# Add specific regexes here ONLY for confirmed false positives, each with a
+# comment explaining why the match is not a real secret.
+regexes = []

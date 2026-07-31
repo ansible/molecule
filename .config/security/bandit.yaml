@@ -1,0 +1,11 @@
+---
+# Bandit configuration for Molecule SAST.
+# Scanned path is passed on the CLI (src). We only exclude test trees.
+exclude_dirs:
+  - tests
+  - .tox
+  - .venv
+# Skip nothing globally; suppress individual false positives inline with
+# `# nosec: <reason>` on the offending line. Add B-ids here only with a
+# repo-wide justification.
+skips: []

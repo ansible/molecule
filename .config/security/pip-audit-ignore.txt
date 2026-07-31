@@ -1,0 +1,8 @@
+# pip-audit ignore list.
+# One vulnerability id (GHSA-… or CVE-…) per line, followed by a
+# justification and a review-by date. Entries are passed to pip-audit via
+# repeated --ignore-vuln flags. Keep this list EMPTY unless a finding is a
+# confirmed false positive or an unfixable upstream transitive CVE.
+#
+# Example:
+# GHSA-xxxx-xxxx-xxxx  # transitive via <dep>, no fix upstream, review 2026-12-01
