@@ -17,3 +17,18 @@ rules:
       # `secrets: inherit` is required by the team-devtools reusable workflows.
       - tox.yml
       - ack.yml
+      # finalize reuses team-devtools and must inherit secrets by design.
+      - finalize.yml
+  dangerous-triggers:
+    ignore:
+      # ack uses pull_request_target to label fork PRs (team-devtools design).
+      - ack.yml
+      # finalize uses workflow_run to run after the tox workflow completes.
+      - finalize.yml
+  excessive-permissions:
+    ignore:
+      # Callers of team-devtools reusable workflows; the called workflow sets
+      # its own least-privilege permissions. Cannot override locally.
+      - tox.yml
+      - push.yml
+      - ack.yml
