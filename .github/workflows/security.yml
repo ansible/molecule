@@ -1,0 +1,97 @@
+---
+name: security
+
+on:
+  pull_request:
+    branches: ["main", "releases/**", "stable/**"]
+  push:
+    branches: ["main"]
+  schedule:
+    - cron: "0 3 * * 1" # weekly full scan, Monday 03:00 UTC
+  workflow_dispatch:
+  workflow_call:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  FORCE_COLOR: "1"
+
+jobs:
+  deps:
+    name: deps (pip-audit)
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: "0.11.32"
+      - name: Export locked dependencies
+        run: uv export --frozen --no-emit-project --no-dev -o requirements.txt
+      - name: Build pip-audit ignore args
+        run: |
+          set -euo pipefail
+          args=""
+          while IFS= read -r line; do
+            id="${line%%#*}"; id="$(echo "$id" | xargs)"
+            [ -z "$id" ] && continue
+            args="$args --ignore-vuln $id"
+          done < .config/security/pip-audit-ignore.txt
+          echo "PIP_AUDIT_IGNORE_ARGS=$args" >> "$GITHUB_ENV"
+      - name: Audit dependencies
+        run: uvx pip-audit -r requirements.txt --strict $PIP_AUDIT_IGNORE_ARGS
+
+  sast:
+    name: sast (bandit)
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: "0.11.32"
+      - name: Run bandit
+        run: uvx bandit -c .config/security/bandit.yaml -r src -ll
+
+  secrets:
+    name: secrets (gitleaks)
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env:
+          GITLEAKS_CONFIG: .config/security/gitleaks.toml
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: "false"
+          GITLEAKS_ENABLE_SUMMARY: "true"
+
+  hardening:
+    name: hardening (zizmor)
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: "0.11.32"
+      - name: Run zizmor
+        run: uvx zizmor --config .config/security/zizmor.yml .github/workflows
