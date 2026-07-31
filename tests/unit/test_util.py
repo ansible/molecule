@@ -204,6 +204,70 @@ def test_write_file(test_cache_path: Path) -> None:
     assert x == data
 
 
+def test_atomic_write_file(test_cache_path: Path) -> None:
+    """Atomic write produces the same content as write_file and leaves no temp file.
+
+    Args:
+        test_cache_path: The path to the test cache directory for the test.
+    """
+    dest_file = test_cache_path / "test_util_atomic_write_file.tmp"
+    contents = binascii.b2a_hex(os.urandom(15)).decode("utf-8")
+    util.atomic_write_file(str(dest_file), contents)
+    assert dest_file.read_text() == f"# Molecule managed\n\n{contents}"
+    assert [p.name for p in test_cache_path.iterdir()] == [dest_file.name]
+
+
+def test_atomic_write_file_never_truncates_target(
+    test_cache_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A concurrent reader never sees a partial file: the target is swapped whole.
+
+    Args:
+        test_cache_path: The path to the test cache directory for the test.
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    dest_file = test_cache_path / "state.yml"
+    util.atomic_write_file(dest_file, "old", header="")
+
+    observed: list[str] = []
+    real_replace = Path.replace
+
+    def spy(self: Path, target: str | Path) -> Path:
+        observed.append(Path(target).read_text())
+        return real_replace(self, target)
+
+    monkeypatch.setattr(Path, "replace", spy)
+    util.atomic_write_file(dest_file, "new", header="")
+
+    assert observed == ["old"]
+    assert dest_file.read_text() == "new"
+
+
+def test_atomic_write_file_cleans_up_on_error(
+    test_cache_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A failed replace leaves the original intact and drops no temp file behind.
+
+    Args:
+        test_cache_path: The path to the test cache directory for the test.
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    dest_file = test_cache_path / "state.yml"
+    util.atomic_write_file(dest_file, "old", header="")
+
+    def boom(self: Path, target: str | Path) -> Path:
+        raise OSError
+
+    monkeypatch.setattr(Path, "replace", boom)
+    with pytest.raises(OSError):  # noqa: PT011
+        util.atomic_write_file(dest_file, "new", header="")
+
+    assert dest_file.read_text() == "old"
+    assert [p.name for p in test_cache_path.iterdir()] == [dest_file.name]
+
+
 def test_molecule_prepender(tmp_path: Path) -> None:  # noqa: D103
     fname = tmp_path / "some.txt"
     fname.write_text("foo bar")
