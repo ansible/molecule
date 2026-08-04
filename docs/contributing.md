@@ -8,7 +8,7 @@ There are many ways to get involved and contribute, find out how.
 
 - We are interested in various different kinds of improvement for
   Molecule; please feel free to raise an
-  [Issue](https://github.com/ansible-community/molecule/issues/new/choose)
+  [Issue](https://github.com/ansible/molecule/issues/new/choose)
   if you would like to work on something major to ensure efficient
   collaboration and avoid duplicate effort.
 - Create a topic branch from where you want to base your work.
@@ -16,7 +16,7 @@ There are many ways to get involved and contribute, find out how.
 - Although not required, it is good to sign off commits using
   `git commit --signoff`, and agree that usage of `--signoff`
   constitutes agreement with the terms of [DCO
-  1.1](https://github.com/ansible-community/molecule/blob/main/DCO_1_1.md).
+  1.1](https://github.com/ansible/ansible-documentation/blob/devel/DCO).
 - Run all the tests to ensure nothing else was accidentally broken.
 - Reformat the code by following the formatting section below.
 - Submit a pull request.
@@ -48,7 +48,7 @@ Possible security bugs should be reported via email to
 ## Code Of Conduct
 
 Please see our [Code of
-Conduct](https://github.com/ansible-community/molecule/blob/main/.github/CODE_OF_CONDUCT.md)
+Conduct](https://github.com/ansible/molecule/blob/main/.github/CODE_OF_CONDUCT.md)
 document.
 
 ## Pull Request and Governance
@@ -141,6 +141,6 @@ Dependencies need to be updated by hand in:
 
 Based on the good work of John Dewey
 ([\@retr0h](https://github.com/retr0h)) and other
-[contributors](https://github.com/ansible-community/molecule/graphs/contributors).
+[contributors](https://github.com/ansible/molecule/graphs/contributors).
 Active member list can be seen at [Molecule working
 group](https://github.com/ansible/community/wiki/Molecule).

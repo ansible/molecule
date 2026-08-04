@@ -76,3 +76,40 @@ def _model_platforms_delegated_section_data() -> str:
 platforms:
   - name: instance
 """.strip()
+
+
+@pytest.fixture
+def _model_platforms_valid_relaxed_section_data() -> str:
+    # Exercises the MoleculePlatformModel restored via platforms.items $ref,
+    # plus the relaxed types that match the docker/podman drivers:
+    # command as a list, cpus as a float, memory as a string.
+    return """
+---
+platforms:
+  - name: instance
+    groups:
+      - group1
+    children:
+      - instance2
+    networks:
+      - name: molecule-net
+        ipv4_address: 10.0.0.5
+    command:
+      - bash
+      - -c
+      - "while true; do sleep 1; done"
+    cpus: 1.5
+    memory: "512m"
+""".strip()
+
+
+@pytest.fixture
+def _model_platforms_invalid_children_section_data() -> str:
+    # Must be rejected once platforms.items references MoleculePlatformModel:
+    # children must be a list, here an int (name set so it is the only fault).
+    return """
+---
+platforms:
+  - name: instance
+    children: 2
+""".strip()

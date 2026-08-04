@@ -31,3 +31,25 @@ from molecule.model import schema_v3
 )
 def test_platforms_delegated(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     assert not schema_v3.validate(config)
+
+
+@pytest.mark.parametrize(
+    "config",
+    ["_model_platforms_valid_relaxed_section_data"],  # noqa: PT007
+    indirect=True,
+)
+def test_platforms_valid_relaxed(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    # A fully-specified platform (name, groups, children as a list, a network
+    # entry) with the relaxed command/cpus/memory types must validate cleanly.
+    assert not schema_v3.validate(config)
+
+
+@pytest.mark.parametrize(
+    "config",
+    ["_model_platforms_invalid_children_section_data"],  # noqa: PT007
+    indirect=True,
+)
+def test_platforms_invalid_children(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    # Guards the platforms.items $ref against regressing to an open object:
+    # children must be a list, here an int (name set so it is the only fault).
+    assert schema_v3.validate(config)

@@ -1,6 +1,6 @@
 ---
 # Steps provided by @saez0pub
-# Taken from https://github.com/ansible-community/molecule/issues/835
+# Taken from https://github.com/ansible/molecule/issues/835
 
 - name: Create /tmp/test1
   ansible.builtin.file:
