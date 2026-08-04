@@ -571,7 +571,7 @@ class Config:
             with open(base_config) as stream:  # noqa: PTH123
                 s = stream.read()
                 interpolated_config = self._interpolate(s, env, keep_string)
-                config_data = util.safe_load(interpolated_config)
+                config_data = util.safe_load(interpolated_config, base_config)
                 user_config_files.append((base_config, config_data))
 
         # Load molecule.yml
@@ -579,7 +579,7 @@ class Config:
             with open(self.molecule_file) as stream:  # noqa: PTH123
                 s = stream.read()
                 interpolated_config = self._interpolate(s, env, keep_string)
-                config_data = util.safe_load(interpolated_config)
+                config_data = util.safe_load(interpolated_config, self.molecule_file)
                 user_config_files.append((self.molecule_file, config_data))
 
         # Step 3: Debug log legacy keys that will be migrated
