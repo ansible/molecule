@@ -554,7 +554,7 @@ def create_border_footer(text: str = "", width: int = DEFAULT_BORDER_WIDTH) -> s
     return f"{A.BOX_BOTTOM_LEFT}{A.BOX_HORIZONTAL * (width - 1)}"
 
 
-def write_bordered_block(  # noqa: PLR0913
+def write_bordered_block(  # noqa: PLR0913,PLR0917
     stream: TextIO,
     content: str,
     title: str = "",

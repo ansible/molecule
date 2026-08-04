@@ -135,7 +135,7 @@ easier to refer to.
     ```
 
 ```bash title="Install"
-python3 -m pip install -U git+https://github.com/ansible-community/molecule
+python3 -m pip install -U git+https://github.com/ansible/molecule
 ```
 
 [pip]: https://pip.pypa.io/en/stable/installation/

@@ -43,10 +43,10 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-changelog = "https://github.com/ansible-community/molecule/releases"
+changelog = "https://github.com/ansible/molecule/releases"
 documentation = "https://docs.ansible.com/projects/molecule/"
-homepage = "https://github.com/ansible-community/molecule"
-repository = "https://github.com/ansible-community/molecule"
+homepage = "https://github.com/ansible/molecule"
+repository = "https://github.com/ansible/molecule"
 
 [project.scripts]
 molecule = "molecule.__main__:main"
@@ -422,6 +422,7 @@ external = [
 ]
 ignore = [
   "COM812",  # conflicts with ISC001 on format
+  "CPY001",  # no copyright header required
   "E501",  # line-too-long / rely on black
   "ISC001",  # conflicts with COM812 on format
   "S603",  # subprocess

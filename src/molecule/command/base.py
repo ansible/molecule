@@ -23,14 +23,12 @@ from __future__ import annotations
 
 import abc
 import collections
-import contextlib
 import copy
 import fnmatch
 import importlib
 import logging
 import re
 import shutil
-import subprocess
 
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -42,7 +40,7 @@ from wcmatch import glob
 
 from molecule import config, logger, text, util
 from molecule.constants import MOLECULE_COLLECTION_ROOT, MOLECULE_DEFAULT_SCENARIO_NAME
-from molecule.exceptions import MoleculeError, ScenarioFailureError
+from molecule.exceptions import ConfigLoadError, MoleculeError, ScenarioFailureError
 from molecule.reporting.definitions import ScenarioResults
 from molecule.reporting.rendering import report
 from molecule.scenarios import Scenarios
@@ -197,6 +195,9 @@ def execute_cmdline_scenarios(
         command_args: dict of command arguments, including the target
         ansible_args: Optional tuple of arguments to pass to the `ansible-playbook` command
         excludes: Name of scenarios to not run.
+
+    Raises:
+        ConfigLoadError: If the default scenario is present but cannot be parsed.
     """
     if excludes is None:
         excludes = []
@@ -229,6 +230,9 @@ def execute_cmdline_scenarios(
     default_config = None
     try:
         default_config = get_configs(args, command_args, ansible_args, default_glob)[0]
+    except ConfigLoadError:
+        # A default that is present but fails to parse is a real error, not absent.
+        raise
     except MoleculeError:
         # Use a generic logger for this since it's not tied to a specific scenario
         logging.getLogger(__name__).info("default scenario not found, disabling shared state.")
@@ -483,35 +487,6 @@ def execute_scenario(scenario: Scenario, *, shared_state: bool = False) -> None:
             scenario._remove_scenario_state_directory()  # noqa: SLF001
 
 
-def filter_ignored_scenarios(scenario_paths: list[str]) -> list[str]:
-    """Filter out candidate scenario paths that are ignored by git.
-
-    Args:
-        scenario_paths: List of candidate scenario paths.
-
-    Returns:
-        Filtered list of scenario paths.
-    """
-    command = ["git", "check-ignore", *scenario_paths]
-
-    with contextlib.suppress(subprocess.CalledProcessError, FileNotFoundError):
-        proc = subprocess.run(
-            args=command,
-            capture_output=True,
-            check=True,
-            text=True,
-            shell=False,
-        )
-
-    try:
-        ignored = proc.stdout.splitlines()
-        paths = [candidate for candidate in scenario_paths if str(candidate) not in ignored]
-    except NameError:
-        paths = scenario_paths
-
-    return paths
-
-
 def get_configs(
     args: MoleculeArgs,
     command_args: CommandArgs,
@@ -540,7 +515,6 @@ def get_configs(
         flags=wcmatch.pathlib.GLOBSTAR | wcmatch.pathlib.BRACE | wcmatch.pathlib.DOTGLOB,
     )
 
-    scenario_paths = filter_ignored_scenarios(scenario_paths)
     configs = [
         config.Config(
             molecule_file=util.abs_path(c),

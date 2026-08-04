@@ -210,12 +210,15 @@
           "type": "array"
         },
         "command": {
+          "items": {
+            "type": "string"
+          },
           "title": "Command",
-          "type": "string"
+          "type": ["string", "array"]
         },
         "cpus": {
           "title": "Cpus",
-          "type": "integer"
+          "type": "number"
         },
         "dockerfile": {
           "title": "Dockerfile",
@@ -256,7 +259,7 @@
         },
         "memory": {
           "title": "Memory",
-          "type": "integer"
+          "type": ["string", "integer"]
         },
         "name": {
           "title": "Name",
@@ -557,9 +560,6 @@
           "type": "array"
         },
         "directory": {
-          "items": {
-            "type": "string"
-          },
           "title": "Directory",
           "type": "string"
         },
@@ -586,7 +586,7 @@
       "type": "object"
     }
   },
-  "$id": "https://raw.githubusercontent.com/ansible-community/molecule/main/src/molecule/data/molecule.json",
+  "$id": "https://raw.githubusercontent.com/ansible/molecule/main/src/molecule/data/molecule.json",
   "$schema": "http://json-schema.org/draft-07/schema",
   "additionalProperties": false,
   "allOf": [
@@ -746,7 +746,7 @@
     },
     "platforms": {
       "items": {
-        "type": "object"
+        "$ref": "#/$defs/MoleculePlatformModel"
       },
       "title": "Platforms",
       "type": "array"
