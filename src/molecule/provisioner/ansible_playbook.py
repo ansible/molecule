@@ -39,6 +39,7 @@ from molecule.reporting.definitions import CompletionState
 
 if TYPE_CHECKING:
     from molecule.config import Config
+    from molecule.types import Options
 
 
 class AnsiblePlaybook:
@@ -67,7 +68,7 @@ class AnsiblePlaybook:
         if verify:
             self._env = util.merge_dicts(
                 self._config.verifier.env,
-                self._config.config["verifier"]["env"],
+                self._config.config_data["verifier"]["env"],
             )
         elif self._config.provisioner:
             self._env = self._config.provisioner.env
@@ -84,68 +85,99 @@ class AnsiblePlaybook:
         return logger.get_scenario_logger(__name__, self._config.scenario.name, step_name)
 
     def bake(self) -> None:
-        """Bake ``ansible-playbook`` or ``navigator run`` command so it's ready to execute.
-
-        Raises:
-            ValueError: when backend is incorrect.
-            RuntimeError: when ansible-playbook or ansible-navigator is not available.
-        """
-        if not self._playbook:
+        """Bake ``ansible-playbook`` or ``navigator run`` command so it's ready to execute."""
+        if not self._playbook or not self._config.provisioner:
             return
 
-        if self._config.provisioner:
-            # Pass a directory as inventory to let Ansible merge the multiple
-            # inventory sources located under
-            self.add_cli_arg("inventory", self._config.provisioner.inventory_directory)
-            options = util.merge_dicts(self._config.provisioner.options, self._cli)
-            verbose_flag = util.verbose_flag(options)
-            if self._playbook != self._config.provisioner.playbooks.converge:  # noqa: SIM102
-                if options.get("become"):
-                    del options["become"]
+        self.add_cli_arg("inventory", self._config.provisioner.inventory_directory)
+        options = util.merge_dicts(self._config.provisioner.options, self._cli)
+        verbose_flag = util.verbose_flag(options)
+        if self._playbook != self._config.provisioner.playbooks.converge:  # noqa: SIM102
+            if options.get("become"):
+                del options["become"]
 
-            all_args = [*self._config.provisioner.ansible_args, *self._config.ansible_args]
-            ansible_args = all_args if self._should_provide_args(self._config.action) else []
+        all_args = [*self._config.provisioner.ansible_args, *self._config.ansible_args]
+        ansible_args = all_args if self._should_provide_args(self._config.action) else []
 
-            backend = self._config.executor
+        backend = self._config.executor
+        self._validate_backend(backend)
+        self._ansible_command = self._build_command(
+            backend,
+            self._playbook,
+            options,
+            verbose_flag,
+            ansible_args,
+        )
 
-            if backend:
-                try:
-                    result = subprocess.run(
-                        [backend, "--version"],
-                        capture_output=True,
-                        text=True,
-                        check=True,
-                    )
-                    self._log.debug("%s version: %s", backend, result.stdout.strip())
-                except subprocess.CalledProcessError as exc:
-                    msg = f"{backend} is not available. Please ensure that it is installed."
-                    raise RuntimeError(msg) from exc
+    def _validate_backend(self, backend: str) -> None:
+        """Verify the backend executable is available.
 
-            if backend == "ansible-playbook":
-                self._ansible_command = [
-                    "ansible-playbook",
-                    *util.dict2args(options),
-                    *util.bool2args(verbose_flag),
-                    *ansible_args,
-                    self._playbook,  # must always go last
-                ]
+        Args:
+            backend: Name of the backend executable.
 
-            elif backend == "ansible-navigator":
-                self._ansible_command = [
-                    "ansible-navigator",
-                    "run",
-                    self._playbook,
-                    "--mode",
-                    "stdout",
-                    *util.dict2args(options),
-                    *util.bool2args(verbose_flag),
-                    *ansible_args,
-                ]
-            else:
-                msg = f"Unsupported backend: {backend}"
-                raise ValueError(msg)
+        Raises:
+            RuntimeError: when the backend is not available.
+        """
+        if not backend:
+            return
+        try:
+            result = subprocess.run(
+                [backend, "--version"],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            self._log.debug("%s version: %s", backend, result.stdout.strip())
+        except subprocess.CalledProcessError as exc:
+            msg = f"{backend} is not available. Please ensure that it is installed."
+            raise RuntimeError(msg) from exc
 
-    def execute(self, action_args: list[str] | None = None) -> str:  # noqa: ARG002
+    def _build_command(
+        self,
+        backend: str,
+        playbook: str,
+        options: Options,
+        verbose_flag: list[str],
+        ansible_args: list[str],
+    ) -> list[str]:
+        """Build the ansible command list for the given backend.
+
+        Args:
+            backend: The executor backend name.
+            playbook: Path to the playbook file.
+            options: Merged provisioner options.
+            verbose_flag: Verbose flag options.
+            ansible_args: Additional ansible arguments.
+
+        Returns:
+            The assembled command list.
+
+        Raises:
+            ValueError: when backend is not supported.
+        """
+        if backend == "ansible-playbook":
+            return [
+                "ansible-playbook",
+                *util.dict2args(options),
+                *util.bool2args(verbose_flag),
+                *ansible_args,
+                playbook,
+            ]
+        if backend == "ansible-navigator":
+            return [
+                "ansible-navigator",
+                "run",
+                playbook,
+                "--mode",
+                "stdout",
+                *util.dict2args(options),
+                *util.bool2args(verbose_flag),
+                *ansible_args,
+            ]
+        msg = f"Unsupported backend: {backend}"
+        raise ValueError(msg)
+
+    def execute(self, action_args: list[str] | None = None) -> str:
         """Execute ``ansible-playbook`` or ``ansible-navigator run``.
 
         Args:
@@ -157,6 +189,7 @@ class AnsiblePlaybook:
         Raises:
             ScenarioFailureError: when Ansible returns nonzero code.
         """
+        del action_args
         if not self._ansible_command:
             self.bake()
 

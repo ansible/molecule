@@ -55,11 +55,10 @@ def drivers(config: Config | None = None) -> dict[str, Driver]:
             try:
                 driver = plugin(config)
                 plugins[driver.name] = driver
-            except (MoleculeError, TypeError) as e:
-                LOG.error(  # noqa: TRY400
-                    "Failed to load %s driver: %s",
+            except (MoleculeError, TypeError):
+                LOG.exception(
+                    "Failed to load %s driver",
                     pm.get_name(plugin),
-                    str(e),
                 )
         else:
             msg = f"Skipped loading plugin class {plugin} because is not a subclass of Driver."
@@ -91,8 +90,8 @@ def verifiers(config: Config | None = None) -> dict[str, Verifier]:
             if issubclass(plugin_class, Verifier):
                 plugin = plugin_class(config)
                 plugins[plugin.name] = plugin
-        except Exception as e:  # noqa: BLE001, PERF203
-            LOG.error("Failed to load %s driver: %s", plugin_class.__name__, str(e))  # noqa: TRY400
+        except Exception:  # noqa: PERF203
+            LOG.exception("Failed to load %s verifier", plugin_class.__name__)
     return plugins
 
 

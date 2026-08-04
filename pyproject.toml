@@ -29,7 +29,7 @@ classifiers = [
 ]
 dependencies = [
   "ansible-compat>=25.1.4",
-  "ansible-core>=2.15.0",
+  "ansible-core>=2.15.0,!=2.17.*",
   "click>=8.0,<9",
   "enrich>=1.2.7",
   "jinja2>=2.11.3",
@@ -43,10 +43,10 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-changelog = "https://github.com/ansible-community/molecule/releases"
+changelog = "https://github.com/ansible/molecule/releases"
 documentation = "https://docs.ansible.com/projects/molecule/"
-homepage = "https://github.com/ansible-community/molecule"
-repository = "https://github.com/ansible-community/molecule"
+homepage = "https://github.com/ansible/molecule"
+repository = "https://github.com/ansible/molecule"
 
 [project.scripts]
 molecule = "molecule.__main__:main"
@@ -422,6 +422,7 @@ external = [
 ]
 ignore = [
   "COM812",  # conflicts with ISC001 on format
+  "CPY001",  # no copyright header required
   "E501",  # line-too-long / rely on black
   "ISC001",  # conflicts with COM812 on format
   "S603",  # subprocess
@@ -669,6 +670,7 @@ TERM = "xterm-256color"
 [tool.uv]
 constraint-dependencies = [
   "ansible-core>=2.20.0.dev0; python_version >= '3.14'",
+  "cairosvg>=2.9.0",
 ]
 default-groups = ["dev", "docs", "lint", "pkg"]
 package = true

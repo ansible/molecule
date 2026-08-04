@@ -84,7 +84,7 @@
       "type": "object"
     }
   },
-  "$id": "https://raw.githubusercontent.com/ansible-community/molecule/main/src/molecule/driver/driver.json",
+  "$id": "https://raw.githubusercontent.com/ansible/molecule/main/src/molecule/data/driver.json",
   "$schema": "http://json-schema.org/draft-07/schema",
   "examples": ["molecule/*/molecule.yml"],
   "properties": {

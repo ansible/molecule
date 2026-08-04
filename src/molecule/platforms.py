@@ -48,13 +48,13 @@ class Platforms:
             platform_name: One platform to target only, defaults to None.
         """
         if platform_name:
-            config.config["platforms"] = util._filter_platforms(  # noqa: SLF001
-                config.config,
+            config.config_data["platforms"] = util._filter_platforms(  # noqa: SLF001
+                config.config_data,
                 platform_name,
             )
         if parallelize_platforms:
-            config.config["platforms"] = util._parallelize_platforms(  # noqa: SLF001
-                config.config,
+            config.config_data["platforms"] = util._parallelize_platforms(  # noqa: SLF001
+                config.config_data,
                 config._run_uuid,  # noqa: SLF001
             )
         self._config = config
@@ -66,4 +66,4 @@ class Platforms:
         Returns:
             The list of platforms in the config.
         """
-        return self._config.config["platforms"]
+        return self._config.config_data["platforms"]

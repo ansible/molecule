@@ -38,7 +38,7 @@ if TYPE_CHECKING:
 
     from typing_extensions import Self
 
-    from molecule.reporting.definitions import ScenariosResults
+    from molecule.reporting.definitions import ScenarioResults, ScenariosResults
 
 
 def should_do_markup() -> bool:
@@ -99,13 +99,12 @@ def get_line_style(line: str) -> str:
         ANSI escape sequence from start of line without reset codes, or empty string if none
     """
     # Match ANSI escape sequences at the start of the line
-    # Patterns: \x1b[...m or \033[...m
-    match = re.match(r"^(\x1b\[[0-9;]*m|\033\[[0-9;]*m)", line)
+    match = re.match(r"^(\x1b\[[0-9;]*m)", line)
     if match:
         escape_seq = match.group(1)
 
-        # Skip pure reset sequences (just \x1b[0m)
-        if escape_seq in ["\x1b[0m", "\033[0m"]:
+        # Skip pure reset sequences
+        if escape_seq == "\x1b[0m":
             return ""
 
         # Extract color from reset+color sequences (e.g., \x1b[0;32m -> \x1b[32m)
@@ -186,8 +185,7 @@ class AnsiOutput:
         processed = re.sub(r"\[([^/\]]+)\]", replace_tag, text)
 
         # Process closing tags last (convert [/] to reset)
-        result = re.sub(r"\[/\]", A.RESET, processed)
-        return str(result)
+        return processed.replace("[/]", A.RESET)
 
     def format_log_level(self, level_name: str) -> tuple[str, str]:
         """Format a log level returning both colored and plain versions.
@@ -315,77 +313,80 @@ class AnsiOutput:
         Returns:
             Formatted recap string with ANSI colors if enabled.
         """
-        # Import here to avoid circular imports
-        from molecule.reporting.definitions import CompletionState  # noqa: PLC0415
-
         if not results:
             return ""
 
         lines = []
 
-        # Header with bold and underline styling, padded to 79 characters
         header_text = "SCENARIO RECAP"
         header_padded = f"{header_text:<79}"
         header = self.process_markup(f"[bold][underline]{header_padded}[/]")
         lines.append(header)
 
-        # Process each scenario
         for scenario_result in results:
             if not scenario_result.actions:
                 continue
-
-            scenario_name = scenario_result.name
-
-            # Count completion states across all actions
-            state_counts = dict.fromkeys(SCENARIO_RECAP_STATE_ORDER, 0)
-            total_actions = 0
-
-            for action_result in scenario_result.actions:
-                if action_result.states:
-                    # Count all individual states for this action
-                    for state in action_result.states:
-                        if state.state in state_counts:
-                            state_counts[state.state] += 1
-                total_actions += 1  # One action regardless of how many states it has
-
-            # Create plain text version for length calculations
-            scenario_plain = scenario_name
-
-            # Pad scenario name to 26 characters (like Ansible's host field)
-            scenario_padded_plain = f"{scenario_plain:<26}"
-
-            # Apply colors to the padded plain text
-            scenario_colored = self.process_markup(f"[scenario]{scenario_padded_plain}[/]")
-
-            # Format counts with fixed field widths to ensure alignment
-            # Only apply colors if count > 0 (matching Ansible behavior)
-            actions_part = (
-                self.process_markup(f"[action]actions={total_actions}[/]")
-                if total_actions > 0
-                else f"actions={total_actions}"
-            )
-
-            # Generate state parts dynamically using CompletionState colors
-            state_parts = []
-            for state_name in SCENARIO_RECAP_STATE_ORDER:
-                count = state_counts[state_name]
-
-                # Get the color tag from the CompletionState
-                state_obj = getattr(CompletionState, state_name)
-                color_tag = state_obj.color.tag
-
-                if count > 0:
-                    state_part = self.process_markup(f"[{color_tag}]{state_name}={count}[/]")
-                else:
-                    state_part = f"{state_name}={count}"
-
-                state_parts.append(state_part)
-
-            # Build line with consistent spacing to match expected format
-            line = f"{scenario_colored}: {actions_part}  " + "  ".join(state_parts)
-            lines.append(line)
+            lines.append(self._format_recap_line(scenario_result))
 
         return "\n".join(lines)
+
+    def _format_recap_line(self, scenario_result: ScenarioResults) -> str:
+        """Format a single scenario recap line.
+
+        Args:
+            scenario_result: Results for one scenario.
+
+        Returns:
+            Formatted line with ANSI colors.
+        """
+        from molecule.reporting.definitions import CompletionState  # noqa: PLC0415
+
+        state_counts, total_actions = self._count_states(scenario_result)
+
+        scenario_padded = f"{scenario_result.name:<26}"
+        scenario_colored = self.process_markup(f"[scenario]{scenario_padded}[/]")
+
+        actions_part = (
+            self.process_markup(f"[action]actions={total_actions}[/]")
+            if total_actions > 0
+            else f"actions={total_actions}"
+        )
+
+        state_parts = []
+        for state_name in SCENARIO_RECAP_STATE_ORDER:
+            count = state_counts[state_name]
+            state_obj = getattr(CompletionState, state_name)
+            color_tag = state_obj.color.tag
+            state_part = (
+                self.process_markup(f"[{color_tag}]{state_name}={count}[/]")
+                if count > 0
+                else f"{state_name}={count}"
+            )
+            state_parts.append(state_part)
+
+        return f"{scenario_colored}: {actions_part}  " + "  ".join(state_parts)
+
+    @staticmethod
+    def _count_states(scenario_result: ScenarioResults) -> tuple[dict[str, int], int]:
+        """Count completion states and total actions for a scenario.
+
+        Args:
+            scenario_result: Results for one scenario.
+
+        Returns:
+            Tuple of (state_counts dict, total_actions count).
+        """
+        state_counts = dict.fromkeys(SCENARIO_RECAP_STATE_ORDER, 0)
+        total_actions = 0
+
+        for action_result in scenario_result.actions:
+            if action_result.states:
+                for state in action_result.states:
+                    if state.state in state_counts:
+                        state_counts[state.state] += 1
+            total_actions += 1
+
+        return state_counts, total_actions
 
 
 class BorderedStream:
@@ -415,81 +416,90 @@ class BorderedStream:
         if not text:
             return 0
 
-        # Add to buffer first for getvalue()
         self.buffer.write(text)
 
-        # Concatenate new text with existing partial line FIRST, then split
         remaining = self.partial_line + text
         lines = remaining.split("\n")
 
-        # Process all complete lines
+        border_prefix_width = len("  │ ")
+        terminal_width = shutil.get_terminal_size().columns
+        first_line_width = terminal_width - border_prefix_width
+        continuation_width = first_line_width - 2
+
         for line in lines[:-1]:
-            # Calculate effective width accounting for border prefix
-            terminal_width = shutil.get_terminal_size().columns
-            border_prefix_width = len("  │ ")  # 4 characters: "  │ "
-            continuation_indent_width = 2  # 2 additional spaces for continuation lines
-
-            # Width available for first line
-            first_line_width = terminal_width - border_prefix_width
-            # Width available for continuation lines (less space due to indentation)
-            continuation_width = terminal_width - border_prefix_width - continuation_indent_width
-
             if len(line) <= first_line_width:
-                # Line fits, output directly
-                line_style = get_line_style(line)
-                styled_prefix = f"{A.DIM}{line_style}{A.BOX_VERTICAL}{A.RESET} "
-                self.target_stream.write(f"  {styled_prefix}{line}\n")
+                self._write_single_line(line)
             else:
-                # Extract original line style to preserve color across wrapped lines
-                original_style = get_line_style(line)
+                self._write_wrapped_line(line, first_line_width, continuation_width)
 
-                # Strip ANSI codes for accurate width calculation
-                clean_line = re.sub(r"\x1b\[[0-9;]*m", "", line)
-
-                # Manual wrapping to handle different widths for first vs continuation lines
-                wrapped_lines = []
-                remaining_text = clean_line
-                is_first = True
-
-                while remaining_text:
-                    # Use appropriate width for this line
-                    current_width = first_line_width if is_first else continuation_width
-
-                    if len(remaining_text) <= current_width:
-                        # Remaining text fits in current line
-                        wrapped_lines.append(remaining_text)
-                        break
-                    # Find best break point within width limit
-                    break_point = remaining_text.rfind(" ", 0, current_width)
-                    if break_point == -1:
-                        # No space found, break at width limit
-                        break_point = current_width
-
-                    # Add this segment
-                    wrapped_lines.append(remaining_text[:break_point])
-                    remaining_text = remaining_text[break_point:].lstrip()
-                    is_first = False
-
-                # Output each wrapped line with proper styling and indentation
-                for i, wrapped_line in enumerate(wrapped_lines):
-                    _wrapped_line = wrapped_line
-                    # Add 2 spaces indentation to continuation lines (all except first)
-                    if i > 0:
-                        _wrapped_line = "  " + _wrapped_line
-
-                    # Apply original line style and color to maintain consistency
-                    styled_prefix = f"{A.DIM}{original_style}{A.BOX_VERTICAL}{A.RESET} "
-                    # Re-apply original color to the content
-                    if original_style:
-                        colored_content = f"{original_style}{_wrapped_line}{A.RESET}"
-                    else:
-                        colored_content = _wrapped_line
-                    self.target_stream.write(f"  {styled_prefix}{colored_content}\n")
-
-        # Store the remaining partial line
         self.partial_line = lines[-1]
-
         return len(text)
+
+    def _write_single_line(self, line: str) -> None:
+        """Write a line that fits within the terminal width.
+
+        Args:
+            line: Complete line to write.
+        """
+        line_style = get_line_style(line)
+        styled_prefix = f"{A.DIM}{line_style}{A.BOX_VERTICAL}{A.RESET} "
+        self.target_stream.write(f"  {styled_prefix}{line}\n")
+
+    def _write_wrapped_line(
+        self,
+        line: str,
+        first_line_width: int,
+        continuation_width: int,
+    ) -> None:
+        """Wrap and write a long line with proper styling.
+
+        Args:
+            line: Long line that needs wrapping.
+            first_line_width: Max width for the first segment.
+            continuation_width: Max width for continuation segments.
+        """
+        original_style = get_line_style(line)
+        clean_line = re.sub(r"\x1b\[[0-9;]*m", "", line)
+        wrapped_lines = self._split_to_width(clean_line, first_line_width, continuation_width)
+
+        styled_prefix = f"{A.DIM}{original_style}{A.BOX_VERTICAL}{A.RESET} "
+        for i, segment in enumerate(wrapped_lines):
+            content = ("  " + segment) if i > 0 else segment
+            colored = f"{original_style}{content}{A.RESET}" if original_style else content
+            self.target_stream.write(f"  {styled_prefix}{colored}\n")
+
+    @staticmethod
+    def _split_to_width(
+        text: str,
+        first_width: int,
+        continuation_width: int,
+    ) -> list[str]:
+        """Split text into segments respecting width limits.
+
+        Args:
+            text: Plain text to split.
+            first_width: Width limit for the first segment.
+            continuation_width: Width limit for subsequent segments.
+
+        Returns:
+            List of text segments.
+        """
+        segments: list[str] = []
+        remaining = text
+        current_width = first_width
+
+        while remaining:
+            if len(remaining) <= current_width:
+                segments.append(remaining)
+                break
+            break_point = remaining.rfind(" ", 0, current_width)
+            if break_point == -1:
+                break_point = current_width
+            segments.append(remaining[:break_point])
+            remaining = remaining[break_point:].lstrip()
+            current_width = continuation_width
+
+        return segments
 
     def flush(self) -> None:
         """Flush the stream."""
@@ -539,12 +549,12 @@ def create_border_footer(text: str = "", width: int = DEFAULT_BORDER_WIDTH) -> s
     """
     if text:
         footer_text = f" {text} "
-        padding = width - len(footer_text) - 2  # 2 = corner + dash
+        padding = width - len(footer_text) - 2
         return f"{A.BOX_BOTTOM_LEFT}{A.BOX_HORIZONTAL}{footer_text}{A.BOX_HORIZONTAL * padding}"
     return f"{A.BOX_BOTTOM_LEFT}{A.BOX_HORIZONTAL * (width - 1)}"
 
 
-def write_bordered_block(  # noqa: PLR0913
+def write_bordered_block(  # noqa: PLR0913,PLR0917
     stream: TextIO,
     content: str,
     title: str = "",
@@ -629,7 +639,7 @@ class CommandBorders:
         # Add blank line with pipe
         self.original_stderr.write(f"  {A.DIM}{A.BOX_VERTICAL}{A.RESET} \n")
 
-    def _format_command_lines(  # noqa: C901, PLR0912
+    def _format_command_lines(
         self,
         cmd: str | list[str],
         max_width: int | None = None,
@@ -643,30 +653,38 @@ class CommandBorders:
         Returns:
             List of formatted command lines
         """
-        indent = "  "
         parts = split_command_to_strings(cmd)
         if not parts:
             return [""]
 
         decor = len("  | ")
-
-        max_width = (
+        effective_width = (
             shutil.get_terminal_size().columns - decor if max_width is None else max_width - decor
         )
 
-        lines, i = [], 0
+        lines = self._group_command_parts(parts)
+        return self._wrap_lines(lines, effective_width)
 
-        # First line: exec + first param/flag/value
+    @staticmethod
+    def _group_command_parts(parts: list[str]) -> list[str]:
+        """Group command parts into logical lines (flags with their values).
+
+        Args:
+            parts: Split command parts.
+
+        Returns:
+            Grouped command lines before wrapping.
+        """
+        lines: list[str] = []
+        i = 0
+
+        # First line: executable + first param/flag/value
         first = parts[i]
         i += 1
         if i < len(parts):
-            if parts[i].startswith("-"):
-                first += " " + parts[i]
-                i += 1
-                if i < len(parts) and not parts[i].startswith("-"):
-                    first += " " + parts[i]
-                    i += 1
-            else:
+            first += " " + parts[i]
+            i += 1
+            if parts[i - 1].startswith("-") and i < len(parts) and not parts[i].startswith("-"):
                 first += " " + parts[i]
                 i += 1
         lines.append(first)
@@ -677,24 +695,32 @@ class CommandBorders:
             if part.startswith("-") and i + 1 < len(parts) and not parts[i + 1].startswith("-"):
                 lines.append(part + " " + parts[i + 1])
                 i += 2
-            elif not part.startswith("-"):
-                lines.append(part)
-                i += 1
             else:
                 lines.append(part)
                 i += 1
 
-        # Now wrap all lines
-        wrapped = []
+        return lines
+
+    @staticmethod
+    def _wrap_lines(lines: list[str], max_width: int) -> list[str]:
+        """Wrap lines to fit within max_width, indenting continuation lines.
+
+        Args:
+            lines: Grouped command lines.
+            max_width: Maximum character width per line.
+
+        Returns:
+            Wrapped and indented lines.
+        """
+        indent = "  "
+        wrapped: list[str] = []
         for i, line in enumerate(lines):
             while len(line) > max_width:
                 k = line.rfind(" ", 0, max_width)
-                wrapped.append(line[: k if k != -1 else max_width])
-                line = line[(k + 1) if k != -1 else max_width :]  # noqa: PLW2901
-            if i > 0:
-                wrapped.append(indent + line)
-            else:
-                wrapped.append(line)
+                split_at = k if k != -1 else max_width
+                wrapped.append(line[:split_at])
+                line = line[split_at + 1 :] if k != -1 else line[split_at:]  # noqa: PLW2901
+            wrapped.append(indent + line if i > 0 else line)
         return wrapped
 
     def _print_footer(self, return_code: int) -> None:
@@ -750,56 +776,94 @@ def print_matrix(matrix_data: dict[str, list[str]], config: object | None = None
         config: Molecule config object to resolve playbook file paths.
     """
     output = AnsiOutput()
-
-    # Get subcommand name for dynamic header
-    subcommand = "test"  # default fallback
-    if config and hasattr(config, "subcommand"):
-        subcommand = config.subcommand
+    subcommand = _get_subcommand(config)
 
     header = f"{subcommand.title()} matrix"
     sys.stdout.write(f"\n{header}\n")
     sys.stdout.write("-" * len(header) + "\n")
 
     for scenario_name, actions in matrix_data.items():
-        # Print scenario name in green
         scenario_markup = f"[scenario]{scenario_name}[/]"
         sys.stdout.write(output.process_markup(scenario_markup) + "\n")
 
         for i, action in enumerate(actions):
-            # Use molecule's existing playbook resolution
-            playbook_path = None
-            if config and hasattr(config, "provisioner") and getattr(config, "provisioner", None):
-                # Use public interface via property instead of private method
-                provisioner = config.provisioner
-                if hasattr(provisioner, "playbooks"):
-                    playbook_property = getattr(provisioner.playbooks, action, None)
-                    if playbook_property:
-                        playbook_path = playbook_property
-
-            # Choose tree character: └─ for last item, ├─ for others
-            is_last = i == len(actions) - 1
-            tree_char = (
-                f"{A.BOX_BOTTOM_LEFT}{A.BOX_HORIZONTAL}"
-                if is_last
-                else f"{A.BOX_LEFT_MIDDLE}{A.BOX_HORIZONTAL}"
+            playbook_path = _resolve_playbook_path(config, action)
+            line = _format_matrix_action(
+                output,
+                action,
+                playbook_path,
+                subcommand,
+                is_last=(i == len(actions) - 1),
             )
-
-            # Format action with file path or "Missing"
-            action_markup = f"[action]{action}[/]"
-            if playbook_path and Path(playbook_path).exists():
-                # Show file path in dim
-                file_info = f"[dim]{playbook_path}[/]"
-                line = f"  {tree_char} {output.process_markup(action_markup)} {output.process_markup(file_info)}"
-            else:
-                # Show missing message consistent with rest of molecule
-                subcommand = "test"  # default fallback
-                if config and hasattr(config, "subcommand"):
-                    subcommand = config.subcommand
-                missing_info = (
-                    f"[dim]Missing playbook (remove from {subcommand}_sequence to suppress)[/]"
-                )
-                line = f"  {tree_char} {output.process_markup(action_markup)} {output.process_markup(missing_info)}"
-
             sys.stdout.write(line + "\n")
 
-        sys.stdout.write("\n")  # Empty line between scenarios
+        sys.stdout.write("\n")
+
+
+def _get_subcommand(config: object | None) -> str:
+    """Extract the subcommand name from config.
+
+    Args:
+        config: Molecule config object.
+
+    Returns:
+        Subcommand name or "test" as fallback.
+    """
+    if config and hasattr(config, "subcommand"):
+        return str(config.subcommand)
+    return "test"
+
+
+def _resolve_playbook_path(config: object | None, action: str) -> str | None:
+    """Resolve playbook file path for an action from config.
+
+    Args:
+        config: Molecule config object.
+        action: Action name to look up.
+
+    Returns:
+        Playbook path string or None if not resolvable.
+    """
+    if not config or not hasattr(config, "provisioner"):
+        return None
+    provisioner = getattr(config, "provisioner", None)
+    if not provisioner or not hasattr(provisioner, "playbooks"):
+        return None
+    return getattr(provisioner.playbooks, action, None)
+
+
+def _format_matrix_action(
+    output: AnsiOutput,
+    action: str,
+    playbook_path: str | None,
+    subcommand: str,
+    *,
+    is_last: bool,
+) -> str:
+    """Format a single action line in the test matrix.
+
+    Args:
+        output: AnsiOutput instance for markup processing.
+        action: Action name.
+        playbook_path: Resolved playbook path or None.
+        is_last: Whether this is the last action in the list.
+        subcommand: Current subcommand name.
+
+    Returns:
+        Formatted line string.
+    """
+    tree_char = (
+        f"{A.BOX_BOTTOM_LEFT}{A.BOX_HORIZONTAL}"
+        if is_last
+        else f"{A.BOX_LEFT_MIDDLE}{A.BOX_HORIZONTAL}"
+    )
+    action_markup = f"[action]{action}[/]"
+    action_str = output.process_markup(action_markup)
+
+    if playbook_path and Path(playbook_path).exists():
+        info = output.process_markup(f"[dim]{playbook_path}[/]")
+    else:
+        msg = f"[dim]Missing playbook (remove from {subcommand}_sequence to suppress)[/]"
+        info = output.process_markup(msg)
+
+    return f"  {tree_char} {action_str} {info}"

@@ -15,6 +15,8 @@ from molecule.worker import run_one_scenario, run_scenarios_parallel, validate_w
 
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from pytest_mock import MockerFixture
 
     from molecule.types import CommandArgs, MoleculeArgs
@@ -283,7 +285,7 @@ def _make_mock_scenarios(
         scenario.config.args = {}
         scenario.config.command_args = {"subcommand": "test"}
         scenario.config.ansible_args = ()
-        scenario.config.config = {"prerun": prerun, "role_name_check": 0}
+        scenario.config.config_data = {"prerun": prerun, "role_name_check": 0}
         scenario.config.scenario.name = name
         scenario.ephemeral_directory = f"/tmp/{name}"  # noqa: S108
         scenario_list.append(scenario)
@@ -359,7 +361,7 @@ def test_parallel_collects_results(mocker: MockerFixture) -> None:
 
     run_scenarios_parallel(scenarios, command_args, None, num_workers=2)
 
-    scenarios.results.append.assert_called_with(result)  # pylint: disable=no-member
+    scenarios.results.append.assert_called_with(result)
 
 
 def test_parallel_fail_fast_on_failure(mocker: MockerFixture) -> None:
@@ -394,7 +396,7 @@ def test_parallel_fail_fast_on_failure(mocker: MockerFixture) -> None:
     assert "Scenarios failed" in exc_info.value.message
 
     mock_pool.shutdown.assert_called_once_with(wait=True, cancel_futures=True)
-    scenarios.results.append.assert_called_with(failed_result)  # pylint: disable=no-member
+    scenarios.results.append.assert_called_with(failed_result)
 
 
 def test_parallel_continue_on_failure(mocker: MockerFixture) -> None:
@@ -427,4 +429,76 @@ def test_parallel_continue_on_failure(mocker: MockerFixture) -> None:
     assert "Scenarios failed" in exc_info.value.message
 
     mock_pool.shutdown.assert_not_called()
-    assert scenarios.results.append.call_count >= 2  # noqa: PLR2004  # pylint: disable=no-member
+    assert scenarios.results.append.call_count >= 2  # noqa: PLR2004
+
+
+def test_parallel_prerun_executes_when_enabled(mocker: MockerFixture) -> None:
+    """Prerun steps are executed when prerun is enabled in scenario config.
+
+    Args:
+        mocker: Pytest mocker fixture.
+    """
+    mocker.patch("molecule.worker.execute_subcommand_default", return_value=None)
+    mocker.patch("molecule.worker.as_completed", return_value=[])
+    _make_mock_pool(mocker)
+
+    scenarios = _make_mock_scenarios(["s1", "s2"], prerun=True)
+
+    command_args: CommandArgs = {"workers": 2, "subcommand": "test"}
+    run_scenarios_parallel(scenarios, command_args, None, num_workers=2)
+
+    for scenario in scenarios.all:
+        scenario.config.runtime.prepare_environment.assert_called_once_with(
+            install_local=True,
+            role_name_check=0,
+        )
+
+
+def test_parallel_reset_removes_ephemeral_dirs(
+    mocker: MockerFixture,
+    tmp_path: Path,
+) -> None:
+    """The reset subcommand removes scenario ephemeral directories.
+
+    Args:
+        mocker: Pytest mocker fixture.
+        tmp_path: Pytest temporary path fixture.
+    """
+    mocker.patch("molecule.worker.execute_subcommand_default", return_value=None)
+    _make_mock_pool(mocker)
+
+    scenarios = _make_mock_scenarios(["reset_me"])
+    eph_dir = tmp_path / "reset_me"
+    eph_dir.mkdir()
+    scenarios.all[0].ephemeral_directory = str(eph_dir)
+
+    command_args: CommandArgs = {"workers": 2, "subcommand": "reset"}
+    run_scenarios_parallel(scenarios, command_args, None, num_workers=2)
+
+    assert not eph_dir.exists()
+
+
+def test_parallel_worker_crash_handled(mocker: MockerFixture) -> None:
+    """A future that raises an exception is handled gracefully.
+
+    Args:
+        mocker: Pytest mocker fixture.
+    """
+    mocker.patch("molecule.worker.execute_subcommand_default", return_value=None)
+
+    future = MagicMock()
+    future.result.side_effect = RuntimeError("segfault in worker")
+    mocker.patch("molecule.worker.as_completed", return_value=[future])
+
+    _make_mock_pool(mocker, futures=[future])
+
+    scenarios = _make_mock_scenarios(["broken_worker"])
+    command_args: CommandArgs = {
+        "workers": 2,
+        "continue_on_failure": False,
+        "subcommand": "test",
+    }
+
+    with pytest.raises(ScenarioFailureError) as exc_info:
+        run_scenarios_parallel(scenarios, command_args, None, num_workers=2)
+    assert "broken_worker" in exc_info.value.message

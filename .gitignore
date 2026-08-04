@@ -174,8 +174,7 @@ cython_debug/
 
 node_modules/
 
-# There is a test for this, otherwise unknown
-# tests/b_functional/test_command.py test_w_gitignore
+# Used by tests/integration/test_command.py::test_gitignored_scenario_is_discovered
 tests/fixtures/resources/.extensions/
 
 # docs output

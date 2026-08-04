@@ -25,6 +25,7 @@ import inspect
 import os
 
 from abc import ABC, abstractmethod
+from functools import total_ordering
 from importlib.metadata import version
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -39,6 +40,7 @@ if TYPE_CHECKING:
     from molecule.types import DriverOptions
 
 
+@total_ordering
 class Driver(ABC):
     """Driver Class.
 
@@ -161,7 +163,7 @@ class Driver(ABC):
         Returns:
             Dictionary of driver options.
         """
-        return self._config.config["driver"]["options"]
+        return self._config.config_data["driver"]["options"]
 
     @property
     def instance_config(self) -> str:
@@ -184,8 +186,8 @@ class Driver(ABC):
         Returns:
             List of ssh connection options.
         """
-        if self._config.config["driver"]["ssh_connection_options"]:
-            return self._config.config["driver"]["ssh_connection_options"]
+        if self._config.config_data["driver"]["ssh_connection_options"]:
+            return self._config.config_data["driver"]["ssh_connection_options"]
         return self.default_ssh_connection_options
 
     @property
@@ -195,7 +197,7 @@ class Driver(ABC):
         Returns:
             List of safe files.
         """
-        return self.default_safe_files + self._config.config["driver"]["safe_files"]
+        return self.default_safe_files + self._config.config_data["driver"]["safe_files"]
 
     @property
     def delegated(self) -> bool:
@@ -372,14 +374,13 @@ class Driver(ABC):
             return str(p)
         return None
 
-    def reset(self) -> None:
+    def reset(self) -> None:  # noqa: B027
         """Release all resources owned by molecule.
 
         This is a destructive operation that would affect all resources managed
         by molecule, regardless the scenario name.  Molecule will use metadata
         like labels or tags to annotate resources allocated by it.
         """
-        return
 
     @property
     def required_collections(self) -> dict[str, str]:

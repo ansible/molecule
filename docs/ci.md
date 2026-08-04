@@ -344,7 +344,7 @@ pipeline {
     ```
 
     This is the cleaner of the current choices. See
-    [issue1567_comment](https://github.com/ansible-community/molecule/issues/1567#issuecomment-436876722)
+    [issue1567_comment](https://github.com/ansible/molecule/issues/1567#issuecomment-436876722)
     for additional detail.
 
 ## Tox

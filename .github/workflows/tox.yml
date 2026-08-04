@@ -32,3 +32,15 @@ jobs:
       other_names_also: |
         collection
         eco
+      # Temporary: ubuntu-24.04 image 20260726.254 ships Podman 5.8.4 but leaves
+      # Podman pointed at /usr/bin/crun 1.14.1 while /usr/local/bin/crun 1.28 exists.
+      # Promote into team-devtools tox.yml if this unblocks Linux integration tests.
+      # See https://github.com/actions/runner-images/issues/14473
+      run_pre: |
+        set -euxo pipefail
+        if [[ "$(uname -s)" == Linux && -x /usr/local/bin/crun ]]; then
+          sudo mkdir -p /etc/containers/containers.conf.d
+          printf '%s\n' '[engine.runtimes]' 'crun = ["/usr/local/bin/crun"]' \
+            | sudo tee /etc/containers/containers.conf.d/99-gha-crun.conf >/dev/null
+          podman info --format '{{.Host.OCIRuntime.Path}}' || true
+        fi

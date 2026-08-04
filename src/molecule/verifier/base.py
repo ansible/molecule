@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import abc
 
+from functools import total_ordering
 from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict
 
@@ -79,6 +80,7 @@ class Schema(TypedDict):
     verifier: VerifierDef
 
 
+@total_ordering
 class Verifier(abc.ABC):
     """Verifier Base Class."""
 
@@ -140,7 +142,7 @@ class Verifier(abc.ABC):
         Returns:
             Whether the verifier is enabled.
         """
-        return self._config.config["verifier"]["enabled"]
+        return self._config.config_data["verifier"]["enabled"]
 
     @property
     def directory(self) -> str:
@@ -152,7 +154,7 @@ class Verifier(abc.ABC):
         return str(
             Path(
                 self._config.scenario.directory,
-                self._config.config["verifier"].get("directory", "tests"),
+                self._config.config_data["verifier"].get("directory", "tests"),
             ),
         )
 
@@ -165,7 +167,7 @@ class Verifier(abc.ABC):
         """
         return util.merge_dicts(
             self.default_options,
-            self._config.config["verifier"]["options"],
+            self._config.config_data["verifier"]["options"],
         )
 
     @property
@@ -178,7 +180,7 @@ class Verifier(abc.ABC):
         """
         return util.merge_dicts(
             self.default_env,
-            self._config.config["verifier"]["env"],
+            self._config.config_data["verifier"]["env"],
         )
 
     def __eq__(self, other: object) -> bool:

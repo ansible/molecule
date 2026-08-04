@@ -29,21 +29,21 @@ from molecule import config, scenarios
 @pytest.fixture
 def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202
     config_instance_1 = copy.deepcopy(config_instance)
-    config_instance_1.config["scenario"]["name"] = "two"
+    config_instance_1.config_data["scenario"]["name"] = "two"
     config_instance_1.molecule_file = config_instance_1.molecule_file.replace(
         "default",
         "02_foo",
     )
 
     config_instance_2 = copy.deepcopy(config_instance)
-    config_instance_2.config["scenario"]["name"] = "one"
+    config_instance_2.config_data["scenario"]["name"] = "one"
     config_instance_2.molecule_file = config_instance_2.molecule_file.replace(
         "default",
         "01_foo",
     )
 
     config_instance_3 = copy.deepcopy(config_instance)
-    config_instance_3.config["scenario"]["name"] = "three"
+    config_instance_3.config_data["scenario"]["name"] = "three"
     config_instance_3.molecule_file = config_instance_3.molecule_file.replace(
         "default",
         "03_foo",

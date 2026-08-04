@@ -107,8 +107,8 @@ class Config:
     def __init__(
         self,
         molecule_file: str,  # pylint: disable=redefined-outer-name
-        args: MoleculeArgs = {},  # noqa: B006
-        command_args: CommandArgs = {},  # noqa: B006
+        args: MoleculeArgs | None = None,
+        command_args: CommandArgs | None = None,
         ansible_args: tuple[str, ...] = (),
     ) -> None:
         """Initialize a new config class and returns None.
@@ -120,10 +120,10 @@ class Config:
             ansible_args: An optional tuple of arguments provided to the `ansible-playbook` command.
         """
         self.molecule_file = molecule_file
-        self.args = args
-        self.command_args = command_args
+        self.args: MoleculeArgs = args if args is not None else {}
+        self.command_args: CommandArgs = command_args if command_args is not None else {}
         self.ansible_args = ansible_args
-        self.config = self._get_config()
+        self.config_data = self._get_config()
         self._action: str | None = None
         self._run_uuid = str(uuid4())
         self.project_directory = os.getenv(
@@ -135,7 +135,7 @@ class Config:
         self.scenario_path = Path(molecule_file).parent
 
         # Former after_init() contents
-        self.config = self._reget_config()
+        self.config_data = self._reget_config()
         self._apply_env_overrides()
         self._apply_cli_overrides()
         if self.molecule_file:
@@ -143,7 +143,7 @@ class Config:
 
     def write(self) -> None:
         """Write config file to filesystem."""
-        util.write_file(self.config_file, util.safe_dump(self.config))
+        util.write_file(self.config_file, util.safe_dump(self.config_data))
 
     def _apply_cli_overrides(self) -> None:
         """Apply CLI argument overrides to config.
@@ -157,7 +157,7 @@ class Config:
             return
         source = ctx.get_parameter_source("shared_state")
         if source == click.core.ParameterSource.COMMANDLINE:
-            self.config["shared_state"] = self.command_args["shared_state"]
+            self.config_data["shared_state"] = self.command_args["shared_state"]
 
     def _apply_env_overrides(self) -> None:
         """Apply environment variable overrides to command_args.
@@ -220,7 +220,7 @@ class Config:
         Returns:
             Whether molecule should share ephemeral state.
         """
-        return self.config.get("shared_state", False)
+        return self.config_data.get("shared_state", False)
 
     @property
     def command_borders(self) -> bool:
@@ -329,7 +329,7 @@ class Config:
         Returns:
             Instance of a molecule dependency plugin.
         """
-        dependency_name = self.config["dependency"]["name"]
+        dependency_name = self.config_data["dependency"]["name"]
         if dependency_name == "galaxy":
             return ansible_galaxy.AnsibleGalaxy(self)
         if dependency_name == "shell":
@@ -363,7 +363,7 @@ class Config:
         Returns:
             The executor backend.
         """
-        return self.config["ansible"]["executor"]["backend"]
+        return self.config_data["ansible"]["executor"]["backend"]
 
     @property
     def env(self) -> dict[str, str]:
@@ -410,7 +410,7 @@ class Config:
         Returns:
             An instance of the Ansible provisioner.
         """
-        provisioner_name = self.config["provisioner"]["name"]
+        provisioner_name = self.config_data["provisioner"]["name"]
         if provisioner_name == "ansible":
             return ansible.Ansible(self)
         return None
@@ -467,7 +467,7 @@ class Config:
         Returns:
             Instance of Verifier driver.
         """
-        name = self.config["verifier"]["name"]
+        name = self.config_data["verifier"]["name"]
         if name not in api.verifiers(self):
             msg = f"Unable to find '{name}' verifier driver."
             raise RuntimeError(msg)
@@ -479,7 +479,7 @@ class Config:
         # the user may supply a driver on the command line
         driver_from_cli = self.command_args.get("driver_name")
         # the driver may also be edited in the scenario
-        driver_from_scenario = self.config["driver"]["name"]
+        driver_from_scenario = self.config_data["driver"]["name"]
 
         if driver_from_state_file:
             driver_name = driver_from_state_file
@@ -571,7 +571,7 @@ class Config:
             with open(base_config) as stream:  # noqa: PTH123
                 s = stream.read()
                 interpolated_config = self._interpolate(s, env, keep_string)
-                config_data = util.safe_load(interpolated_config)
+                config_data = util.safe_load(interpolated_config, base_config)
                 user_config_files.append((base_config, config_data))
 
         # Load molecule.yml
@@ -579,7 +579,7 @@ class Config:
             with open(self.molecule_file) as stream:  # noqa: PTH123
                 s = stream.read()
                 interpolated_config = self._interpolate(s, env, keep_string)
-                config_data = util.safe_load(interpolated_config)
+                config_data = util.safe_load(interpolated_config, self.molecule_file)
                 user_config_files.append((self.molecule_file, config_data))
 
         # Step 3: Debug log legacy keys that will be migrated
@@ -743,13 +743,13 @@ class Config:
     def _validate(self) -> None:
         """Validate molecule file."""
         # Use scenario logger with hardcoded values since scenario property isn't available yet
-        scenario_name = self.config["scenario"]["name"]
+        scenario_name = self.config_data["scenario"]["name"]
         validation_log = logger.get_scenario_logger(__name__, scenario_name, "validate")
 
         msg = f"Validating schema {self.molecule_file}."
         validation_log.debug(msg)
 
-        errors = schema_v3.validate(self.config)
+        errors = schema_v3.validate(self.config_data)
         if errors:
             msg = f"Failed to validate {self.molecule_file}\n\n{errors}"
             sysexit_with_message(msg, code=1)
