@@ -21,18 +21,25 @@
 
 from __future__ import annotations
 
+import json
+import subprocess
+
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from molecule import util
 from molecule.api import Driver
 from molecule.data import __file__ as data_module
+from molecule.logger import get_logger
 
 
 if TYPE_CHECKING:
     from typing import Any
 
     from molecule.config import Config
+
+
+LOG = get_logger(__name__)
 
 
 class Delegated(Driver):
@@ -128,8 +135,143 @@ class Delegated(Driver):
         if self.managed:
             d = {"instance": instance_name}
 
-            return util.merge_dicts(d, self._get_instance_config(instance_name))
+            try:
+                return util.merge_dicts(d, self._get_instance_config(instance_name))
+            except (StopIteration, OSError):
+                # instance_config.yml doesn't exist, or has no entry for
+                # this instance - e.g. an ansible-native scenario (no
+                # `platforms` declared), whose create playbook has no
+                # obligation to populate it (mirrors
+                # ansible_connection_options()'s own handling of this exact
+                # case). Fall back to whatever the real ansible inventory
+                # already has for this host - population of those vars is
+                # up to the scenario/create playbook's own author, this
+                # just reads what's already there instead of requiring a
+                # second, molecule-specific copy of the same facts.
+                return util.merge_dicts(d, self._get_inventory_login_options(instance_name))
         return {"instance": instance_name}
+
+    def _ansible_inventory_args(self) -> list[str]:
+        """Resolve the same --inventory sources ansible-playbook itself is invoked with.
+
+        See AnsiblePlaybook.bake(): it always passes
+        provisioner.inventory_directory, plus whatever extra
+        --inventory/-i args are configured in provisioner.ansible_args /
+        the top-level ansible_args. Reusing the exact same sources here
+        means queries reflect exactly what ansible-playbook itself would
+        see - no separate inventory config to keep in sync.
+
+        Returns:
+            List of `ansible-inventory` CLI arguments selecting the same
+            inventory sources ansible-playbook uses.
+        """
+        extra_inventory_args = []
+        if self._config.provisioner is None:
+            return []
+        source_args = (*self._config.provisioner.ansible_args, *self._config.ansible_args)
+        take_next = False
+        for arg in source_args:
+            if take_next:
+                extra_inventory_args.append(arg)
+                take_next = False
+            elif arg.startswith(("--inventory=", "-i=")):
+                extra_inventory_args.append(arg)
+            elif arg in ("--inventory", "-i"):
+                extra_inventory_args.append(arg)
+                take_next = True
+
+        return [
+            "--inventory",
+            self._config.provisioner.inventory_directory,
+            *extra_inventory_args,
+        ]
+
+    def _run_ansible_inventory(self, extra_args: list[str]) -> dict[str, Any] | None:
+        """Run `ansible-inventory` against the resolved inventory sources.
+
+        Args:
+            extra_args: Additional ansible-inventory CLI arguments, e.g.
+                ``["--host", name]`` or ``["--list"]``.
+
+        Returns:
+            The parsed JSON output, or None if the command failed for any
+            reason (ansible-inventory not available, no matching host,
+            malformed output, etc).
+        """
+        cmd = ["ansible-inventory", *extra_args, *self._ansible_inventory_args()]
+        try:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                check=True,
+                timeout=30,
+            )
+            return json.loads(result.stdout)  # type: ignore[no-any-return]
+        except subprocess.CalledProcessError as exc:
+            LOG.debug(
+                "ansible-inventory %s failed (rc=%d): %s",
+                " ".join(extra_args),
+                exc.returncode,
+                exc.stderr.strip() if exc.stderr else "(no stderr)",
+            )
+            return None
+        except subprocess.TimeoutExpired:
+            LOG.debug("ansible-inventory %s timed out after 30s", " ".join(extra_args))
+            return None
+        except (json.JSONDecodeError, OSError) as exc:
+            LOG.debug("ansible-inventory %s failed: %s", " ".join(extra_args), exc)
+            return None
+
+    def _get_inventory_login_options(self, instance_name: str) -> dict[str, str]:
+        """Resolve login options for an instance from the real ansible inventory.
+
+        Used as a fallback when instance_config.yml has no entry for this
+        instance (ansible-native scenarios have no obligation to write one).
+        Reflects whatever the scenario's own create playbook already
+        populated - e.g. via host_vars - with no separate bookkeeping
+        required.
+
+        Args:
+            instance_name: The name of the instance to look up.
+
+        Returns:
+            Dictionary of options related to logging into the instance, or
+            an empty dictionary if none could be resolved.
+        """
+        host_vars = self._run_ansible_inventory(["--host", instance_name])
+        if host_vars is None:
+            return {}
+
+        d = {}
+        if "ansible_host" in host_vars:
+            d["address"] = host_vars["ansible_host"]
+        if "ansible_user" in host_vars:
+            d["user"] = host_vars["ansible_user"]
+        if "ansible_port" in host_vars:
+            d["port"] = host_vars["ansible_port"]
+        if "ansible_ssh_private_key_file" in host_vars:
+            d["identity_file"] = host_vars["ansible_ssh_private_key_file"]
+        return d
+
+    def get_ansible_native_hosts(self) -> list[str]:
+        """List real host names from the configured inventory.
+
+        For ansible-native scenarios (no `platforms` declared), molecule
+        has no static list of instance names to fall back on - this
+        queries the same inventory ansible-playbook itself would use and
+        returns every host it defines, so `molecule list`/`molecule login`
+        can work with real names instead of a blank placeholder / always
+        requiring --host.
+
+        Returns:
+            Sorted list of host names found in the inventory, or an empty
+            list if none could be resolved.
+        """
+        data = self._run_ansible_inventory(["--list"])
+        if data is None:
+            return []
+        return sorted(data.get("_meta", {}).get("hostvars", {}).keys())
 
     def ansible_connection_options(
         self,

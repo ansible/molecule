@@ -175,3 +175,65 @@ def test_get_hostname_no_host_flag_specified_on_cli_with_multiple_hosts_raises( 
         "instance-2"
     )
     assert msg in caplog.text
+
+
+def test_get_hostname_no_hosts_and_none_in_inventory_raises(  # noqa: D103
+    caplog: pytest.LogCaptureFixture,
+    _instance: login.Login,  # noqa: PT019
+) -> None:
+    _instance._config.command_args = {}
+    with pytest.raises(SystemExit) as e:
+        _instance._get_hostname([])
+
+    assert e.value.code == 1
+
+    msg = (
+        "There are 0 running hosts, and none could be found in "
+        "the configured inventory either. Specify the instance "
+        "name directly with --host."
+    )
+    assert msg in caplog.text
+
+
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_molecule_data_native"],  # noqa: PT007
+    indirect=True,
+)
+def test_execute_falls_back_to_ansible_native_hosts_when_no_platforms(  # noqa: D103
+    mocker: MockerFixture,
+    _instance: login.Login,  # noqa: PT019
+) -> None:
+    assert _instance._config.platforms.instances == []
+
+    m = mocker.patch(
+        "molecule.driver.delegated.Delegated.get_ansible_native_hosts",
+        return_value=["sles15-efi"],
+    )
+    mocker.patch("molecule.command.login.Login._get_login")
+
+    _instance._config.command_args = {}
+    _instance.execute()
+
+    m.assert_called_once_with()
+
+
+def test_get_login_raises_on_missing_connection_details(  # noqa: D103
+    mocker: MockerFixture,
+    _instance: login.Login,  # noqa: PT019
+) -> None:
+    mocker.patch("os.popen").return_value.read.return_value = "24 80"
+    mocker.patch(
+        "molecule.driver.delegated.Delegated.login_options",
+        return_value={"instance": "sles15-efi"},
+    )
+    mocker.patch(
+        "molecule.driver.delegated.Delegated.login_cmd_template",
+        new_callable=mocker.PropertyMock,
+        return_value="ssh {address} -l {user} -p {port} -i {identity_file}",
+    )
+
+    with pytest.raises(SystemExit) as e:
+        _instance._get_login("sles15-efi")
+
+    assert e.value.code == 1

@@ -19,7 +19,9 @@
 #  DEALINGS IN THE SOFTWARE.
 from __future__ import annotations
 
+import json
 import os
+import subprocess
 
 from typing import TYPE_CHECKING
 
@@ -345,6 +347,21 @@ def _driver_options_managed_section_data():  # type: ignore[no-untyped-def]  # n
     return {"driver": {"options": {"managed": False}}}
 
 
+@pytest.fixture
+def _molecule_data_native():  # type: ignore[no-untyped-def]  # noqa: ANN202
+    """Provide a molecule data dictionary for an ansible-native scenario (no `platforms`).
+
+    Returns:
+        A molecule config dict with empty platforms.
+    """
+    return {
+        "ansible": {"executor": {"backend": "ansible-playbook"}},
+        "driver": {},
+        "platforms": [],
+        "provisioner": {},
+    }
+
+
 @pytest.mark.parametrize(
     "config_instance",
     ["_driver_options_managed_section_data"],  # noqa: PT007
@@ -367,3 +384,333 @@ def test_get_instance_config(mocker: MockerFixture, _instance):  # type: ignore[
 
     x = {"instance": "foo"}
     assert x == _instance._get_instance_config("foo")
+
+
+def test_ansible_inventory_args(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+    args = _instance._ansible_inventory_args()
+
+    assert args[0] == "--inventory"
+    assert args[1] == _instance._config.provisioner.inventory_directory
+
+
+def test_ansible_inventory_args_includes_extra_inventory_args(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    mocker.patch.object(
+        type(_instance._config.provisioner),
+        "ansible_args",
+        new_callable=mocker.PropertyMock,
+        return_value=["--inventory=/extra/inventory", "--diff"],
+    )
+
+    args = _instance._ansible_inventory_args()
+
+    assert args == [
+        "--inventory",
+        _instance._config.provisioner.inventory_directory,
+        "--inventory=/extra/inventory",
+    ]
+
+
+def test_ansible_inventory_args_includes_split_inventory_flag_and_value(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    mocker.patch.object(
+        type(_instance._config.provisioner),
+        "ansible_args",
+        new_callable=mocker.PropertyMock,
+        return_value=["--inventory", "/extra/inventory", "--diff"],
+    )
+
+    args = _instance._ansible_inventory_args()
+
+    assert args == [
+        "--inventory",
+        _instance._config.provisioner.inventory_directory,
+        "--inventory",
+        "/extra/inventory",
+    ]
+
+
+def test_ansible_inventory_args_includes_split_short_flag_and_value(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    mocker.patch.object(
+        type(_instance._config.provisioner),
+        "ansible_args",
+        new_callable=mocker.PropertyMock,
+        return_value=["-i", "/extra/inventory"],
+    )
+
+    args = _instance._ansible_inventory_args()
+
+    assert args == [
+        "--inventory",
+        _instance._config.provisioner.inventory_directory,
+        "-i",
+        "/extra/inventory",
+    ]
+
+
+def test_ansible_inventory_args_keeps_trailing_inventory_flag_with_no_value(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    mocker.patch.object(
+        type(_instance._config.provisioner),
+        "ansible_args",
+        new_callable=mocker.PropertyMock,
+        return_value=["--diff", "--inventory"],
+    )
+
+    args = _instance._ansible_inventory_args()
+
+    assert args == [
+        "--inventory",
+        _instance._config.provisioner.inventory_directory,
+        "--inventory",
+    ]
+
+
+def test_run_ansible_inventory_returns_parsed_json(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    m = mocker.patch("subprocess.run")
+    m.return_value = subprocess.CompletedProcess(
+        args=[],
+        returncode=0,
+        stdout=json.dumps({"_meta": {"hostvars": {"instance-1": {}}}}),
+    )
+
+    result = _instance._run_ansible_inventory(["--list"])
+
+    assert result == {"_meta": {"hostvars": {"instance-1": {}}}}
+
+
+def test_run_ansible_inventory_returns_none_on_called_process_error(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    caplog: pytest.LogCaptureFixture,
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    m = mocker.patch("subprocess.run")
+    m.side_effect = subprocess.CalledProcessError(
+        returncode=1,
+        cmd=["ansible-inventory"],
+        stderr="boom",
+    )
+
+    with caplog.at_level("DEBUG"):
+        result = _instance._run_ansible_inventory(["--list"])
+
+    assert result is None
+    assert "boom" in caplog.text
+
+
+def test_run_ansible_inventory_returns_none_on_bad_json(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    caplog: pytest.LogCaptureFixture,
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    m = mocker.patch("subprocess.run")
+    m.return_value = subprocess.CompletedProcess(args=[], returncode=0, stdout="not json")
+
+    with caplog.at_level("DEBUG"):
+        result = _instance._run_ansible_inventory(["--list"])
+
+    assert result is None
+    assert "ansible-inventory" in caplog.text
+
+
+def test_run_ansible_inventory_returns_none_when_binary_missing(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    caplog: pytest.LogCaptureFixture,
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    m = mocker.patch("subprocess.run")
+    m.side_effect = FileNotFoundError("ansible-inventory not found")
+
+    with caplog.at_level("DEBUG"):
+        result = _instance._run_ansible_inventory(["--list"])
+
+    assert result is None
+    assert "ansible-inventory" in caplog.text
+
+
+def test_run_ansible_inventory_returns_none_on_timeout(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    caplog: pytest.LogCaptureFixture,
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    m = mocker.patch("subprocess.run")
+    m.side_effect = subprocess.TimeoutExpired(cmd=["ansible-inventory"], timeout=30)
+
+    with caplog.at_level("DEBUG"):
+        result = _instance._run_ansible_inventory(["--list"])
+
+    assert result is None
+    assert "timed out" in caplog.text
+
+
+def test_run_ansible_inventory_passes_timeout_to_subprocess_run(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    m = mocker.patch("subprocess.run")
+    m.return_value = subprocess.CompletedProcess(args=[], returncode=0, stdout="{}")
+
+    _instance._run_ansible_inventory(["--list"])
+
+    assert m.call_args.kwargs["timeout"] == 30  # noqa: PLR2004
+
+
+def test_get_inventory_login_options_maps_ansible_vars(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    m = mocker.patch("molecule.driver.delegated.Delegated._run_ansible_inventory")
+    m.return_value = {
+        "ansible_host": "172.16.0.2",
+        "ansible_user": "cloud-user",
+        "ansible_port": 22,
+        "ansible_ssh_private_key_file": "/foo/bar",
+    }
+
+    x = {
+        "address": "172.16.0.2",
+        "user": "cloud-user",
+        "port": 22,
+        "identity_file": "/foo/bar",
+    }
+    assert x == _instance._get_inventory_login_options("foo")
+
+
+def test_get_inventory_login_options_partial_vars(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    m = mocker.patch("molecule.driver.delegated.Delegated._run_ansible_inventory")
+    m.return_value = {"ansible_host": "172.16.0.2"}
+
+    assert _instance._get_inventory_login_options("foo") == {"address": "172.16.0.2"}
+
+
+def test_get_inventory_login_options_returns_empty_dict_when_lookup_fails(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    m = mocker.patch("molecule.driver.delegated.Delegated._run_ansible_inventory")
+    m.return_value = None
+
+    assert _instance._get_inventory_login_options("foo") == {}
+
+
+def test_get_ansible_native_hosts_returns_sorted_hostvars_keys(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    m = mocker.patch("molecule.driver.delegated.Delegated._run_ansible_inventory")
+    m.return_value = {
+        "_meta": {
+            "hostvars": {
+                "instance-2": {},
+                "instance-1": {},
+            },
+        },
+    }
+
+    assert _instance.get_ansible_native_hosts() == ["instance-1", "instance-2"]
+
+
+def test_get_ansible_native_hosts_returns_empty_list_when_lookup_fails(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    m = mocker.patch("molecule.driver.delegated.Delegated._run_ansible_inventory")
+    m.return_value = None
+
+    assert _instance.get_ansible_native_hosts() == []
+
+
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_driver_managed_section_data"],  # noqa: PT007
+    indirect=True,
+)
+def test_login_options_falls_back_to_inventory_on_stop_iteration(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    mocker.patch(
+        "molecule.driver.delegated.Delegated._get_instance_config",
+        side_effect=StopIteration,
+    )
+    m = mocker.patch("molecule.driver.delegated.Delegated._get_inventory_login_options")
+    m.return_value = {"address": "172.16.0.2", "user": "cloud-user"}
+
+    x = {"instance": "foo", "address": "172.16.0.2", "user": "cloud-user"}
+    assert x == _instance.login_options("foo")
+    m.assert_called_once_with("foo")
+
+
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_driver_managed_section_data"],  # noqa: PT007
+    indirect=True,
+)
+def test_login_options_falls_back_to_inventory_on_os_error(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    mocker.patch(
+        "molecule.driver.delegated.Delegated._get_instance_config",
+        side_effect=OSError,
+    )
+    m = mocker.patch("molecule.driver.delegated.Delegated._get_inventory_login_options")
+    m.return_value = {}
+
+    assert _instance.login_options("foo") == {"instance": "foo"}
+    m.assert_called_once_with("foo")
+
+
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_molecule_data_native"],  # noqa: PT007
+    indirect=True,
+)
+def test_status_falls_back_to_ansible_native_hosts_when_no_platforms(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    assert _instance._config.platforms.instances == []
+
+    mocker.patch(
+        "molecule.driver.delegated.Delegated.get_ansible_native_hosts",
+        return_value=["instance-2", "instance-1"],
+    )
+
+    result = _instance.status()
+
+    assert [s.instance_name for s in result] == ["instance-2", "instance-1"]
+
+
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_molecule_data_native"],  # noqa: PT007
+    indirect=True,
+)
+def test_status_falls_back_to_blank_placeholder_when_inventory_empty(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    mocker: MockerFixture,
+    _instance,  # noqa: PT019
+):
+    mocker.patch(
+        "molecule.driver.delegated.Delegated.get_ansible_native_hosts",
+        return_value=[],
+    )
+
+    result = _instance.status()
+
+    assert [s.instance_name for s in result] == [""]

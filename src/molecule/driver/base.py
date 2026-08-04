@@ -217,6 +217,20 @@ class Driver(ABC):
         """
         return self.options["managed"]
 
+    def get_ansible_native_hosts(self) -> list[str]:
+        """List real host names for an ansible-native scenario (no `platforms` declared).
+
+        Base implementation returns an empty list - drivers that manage
+        instances off a real inventory (see Delegated) can override this to
+        report real host names instead of leaving callers with nothing to
+        work with.
+
+        Returns:
+            List of host names, or an empty list if this driver has no way
+            to determine one.
+        """
+        return []
+
     def status(self) -> list[Status]:
         """Collect the instances state and returns a list.
 
@@ -236,8 +250,11 @@ class Driver(ABC):
         instances = self._config.platforms.instances
 
         if not instances:
-            # an ansible-native scenario
-            instances.append({"name": ""})
+            # an ansible-native scenario - try to discover real host names
+            # from the configured inventory instead of a single blank
+            # placeholder.
+            inventory_hosts = self.get_ansible_native_hosts()
+            instances = [{"name": name} for name in inventory_hosts] or [{"name": ""}]
 
         for platform in instances:
             instance_name = platform["name"]

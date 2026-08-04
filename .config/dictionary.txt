@@ -120,6 +120,7 @@ selectattr
 serviceaccount
 sessionfinish
 skipsdist
+sles
 ssbarnea
 stestr
 stopall
