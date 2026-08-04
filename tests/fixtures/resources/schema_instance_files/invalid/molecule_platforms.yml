@@ -1,0 +1,6 @@
+---
+# Must be rejected once platforms.items references MoleculePlatformModel:
+# children must be a list, here an int (name set so it is the only fault).
+platforms:
+  - name: instance
+    children: 2

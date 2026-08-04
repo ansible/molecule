@@ -1,0 +1,18 @@
+---
+# Exercises the restored MoleculePlatformModel (platforms.items $ref) and the
+# relaxed command/cpus/memory types that match the docker and podman drivers.
+platforms:
+  - name: instance
+    groups:
+      - group1
+    children:
+      - instance2
+    networks:
+      - name: molecule-net
+        ipv4_address: 10.0.0.5
+    command:
+      - bash
+      - -c
+      - "while true; do sleep 1; done"
+    cpus: 1.5
+    memory: "512m"
