@@ -560,9 +560,6 @@
           "type": "array"
         },
         "directory": {
-          "items": {
-            "type": "string"
-          },
           "title": "Directory",
           "type": "string"
         },

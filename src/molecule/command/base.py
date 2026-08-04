@@ -40,7 +40,7 @@ from wcmatch import glob
 
 from molecule import config, logger, text, util
 from molecule.constants import MOLECULE_COLLECTION_ROOT, MOLECULE_DEFAULT_SCENARIO_NAME
-from molecule.exceptions import MoleculeError, ScenarioFailureError
+from molecule.exceptions import ConfigLoadError, MoleculeError, ScenarioFailureError
 from molecule.reporting.definitions import ScenarioResults
 from molecule.reporting.rendering import report
 from molecule.scenarios import Scenarios
@@ -195,6 +195,9 @@ def execute_cmdline_scenarios(
         command_args: dict of command arguments, including the target
         ansible_args: Optional tuple of arguments to pass to the `ansible-playbook` command
         excludes: Name of scenarios to not run.
+
+    Raises:
+        ConfigLoadError: If the default scenario is present but cannot be parsed.
     """
     if excludes is None:
         excludes = []
@@ -227,6 +230,9 @@ def execute_cmdline_scenarios(
     default_config = None
     try:
         default_config = get_configs(args, command_args, ansible_args, default_glob)[0]
+    except ConfigLoadError:
+        # A default that is present but fails to parse is a real error, not absent.
+        raise
     except MoleculeError:
         # Use a generic logger for this since it's not tied to a specific scenario
         logging.getLogger(__name__).info("default scenario not found, disabling shared state.")
