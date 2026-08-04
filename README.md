@@ -2,7 +2,7 @@
 
 [![PyPI Package](https://img.shields.io/pypi/v/molecule)](https://pypi.org/project/molecule/)
 [![Documentation Status](https://readthedocs.org/projects/molecule/badge/?version=latest)](https://docs.ansible.com/projects/molecule/)
-[![image](https://github.com/ansible-community/molecule/workflows/tox/badge.svg)](https://github.com/ansible-community/molecule/actions)
+[![image](https://github.com/ansible/molecule/workflows/tox/badge.svg)](https://github.com/ansible/molecule/actions)
 [![Python Black Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
 [![Ansible Code of Conduct](https://img.shields.io/badge/Code%20of%20Conduct-silver.svg)](https://docs.ansible.com/projects/ansible/latest/community/code_of_conduct.html)
 [![Discussions](https://img.shields.io/badge/Discussions-silver.svg)](https://forum.ansible.com/tag/molecule)
@@ -45,7 +45,7 @@ For complete details, see the
 If you want to get moving fast and make a quick patch:
 
 ```bash
-git clone https://github.com/ansible-community/molecule && cd molecule
+git clone https://github.com/ansible/molecule && cd molecule
 python3 -m venv .venv && source .venv/bin/activate
 python3 -m pip install -U setuptools pip tox
 ```
@@ -61,7 +61,7 @@ it is now community-maintained as part of the
 ## License
 
 The
-[MIT](https://github.com/ansible-community/molecule/blob/main/LICENSE)
+[MIT](https://github.com/ansible/molecule/blob/main/LICENSE)
 License.
 
 The logo is licensed under the [Creative Commons NoDerivatives 4.0
