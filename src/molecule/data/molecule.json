@@ -210,12 +210,15 @@
           "type": "array"
         },
         "command": {
+          "items": {
+            "type": "string"
+          },
           "title": "Command",
-          "type": "string"
+          "type": ["string", "array"]
         },
         "cpus": {
           "title": "Cpus",
-          "type": "integer"
+          "type": "number"
         },
         "dockerfile": {
           "title": "Dockerfile",
@@ -256,7 +259,7 @@
         },
         "memory": {
           "title": "Memory",
-          "type": "integer"
+          "type": ["string", "integer"]
         },
         "name": {
           "title": "Name",
@@ -743,7 +746,7 @@
     },
     "platforms": {
       "items": {
-        "type": "object"
+        "$ref": "#/$defs/MoleculePlatformModel"
       },
       "title": "Platforms",
       "type": "array"
