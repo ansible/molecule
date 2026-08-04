@@ -166,6 +166,8 @@ class Delegated(Driver):
             inventory sources ansible-playbook uses.
         """
         extra_inventory_args = []
+        if self._config.provisioner is None:
+            return []
         source_args = (*self._config.provisioner.ansible_args, *self._config.ansible_args)
         take_next = False
         for arg in source_args:
