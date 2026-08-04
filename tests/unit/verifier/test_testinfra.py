@@ -21,9 +21,12 @@ from __future__ import annotations
 
 import os
 
+from subprocess import CompletedProcess
+
 import pytest
 
 from molecule.config import Config
+from molecule.exceptions import ScenarioFailureError
 from molecule.util import write_file
 from molecule.verifier import testinfra
 
@@ -314,13 +317,24 @@ def test_execute_bakes_env(  # type: ignore[no-untyped-def]  # noqa: ANN201, D10
     assert patched_run_command.call_args[1]["env"]["FOO"] == "bar"
 
 
-def test_testinfra_executes_catches_and_exits_return_code(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_testinfra_execute_failed_tests_raise_scenario_failure(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     patched_run_command,
     _patched_testinfra_get_tests,  # noqa: PT019
     _instance,  # noqa: PT019
 ):
-    patched_run_command.side_effect = SystemExit(1)
-    with pytest.raises(SystemExit) as e:
+    # A non-zero verifier return code must raise ScenarioFailureError (not
+    # sysexit) so `molecule test` still runs cleanup/destroy on --destroy=always.
+    returncode = 2
+    patched_run_command.return_value = CompletedProcess(
+        args="foo",
+        returncode=returncode,
+        stdout="",
+        stderr="",
+    )
+    with pytest.raises(ScenarioFailureError) as e:
         _instance.execute()
 
-    assert e.value.code == 1
+    assert e.value.code == returncode
+    # The failure is recorded so the scenario recap reports verify as failed,
+    # not the empty-state default of "successful".
+    assert _instance._config.scenario.results.last_action_summary.state == "failed"

@@ -29,6 +29,7 @@ from typing import TYPE_CHECKING, cast
 
 from molecule import logger, util
 from molecule.api import Verifier
+from molecule.exceptions import ScenarioFailureError
 from molecule.reporting.definitions import CompletionState
 
 
@@ -157,6 +158,9 @@ class Testinfra(Verifier):
 
         Args:
             action_args: list of arguments to be passed.
+
+        Raises:
+            ScenarioFailureError: when the verifier reports a non-zero return code.
         """
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
@@ -190,7 +194,8 @@ class Testinfra(Verifier):
             self._log.info(msg)
         else:
             msg = "Verifier tests failed"
-            util.sysexit_with_message(msg, code=result.returncode)
+            self._config.scenario.results.add_completion(CompletionState.failed(note=msg))
+            raise ScenarioFailureError(message=msg, code=result.returncode)
 
     def _get_tests(self, action_args: list[str] | None = None) -> list[str]:
         """Walk the verifier's directory for tests.
