@@ -349,7 +349,11 @@ def _driver_options_managed_section_data():  # type: ignore[no-untyped-def]  # n
 
 @pytest.fixture
 def _molecule_data_native():  # type: ignore[no-untyped-def]  # noqa: ANN202
-    """Provide a molecule data dictionary for an ansible-native scenario (no `platforms`)."""
+    """Provide a molecule data dictionary for an ansible-native scenario (no `platforms`).
+
+    Returns:
+        A molecule config dict with empty platforms.
+    """
     return {
         "ansible": {"executor": {"backend": "ansible-playbook"}},
         "driver": {},

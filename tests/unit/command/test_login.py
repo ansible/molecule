@@ -212,7 +212,7 @@ def test_execute_falls_back_to_ansible_native_hosts_when_no_platforms(  # noqa: 
     )
     mocker.patch("molecule.command.login.Login._get_login")
 
-    _instance._config.command_args = {"host": None}
+    _instance._config.command_args = {}
     _instance.execute()
 
     m.assert_called_once_with()
