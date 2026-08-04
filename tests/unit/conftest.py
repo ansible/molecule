@@ -81,9 +81,6 @@ def config_instance(
     resulting data to a molecule file.  Return a Config instance with the
     molecule file path.
 
-    Because the test_cache_path is gitignored, monkeypatch the filter_ignored_scenarios
-    function to return the original list of scenarios.
-
     Args:
         monkeypatch: The pytest fixture for patching
         molecule_data: The pytest fixture for molecule data.
@@ -116,11 +113,6 @@ def config_instance(
     molecule_dir.mkdir(parents=True, exist_ok=True)
     molecule_file = molecule_dir / "molecule.yml"
     write_molecule_file(molecule_file, mdc)
-
-    def _filter_ignored_scenarios(scenario_paths: list[str]) -> list[str]:
-        return scenario_paths
-
-    monkeypatch.setattr("molecule.command.base.filter_ignored_scenarios", _filter_ignored_scenarios)
 
     _environ = dict(os.environ)
     c = config.Config(str(molecule_file))

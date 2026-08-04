@@ -1,0 +1,8 @@
+---
+# Must be rejected once command's array form constrains items to strings:
+# a non-string element (int) is the only fault (name set).
+platforms:
+  - name: instance
+    command:
+      - bash
+      - 42

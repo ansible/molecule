@@ -36,7 +36,7 @@ import yaml
 
 from molecule import util
 from molecule.constants import MOLECULE_COLLECTION_GLOB, MOLECULE_HEADER
-from molecule.exceptions import MoleculeError
+from molecule.exceptions import ConfigLoadError, MoleculeError
 
 
 if TYPE_CHECKING:
@@ -204,6 +204,70 @@ def test_write_file(test_cache_path: Path) -> None:
     assert x == data
 
 
+def test_atomic_write_file(test_cache_path: Path) -> None:
+    """Atomic write produces the same content as write_file and leaves no temp file.
+
+    Args:
+        test_cache_path: The path to the test cache directory for the test.
+    """
+    dest_file = test_cache_path / "test_util_atomic_write_file.tmp"
+    contents = binascii.b2a_hex(os.urandom(15)).decode("utf-8")
+    util.atomic_write_file(str(dest_file), contents)
+    assert dest_file.read_text() == f"# Molecule managed\n\n{contents}"
+    assert [p.name for p in test_cache_path.iterdir()] == [dest_file.name]
+
+
+def test_atomic_write_file_never_truncates_target(
+    test_cache_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A concurrent reader never sees a partial file: the target is swapped whole.
+
+    Args:
+        test_cache_path: The path to the test cache directory for the test.
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    dest_file = test_cache_path / "state.yml"
+    util.atomic_write_file(dest_file, "old", header="")
+
+    observed: list[str] = []
+    real_replace = Path.replace
+
+    def spy(self: Path, target: str | Path) -> Path:
+        observed.append(Path(target).read_text())
+        return real_replace(self, target)
+
+    monkeypatch.setattr(Path, "replace", spy)
+    util.atomic_write_file(dest_file, "new", header="")
+
+    assert observed == ["old"]
+    assert dest_file.read_text() == "new"
+
+
+def test_atomic_write_file_cleans_up_on_error(
+    test_cache_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A failed replace leaves the original intact and drops no temp file behind.
+
+    Args:
+        test_cache_path: The path to the test cache directory for the test.
+        monkeypatch: Pytest monkeypatch fixture.
+    """
+    dest_file = test_cache_path / "state.yml"
+    util.atomic_write_file(dest_file, "old", header="")
+
+    def boom(self: Path, target: str | Path) -> Path:
+        raise OSError
+
+    monkeypatch.setattr(Path, "replace", boom)
+    with pytest.raises(OSError):  # noqa: PT011
+        util.atomic_write_file(dest_file, "new", header="")
+
+    assert dest_file.read_text() == "old"
+    assert [p.name for p in test_cache_path.iterdir()] == [dest_file.name]
+
+
 def test_molecule_prepender(tmp_path: Path) -> None:  # noqa: D103
     fname = tmp_path / "some.txt"
     fname.write_text("foo bar")
@@ -251,6 +315,104 @@ def test_safe_load_exits_when_cannot_parse() -> None:  # noqa: D103
         util.safe_load(data)
 
     assert e.value.code == 1
+
+
+def test_safe_load_exits_on_unsupported_yaml_tag() -> None:
+    """An unsupported YAML tag raises a MoleculeError naming the tag.
+
+    Regression test for a `!unsafe` (or any unknown) tag causing an unhandled
+    traceback rather than a readable error.
+    """
+    data = 'foo: !unsafe "{{ bar }}"'
+
+    with pytest.raises(MoleculeError) as e:
+        util.safe_load(data)
+
+    assert e.value.code == 1
+    assert "!unsafe" in e.value.message
+    assert "not supported" in e.value.message
+
+
+def test_safe_load_exits_on_yaml_syntax_error() -> None:
+    """A malformed document raises a clean MoleculeError, not a traceback.
+
+    `ParserError` is not a `ScannerError`, so it previously escaped uncaught.
+    """
+    with pytest.raises(MoleculeError) as e:
+        util.safe_load("foo: [unclosed", filename="molecule.yml")
+
+    assert e.value.code == 1
+    assert "molecule.yml" in e.value.message
+
+
+def test_safe_load_error_includes_filename() -> None:
+    """The failure message names the source file when one is provided."""
+    with pytest.raises(MoleculeError) as e:
+        util.safe_load("foo: !unsafe bar", filename="molecule.yml")
+
+    assert "molecule.yml" in e.value.message
+
+
+def test_safe_load_raises_config_load_error() -> None:
+    """A parse failure raises ConfigLoadError, still a MoleculeError for callers.
+
+    Callers that only care about "something went wrong" keep catching
+    MoleculeError, while ``command.base`` can tell a malformed file apart from
+    an absent one.
+    """
+    with pytest.raises(ConfigLoadError) as e:
+        util.safe_load("foo: !unsafe bar")
+
+    assert isinstance(e.value, MoleculeError)
+    assert e.value.code == 1
+
+
+def test_safe_load_reports_non_tag_constructor_error() -> None:
+    """A ConstructorError that is not an unknown tag keeps its own detail.
+
+    The unknown-tag message is specific to the "constructor for the tag" case;
+    any other construction failure (here an unhashable list key) must fall back
+    to PyYAML's own reason rather than claiming a tag is unsupported.
+    """
+    data = "? [1, 2]\n: value"
+
+    with pytest.raises(ConfigLoadError) as e:
+        util.safe_load(data, filename="molecule.yml")
+
+    assert "molecule.yml" in e.value.message
+    assert "unhashable" in e.value.message
+    assert "not supported" not in e.value.message
+
+
+def test_safe_load_error_includes_yaml_context() -> None:
+    """Both halves of PyYAML's reason (context and problem) reach the message.
+
+    PyYAML splits some errors across ``context`` and ``problem``; keeping only
+    one half yields a cropped, cryptic message.
+    """
+    data = "---\na: 1\n---\nb: 2\n"
+
+    with pytest.raises(ConfigLoadError) as e:
+        util.safe_load(data, filename="molecule.yml")
+
+    assert "single document" in e.value.message
+    assert "another document" in e.value.message
+
+
+def test_safe_load_file_reports_filename(tmp_path: Path) -> None:
+    """safe_load_file names the offending file and tag in its error.
+
+    Args:
+        tmp_path: pytest temporary-directory fixture.
+    """
+    bad_file = tmp_path / "molecule.yml"
+    bad_file.write_text('foo: !unsafe "{{ bar }}"')
+
+    with pytest.raises(ConfigLoadError) as e:
+        util.safe_load_file(bad_file)
+
+    assert str(bad_file) in e.value.message
+    assert "!unsafe" in e.value.message
 
 
 def test_safe_load_file(test_cache_path: Path) -> None:

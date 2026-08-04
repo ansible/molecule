@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+# pylint: disable=too-many-lines
+
 from __future__ import annotations
 
 import os
@@ -31,7 +33,12 @@ import pytest
 
 from molecule import config, util
 from molecule.command import base
-from molecule.exceptions import ImmediateExit, MoleculeError, ScenarioFailureError
+from molecule.exceptions import (
+    ConfigLoadError,
+    ImmediateExit,
+    MoleculeError,
+    ScenarioFailureError,
+)
 from molecule.shell import main
 
 
@@ -245,6 +252,34 @@ def test_execute_cmdline_scenarios(patched_execute_scenario: MagicMock) -> None:
 
     scenario_count = 1
     assert patched_execute_scenario.call_count == scenario_count
+
+
+def test_execute_cmdline_scenarios_corrupt_default_surfaces(
+    mocker: MockerFixture,
+) -> None:
+    """A default molecule.yml that fails to parse surfaces instead of exiting cleanly.
+
+    A ConfigLoadError raised while loading the default scenario must propagate,
+    not be swallowed as "default scenario not found" (which would disable shared
+    state and let an otherwise-valid run continue to a zero exit).
+
+    Args:
+        mocker: pytest-mock fixture for mocking.
+    """
+    requested = mocker.MagicMock()
+    requested.scenario.name = "smoke"
+    # First get_configs call resolves the requested scenario; the second (the
+    # default scenario) fails to parse.
+    mocker.patch.object(
+        base,
+        "get_configs",
+        side_effect=[[requested], ConfigLoadError("Unable to load molecule.yml")],
+    )
+
+    args: MoleculeArgs = {}
+    command_args: CommandArgs = {"subcommand": "test"}
+    with pytest.raises(ConfigLoadError):
+        base.execute_cmdline_scenarios(["smoke"], args, command_args)
 
 
 @pytest.mark.usefixtures("config_instance")
