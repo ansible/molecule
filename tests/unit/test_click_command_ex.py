@@ -9,7 +9,7 @@ import click
 from click.testing import CliRunner
 
 from molecule.click_cfg import click_command_ex
-from molecule.exceptions import ImmediateExit, MoleculeError
+from molecule.exceptions import ImmediateExit, MoleculeError, ScenarioFailureError
 
 
 if TYPE_CHECKING:
@@ -174,6 +174,36 @@ def test_click_command_ex_with_molecule_error(mocker: MockerFixture) -> None:
 
     mock_logger.return_value.error.assert_not_called()
     mock_sysexit.assert_called_once_with(code=3)
+
+
+def test_click_command_ex_scenario_failure_exits_with_code(mocker: MockerFixture) -> None:
+    """A ScenarioFailureError exits with the code it carries.
+
+    A failed verifier raises ScenarioFailureError with the tool's return code
+    (see verifier/testinfra.py), so the process must exit with that same code
+    rather than a generic 1.
+
+    Args:
+        mocker: pytest-mock fixture for mocking.
+    """
+    mocker.patch("molecule.click_cfg.logging.getLogger")
+    mock_sysexit = mocker.patch("molecule.util.sysexit")
+    mocker.patch("molecule.click_cfg.util.is_debug_mode", return_value=False)
+
+    @click_command_ex()
+    def test_command() -> None:
+        """Test command that raises ScenarioFailureError.
+
+        Raises:
+            ScenarioFailureError: Always raised for testing.
+        """
+        msg = "Verifier tests failed"
+        raise ScenarioFailureError(message=msg, code=2)
+
+    runner = CliRunner()
+    runner.invoke(test_command, [])
+
+    mock_sysexit.assert_called_once_with(code=2)
 
 
 def test_click_command_ex_with_message_less_molecule_error(mocker: MockerFixture) -> None:
