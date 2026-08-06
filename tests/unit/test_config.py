@@ -461,7 +461,7 @@ def test_validate_exists_when_validation_fails(  # noqa: D103
     config_instance: config.Config,
 ) -> None:
     m = mocker.patch("molecule.model.schema_v3.validate")
-    m.return_value = "validation errors"
+    m.return_value = ["validation errors"]
 
     with pytest.raises(SystemExit) as e:
         config_instance._validate()
