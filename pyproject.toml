@@ -78,7 +78,6 @@ dev = [
   "types-pyyaml>=6.0.12.20250822",
 ]
 collection = [
-  "molecule>=6.0.0",
   "pip>=2.20.3",
   "pytest-ansible>=26.2.0",
   "tox>=4.46.0",

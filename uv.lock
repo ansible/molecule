@@ -1716,7 +1716,6 @@ dependencies = [
 
 [package.dev-dependencies]
 collection = [
-    { name = "molecule" },
     { name = "pip" },
     { name = "pytest-ansible" },
     { name = "tox" },
@@ -1784,7 +1783,6 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 collection = [
-    { name = "molecule", specifier = ">=6.0.0" },
     { name = "pip", specifier = ">=2.20.3" },
     { name = "pytest-ansible", specifier = ">=26.2.0" },
     { name = "tox", specifier = ">=4.46.0" },
