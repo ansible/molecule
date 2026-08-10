@@ -97,23 +97,6 @@ plugins:
       separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - material/social
   - material/tags
-  - mkdocstrings:
-      enable_inventory: true
-      default_handler: python
-      handlers:
-        python:
-          paths: [src]
-          options:
-            # Sphinx is for historical reasons, but we could consider switching if needed
-            # https://mkdocstrings.github.io/griffe/docstrings/
-            docstring_style: sphinx
-            merge_init_into_class: yes
-            show_submodules: yes
-          inventories:
-            - url: https://docs.ansible.com/projects/ansible/latest/objects.inv
-              domains: [py, std, "std:doc", "std:label"]
-            - url: https://pip.pypa.io/en/latest/objects.inv
-              domains: [py, std]
 
 markdown_extensions:
   - markdown_include.include:
