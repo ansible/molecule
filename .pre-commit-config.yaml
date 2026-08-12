@@ -45,7 +45,7 @@ repos:
       - id: shellcheck
         priority: 0
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.12.1
+    rev: 0.12.3
 
     hooks:
       - id: uv-sync
@@ -56,7 +56,7 @@ repos:
         args: ["--upgrade"]
         stages: [manual]
   - repo: https://github.com/biomejs/pre-commit
-    rev: "v2.5.6"
+    rev: "v2.5.7"
     hooks:
       - id: biome-check
         name: biome
@@ -90,7 +90,7 @@ repos:
         priority: 1
 
   - repo: https://github.com/pycqa/pylint.git
-    rev: v4.0.6
+    rev: v4.0.7
     hooks:
       - id: pylint
         priority: 1
