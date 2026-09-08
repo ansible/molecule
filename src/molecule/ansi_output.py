@@ -41,6 +41,12 @@ if TYPE_CHECKING:
     from molecule.reporting.definitions import ScenarioResults, ScenariosResults
 
 
+# Pattern for matching valid Rich markup tag names and closing tags
+# Matches opening tags, named closing tags, and bare closing tags
+# Examples: [bold], [/bold], [scenario], [/scenario], [logging.level.info], [/]
+RICH_MARKUP_TAG_PATTERN = r"(?:/(?:[a-zA-Z0-9_.\-]+)?|[a-zA-Z0-9_.\-]+)"
+
+
 def should_do_markup() -> bool:
     """Decide about use of ANSI colors.
 
@@ -156,7 +162,9 @@ class AnsiOutput:
         Returns:
             Text with all markup tags removed.
         """
-        return re.sub(r"\[/?[^\]]*\]", "", str(text))
+        # Strip all valid Rich markup tags (opening, named closing, bare closing)
+        # This avoids stripping literal brackets like ["..."] in error messages
+        return re.sub(rf"\[{RICH_MARKUP_TAG_PATTERN}\]", "", str(text))
 
     def process_markup(self, text: str) -> str:
         """Convert Rich-style markup tags to ANSI escape codes.
@@ -170,9 +178,13 @@ class AnsiOutput:
         if not self.markup_enabled:
             return self.strip_markup(text)
 
-        # Process opening tags first to avoid conflicts with ANSI escape sequences
+        # Process opening and closing tags
         def replace_tag(match: re.Match[str]) -> str:
             tag = match.group(1).lower()
+            # Handle closing tags (both [/] and [/bold])
+            if tag.startswith("/"):
+                return A.RESET
+            # Handle opening tags
             try:
                 return MARKUP_MAP[tag]
             except KeyError:
@@ -181,11 +193,8 @@ class AnsiOutput:
                 except AttributeError:
                     return ""
 
-        # Match tags that don't start with /
-        processed = re.sub(r"\[([^/\]]+)\]", replace_tag, text)
-
-        # Process closing tags last (convert [/] to reset)
-        return processed.replace("[/]", A.RESET)
+        # Process all valid Rich markup tags
+        return re.sub(rf"\[({RICH_MARKUP_TAG_PATTERN})\]", replace_tag, text)
 
     def format_log_level(self, level_name: str) -> tuple[str, str]:
         """Format a log level returning both colored and plain versions.

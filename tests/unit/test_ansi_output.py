@@ -302,3 +302,66 @@ def test_process_markup_complex() -> None:
     assert "test" in result
     assert "action" in result
     assert "bold" in result
+
+
+def test_strip_markup_preserves_literal_brackets() -> None:
+    """Test that literal brackets in error messages are not stripped.
+
+    This is critical for validation errors that contain Python list/dict
+    representations like ["Additional properties are not allowed"].
+    """
+    ansi_output = AnsiOutput()
+
+    # Test Python list representation (common in validation errors)
+    text = 'Failed to validate\n\n["Additional properties are not allowed"]'
+    assert ansi_output.strip_markup(text) == text
+
+    # Test dict-like syntax
+    text_dict = 'Error: {"key": "value"} was unexpected'
+    assert ansi_output.strip_markup(text_dict) == text_dict
+
+    # Test mixed: markup tags + literal brackets
+    text_mixed = '[bold]Error[/]: ["value" was unexpected]'
+    expected = 'Error: ["value" was unexpected]'
+    assert ansi_output.strip_markup(text_mixed) == expected
+
+    # Test process_markup also preserves literal brackets
+    result = ansi_output.process_markup('["test"]')
+    assert result == '["test"]'
+
+
+def test_strip_markup_handles_named_closing_tags() -> None:
+    """Test that named closing tags like [/bold] are stripped correctly."""
+    ansi_output = AnsiOutput()
+
+    # Test named closing tags
+    assert ansi_output.strip_markup("[bold]text[/bold]") == "text"
+    assert ansi_output.strip_markup("[red]error[/red]") == "error"
+    assert ansi_output.strip_markup("[scenario]test[/scenario]") == "test"
+
+    # Test mixed bare and named closing tags
+    assert ansi_output.strip_markup("[bold]text[/] [red]more[/red]") == "text more"
+
+    # Test nested with named closing
+    assert ansi_output.strip_markup("[bold][red]nested[/red][/bold]") == "nested"
+
+    # Test dotted tags with named closing
+    assert ansi_output.strip_markup("[logging.level.info]INFO[/logging.level.info]") == "INFO"
+
+
+def test_process_markup_handles_named_closing_tags(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test that named closing tags are converted to ANSI reset codes."""
+    monkeypatch.setenv("FORCE_COLOR", "1")
+    ansi_output = AnsiOutput()
+
+    # Named closing tags should produce ANSI reset
+    result = ansi_output.process_markup("[bold]text[/bold]")
+    assert "text" in result
+    if ansi_output.markup_enabled:
+        # Should contain ANSI codes and reset at the end
+        assert "\x1b[" in result
+        assert result.endswith("\x1b[0m")
+
+    # Test with dotted tag names
+    result = ansi_output.process_markup("[logging.level.info]INFO[/logging.level.info]")
+    assert "INFO" in result
