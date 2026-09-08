@@ -1,6 +1,6 @@
 # Collection Testing
 
-This guide demonstrates how to use Molecule to test Ansible collections with multiple components and shared testing resources. This approach builds a complete testing framework that showcases best practices for collection-level testing.
+Use this page when the primary content under development is an Ansible collection. It covers testing at the collection level with multiple Ansible content types, including roles, plugins, and modules, along with shared test infrastructure.
 
 ## Overview
 
