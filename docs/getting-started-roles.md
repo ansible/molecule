@@ -33,7 +33,7 @@ Add a small task to `tasks/main.yml`:
     mode: "0644"
 ```
 
-The example uses a disposable container. The role under test writes a marker file into that container, and `verify.yml` checks that the file exists.
+The example uses a disposable container. The role under test writes a marker file into that container. The default scenario will verify the file during its verify sequence. See [Verify the result](#verify-the-result).
 
 ## Scenario layout
 
@@ -198,6 +198,26 @@ For a more complete lifecycle implementation, see [Using podman containers](exam
         success_msg: The role created the marker file
 ```
 
+## Run the complete scenario
+
+Run the full lifecycle from the role directory:
+
+```bash
+molecule test
+```
+
+Molecule runs the configured sequences:
+
+```text
+dependency → destroy → create → converge → idempotence → verify → destroy
+```
+
+The scenario should finish successfully and remove the test container. If it fails, rerun with `--debug` for more detail:
+
+```bash
+molecule --debug test
+```
+
 ## Test multiple scenarios with shared state
 
 If a role needs more than one scenario, each scenario would normally create and
@@ -230,8 +250,8 @@ shared_state: true
 
 Molecule auto-discovers `.config/molecule/config.yml` in a standalone role
 repository. It deep-merges this base configuration into each scenario. The
-inventory path stays anchored to the project directory so component scenarios
-do not look for an inventory inside their own directories.
+inventory path stays anchored to the project directory so the `reverse` scenario
+does not look for an inventory inside its own directory.
 
 Keep the existing `molecule/default/` files from the previous steps. Update
 the role to write both the original and reversed input. Add the input variable
@@ -239,7 +259,7 @@ to `defaults/main.yml`:
 
 ```yaml
 ---
-role_input: molecule role test
+my_role_input: molecule role test
 ```
 
 Update `tasks/main.yml`:
@@ -248,13 +268,13 @@ Update `tasks/main.yml`:
 ---
 - name: Create a marker file
   ansible.builtin.copy:
-    content: "{% raw %}{{ role_input }}{% endraw %}"
+    content: "{% raw %}{{ my_role_input }}{% endraw %}"
     dest: /tmp/molecule_role_marker
     mode: "0644"
 
 - name: Create a reversed marker file
   ansible.builtin.copy:
-    content: "{% raw %}{{ role_input | reverse }}{% endraw %}"
+    content: "{% raw %}{{ my_role_input | reverse }}{% endraw %}"
     dest: /tmp/molecule_role_marker_reversed
     mode: "0644"
 ```
@@ -280,7 +300,7 @@ my_role/
         └── verify.yml
 ```
 
-The component scenario does not need its own create, destroy, requirements, or
+The `reverse` scenario does not need its own create, destroy, requirements, or
 inventory files. Create `molecule/reverse/molecule.yml` with only its document
 marker and an explanation of the inherited configuration:
 
@@ -313,7 +333,7 @@ the verification play:
   hosts: molecule
   gather_facts: false
   vars:
-    role_input: molecule role test
+    my_role_input: molecule role test
   tasks:
     - name: Read the reversed marker file
       ansible.builtin.slurp:
@@ -327,7 +347,7 @@ the verification play:
     - name: Confirm the marker content is the role input reversed
       ansible.builtin.assert:
         that:
-          - marker_content == role_input | reverse
+          - marker_content == my_role_input | reverse
         fail_msg: "Unexpected reversed content: {% raw %}{{ marker_content }}{% endraw %}"
         success_msg: The reversed marker content is correct
 ```
@@ -359,26 +379,6 @@ scenario does not need it.
 
 For the collection version of this pattern, see [Shared state vs per-scenario
 resources](getting-started-collections.md#shared-state-vs-per-scenario-resources).
-
-## Run the complete scenario
-
-Run the full lifecycle from the role directory:
-
-```bash
-molecule test
-```
-
-Molecule runs the configured sequences:
-
-```text
-dependency → destroy → create → converge → idempotence → verify → destroy
-```
-
-The scenario should finish successfully and remove the test container. If it fails, rerun with `--debug` for more detail:
-
-```bash
-molecule --debug test
-```
 
 ## Next steps
 
