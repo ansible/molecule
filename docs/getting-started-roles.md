@@ -223,9 +223,9 @@ molecule --debug test
 
 If a role needs more than one scenario, each scenario would normally create and
 destroy its own test instance. Set `shared_state: true` to let the `default`
-scenario manage the instance while the other scenarios test the role against
-it. This is the same lifecycle split used for collection testing, and it also
-works in a standalone role repository.
+scenario manage the instance while the `reverse` scenario tests the role
+against it. This keeps one test instance for both scenarios in a standalone
+role repository.
 
 Create `.config/molecule/config.yml` at the root of the role repository:
 
@@ -379,12 +379,8 @@ Molecule still runs `default`'s create and destroy actions around the `reverse`
 test. Use shared state when scenarios reuse the same instances. A single
 scenario does not need it.
 
-For the collection version of this pattern, see [Shared state vs per-scenario
-resources](getting-started-collections.md#shared-state-vs-per-scenario-resources).
-
 ## Next steps
 
 - Use [Using podman containers](examples/podman.md) for a detailed ansible-native Podman lifecycle.
 - Use [Systemd Container](guides/systemd-container.md) when the role manages services and needs `systemd` as PID 1.
 - Use [shared state for multiple role scenarios](#test-multiple-scenarios-with-shared-state) when scenarios reuse the same test instances.
-- See [Shared state vs per-scenario resources](getting-started-collections.md#shared-state-vs-per-scenario-resources) for the collection testing pattern.
