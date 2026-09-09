@@ -198,6 +198,168 @@ For a more complete lifecycle implementation, see [Using podman containers](exam
         success_msg: The role created the marker file
 ```
 
+## Test multiple scenarios with shared state
+
+If a role needs more than one scenario, each scenario would normally create and
+destroy its own test instance. Set `shared_state: true` to let the `default`
+scenario manage the instance while the other scenarios test the role against
+it. This is the same lifecycle split used for collection testing, and it also
+works in a standalone role repository.
+
+Create `.config/molecule/config.yml` at the root of the role repository:
+
+```yaml
+---
+ansible:
+  cfg:
+    defaults:
+      roles_path: ${MOLECULE_PROJECT_DIRECTORY}/../
+  executor:
+    args:
+      ansible_playbook:
+        - --inventory=${MOLECULE_PROJECT_DIRECTORY}/molecule/default/inventory/
+
+scenario:
+  test_sequence:
+    - converge
+    - idempotence
+    - verify
+
+shared_state: true
+```
+
+Molecule auto-discovers `.config/molecule/config.yml` in a standalone role
+repository. It deep-merges this base configuration into each scenario. The
+inventory path stays anchored to the project directory so component scenarios
+do not look for an inventory inside their own directories.
+
+Keep the existing `molecule/default/` files from the previous steps. Update
+the role to write both the original and reversed input. Add the input variable
+to `defaults/main.yml`:
+
+```yaml
+---
+role_input: molecule role test
+```
+
+Update `tasks/main.yml`:
+
+```yaml
+---
+- name: Create a marker file
+  ansible.builtin.copy:
+    content: "{% raw %}{{ role_input }}{% endraw %}"
+    dest: /tmp/molecule_role_marker
+    mode: "0644"
+
+- name: Create a reversed marker file
+  ansible.builtin.copy:
+    content: "{% raw %}{{ role_input | reverse }}{% endraw %}"
+    dest: /tmp/molecule_role_marker_reversed
+    mode: "0644"
+```
+
+Add a `reverse` scenario with this structure:
+
+```text
+my_role/
+├── .config/
+│   └── molecule/
+│       └── config.yml
+├── defaults/
+│   └── main.yml
+├── tasks/
+│   └── main.yml
+└── molecule/
+    ├── default/
+    │   ├── molecule.yml
+    │   └── ... (unchanged from the previous steps)
+    └── reverse/
+        ├── molecule.yml
+        ├── converge.yml
+        └── verify.yml
+```
+
+The component scenario does not need its own create, destroy, requirements, or
+inventory files. Create `molecule/reverse/molecule.yml` with only its document
+marker and an explanation of the inherited configuration:
+
+```yaml
+---
+# Inherits shared_state, the test sequence, and the inventory from
+# .config/molecule/config.yml.
+```
+
+Create `molecule/reverse/converge.yml` with the same role application as the
+default scenario:
+
+```yaml
+---
+- name: Converge
+  hosts: molecule
+  gather_facts: false
+  tasks:
+    - name: Apply the role under test
+      ansible.builtin.include_role:
+        name: my_role
+```
+
+Create `molecule/reverse/verify.yml` with the expected role input declared in
+the verification play:
+
+```yaml
+---
+- name: Verify
+  hosts: molecule
+  gather_facts: false
+  vars:
+    role_input: molecule role test
+  tasks:
+    - name: Read the reversed marker file
+      ansible.builtin.slurp:
+        src: /tmp/molecule_role_marker_reversed
+      register: reversed_marker
+
+    - name: Decode the marker content
+      ansible.builtin.set_fact:
+        marker_content: "{% raw %}{{ reversed_marker.content | b64decode }}{% endraw %}"
+
+    - name: Confirm the marker content is the role input reversed
+      ansible.builtin.assert:
+        that:
+          - marker_content == role_input | reverse
+        fail_msg: "Unexpected reversed content: {% raw %}{{ marker_content }}{% endraw %}"
+        success_msg: The reversed marker content is correct
+```
+
+Run both scenarios together:
+
+```bash
+molecule test --all
+```
+
+Molecule runs the lifecycle in this order:
+
+```text
+default → create
+reverse → converge → idempotence → verify
+default → destroy
+```
+
+The `reverse` scenario does not create or destroy another container. To run
+only that scenario, use:
+
+```bash
+molecule test -s reverse
+```
+
+Molecule still runs `default`'s create and destroy actions around the `reverse`
+test. Use shared state when scenarios reuse the same instances. A single
+scenario does not need it.
+
+For the collection version of this pattern, see [Shared state vs per-scenario
+resources](getting-started-collections.md#shared-state-vs-per-scenario-resources).
+
 ## Run the complete scenario
 
 Run the full lifecycle from the role directory:
@@ -222,3 +384,5 @@ molecule --debug test
 
 - Use [Using podman containers](examples/podman.md) for a detailed ansible-native Podman lifecycle.
 - Use [Systemd Container](guides/systemd-container.md) when the role manages services and needs `systemd` as PID 1.
+- Use [shared state for multiple role scenarios](#test-multiple-scenarios-with-shared-state) when scenarios reuse the same test instances.
+- See [Shared state vs per-scenario resources](getting-started-collections.md#shared-state-vs-per-scenario-resources) for the collection testing pattern.
