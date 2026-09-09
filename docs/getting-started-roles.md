@@ -19,6 +19,7 @@ Create a role directory and initialize its default Molecule scenario:
 ```bash
 mkdir -p my_role/tasks
 cd my_role
+git init
 molecule init scenario default
 ```
 
@@ -248,10 +249,11 @@ scenario:
 shared_state: true
 ```
 
-Molecule auto-discovers `.config/molecule/config.yml` in a standalone role
-repository. It deep-merges this base configuration into each scenario. The
-inventory path stays anchored to the project directory so the `reverse` scenario
-does not look for an inventory inside its own directory.
+Molecule uses the role repository's VCS root when it auto-discovers
+`.config/molecule/config.yml`. The `git init` step above creates that root for a
+new standalone role. Molecule deep-merges the base configuration into each
+scenario. The inventory path stays anchored to the project directory so the
+`reverse` scenario does not look for an inventory inside its own directory.
 
 Keep the existing `molecule/default/` files from the previous steps. Update
 the role to write both the original and reversed input. Add the input variable
