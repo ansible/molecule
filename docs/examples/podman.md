@@ -40,6 +40,8 @@ Container definitions are managed through standard Ansible inventory:
 
 **Key points**: Containers are defined as inventory hosts with connection and configuration details. The `molecule` group contains test targets.
 
+When selecting the container image, remember that the container image **must** have Python installed to be able to run many of the builtin tasks.
+
 ```yaml title="inventory/group_vars/molecule.yml"
 {!tests/fixtures/integration/test_command/molecule/podman/inventory/group_vars/molecule.yml!}
 ```
