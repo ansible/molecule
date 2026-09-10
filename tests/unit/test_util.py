@@ -1131,6 +1131,127 @@ def test_find_vcs_root_skips_fake_git_dir(tmp_path: Path) -> None:
     assert result == str(repo)
 
 
+def test_find_vcs_root_in_git_worktree(tmp_path: Path) -> None:
+    """Ensure find_vcs_root recognizes a worktree where .git is a file.
+
+    In a git worktree the ".git" entry is a file containing a
+    "gitdir: <path>" pointer rather than a directory.
+
+    Args:
+        tmp_path: pytest fixture for temporary directory.
+    """
+    # Worktree root: .git is a file pointing at the main repo's gitdir.
+    worktree = tmp_path / "worktree"
+    worktree.mkdir()
+    git_file = worktree / ".git"
+    git_file.write_text(f"gitdir: {tmp_path / 'main' / '.git' / 'worktrees' / 'wt'}\n")
+
+    subdir = worktree / "infra"
+    subdir.mkdir()
+
+    util.find_vcs_root.cache_clear()
+    result = util.find_vcs_root(location=str(subdir))
+    assert result == str(worktree)
+
+
+@pytest.mark.parametrize(
+    "bogus_pointer",
+    (
+        # Not a gitdir pointer at all.
+        "not a gitdir pointer\n",
+        # Missing the required space after the colon; git rejects these
+        # with "invalid gitfile format".
+        "gitdir:",
+        "gitdir:\n",
+        "gitdir:/tmp/target\n",
+        # Correct prefix but empty path; git rejects with "no path in gitfile".
+        "gitdir: ",
+        "gitdir: \n",
+    ),
+    ids=(
+        "no-prefix",
+        "no-space-empty",
+        "no-space-newline",
+        "no-space-path",
+        "empty-path",
+        "empty-path-newline",
+    ),
+)
+def test_find_vcs_root_skips_bogus_git_file(tmp_path: Path, bogus_pointer: str) -> None:
+    """Ensure find_vcs_root ignores a .git file with a malformed pointer.
+
+    Git only accepts a ``.git`` pointer file whose contents start with the
+    exact ``gitdir: `` prefix (colon + space) followed by a non-empty path.
+    Anything else must not be treated as a repository root, otherwise
+    ``find_vcs_root()`` (and callers such as ``lookup_config_file``) would
+    pick up an unrelated ancestor and use the wrong project config.
+
+    Args:
+        tmp_path: pytest fixture for temporary directory.
+        bogus_pointer: A malformed ``.git`` pointer file body.
+    """
+    # Real repo at top level.
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    git_dir = repo / ".git"
+    git_dir.mkdir()
+    (git_dir / "HEAD").write_text("ref: refs/heads/main\n")
+
+    # Subdirectory with a .git file whose contents are not a valid pointer.
+    subdir = repo / "infra"
+    subdir.mkdir()
+    (subdir / ".git").write_text(bogus_pointer)
+
+    util.find_vcs_root.cache_clear()
+    result = util.find_vcs_root(location=str(subdir))
+    assert result == str(repo)
+
+
+def test_find_vcs_root_skips_unreadable_git_file(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Ensure find_vcs_root ignores a .git file that cannot be read.
+
+    If reading the ".git" file raises OSError (e.g. permission denied),
+    the entry should be skipped rather than crash.
+
+    Args:
+        tmp_path: pytest fixture for temporary directory.
+        monkeypatch: pytest fixture for patching attributes.
+    """
+    # Real repo at top level.
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    git_dir = repo / ".git"
+    git_dir.mkdir()
+    (git_dir / "HEAD").write_text("ref: refs/heads/main\n")
+
+    # Subdirectory with a .git file that will fail to read.
+    subdir = repo / "infra"
+    subdir.mkdir()
+    unreadable = subdir / ".git"
+    unreadable.write_text("gitdir: /somewhere\n")
+
+    original_read_text = Path.read_text
+
+    def raise_for_target(
+        self: Path,
+        encoding: str | None = None,
+        errors: str | None = None,
+    ) -> str:
+        if self == unreadable:
+            msg = "simulated permission error"
+            raise PermissionError(msg)
+        return original_read_text(self, encoding=encoding, errors=errors)
+
+    monkeypatch.setattr(Path, "read_text", raise_for_target)
+
+    util.find_vcs_root.cache_clear()
+    result = util.find_vcs_root(location=str(subdir))
+    assert result == str(repo)
+
+
 @pytest.mark.parametrize(
     ("input_value", "expected"),
     (
