@@ -206,6 +206,8 @@ class State:
         """
         if key not in VALID_KEYS:
             raise InvalidState
+        # Reload first so a sibling State object's write under shared_state isn't reverted.
+        self._data = self._get_data()
         self._data[key] = value  # type: ignore[literal-required]
 
     def _get_data(self) -> StateData:

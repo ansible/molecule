@@ -111,6 +111,23 @@ def test_change_state_raises(_instance: state.State) -> None:  # noqa: PT019, D1
         _instance.change_state("invalid-state", True)  # noqa: FBT003
 
 
+def test_change_state_does_not_clobber_a_sibling_states_write(  # noqa: D103
+    _instance: state.State,  # noqa: PT019
+    config_instance: config.Config,
+) -> None:
+    # `_instance` is constructed first, so its in-memory snapshot predates the
+    # write below, the same way a scenario's own State object under
+    # shared_state is constructed before default_config's create step runs.
+    creator = state.State(config_instance)
+    creator.change_state("created", True)  # noqa: FBT003
+
+    _instance.change_state("prepared", True)  # noqa: FBT003
+
+    on_disk = util.safe_load_file(_instance.state_file)
+    assert on_disk["created"] is True
+    assert on_disk["prepared"] is True
+
+
 def test_get_data_loads_existing_state_file(  # noqa: D103
     _instance: state.State,  # noqa: PT019
     molecule_data: dict[str, Any],
