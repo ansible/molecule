@@ -60,8 +60,10 @@ nav:
   - philosophy.md
   - installation.md
   - Using:
-      - getting-started-playbooks.md
-      - getting-started-collections.md
+      - Choose your path: getting-started.md
+      - Test a role: getting-started-roles.md
+      - Test a playbook project: getting-started-playbooks.md
+      - Test a collection: getting-started-collections.md
       - usage.md
       - ansible-native.md
       - workflow.md

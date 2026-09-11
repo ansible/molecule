@@ -49,6 +49,7 @@ dbadmin
 decentral
 delenv
 dependee
+devfile
 dind
 dotdot
 emptydisk
