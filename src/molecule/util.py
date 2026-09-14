@@ -544,7 +544,11 @@ def _is_valid_vcs_dir(path: Path, name: str) -> bool:
     if name == ".git" and vcs_entry.is_file():
         try:
             pointer = vcs_entry.read_text(encoding="utf-8")
-        except OSError:
+        except (OSError, UnicodeDecodeError):
+            # OSError covers permission / IO failures; UnicodeDecodeError
+            # covers stray binary files that happen to be named ".git".
+            # Either way, treat the entry as not a valid pointer and keep
+            # walking rather than aborting find_vcs_root().
             return False
         prefix = "gitdir: "
         return pointer.startswith(prefix) and bool(pointer[len(prefix) :].strip())

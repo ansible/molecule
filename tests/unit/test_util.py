@@ -1252,6 +1252,35 @@ def test_find_vcs_root_skips_unreadable_git_file(
     assert result == str(repo)
 
 
+def test_find_vcs_root_skips_binary_git_file(tmp_path: Path) -> None:
+    """Ensure find_vcs_root ignores a .git file with invalid UTF-8 contents.
+
+    A stray binary file that happens to be named ``.git`` must not abort
+    the walk with ``UnicodeDecodeError`` when we attempt to decode the
+    pointer as UTF-8. The entry should be treated the same as any other
+    malformed pointer and skipped.
+
+    Args:
+        tmp_path: pytest fixture for temporary directory.
+    """
+    # Real repo at top level.
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    git_dir = repo / ".git"
+    git_dir.mkdir()
+    (git_dir / "HEAD").write_text("ref: refs/heads/main\n")
+
+    # Subdirectory with a .git file whose bytes are not valid UTF-8.
+    subdir = repo / "infra"
+    subdir.mkdir()
+    # 0xFF is never a valid UTF-8 lead byte.
+    (subdir / ".git").write_bytes(b"\xff\xfe\x00binary garbage\x00")
+
+    util.find_vcs_root.cache_clear()
+    result = util.find_vcs_root(location=str(subdir))
+    assert result == str(repo)
+
+
 @pytest.mark.parametrize(
     ("input_value", "expected"),
     (
