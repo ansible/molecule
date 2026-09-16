@@ -222,7 +222,16 @@ def test_ansible_connection_options(_instance):  # type: ignore[no-untyped-def] 
     ["_driver_managed_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_ansible_connection_options_when_managed(mocker: MockerFixture, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+def test_ansible_connection_options_when_managed(
+    mocker: MockerFixture,
+    _instance: delegated.Delegated,  # noqa: PT019
+) -> None:
+    """Map the recorded ssh and winrm instance configs to host vars.
+
+    Args:
+        mocker: pytest mocker fixture.
+        _instance: Delegated driver instance.
+    """
     assert _instance.managed is True
 
     ssh_case_data = mocker.patch(
@@ -245,7 +254,6 @@ def test_ansible_connection_options_when_managed(mocker: MockerFixture, _instanc
         "ansible_become_method": "su",
         "ansible_become_pass": "password",
         "ansible_private_key_file": "/foo/bar",
-        "ansible_connection": "smart",
         "ansible_ssh_common_args": (
             "-o UserKnownHostsFile=/dev/null "
             "-o ControlMaster=auto "
@@ -257,7 +265,9 @@ def test_ansible_connection_options_when_managed(mocker: MockerFixture, _instanc
         ),
     }
 
-    assert ssh_expected_data.items() <= _instance.ansible_connection_options("foo").items()
+    ssh_result = _instance.ansible_connection_options("foo")
+    assert ssh_expected_data.items() <= ssh_result.items()
+    assert "ansible_connection" not in ssh_result
 
     winrm_case_data = mocker.patch(
         "molecule.driver.delegated.Delegated._get_instance_config",
@@ -278,6 +288,37 @@ def test_ansible_connection_options_when_managed(mocker: MockerFixture, _instanc
     }
 
     assert winrm_expected_data.items() <= _instance.ansible_connection_options("foo").items()
+
+
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_driver_managed_section_data"],  # noqa: PT007
+    indirect=True,
+)
+def test_ansible_connection_options_omits_unrecorded_keys_when_managed(
+    mocker: MockerFixture,
+    _instance: delegated.Delegated,  # noqa: PT019
+) -> None:
+    """Omit host vars for keys missing from the instance config or recorded as None.
+
+    Args:
+        mocker: pytest mocker fixture.
+        _instance: Delegated driver instance.
+    """
+    m = mocker.patch("molecule.driver.delegated.Delegated._get_instance_config")
+    m.return_value = {
+        "instance": "foo",
+        "address": "172.16.0.2",
+        "user": None,
+    }
+
+    result = _instance.ansible_connection_options("foo")
+
+    assert result["ansible_host"] == "172.16.0.2"
+    assert "ansible_connection" not in result
+    assert "ansible_user" not in result
+    assert "ansible_port" not in result
+    assert None not in result.values()
 
 
 def test_ansible_connection_options_handles_missing_instance_config_managed(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
