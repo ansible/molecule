@@ -595,6 +595,16 @@ data, and the developer's destroy playbook must reset the instance-config.
 This article covers how to configure and use WinRM with Ansible:
 <https://docs.ansible.com/projects/ansible/latest/user_guide/windows_winrm.html>
 
+Molecule writes `ansible_connection`, `ansible_user`, `ansible_host` and
+`ansible_port` to the generated inventory only when the create playbook
+records a value for the matching key. When `connection` is not recorded,
+Ansible resolves the transport itself, so a value set through
+`provisioner.inventory`, `provisioner.connection_options`, the `ansible.cfg`
+section of `molecule.yml` or `ANSIBLE_TRANSPORT` applies.
+`driver.options.ansible_connection_options` is used as the host vars only
+when `managed: False`, except `ansible_ssh_common_args`, which is appended
+to Molecule's ssh options in both modes.
+
 Molecule can also skip the provisioning/deprovisioning steps. It is the
 developers responsibility to manage the instances, and properly configure
 Molecule to connect to said instances.
