@@ -294,7 +294,7 @@ class Delegated(Driver):
             ("winrm_cert_key_pem", None),
             ("winrm_server_cert_validation", None),
             ("shell_type", None),
-            ("connection", "smart"),
+            ("connection", None),
         ]
         if self.managed:
             try:
@@ -327,7 +327,10 @@ class Delegated(Driver):
                 # instance_config is not on disk.
                 return {}
             else:
-                return conn_dict
+                # Drop the None values, so a key the instance config did not
+                # record does not shadow the same variable set elsewhere in
+                # the inventory
+                return {k: v for k, v in conn_dict.items() if v is not None}
 
         return self.options.get("ansible_connection_options", {})
 
