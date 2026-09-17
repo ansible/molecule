@@ -30,8 +30,6 @@ tests/conftest.py
     DOC101: Function `test_fixture_dir`: Docstring contains fewer arguments than in function signature.
     DOC103: Function `test_fixture_dir`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [request: pytest.FixtureRequest].
     DOC201: Function `test_fixture_dir` does not have a return section in docstring
-    DOC101: Function `mock_ephemeral_directory`: Docstring contains fewer arguments than in function signature.
-    DOC103: Function `mock_ephemeral_directory`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [_self: Scenario].
 --------------------
 tests/fixtures/integration/test_command/scenarios/cleanup/molecule/default/tests/test_cleanup.py
     DOC101: Function `test_hosts_file`: Docstring contains fewer arguments than in function signature.
