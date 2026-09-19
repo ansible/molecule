@@ -415,8 +415,14 @@ This pattern directly demonstrates several [testing framework requirements](#ess
 - **Multi-platform support**: Abstract enterprise infrastructure complexity while enabling test-specific instance definitions
 - **Extensibility and integration**: Clean integration with existing enterprise toolchains and governance policies
 
-**Multi-scenario/multi-action data sharing**
-When using native inventory patterns, teams often need to share host-specific data between different Molecule actions (create, converge, verify, destroy). This is especially valuable when using `--shared-state`, where the `default` scenario's create action provisions infrastructure and other scenarios need access to resource-specific data captured during that initial provisioning. A simple and effective approach uses temporary files to pass data from one action to subsequent actions:
+**Sharing one environment across scenarios**
+Real environments are built once and used many times, and a test suite should work the same way. Standing up infrastructure, preparing data, and connecting services is costly, so repeating that work for every check is slow and unlike how the system really runs.
+
+Molecule lets a single setup serve the whole suite. One part of a run creates the shared environment and records what it produced. The checks that follow run against that same environment and build on those results instead of starting over, and when the run ends the environment is torn down once.
+
+Molecule calls this shared state. One scenario, the default, creates and destroys the environment for the whole run, and the others skip setup and teardown to test against it. Whatever the default scenario captures while provisioning is kept where every scenario can reach it, so a later scenario reads what an earlier one produced rather than rediscovering it.
+
+The following playbooks show one way to do this, writing data as the default scenario provisions, reading it back in a later scenario, and removing it at teardown:
 
 ```yaml
 # Example: Sharing infrastructure and host-specific data between actions
@@ -426,7 +432,7 @@ When using native inventory patterns, teams often need to share host-specific da
   hosts: localhost
   gather_facts: false
   vars:
-    execution_vars: "{% raw %}{{ molecule_ephemeral_directory }}{% endraw %}/execution_vars/"
+    execution_vars: "{% raw %}{{ molecule_shared_ephemeral_directory }}{% endraw %}/execution_vars/"
   tasks:
     - name: Ensure execution vars directory exists
       ansible.builtin.file:
@@ -455,7 +461,7 @@ When using native inventory patterns, teams often need to share host-specific da
   hosts: molecule
   gather_facts: false
   vars:
-    execution_vars: "{% raw %}{{ molecule_ephemeral_directory }}{% endraw %}/execution_vars/"
+    execution_vars: "{% raw %}{{ molecule_shared_ephemeral_directory }}{% endraw %}/execution_vars/"
   vars_files:
     - "{% raw %}{{ execution_vars }}{% endraw %}host_{% raw %}{{ inventory_hostname }}{% endraw %}.yml"
   tasks:
@@ -469,7 +475,7 @@ When using native inventory patterns, teams often need to share host-specific da
   hosts: localhost
   gather_facts: false
   vars:
-    execution_vars: "{% raw %}{{ molecule_ephemeral_directory }}{% endraw %}/execution_vars/"
+    execution_vars: "{% raw %}{{ molecule_shared_ephemeral_directory }}{% endraw %}/execution_vars/"
   tasks:
     - name: Destroying resources
       ansible.builtin.debug:
