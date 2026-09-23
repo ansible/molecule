@@ -515,6 +515,7 @@ def _sanitize_molecule_output(output: str) -> str:
         and trailing whitespace removed except for the last line which is always a newline
     """
     clean = strip_ansi_escape(output)
+    clean = re.sub(r'([\s=\'"]|^)(/.*?/molecule/[^\s\n]+)', r"\1REDACTED", clean, flags=re.MULTILINE)
     clean = re.sub(r'([\s=\'"]|^)(/[^\s]+)', r"\1REDACTED", clean, flags=re.MULTILINE)
     clean_lines = []
     for line in clean.splitlines():
