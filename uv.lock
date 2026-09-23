@@ -65,11 +65,11 @@ resolution-markers = [
     "python_full_version < '3.11'",
 ]
 dependencies = [
-    { name = "cryptography" },
-    { name = "jinja2" },
-    { name = "packaging" },
-    { name = "pyyaml" },
-    { name = "resolvelib", version = "1.0.1", source = { registry = "https://pypi.org/simple" } },
+    { name = "cryptography", marker = "python_full_version < '3.11'" },
+    { name = "jinja2", marker = "python_full_version < '3.11'" },
+    { name = "packaging", marker = "python_full_version < '3.11'" },
+    { name = "pyyaml", marker = "python_full_version < '3.11'" },
+    { name = "resolvelib", version = "1.0.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/9d/75/b73552520a48c6a7822445f760e23a59612c0d77df481ba1b9ba8ed4e1d9/ansible_core-2.16.19.tar.gz", hash = "sha256:5125f26412039ffb99a3a7723618535ab80e6ef38944aa2453997350388f4ef4", size = 3172397, upload-time = "2026-06-18T19:40:08.358Z" }
 wheels = [
@@ -84,11 +84,11 @@ resolution-markers = [
     "python_full_version == '3.11.*'",
 ]
 dependencies = [
-    { name = "cryptography" },
-    { name = "jinja2" },
-    { name = "packaging" },
-    { name = "pyyaml" },
-    { name = "resolvelib", version = "1.2.1", source = { registry = "https://pypi.org/simple" } },
+    { name = "cryptography", marker = "python_full_version == '3.11.*'" },
+    { name = "jinja2", marker = "python_full_version == '3.11.*'" },
+    { name = "packaging", marker = "python_full_version == '3.11.*'" },
+    { name = "pyyaml", marker = "python_full_version == '3.11.*'" },
+    { name = "resolvelib", version = "1.2.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/70/10/fb022a98682af71ec7b21ea24dab3103af1c85ae884ac21c9e3f0a2ded9b/ansible_core-2.19.13.tar.gz", hash = "sha256:3711fc5db7a265f93b34cf3f0db8b9708fb0eec12211a6be32ed6edd6c68044b", size = 3432103, upload-time = "2026-09-08T16:47:54.44Z" }
 wheels = [
@@ -105,11 +105,11 @@ resolution-markers = [
     "python_full_version >= '3.12' and python_full_version < '3.14'",
 ]
 dependencies = [
-    { name = "cryptography" },
-    { name = "jinja2" },
-    { name = "packaging" },
-    { name = "pyyaml" },
-    { name = "resolvelib", version = "1.2.1", source = { registry = "https://pypi.org/simple" } },
+    { name = "cryptography", marker = "python_full_version >= '3.12'" },
+    { name = "jinja2", marker = "python_full_version >= '3.12'" },
+    { name = "packaging", marker = "python_full_version >= '3.12'" },
+    { name = "pyyaml", marker = "python_full_version >= '3.12'" },
+    { name = "resolvelib", version = "1.2.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/df/72/2152230f254bd9c6b892f95d6d291a96fd09b632ce01c6b406eda8c5cd75/ansible_core-2.21.4.tar.gz", hash = "sha256:81a9329f4f12cfa5008dcab5d1bf23ae69b7effc08c0f00048ab2461147ae95a", size = 3394492, upload-time = "2026-09-08T16:51:48.569Z" }
 wheels = [
@@ -1052,7 +1052,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -1165,7 +1165,7 @@ name = "importlib-metadata"
 version = "9.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "zipp" },
+    { name = "zipp", marker = "python_full_version < '3.12'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/6f/7e/1e7e8dc30634b93ebb3d58a3dea569ad146e656218d3960ab04f62047b29/importlib_metadata-9.0.1.tar.gz", hash = "sha256:ab830580bc0ef3db61ce8fae716389e5462b67e033018bab6d8f80ef17172f99", size = 59124, upload-time = "2026-08-28T15:30:34.646Z" }
 wheels = [
@@ -1679,22 +1679,22 @@ resolution-markers = [
     "python_full_version < '3.11'",
 ]
 dependencies = [
-    { name = "cairosvg" },
-    { name = "linkchecker" },
-    { name = "markdown-exec" },
-    { name = "markdown-include" },
-    { name = "mkdocs" },
-    { name = "mkdocs-gen-files" },
-    { name = "mkdocs-htmlproofer-plugin" },
-    { name = "mkdocs-macros-plugin" },
-    { name = "mkdocs-material" },
-    { name = "mkdocs-material-extensions" },
-    { name = "mkdocs-minify-plugin" },
-    { name = "mkdocs-monorepo-plugin" },
-    { name = "mkdocstrings" },
-    { name = "mkdocstrings-python" },
-    { name = "pillow" },
-    { name = "pymdown-extensions" },
+    { name = "cairosvg", marker = "python_full_version < '3.11'" },
+    { name = "linkchecker", marker = "python_full_version < '3.11'" },
+    { name = "markdown-exec", marker = "python_full_version < '3.11'" },
+    { name = "markdown-include", marker = "python_full_version < '3.11'" },
+    { name = "mkdocs", marker = "python_full_version < '3.11'" },
+    { name = "mkdocs-gen-files", marker = "python_full_version < '3.11'" },
+    { name = "mkdocs-htmlproofer-plugin", marker = "python_full_version < '3.11'" },
+    { name = "mkdocs-macros-plugin", marker = "python_full_version < '3.11'" },
+    { name = "mkdocs-material", marker = "python_full_version < '3.11'" },
+    { name = "mkdocs-material-extensions", marker = "python_full_version < '3.11'" },
+    { name = "mkdocs-minify-plugin", marker = "python_full_version < '3.11'" },
+    { name = "mkdocs-monorepo-plugin", marker = "python_full_version < '3.11'" },
+    { name = "mkdocstrings", marker = "python_full_version < '3.11'" },
+    { name = "mkdocstrings-python", marker = "python_full_version < '3.11'" },
+    { name = "pillow", marker = "python_full_version < '3.11'" },
+    { name = "pymdown-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/81/54/0b52701cde603997bc52f43f196e3864e70b275922b19deaed8f60034061/mkdocs_ansible-25.2.0.tar.gz", hash = "sha256:c8b55cfa82656d20d7afbfa6bffb32f05e963e6649b8d14dbca5ba34ac9d693a", size = 46201, upload-time = "2025-02-18T13:32:57.504Z" }
 wheels = [
@@ -1712,22 +1712,22 @@ resolution-markers = [
     "python_full_version == '3.11.*'",
 ]
 dependencies = [
-    { name = "cairosvg" },
-    { name = "cffi" },
-    { name = "linkchecker" },
-    { name = "markdown-exec" },
-    { name = "markdown-include" },
-    { name = "mkdocs" },
-    { name = "mkdocs-gen-files" },
-    { name = "mkdocs-htmlproofer-plugin" },
-    { name = "mkdocs-macros-plugin" },
-    { name = "mkdocs-material" },
-    { name = "mkdocs-material-extensions" },
-    { name = "mkdocs-minify-plugin" },
-    { name = "mkdocstrings" },
-    { name = "mkdocstrings-python" },
-    { name = "pillow" },
-    { name = "pymdown-extensions" },
+    { name = "cairosvg", marker = "python_full_version >= '3.11'" },
+    { name = "cffi", marker = "python_full_version >= '3.11'" },
+    { name = "linkchecker", marker = "python_full_version >= '3.11'" },
+    { name = "markdown-exec", marker = "python_full_version >= '3.11'" },
+    { name = "markdown-include", marker = "python_full_version >= '3.11'" },
+    { name = "mkdocs", marker = "python_full_version >= '3.11'" },
+    { name = "mkdocs-gen-files", marker = "python_full_version >= '3.11'" },
+    { name = "mkdocs-htmlproofer-plugin", marker = "python_full_version >= '3.11'" },
+    { name = "mkdocs-macros-plugin", marker = "python_full_version >= '3.11'" },
+    { name = "mkdocs-material", marker = "python_full_version >= '3.11'" },
+    { name = "mkdocs-material-extensions", marker = "python_full_version >= '3.11'" },
+    { name = "mkdocs-minify-plugin", marker = "python_full_version >= '3.11'" },
+    { name = "mkdocstrings", marker = "python_full_version >= '3.11'" },
+    { name = "mkdocstrings-python", marker = "python_full_version >= '3.11'" },
+    { name = "pillow", marker = "python_full_version >= '3.11'" },
+    { name = "pymdown-extensions", marker = "python_full_version >= '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/fb/5a/7927815081eb614108077425c2aae5f0e23a6db4afe576cae4c3b369f064/mkdocs_ansible-26.4.0.tar.gz", hash = "sha256:03745e71ad9e6716821d3be56b36f1d335bbfc207a3eddbc72aa4b9ecd6b0520", size = 157038, upload-time = "2026-04-01T12:48:34.249Z" }
 wheels = [
@@ -1862,8 +1862,8 @@ name = "mkdocs-monorepo-plugin"
 version = "1.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "mkdocs" },
-    { name = "python-slugify" },
+    { name = "mkdocs", marker = "python_full_version < '3.11'" },
+    { name = "python-slugify", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d4/6a/a75245020e44beb9d7c806158f8a2cda37597711409d40c5a37c70078a7e/mkdocs-monorepo-plugin-1.1.2.tar.gz", hash = "sha256:09200bcf837ad35070e6da973aa0cb682e69ed6e16f254a30584550c6d2d8ebb", size = 13723, upload-time = "2025-06-05T19:09:45.042Z" }
 wheels = [
@@ -1976,7 +1976,7 @@ pkg = [
 [package.metadata]
 requires-dist = [
     { name = "ansible-compat", specifier = ">=25.1.4" },
-    { name = "ansible-core", specifier = ">=2.15.0,!=2.17.*" },
+    { name = "ansible-core", specifier = ">=2.16.19,!=2.17.*" },
     { name = "click", specifier = ">=8.0,<9" },
     { name = "enrich", specifier = ">=1.2.7" },
     { name = "jinja2", specifier = ">=2.11.3" },
@@ -2636,7 +2636,7 @@ name = "python-slugify"
 version = "9.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "text-unidecode" },
+    { name = "text-unidecode", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/1c/e7/dc2331a18e4b18721d6382468d2ca163fabacba45d2185945557f364ab39/python_slugify-9.0.0.tar.gz", hash = "sha256:1cd20fe7ebf941b11964a92aba9e5319edfe18606276c6e2481b92e737cde44a", size = 60189, upload-time = "2026-09-08T20:56:07.965Z" }
 wheels = [
