@@ -331,19 +331,49 @@ def test_ansible_connection_options_handles_missing_instance_config_managed(  # 
     assert _instance.ansible_connection_options("foo") == {}
 
 
-def test_ansible_connection_options_handles_missing_results_key_when_managed(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_ansible_connection_options_handles_missing_results_key_when_managed(
     mocker: MockerFixture,
-    _instance,  # noqa: PT019
-):
+    _instance: delegated.Delegated,  # noqa: PT019
+) -> None:
+    """Return empty connection options when the instance config has no results.
+
+    Args:
+        mocker: Pytest mocker fixture.
+        _instance: A delegated driver instance.
+    """
     m = mocker.patch("molecule.util.safe_load_file")
     m.side_effect = StopIteration
 
     assert _instance.ansible_connection_options("foo") == {}
 
 
-def test_instance_config_property(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+def test_instance_config_property(
+    _instance: delegated.Delegated,  # noqa: PT019
+) -> None:
+    """Without shared_state instance_config resolves under the scenario's ephemeral dir.
+
+    Args:
+        _instance: A delegated driver instance.
+    """
     x = os.path.join(  # noqa: PTH118
         _instance._config.scenario.ephemeral_directory,
+        "instance_config.yml",
+    )
+
+    assert x == _instance.instance_config
+
+
+def test_instance_config_property_shared_state(
+    _instance: delegated.Delegated,  # noqa: PT019
+) -> None:
+    """Under shared_state instance_config resolves to the shared root, not a scenario dir.
+
+    Args:
+        _instance: A delegated driver instance.
+    """
+    _instance._config.config_data["shared_state"] = True
+    x = os.path.join(  # noqa: PTH118
+        _instance._config.scenario.shared_ephemeral_directory,
         "instance_config.yml",
     )
 
