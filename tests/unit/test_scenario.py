@@ -108,8 +108,18 @@ def test_ephemeral_directory_property(  # noqa: D103
     _instance: Scenario,  # noqa: PT019
 ) -> None:
     assert os.access(_instance.ephemeral_directory, os.W_OK)
-    # assert that scenario path is included in in repr (useful for debugging)
-    assert _instance.ephemeral_directory in repr(_instance)
+
+
+def test_scenario_repr(
+    _instance: Scenario,  # noqa: PT019
+) -> None:
+    """Pin the scenario repr to its "<Scenario name from project_directory>" format.
+
+    Args:
+        _instance: The scenario whose repr is checked.
+    """
+    expected = f"<Scenario {_instance.name} from {_instance.config.project_directory}>"
+    assert repr(_instance) == expected
 
 
 def test_scenario_inventory_directory_property(  # noqa: D103

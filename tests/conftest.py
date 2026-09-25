@@ -272,10 +272,15 @@ def fixture_test_cache_path(
     def mock_ephemeral_directory(_self: Scenario) -> str:
         """Mock the ephemeral directory.
 
+        Args:
+            _self: The scenario requesting its ephemeral directory
+
         Returns:
-            Path: The ephemeral directory
+            str: The ephemeral directory
         """
-        return str(test_dir)
+        scenario_dir = test_dir / _self.name.replace("/", "--")
+        scenario_dir.mkdir(parents=True, exist_ok=True)
+        return str(scenario_dir)
 
     monkeypatch.setattr(
         "molecule.scenario.Scenario.ephemeral_directory",
