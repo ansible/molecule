@@ -22,7 +22,6 @@ Ulimits
 Unittests
 Virt
 Virt's
-Worktree
 XDIST
 antsibull
 anyconfig
@@ -148,7 +147,6 @@ vfoo
 virtenv
 virtualmachines
 webservers
-worktree
 worktrees
 yourcollection
 yournamespace
