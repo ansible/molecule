@@ -119,11 +119,23 @@ def _model_driver_allows_custom_section_data2():  # type: ignore[no-untyped-def]
     return {"driver": {"name": "custom_test_driver.name"}}
 
 
+@pytest.fixture
+def _model_driver_allows_kubevirt_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
+    return {"driver": {"name": "kubevirt"}}
+
+
+@pytest.fixture
+def _model_driver_allows_lima_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
+    return {"driver": {"name": "lima"}}
+
+
 ###
 @pytest.mark.parametrize(
     "config",
     [  # noqa: PT007
         ("_model_driver_allows_delegated_section_data"),
+        ("_model_driver_allows_kubevirt_section_data"),
+        ("_model_driver_allows_lima_section_data"),
         ("_model_driver_allows_molecule_section_data1"),
         ("_model_driver_allows_molecule_section_data2"),
         ("_model_driver_allows_custom_section_data2"),
