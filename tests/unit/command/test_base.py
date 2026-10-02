@@ -690,8 +690,21 @@ def test_apply_cli_overrides_comprehensive(
     original_apply_cli_overrides = config.Config._apply_cli_overrides
 
     def mock_apply_cli_overrides(self: config.Config) -> None:
+        """Apply the CLI overrides and stop main after the final override pass.
+
+        Config.__init__ applies the CLI overrides before and after the env
+        overrides; the first pass records the Config, the second exits.
+
+        Args:
+            self: The Config under construction.
+
+        Raises:
+            ImmediateExit: On the final override pass, to stop main.
+        """
         original_apply_cli_overrides(self)
-        captured_configs.append(self)
+        if self not in captured_configs:
+            captured_configs.append(self)
+            return
         msg = "Test capture complete"
         raise ImmediateExit(msg, 0)
 
@@ -798,8 +811,21 @@ def test_apply_env_overrides_comprehensive(  # noqa: PLR0913
     original_apply_cli_overrides = config.Config._apply_cli_overrides
 
     def mock_apply_cli_overrides(self: config.Config) -> None:
+        """Apply the CLI overrides and stop main after the final override pass.
+
+        Config.__init__ applies the CLI overrides before and after the env
+        overrides; the first pass records the Config, the second exits.
+
+        Args:
+            self: The Config under construction.
+
+        Raises:
+            ImmediateExit: On the final override pass, to stop main.
+        """
         original_apply_cli_overrides(self)
-        captured_configs.append(self)
+        if self not in captured_configs:
+            captured_configs.append(self)
+            return
         msg = "Test capture complete"
         raise ImmediateExit(msg, 0)
 
@@ -903,8 +929,21 @@ def test_env_var_cli_precedence(  # noqa: PLR0913
     original_apply_cli_overrides = config.Config._apply_cli_overrides
 
     def mock_apply_cli_overrides(self: config.Config) -> None:
+        """Apply the CLI overrides and stop main after the final override pass.
+
+        Config.__init__ applies the CLI overrides before and after the env
+        overrides; the first pass records the Config, the second exits.
+
+        Args:
+            self: The Config under construction.
+
+        Raises:
+            ImmediateExit: On the final override pass, to stop main.
+        """
         original_apply_cli_overrides(self)
-        captured_configs.append(self)
+        if self not in captured_configs:
+            captured_configs.append(self)
+            return
         msg = "Test capture complete"
         raise ImmediateExit(msg, 0)
 

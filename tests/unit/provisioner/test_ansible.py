@@ -17,9 +17,13 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+
+# pylint: disable=too-many-lines
+
 from __future__ import annotations
 
 import collections
+import configparser
 import os
 
 from pathlib import Path
@@ -767,7 +771,12 @@ def test_get_plugin_directory(instance):  # type: ignore[no-untyped-def]  # noqa
     assert parts[-4:] == ("molecule", "provisioner", "ansible", "plugins")
 
 
-def test_absolute_path_for(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_absolute_path_for(instance: ansible.Ansible) -> None:
+    """_absolute_path_for resolves each colon-separated entry under the scenario directory.
+
+    Args:
+        instance: Ansible provisioner instance.
+    """
     env = {"foo": "foo:bar"}
     x = ":".join(
         [
@@ -779,7 +788,12 @@ def test_absolute_path_for(instance):  # type: ignore[no-untyped-def]  # noqa: A
     assert x == instance._absolute_path_for(env, "foo")
 
 
-def test_absolute_path_for_raises_with_missing_key(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+def test_absolute_path_for_raises_with_missing_key(instance: ansible.Ansible) -> None:
+    """_absolute_path_for raises KeyError for a key absent from the env mapping.
+
+    Args:
+        instance: Ansible provisioner instance.
+    """
     env = {"foo": "foo:bar"}
 
     with pytest.raises(KeyError):
@@ -787,6 +801,163 @@ def test_absolute_path_for_raises_with_missing_key(instance):  # type: ignore[no
 
 
 # Test ansible section integration with provisioner
+
+
+# Regression tests for shared_state working-directory isolation (issue #4666).
+
+
+def _shared_state_provisioner(
+    scenario_name: str,
+    inventory: dict[str, Any],
+) -> ansible.Ansible:
+    """Build a shared_state Ansible provisioner for one scenario.
+
+    Args:
+        scenario_name: The molecule scenario name.
+        inventory: Provisioner inventory keys for this scenario.
+
+    Returns:
+        An Ansible provisioner bound to a shared_state config.
+    """
+    c = config.Config(molecule_file="")
+    c.config_data["shared_state"] = True
+    c.config_data["scenario"]["name"] = scenario_name
+    c.config_data["provisioner"]["inventory"].update(inventory)  # type: ignore[typeddict-item]
+    # Config caches its scenario at init with the defaults; rebuild it so the
+    # shared_state and name set above drive the ephemeral directory.
+    del c.scenario
+    return ansible.Ansible(c)
+
+
+def _redirect_ephemeral_root(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Redirect the ansible-compat runtime cache under tmp_path.
+
+    The shared ephemeral root derives from the runtime cache, so this keeps the
+    filesystem writes inside tmp_path rather than the repo's .ansible or the
+    user cache.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        tmp_path: Pytest tmp_path fixture.
+    """
+    monkeypatch.setenv("ANSIBLE_HOME", str(tmp_path / ".ansible"))
+    monkeypatch.chdir(tmp_path)
+
+
+def test_shared_state_group_vars_survive_sibling_action(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """A sibling scenario's manage_inventory must not delete our group_vars (#4666).
+
+    manage_inventory removes (rmtree) and rewrites the group_vars tree under its
+    inventory_directory. Once each scenario owns its own inventory directory a
+    sibling's rewrite cannot reach ours, so the surviving group_vars file is the
+    behavioral check.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        tmp_path: Pytest tmp_path fixture.
+    """
+    _redirect_ephemeral_root(monkeypatch, tmp_path)
+    alpha = _shared_state_provisioner(
+        "alpha",
+        {"group_vars": {"alpha_group": [{"owner": "alpha"}]}},
+    )
+    beta = _shared_state_provisioner(
+        "beta",
+        {"group_vars": {"beta_group": [{"owner": "beta"}]}},
+    )
+
+    alpha.manage_inventory()
+    beta.manage_inventory()
+
+    assert alpha.inventory_directory != beta.inventory_directory
+    assert str(tmp_path) in alpha.inventory_directory
+    alpha_group_vars = Path(alpha.inventory_directory) / "group_vars" / "alpha_group"
+    assert alpha_group_vars.is_file()
+    assert util.safe_load_file(alpha_group_vars) == [{"owner": "alpha"}]
+
+
+def test_shared_state_hosts_survive_sibling_action(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Sibling scenarios must own distinct hosts and exported inventory files (#4666).
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        tmp_path: Pytest tmp_path fixture.
+    """
+    _redirect_ephemeral_root(monkeypatch, tmp_path)
+    alpha = _shared_state_provisioner(
+        "alpha",
+        {"hosts": {"all": {"hosts": {"alpha-host": {}}}}},
+    )
+    beta = _shared_state_provisioner(
+        "beta",
+        {"hosts": {"all": {"hosts": {"beta-host": {}}}}},
+    )
+    alpha._config.config_data["platforms"] = [{"name": "alpha-instance"}]
+    beta._config.config_data["platforms"] = [{"name": "beta-instance"}]
+
+    alpha.manage_inventory()
+    beta.manage_inventory()
+
+    assert alpha.inventory_directory != beta.inventory_directory
+    assert str(tmp_path) in alpha.inventory_directory
+    alpha_hosts = Path(alpha.inventory_directory) / "hosts"
+    assert util.safe_load_file(alpha_hosts)["all"]["hosts"] == {"alpha-host": {}}
+    # inventory_file is the ansible_inventory.yml molecule exports as
+    # MOLECULE_INVENTORY_FILE; it must carry only this scenario's platform host.
+    exported = util.safe_load_file(alpha.inventory_file)
+    assert "alpha-instance" in exported["all"]["hosts"]
+    assert "beta-instance" not in exported["all"]["hosts"]
+
+
+def test_shared_state_ansible_cfg_survives_sibling_write(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """A sibling's write_config must not overwrite our ansible.cfg (#4666).
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        tmp_path: Pytest tmp_path fixture.
+    """
+    _redirect_ephemeral_root(monkeypatch, tmp_path)
+    alpha = _shared_state_provisioner("alpha", {})
+    beta = _shared_state_provisioner("beta", {})
+    alpha._config.config_data["ansible"]["cfg"] = {"defaults": {"forks": 11}}
+    beta._config.config_data["ansible"]["cfg"] = {"defaults": {"forks": 22}}
+
+    alpha.write_config()
+    beta.write_config()
+
+    assert alpha.config_file != beta.config_file
+    cp = configparser.ConfigParser()
+    cp.read(alpha.config_file)
+    assert cp["defaults"]["forks"] == "11"
+
+
+def test_inventory_exports_ephemeral_directory_vars(instance: Ansible) -> None:
+    """The rendered inventory exposes both ephemeral directories to plays.
+
+    Args:
+        instance: Ansible provisioner instance.
+    """
+    all_vars = instance.inventory["all"]["vars"]
+    assert (
+        all_vars["molecule_ephemeral_directory"]
+        == "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}"
+    )
+    assert (
+        all_vars["molecule_shared_ephemeral_directory"]
+        == "{{ lookup('env', 'MOLECULE_SHARED_EPHEMERAL_DIRECTORY') }}"
+    )
 
 
 def test_ansible_args_property_with_ansible_playbook_backend() -> None:
