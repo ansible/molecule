@@ -56,7 +56,7 @@ def _model_dependency_errors_section_data():  # type: ignore[no-untyped-def]  # 
     indirect=True,
 )
 def test_dependency_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    x = ["0 is not one of ['galaxy', 'shell']"]
+    x = ["$.dependency.name: 0 is not one of ['galaxy', 'shell']"]
 
     assert x == schema_v3.validate(config)
 
@@ -94,6 +94,6 @@ def _model_dependency_shell_errors_section_data():  # type: ignore[no-untyped-de
     indirect=True,
 )
 def test_dependency_shell_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    x = ["None is not of type 'string'"]
+    x = ["$.dependency.command: None is not of type 'string'"]
 
     assert x == schema_v3.validate(config)
