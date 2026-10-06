@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 import pytest
 
@@ -13,6 +13,8 @@ from molecule.model import schema_v3
 
 if TYPE_CHECKING:
     from pathlib import Path
+
+    from molecule.types import ConfigData
 
 
 @pytest.mark.parametrize(
@@ -33,7 +35,7 @@ if TYPE_CHECKING:
 def test_validation_error_path(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
-    instance: dict,
+    instance: dict[str, Any],
     expected: str | None,
 ) -> None:
     """Report the location of schema errors, including driver platform errors.
@@ -62,7 +64,9 @@ def test_validation_error_path(
     schema_file.write_text(json.dumps(schema), encoding="utf-8")
     monkeypatch.setattr(schema_v3, "_collect_schema_files", lambda _: [str(schema_file)])
 
-    assert schema_v3.validate(instance) == ([] if expected is None else [expected])
+    assert schema_v3.validate(cast("ConfigData", instance)) == (
+        [] if expected is None else [expected]
+    )
 
 
 @pytest.mark.parametrize("name", ("invalid-driver", 42))
@@ -72,7 +76,7 @@ def test_driver_name_error_preserved(name: str | int) -> None:
     Args:
         name: Invalid driver name to validate.
     """
-    errors = schema_v3.validate({"driver": {"name": name}, "platforms": []})
+    errors = schema_v3.validate(cast("ConfigData", {"driver": {"name": name}, "platforms": []}))
 
     assert len(errors) == 1
     assert errors[0].startswith(f"{name!r} is not one of [")
