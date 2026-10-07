@@ -158,7 +158,17 @@ def test_bake(_inventory_directory, _instance):  # type: ignore[no-untyped-def] 
     assert _instance._ansible_command == args
 
 
-def test_bake_with_ansible_navigator(_inventory_directory, _instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+def test_bake_with_ansible_navigator(
+    _inventory_directory: str,  # noqa: PT019
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+) -> None:
+    """Test that bake() builds the ansible-navigator command.
+
+    Args:
+        _inventory_directory: Temporary inventory directory fixture.
+        _instance: AnsiblePlaybook instance fixture.
+    """
+    assert _instance._config.provisioner is not None
     pb = _instance._config.provisioner.playbooks.converge
     _instance._playbook = pb
     _instance._config.config_data["ansible"]["executor"]["backend"] = "ansible-navigator"
@@ -180,10 +190,107 @@ def test_bake_with_ansible_navigator(_inventory_directory, _instance):  # type: 
     assert _instance._ansible_command == args
 
 
-def test_bake_removes_non_interactive_options_from_non_converge_playbooks(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    _inventory_directory,  # noqa: PT019
-    _instance,  # noqa: PT019
-):
+@pytest.mark.parametrize(("opt", "flag"), (("v", "-v"), ("vv", "-vv"), ("vvv", "-vvv")))
+def test_bake_passes_verbosity_option(
+    opt: str,
+    flag: str,
+    _inventory_directory: str,  # noqa: PT019
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+) -> None:
+    """Test that a provisioner verbosity option reaches the ansible-playbook command.
+
+    Args:
+        opt: The provisioner options key (``v``, ``vv``, or ``vvv``).
+        flag: The verbosity flag expected on the command line.
+        _inventory_directory: Temporary inventory directory fixture.
+        _instance: AnsiblePlaybook instance fixture.
+    """
+    assert _instance._config.provisioner is not None
+    pb = _instance._config.provisioner.playbooks.converge
+    _instance._playbook = pb
+    _instance._config.config_data["provisioner"]["options"][opt] = True
+    _instance.bake()
+
+    args = [
+        "ansible-playbook",
+        "--become",
+        "--inventory",
+        _inventory_directory,
+        "--skip-tags",
+        "molecule-notest,notest",
+        flag,
+        pb,
+    ]
+
+    assert _instance._ansible_command == args
+
+
+@pytest.mark.parametrize(("opt", "flag"), (("v", "-v"), ("vv", "-vv"), ("vvv", "-vvv")))
+def test_bake_passes_verbosity_option_with_ansible_navigator(
+    opt: str,
+    flag: str,
+    _inventory_directory: str,  # noqa: PT019
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+) -> None:
+    """Test that a provisioner verbosity option reaches the ansible-navigator command.
+
+    Args:
+        opt: The provisioner options key (``v``, ``vv``, or ``vvv``).
+        flag: The verbosity flag expected on the command line.
+        _inventory_directory: Temporary inventory directory fixture.
+        _instance: AnsiblePlaybook instance fixture.
+    """
+    assert _instance._config.provisioner is not None
+    pb = _instance._config.provisioner.playbooks.converge
+    _instance._playbook = pb
+    _instance._config.config_data["ansible"]["executor"]["backend"] = "ansible-navigator"
+    _instance._config.config_data["provisioner"]["options"][opt] = True
+    _instance.bake()
+
+    args = [
+        "ansible-navigator",
+        "run",
+        pb,
+        "--mode",
+        "stdout",
+        "--become",
+        "--inventory",
+        _inventory_directory,
+        "--skip-tags",
+        "molecule-notest,notest",
+        flag,
+    ]
+
+    assert _instance._ansible_command == args
+
+
+def test_bake_debug_sets_verbosity(
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+) -> None:
+    """Test that ``--debug`` raises Ansible verbosity to ``-vvv``.
+
+    Args:
+        _instance: AnsiblePlaybook instance fixture.
+    """
+    assert _instance._config.provisioner is not None
+    pb = _instance._config.provisioner.playbooks.converge
+    _instance._playbook = pb
+    _instance._config.args["debug"] = True
+    _instance.bake()
+
+    assert "-vvv" in _instance._ansible_command
+
+
+def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
+    _inventory_directory: str,  # noqa: PT019
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+) -> None:
+    """Test that non-interactive options are dropped for non-converge playbooks.
+
+    Args:
+        _inventory_directory: Temporary inventory directory fixture.
+        _instance: AnsiblePlaybook instance fixture.
+    """
     _instance.bake()
 
     args = [
