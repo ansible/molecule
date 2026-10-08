@@ -450,7 +450,7 @@ With `shared_state` enabled, the **default scenario becomes the lifecycle manage
 
 - **Default scenario handles create/destroy**: The default scenario's `create` and `destroy` actions manage the infrastructure lifecycle for ALL scenarios
 - **Component scenarios skip create/destroy**: Individual scenarios (role1, role2, role3) only run their test sequence (prepare, converge, verify, etc.) - they do not create or destroy their own resources
-- **Shared ephemeral state**: All scenarios share the same state directory, allowing them to access resources created by the default scenario
+- **Shared ephemeral state**: All scenarios share one state directory (`state.yml` and `instance_config.yml`), allowing them to access resources created by the default scenario, and each scenario keeps its own inventory and configuration files
 
 **Why this approach is required for this configuration:**
 

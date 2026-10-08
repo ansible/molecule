@@ -124,6 +124,11 @@ class Config:
         self.command_args: CommandArgs = command_args if command_args is not None else {}
         self.ansible_args = ansible_args
         self.config_data = self._get_config()
+        # Apply the CLI shared_state override before env first evaluates the
+        # scenario's ephemeral directory and the state file path (both cached
+        # on first use); _reget_config replaces config_data, so the override
+        # is applied again below.
+        self._apply_cli_overrides()
         self._action: str | None = None
         self._run_uuid = str(uuid4())
         self.project_directory = os.getenv(
@@ -379,6 +384,11 @@ class Config:
             "MOLECULE_STATE_FILE": self.state.state_file,
             "MOLECULE_INVENTORY_FILE": self.provisioner.inventory_file,  # type: ignore[union-attr]
             "MOLECULE_EPHEMERAL_DIRECTORY": self.scenario.ephemeral_directory,
+            "MOLECULE_SHARED_EPHEMERAL_DIRECTORY": (
+                self.scenario.shared_ephemeral_directory
+                if self.shared_state
+                else self.scenario.ephemeral_directory
+            ),
             "MOLECULE_SCENARIO_DIRECTORY": self.scenario.directory,
             "MOLECULE_PROJECT_DIRECTORY": self.project_directory,
             "MOLECULE_INSTANCE_CONFIG": self.driver.instance_config,
