@@ -42,7 +42,12 @@ def _dependency_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "dependency": {
             "name": "galaxy",
-            "options": {"foo": "bar", "v": True, "role-file": "bar.yml"},
+            "options": {
+                "foo": "bar",
+                "v": True,
+                "role-file": "bar.yml",
+                "collections-path": "/usr/share/ansible/collections",
+            },
             "env": {"FOO": "bar"},
         },
     }
@@ -103,6 +108,7 @@ def test_collections_options_property(_instance, role_file):  # type: ignore[no-
         "force": False,
         "requirements-file": role_file,
         "foo": "bar",
+        "collections-path": "/usr/share/ansible/collections",
         "v": True,
     }
 
@@ -120,6 +126,7 @@ def test_collections_options_property_handles_cli_args(role_file, _instance):  #
         "force": False,
         "requirements-file": role_file,
         "foo": "bar",
+        "collections-path": "/usr/share/ansible/collections",
         "vvv": True,
     }
 
@@ -146,6 +153,8 @@ def test_collections_bake(_instance, role_file):  # type: ignore[no-untyped-def]
         "ansible-galaxy",
         "collection",
         "install",
+        "--collections-path",
+        "/usr/share/ansible/collections",
         "--foo",
         "bar",
         "--requirements-file",
