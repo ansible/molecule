@@ -424,3 +424,48 @@ provisioner:
 verifier:
   name: testinfra
 ```
+
+## Woodpecker CI
+
+[Woodpecker CI](https://woodpecker-ci.org/) is an Open Source CI platform which
+can be used to test Ansible roles.
+
+The security model for Woodpecker is restrictive by default and prevents PIND
+(Podman in Docker) / DIND (Docker in Docker) from working. If your Molecule
+scaffolding creates and tears down containers like in [Ansible Molecule: Test a role](./getting-started-roles.md),
+you must set the [UTS namespace](https://en.wikipedia.org/wiki/Linux_namespaces#UTS)
+to `private` and set your project to trusted (Security) in Woodpecker.
+
+To set the UTS namespace, set `uts: private` when invoking your container
+module:
+
+```diff
+   tasks:
+     - name: Create containers from inventory
+       containers.podman.podman_container:
+         …
++        uts: private
+```
+
+See the [Woodpecker CI documentation](https://woodpecker-ci.org/docs/usage/project-settings#trusted)
+for more information on trusting projects.
+
+Once the project is configured, the following is a minimal CI pipeline to test a
+role:
+
+```yaml
+---
+when:
+  - event: push
+  - event: pull_request
+
+steps:
+  build:
+    image: quay.io/podman/stable:latest
+    privileged: true
+    commands:
+      - dnf install -y python3-pip
+      - python3 -m pip install --upgrade pip
+      - python3 -m pip install molecule
+      - molecule test --all
+```
