@@ -7,12 +7,14 @@ import shutil
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+import click
 import pytest
 
 from molecule import logger
 from molecule.api import drivers
 from molecule.command import base
 from molecule.command.base import _run_scenarios
+from molecule.config import Config
 
 
 LOG = logger.get_scenario_logger(__name__, "reset", "test")
@@ -21,7 +23,6 @@ LOG = logger.get_scenario_logger(__name__, "reset", "test")
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from molecule.config import Config
     from molecule.types import CommandArgs, MoleculeArgs
 
 
@@ -516,3 +517,59 @@ def test_reset_does_not_clean_shared_without_all_flag(
 
     # Shared directory should NOT be removed when --all is not used
     assert str(tmp_path / "shared") not in removed_directories
+
+
+def test_reset_under_shared_state_removes_only_the_scenario_directory(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    patched_execute_subcommand: Callable[..., None],
+) -> None:
+    """Under shared_state a single-scenario reset leaves the shared root's files in place.
+
+    Uses a real Config and the real shutil.rmtree so the directory removed is
+    the one the scenario actually resolves, not a stand-in path.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        tmp_path: Pytest tmp_path fixture.
+        patched_execute_subcommand: Patched execute_subcommand_default function.
+    """
+    monkeypatch.delenv("MOLECULE_EPHEMERAL_DIRECTORY", raising=False)
+    monkeypatch.setenv("ANSIBLE_HOME", str(tmp_path / ".ansible"))
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(
+        "molecule.command.base.execute_subcommand_default",
+        patched_execute_subcommand,
+    )
+
+    # Config.__init__ caches the scenario and state paths, so shared_state
+    # has to be in force before construction: give it the way the CLI does.
+    with click.Context(click.Command("reset")) as ctx:
+        ctx.set_parameter_source("shared_state", click.core.ParameterSource.COMMANDLINE)
+        cfg = Config("", command_args={"shared_state": True})
+    cfg.config_data["prerun"] = False
+    scenario = cfg.scenario
+    shared_root = Path(scenario.shared_ephemeral_directory)
+    scenario_dir = Path(scenario.ephemeral_directory)
+    state_file = Path(cfg.state.state_file)
+    instance_config = Path(cfg.driver.instance_config)
+    instance_config.write_text("[]\n")
+
+    assert scenario_dir.parent == shared_root
+    assert scenario_dir.is_dir()
+    assert state_file.parent == shared_root
+    assert instance_config.parent == shared_root
+
+    scenarios: Any = type(
+        "Scenarios",
+        (),
+        {"all": [scenario], "results": [], "shared_state": True},
+    )()
+    command_args: CommandArgs = {"subcommand": "reset"}
+
+    _run_scenarios(scenarios, command_args, None)
+
+    assert not scenario_dir.exists()
+    assert shared_root.is_dir()
+    assert state_file.is_file()
+    assert instance_config.is_file()

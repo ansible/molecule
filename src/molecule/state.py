@@ -238,4 +238,14 @@ class State:
         util.atomic_write_file(self.state_file, util.safe_dump(self._data))
 
     def _get_state_file(self) -> Path:
+        """Resolve the path to the scenario's state file.
+
+        When shared_state is enabled, the state file lives at the shared
+        ephemeral directory so scenarios share one run state.
+
+        Returns:
+            Path to state.yml.
+        """
+        if self._config.shared_state:
+            return Path(self._config.scenario.shared_ephemeral_directory) / "state.yml"
         return Path(self._config.scenario.ephemeral_directory) / "state.yml"
