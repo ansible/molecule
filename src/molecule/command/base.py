@@ -64,6 +64,22 @@ def _log(scenario_name: str, step: str, message: str, level: str = "info") -> No
     getattr(scenario_log, level)(message)
 
 
+def _remove_scenario_ephemeral_directory(scenario: Scenario, removed_directories: set[str]) -> None:
+    """Remove a scenario's ephemeral directory once, including when it is shared.
+
+    Args:
+        scenario: The scenario whose ephemeral directory should be removed.
+        removed_directories: Directories already removed during this reset.
+    """
+    directory = scenario.ephemeral_directory
+    if directory in removed_directories:
+        return
+
+    _log(scenario.config.scenario.name, "reset", f"Removing {directory}")
+    shutil.rmtree(directory)
+    removed_directories.add(directory)
+
+
 class Base(abc.ABC):
     """An abstract base class used to define the command interface."""
 
@@ -350,6 +366,7 @@ def _run_scenarios(
     if create_results is not None:
         scenarios.results.append(create_results)
 
+    removed_ephemeral_directories: set[str] = set()
     for scenario in scenarios.all:
         if scenario.config.config_data["prerun"]:
             role_name_check = scenario.config.config_data["role_name_check"]
@@ -364,12 +381,7 @@ def _run_scenarios(
             )
 
         if command_args.get("subcommand") == "reset":
-            _log(
-                scenario.config.scenario.name,
-                "reset",
-                f"Removing {scenario.ephemeral_directory}",
-            )
-            shutil.rmtree(scenario.ephemeral_directory)
+            _remove_scenario_ephemeral_directory(scenario, removed_ephemeral_directories)
             continue
         try:
             execute_scenario(scenario, shared_state=scenarios.shared_state)
