@@ -77,7 +77,7 @@ def _model_provisioner_errors_section_data():  # type: ignore[no-untyped-def]  #
     indirect=True,
 )
 def test_provisioner_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    x = ["0 is not one of ['ansible']"]
+    x = ["$.provisioner.name: 0 is not one of ['ansible']"]
 
     assert x == schema_v3.validate(config)
 

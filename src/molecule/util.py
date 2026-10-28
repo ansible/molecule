@@ -681,18 +681,6 @@ def dict2args(data: MutableMapping[str, str | bool]) -> list[str]:
     return result
 
 
-def bool2args(_data: bool | list[str]) -> list[str]:  # noqa: FBT001
-    """Convert a boolean value to command line argument (flag).
-
-    Args:
-        _data: A boolean value.
-
-    Returns:
-        An empty list
-    """
-    return []
-
-
 def oxford_comma(listed: Iterable[bool | str | Path], condition: str = "and") -> str:
     """Format a list into a sentence.
 

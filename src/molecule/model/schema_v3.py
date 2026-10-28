@@ -110,7 +110,7 @@ def _format_validation_error(exc: ValidationError) -> str:
         ),
     )
     if not is_driver_name_error:
-        return exc.message
+        return f"{exc.json_path}: {exc.message}"
 
     wrong_driver_name = str(exc.message.split()[0])
     if isinstance(exc.schema, dict):

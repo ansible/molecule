@@ -58,7 +58,9 @@ def _model_verifier_errors_section_data():  # type: ignore[no-untyped-def]  # no
     indirect=True,
 )
 def test_verifier_has_errors(config):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
-    x = ["0 is not one of ['ansible', 'goss', 'inspec', 'testinfra']"]
+    x = [
+        "$.verifier.name: 0 is not one of ['ansible', 'goss', 'inspec', 'testinfra']",
+    ]
 
     assert x == schema_v3.validate(config)
 
