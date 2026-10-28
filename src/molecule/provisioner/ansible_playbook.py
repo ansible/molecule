@@ -159,7 +159,7 @@ class AnsiblePlaybook:
             return [
                 "ansible-playbook",
                 *util.dict2args(options),
-                *util.bool2args(verbose_flag),
+                *verbose_flag,
                 *ansible_args,
                 playbook,
             ]
@@ -171,7 +171,7 @@ class AnsiblePlaybook:
                 "--mode",
                 "stdout",
                 *util.dict2args(options),
-                *util.bool2args(verbose_flag),
+                *verbose_flag,
                 *ansible_args,
             ]
         msg = f"Unsupported backend: {backend}"
