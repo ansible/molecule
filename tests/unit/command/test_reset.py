@@ -347,6 +347,29 @@ def test_reset_removes_ephemeral_directory(
     assert f"[{scenario_name} > reset] Removing {ephemeral_dir}" in caplog.text
 
 
+def test_reset_removes_shared_ephemeral_directory_once(
+    tmp_path: Path,
+    common_patches: dict[str, Any],
+    patched_scenarios_factory: Any,  # noqa: ANN401
+) -> None:
+    """Remove a shared directory once when multiple scenarios use it."""
+    shared_directory = str(tmp_path / "shared")
+    unique_directory = str(tmp_path / "unique")
+    scenarios = patched_scenarios_factory(
+        [
+            ("scenario1", shared_directory, shared_directory),
+            ("scenario2", shared_directory, shared_directory),
+            ("scenario3", unique_directory, unique_directory),
+        ],
+    )
+
+    _run_scenarios(scenarios, {"subcommand": "reset"}, None)
+
+    removed_directories = common_patches["removed_directories"]
+    assert removed_directories.count(shared_directory) == 1
+    assert removed_directories.count(unique_directory) == 1
+
+
 def test_reset_command_with_all_flag_integration(
     patched_execute_cmdline_scenarios: list[dict[str, Any]],
 ) -> None:
