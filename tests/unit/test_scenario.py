@@ -227,17 +227,27 @@ def test_verify_sequence_property(  # noqa: D103
     assert _instance.verify_sequence == ["verify"]
 
 
-def test_sequence_property_with_invalid_subcommand(  # noqa: D103
+def test_sequence_property_with_invalid_subcommand(
     _instance: Scenario,  # noqa: PT019
 ) -> None:
+    """The sequence property is empty for an unknown subcommand.
+
+    Args:
+        _instance: Scenario instance.
+    """
     _instance.config.command_args = {"subcommand": "invalid"}
 
     assert _instance.sequence == []
 
 
-def test_setup_creates_ephemeral_and_inventory_directories(  # noqa: D103
+def test_setup_creates_ephemeral_and_inventory_directories(
     _instance: Scenario,  # noqa: PT019
 ) -> None:
+    """_setup recreates a writable ephemeral directory and its inventory directory.
+
+    Args:
+        _instance: Scenario instance.
+    """
     ephemeral_dir = _instance.config.scenario.ephemeral_directory
     inventory_dir = _instance.config.scenario.inventory_directory
     shutil.rmtree(ephemeral_dir)
@@ -249,19 +259,60 @@ def test_setup_creates_ephemeral_and_inventory_directories(  # noqa: D103
     assert os.access(ephemeral_dir, os.W_OK)
 
 
-def test_shared_ephemeral_directory_with_shared_state(  # noqa: D103
-) -> None:
+def test_shared_ephemeral_directory_with_shared_state() -> None:
+    """Under shared_state each scenario gets its own dir under the shared root."""
     cfg = config.Config("")
     cfg.config_data["shared_state"] = True
     scenario = Scenario(cfg)
 
     assert scenario.config.shared_state
-    assert scenario.ephemeral_directory == scenario.shared_ephemeral_directory
+    safe_name = scenario.name.replace("/", "--")
+    expected = str(Path(scenario.shared_ephemeral_directory) / safe_name)
+    assert scenario.ephemeral_directory == expected
 
 
-def test_shared_state_respects_env_var(  # noqa: D103
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+def test_shared_state_scenarios_get_distinct_directories(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
 ) -> None:
+    """Two scenarios under shared_state get distinct dirs under one shared root.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        tmp_path: Pytest tmp_path fixture.
+    """
+    # Redirect the ansible-compat runtime cache under tmp_path so the
+    # filesystem writes stay hermetic, out of the repo's .ansible.
+    monkeypatch.setenv("ANSIBLE_HOME", str(tmp_path / ".ansible"))
+    monkeypatch.chdir(tmp_path)
+    cfg_a = config.Config("")
+    cfg_a.config_data["shared_state"] = True
+    cfg_a.config_data["scenario"]["name"] = "alpha"
+    cfg_b = config.Config("")
+    cfg_b.config_data["shared_state"] = True
+    cfg_b.config_data["scenario"]["name"] = "beta"
+
+    scenario_a = Scenario(cfg_a)
+    scenario_b = Scenario(cfg_b)
+
+    assert scenario_a.ephemeral_directory != scenario_b.ephemeral_directory
+    assert scenario_a.shared_ephemeral_directory == scenario_b.shared_ephemeral_directory
+    assert str(tmp_path) in scenario_a.shared_ephemeral_directory
+    assert Path(scenario_a.ephemeral_directory).parent == Path(
+        scenario_a.shared_ephemeral_directory,
+    )
+
+
+def test_shared_state_respects_env_var(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """MOLECULE_EPHEMERAL_DIRECTORY overrides the shared_state ephemeral directory.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        tmp_path: Pytest tmp_path fixture.
+    """
     monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", str(tmp_path / "custom"))
     cfg = config.Config("")
     cfg.config_data["shared_state"] = True

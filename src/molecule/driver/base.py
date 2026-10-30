@@ -169,9 +169,19 @@ class Driver(ABC):
     def instance_config(self) -> str:
         """Instance config file location.
 
+        When shared_state is enabled, this file lives at the shared ephemeral
+        directory so sibling scenarios read the same instance list.
+
         Returns:
             Path to instance_config.yml.
         """
+        if self._config.shared_state:
+            return str(
+                Path(
+                    self._config.scenario.shared_ephemeral_directory,
+                    "instance_config.yml",
+                ),
+            )
         return str(
             Path(
                 self._config.scenario.ephemeral_directory,
