@@ -137,7 +137,7 @@ def _is_excluded(name: str, excludes: list[str]) -> bool:
 
 
 def _resolve_scenario_glob(effective_base_glob: str, scenario_name: str) -> str:
-    """Resolve a scenario name to a glob pattern for molecule.yml discovery.
+    """Resolve a scenario name to a glob pattern for scenario configuration discovery.
 
     In collection mode (glob contains MOLECULE_COLLECTION_ROOT), uses path-based
     resolution to correctly handle both nested names ('appliance_vlans/merged')
@@ -149,7 +149,7 @@ def _resolve_scenario_glob(effective_base_glob: str, scenario_name: str) -> str:
         scenario_name: The scenario name from -s (e.g., 'default' or 'appliance_vlans/merged').
 
     Returns:
-        A glob string targeting the specific scenario's molecule.yml.
+        A glob string targeting the specific scenario's configuration.
 
     Raises:
         ScenarioFailureError: If the scenario name contains path traversal sequences.
@@ -166,11 +166,12 @@ def _resolve_scenario_glob(effective_base_glob: str, scenario_name: str) -> str:
         base_dir = effective_base_glob.split("*", maxsplit=1)[0]
         has_wildcard = glob.is_magic(scenario_name, flags=glob.BRACE)
         is_recursive = "**" in effective_base_glob
+        filename = Path(effective_base_glob).name
         if has_wildcard and is_recursive:
             # Preserve recursive matching so -s "camera_*" or -s "{camera,router}_*"
             # finds scenarios at any depth under matching directories.
-            return str(Path(base_dir) / scenario_name / "**" / "molecule.yml")
-        return str(Path(base_dir) / scenario_name / "molecule.yml")
+            return str(Path(base_dir) / scenario_name / "**" / filename)
+        return str(Path(base_dir) / scenario_name / filename)
     return effective_base_glob.replace("*", scenario_name)
 
 
@@ -530,7 +531,7 @@ def get_configs(
 
 
 def _verify_configs(configs: list[config.Config], glob_str: str | None = None) -> None:
-    """Verify a Molecule config was found and returns None.
+    """Verify configurations were found, with unique names and directories.
 
     Args:
         configs: A list containing absolute paths to Molecule config files.
@@ -548,6 +549,15 @@ def _verify_configs(configs: list[config.Config], glob_str: str | None = None) -
         for scenario_name, n in collections.Counter(scenario_names).items():
             if n > 1:
                 msg = f"Duplicate scenario name '{scenario_name}' found.  Exiting."
+                raise ScenarioFailureError(message=msg)
+
+        scenario_directories = [Path(c.molecule_file).parent for c in configs]
+        for directory, n in collections.Counter(scenario_directories).items():
+            if n > 1:
+                msg = (
+                    "Multiple Molecule configuration files found in scenario directory "
+                    f"'{directory}'.\nExiting."
+                )
                 raise ScenarioFailureError(message=msg)
 
     else:

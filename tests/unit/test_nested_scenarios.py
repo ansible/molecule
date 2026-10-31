@@ -216,16 +216,18 @@ def test_derive_scenario_name_role_mode_ignores_nesting(tmp_path: Path) -> None:
 # --- Integration: end-to-end nested targeting with get_configs ---
 
 
-@pytest.fixture(name="collection_project")
+@pytest.fixture(name="collection_project", params=("yml", "yaml"))
 def fixture_collection_project(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    request: pytest.FixtureRequest,
 ) -> Path:
     """Set up a collection project with flat and nested scenarios.
 
     Args:
         tmp_path: Pytest temporary directory fixture.
         monkeypatch: Pytest monkeypatch fixture.
+        request: Parameterized scenario config extension.
 
     Returns:
         The path to the collection project root.
@@ -240,15 +242,15 @@ def fixture_collection_project(
 
     default_dir = mol_root / "default"
     default_dir.mkdir(parents=True)
-    (default_dir / "molecule.yml").write_text("---\n")
+    (default_dir / f"molecule.{request.param}").write_text("---\n")
 
     nested_dir = mol_root / "appliance_vlans" / "merged"
     nested_dir.mkdir(parents=True)
-    (nested_dir / "molecule.yml").write_text("---\n")
+    (nested_dir / f"molecule.{request.param}").write_text("---\n")
 
     nested_dir2 = mol_root / "appliance_vlans" / "replaced"
     nested_dir2.mkdir(parents=True)
-    (nested_dir2 / "molecule.yml").write_text("---\n")
+    (nested_dir2 / f"molecule.{request.param}").write_text("---\n")
 
     monkeypatch.chdir(project)
 
@@ -293,7 +295,7 @@ def test_get_configs_all_discovers_nested_with_recursive_glob(
     configs = base.get_configs(
         {},
         {"subcommand": "test"},
-        glob_str="extensions/molecule/**/molecule.yml",
+        glob_str=MOLECULE_COLLECTION_GLOB,
     )
     names = sorted(c.scenario.name for c in configs)
     assert names == ["appliance_vlans/merged", "appliance_vlans/replaced", "default"]
@@ -346,10 +348,45 @@ def test_resolve_scenario_glob_wildcard_preserved(
         MOLECULE_COLLECTION_GLOB,
         "appliance_vlans/*",
     )
-    assert glob_str == "extensions/molecule/appliance_vlans/*/**/molecule.yml"
+    assert glob_str == "extensions/molecule/appliance_vlans/*/**/molecule.{yml,yaml}"
     configs = base.get_configs({}, {"subcommand": "test"}, glob_str=glob_str)
     names = sorted(c.scenario.name for c in configs)
     assert names == ["appliance_vlans/merged", "appliance_vlans/replaced"]
+
+
+def test_brace_scenario_names_with_yaml_configs(collection_project: Path) -> None:
+    """Scenario-name braces and extension braces can be expanded together.
+
+    Args:
+        collection_project: The isolated collection fixture.
+    """
+    pattern = base._resolve_scenario_glob(
+        MOLECULE_COLLECTION_GLOB,
+        "appliance_vlans/{merged,replaced}",
+    )
+    configs = base.get_configs({}, {}, glob_str=pattern)
+    assert sorted(c.scenario.name for c in configs) == [
+        "appliance_vlans/merged",
+        "appliance_vlans/replaced",
+    ]
+
+
+def test_collection_custom_yaml_glob_is_exact(collection_project: Path) -> None:
+    """Collection targeting preserves custom filenames and extension restrictions.
+
+    Args:
+        collection_project: The isolated collection fixture.
+    """
+    directory = collection_project / "extensions/molecule/default"
+    (directory / "custom.yaml").write_text("---\n")
+    (directory / "custom.yml").write_text("invalid: [\n")
+    pattern = base._resolve_scenario_glob(
+        "extensions/molecule/**/custom.yaml",
+        "default",
+    )
+    configs = base.get_configs({}, {}, glob_str=pattern)
+    assert len(configs) == 1
+    assert configs[0].molecule_file == str(directory / "custom.yaml")
 
 
 def test_wildcard_scenario_names_expanded_for_scenarios_verify(

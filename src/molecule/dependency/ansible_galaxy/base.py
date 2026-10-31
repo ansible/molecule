@@ -124,7 +124,13 @@ class AnsibleGalaxyBase(base.Base):
         if self._config.debug:
             opts = util.filter_verbose_permutation(opts)
 
-        opts = util.merge_dicts(self.default_options, opts)
+        defaults = dict(self.default_options)
+        # Discover default filenames before explicit options override them.
+        for key in ("role-file", "requirements-file"):
+            value = defaults.get(key)
+            if isinstance(value, str) and value:
+                defaults[key] = str(util.resolve_yaml_path(Path(value)))
+        opts = util.merge_dicts(defaults, opts)
         return self.filter_options(opts, self.FILTER_OPTS)
 
     @property

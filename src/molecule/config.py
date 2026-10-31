@@ -89,8 +89,8 @@ def ansible_version() -> Version:
 class Config:
     """Config Class.
 
-    Molecule searches the current directory for ``molecule.yml`` files by
-    globbing `molecule/*/molecule.yml`.  The files are instantiated into
+    Molecule searches the current directory for scenario configuration files by
+    globbing `molecule/*/molecule.{yml,yaml}`. The files are instantiated into
     a list of Molecule [molecule.config.Config][] objects, and each Molecule subcommand
     operates on this list.
 
@@ -123,6 +123,7 @@ class Config:
         self.args: MoleculeArgs = args if args is not None else {}
         self.command_args: CommandArgs = command_args if command_args is not None else {}
         self.ansible_args = ansible_args
+        self._explicit_playbooks: frozenset[str] = frozenset()
         self.config_data = self._get_config()
         self._action: str | None = None
         self._run_uuid = str(uuid4())
@@ -566,13 +567,17 @@ class Config:
         user_config_files: list[tuple[str, dict[str, Any]]] = []
 
         # Load base configs
-        base_configs = filter(os.path.exists, self.args.get("base_config", []))
-        for base_config in base_configs:
-            with open(base_config) as stream:  # noqa: PTH123
+        for base_config_str in self.args.get("base_config", []):
+            if not base_config_str:
+                continue
+            base_config = Path(base_config_str)
+            if not base_config.exists():
+                continue
+            with base_config.open() as stream:
                 s = stream.read()
                 interpolated_config = self._interpolate(s, env, keep_string)
                 config_data = util.safe_load(interpolated_config, base_config)
-                user_config_files.append((base_config, config_data))
+                user_config_files.append((str(base_config), config_data))
 
         # Load molecule.yml
         if self.molecule_file:
@@ -602,11 +607,29 @@ class Config:
         # Step 5: Migrate user config (legacy keys -> new ansible section)
         migrated_user_config = self._migrate_user_config(merged_user_config)
 
+        # Preserve presence before defaults hide which actions were configured.
+        ansible_config = migrated_user_config.get("ansible", {})
+        playbooks = ansible_config.get("playbooks", {}) if isinstance(ansible_config, dict) else {}
+        self._explicit_playbooks = (
+            frozenset(playbooks) if isinstance(playbooks, dict) else frozenset()
+        )
+
         # Step 6: Merge the migrated user config on top of defaults
         return util.merge_dicts(  # type: ignore[type-var]
             defaults,
             cast("ConfigData", migrated_user_config),
         )
+
+    def is_playbook_explicit(self, section: str) -> bool:
+        """Return whether a playbook action was supplied by user configuration.
+
+        Args:
+            section: Playbook action to query.
+
+        Returns:
+            Whether scenario or base configuration supplies the action.
+        """
+        return section in self._explicit_playbooks
 
     def _get_ansible_key_mapping(self, legacy_key: str) -> str:
         """Map legacy provisioner keys to their ansible section equivalents.

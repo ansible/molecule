@@ -772,6 +772,133 @@ def test_get_effective_molecule_glob_respects_env_var(
     assert result == custom_glob
 
 
+@pytest.mark.parametrize("basename", ("config", ".env", "config.extra"))
+@pytest.mark.parametrize("extensions", ((), (".yml",), (".yaml",), (".yaml", ".yml")))
+@pytest.mark.parametrize("requested", (".yml", ".yaml"))
+def test_resolve_yaml_path(
+    tmp_path: Path,
+    basename: str,
+    extensions: tuple[str, ...],
+    requested: str,
+) -> None:
+    """Keep the supplied file when present, independently of creation or suffix order.
+
+    Args:
+        tmp_path: Temporary directory.
+        basename: Conventional filename without its YAML suffix.
+        extensions: Files to create.
+        requested: Supplied filename extension.
+    """
+    for extension in extensions:
+        (tmp_path / f"{basename}{extension}").touch()
+    expected = requested if requested in extensions else next(iter(extensions), None)
+    path = tmp_path / f"{basename}{requested}"
+    result = util.resolve_yaml_path(path)
+    assert result == (tmp_path / f"{basename}{expected}" if expected else path)
+
+
+@pytest.mark.parametrize("extension", (".json", "", ".YAML"))
+def test_resolve_yaml_path_preserves_non_yaml_paths(tmp_path: Path, extension: str) -> None:
+    """Do not substitute YAML files for missing paths with other extensions.
+
+    Args:
+        tmp_path: Temporary directory.
+        extension: An unsupported filename extension.
+    """
+    path = tmp_path / f"config{extension}"
+    path.touch()
+    assert util.resolve_yaml_path(path) == path
+    path.unlink()
+    path.with_suffix(".yml").touch()
+    path.with_suffix(".yaml").touch()
+    assert util.resolve_yaml_path(path) == path
+
+
+def test_resolve_yaml_path_ignores_directories(tmp_path: Path) -> None:
+    """Select regular-file alternatives, otherwise preserve the original path.
+
+    Args:
+        tmp_path: Temporary directory.
+    """
+    default = tmp_path / "config.yml"
+    default.mkdir()
+    alternative = default.with_suffix(".yaml")
+    alternative.touch()
+    assert util.resolve_yaml_path(default) == alternative
+    alternative.unlink()
+    alternative.mkdir()
+    assert util.resolve_yaml_path(default) == default
+    assert not util.resolve_yaml_path(default).is_file()
+
+
+@pytest.mark.parametrize("winner", ("project", "collection", "home"))
+def test_lookup_yaml_location_precedence(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    winner: str,
+) -> None:
+    """Search both suffixes at each location before moving to the next location.
+
+    Args:
+        tmp_path: Temporary project root.
+        monkeypatch: Fixture for isolating home and working directory.
+        winner: Highest-priority location containing a configuration.
+    """
+    project = tmp_path / "project"
+    project.mkdir()
+    (project / ".git").mkdir()
+    (project / ".git/HEAD").write_text("ref: refs/heads/main\n")
+    (project / "galaxy.yml").write_text("namespace: acme\nname: widgets\nversion: '1.0.0'\n")
+    home = tmp_path / "home"
+    home.mkdir()
+    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.chdir(project)
+    util.find_vcs_root.cache_clear()
+    util.get_collection_metadata.cache_clear()
+    locations = [
+        project / ".config/molecule/config.yml",
+        project / "extensions/molecule/config.yml",
+        home / ".config/molecule/config.yml",
+    ]
+    start = ("project", "collection", "home").index(winner)
+    for path in locations[start:]:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.touch()
+    expected = locations[start].with_suffix(".yaml")
+    locations[start].rename(expected)
+    try:
+        assert util.lookup_config_file(".config/molecule/config.yml") == str(expected)
+        locations[start].touch()
+        assert util.lookup_config_file(".config/molecule/config.yml") == str(locations[start])
+    finally:
+        util.get_collection_metadata.cache_clear()
+        util.find_vcs_root.cache_clear()
+
+
+def test_lookup_non_yaml_filename_is_exact(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Do not widen non-YAML configuration filenames.
+
+    Args:
+        tmp_path: Temporary project root.
+        monkeypatch: Fixture for isolating directory lookup.
+    """
+    (tmp_path / ".git").mkdir()
+    (tmp_path / ".git/HEAD").write_text("ref: refs/heads/main\n")
+    (tmp_path / "settings.yaml").touch()
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("HOME", str(tmp_path))
+    util.get_collection_metadata.cache_clear()
+    util.find_vcs_root.cache_clear()
+    try:
+        assert util.lookup_config_file("settings.conf") is None
+    finally:
+        util.find_vcs_root.cache_clear()
+        util.get_collection_metadata.cache_clear()
+
+
 def test_lookup_config_file_found_in_vcs_root(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,

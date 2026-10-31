@@ -37,8 +37,8 @@ from molecule.app import get_app
 from molecule.click_cfg import click_group_ex
 from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY
 from molecule.console import console
-from molecule.constants import MOLECULE_COLLECTION_ROOT
-from molecule.util import lookup_config_file
+from molecule.constants import MOLECULE_COLLECTION_ROOT, YAML_EXTENSION_PATTERN
+from molecule.util import lookup_config_file, resolve_yaml_path
 
 
 # Setup logging. This location of initialization is not ideal, but the code
@@ -119,18 +119,21 @@ def print_version(
         " If provided, Molecule will first load and deep merge the"
         " configurations in the specified order,"
         " and deep merge each scenario's "
-        "molecule.yml on top. By default Molecule is looking for "
-        f"'{LOCAL_CONFIG_SEARCH}' "
+        "scenario configuration on top. By default Molecule is looking for "
+        f"'.config/molecule/config.{YAML_EXTENSION_PATTERN}' "
         "in current VCS repository, in collections at "
-        f"'{MOLECULE_COLLECTION_ROOT}/config.yml', and if not found it will look "
+        f"'{MOLECULE_COLLECTION_ROOT}/config.{YAML_EXTENSION_PATTERN}', and if not found it will look "
         f"in user home. ({LOCAL_CONFIG})."
     ),
 )
 @click.option(
     "--env-file",
     "-e",
-    default=ENV_FILE,
-    help=("The file to read variables from when rendering molecule.yml. (.env.yml)"),
+    default=lambda: str(resolve_yaml_path(Path(ENV_FILE))),
+    help=(
+        f"The file to read variables from when rendering molecule.{YAML_EXTENSION_PATTERN}."
+        f"Defaults to .env.{YAML_EXTENSION_PATTERN}."
+    ),
 )
 @click.option(
     "--version",

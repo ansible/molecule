@@ -43,6 +43,7 @@ from molecule.constants import (
     MOLECULE_GLOB,
     MOLECULE_HEADER,
     MOLECULE_ROOT,
+    YAML_EXTENSIONS,
 )
 from molecule.exceptions import ConfigLoadError, MoleculeError
 
@@ -591,6 +592,35 @@ def find_vcs_root(
     return default
 
 
+def resolve_yaml_path(path: Path) -> Path:
+    """Discover an implicit path, trying YAML siblings only when it is missing.
+
+    Callers must exclude user-supplied paths. An existing candidate always wins,
+    regardless of its YAML suffix.
+
+    Args:
+        path: The path to resolve.
+
+    Returns:
+        The supplied path or an existing YAML sibling.
+    """
+    if path.is_file():
+        return path
+
+    # A non yaml file could be otherwise erroneously
+    # resolved to an existing yaml file
+    if path.suffix not in YAML_EXTENSIONS:
+        return path
+
+    for suffix in YAML_EXTENSIONS:
+        if suffix == path.suffix:
+            continue
+        candidate = path.with_suffix(suffix)
+        if candidate.is_file():
+            return candidate
+    return path
+
+
 def lookup_config_file(filename: str) -> str | None:
     """Return config file PATH.
 
@@ -612,9 +642,10 @@ def lookup_config_file(filename: str) -> str | None:
     search_paths.append(Path.home() / filename)
 
     for path in search_paths:
-        if path.is_file():
-            LOG.info("Found config file %s", path)
-            return str(path)
+        candidate = resolve_yaml_path(path)
+        if candidate.is_file():
+            LOG.info("Found config file %s", candidate)
+            return str(candidate)
     return None
 
 

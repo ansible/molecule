@@ -364,6 +364,164 @@ def test_role_name_check_one(
     assert result.returncode == 0
 
 
+@pytest.mark.parametrize(
+    ("layout", "selection"),
+    (
+        pytest.param("yaml", ("-s", "default"), id="yaml-named"),
+        pytest.param("mixed", ("--all",), id="mixed-all"),
+        pytest.param("duplicates", ("--all",), id="duplicate-names"),
+        pytest.param("duplicate_files", ("--all",), id="duplicate-files"),
+    ),
+)
+def test_yaml_discovery_execution(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    test_ephemeral_dir_env: dict[str, str],
+    layout: str,
+    selection: tuple[str, ...],
+) -> None:
+    """Run implicit YAML playbooks with YAML base/env files and scenario configurations.
+
+    Args:
+        tmp_path: Temporary project root.
+        monkeypatch: Fixture for changing the subprocess working directory.
+        test_ephemeral_dir_env: Isolated ephemeral directory environment.
+        layout: YAML-only, mixed, duplicate-name, or duplicate-file configuration layout.
+        selection: All-scenario or explicit default-scenario selection.
+    """
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / ".git").mkdir()
+    (tmp_path / ".git/HEAD").write_text("ref: refs/heads/main\n")
+    base_dir = tmp_path / ".config/molecule"
+    base_dir.mkdir(parents=True)
+    (base_dir / "config.yaml").write_text(
+        "prerun: false\n"
+        "ansible:\n"
+        "  env:\n"
+        "    YAML_MESSAGE: ${YAML_MESSAGE}\n"
+        "  executor:\n"
+        "    args:\n"
+        "      ansible_playbook:\n"
+        "        - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/inventory.yml\n"
+        "scenario:\n"
+        "  test_sequence: [converge]\n",
+    )
+    (tmp_path / ".env.yaml").write_text("YAML_MESSAGE: YAML_DISCOVERY_EXECUTED\n")
+    names = ("default", "other") if layout in ("mixed", "duplicates") else ("default",)
+    for name in names:
+        directory = tmp_path / "molecule" / name
+        directory.mkdir(parents=True)
+        extension = "yml" if name == "other" else "yaml"
+        (directory / f"molecule.{extension}").write_text("---\n")
+        if layout == "duplicates":
+            (directory / "molecule.yml").write_text("---\n")
+            (directory / "molecule.yaml").write_text("---\n")
+        elif layout == "duplicate_files":
+            (directory / "molecule.yml").write_text("scenario:\n  name: first\n")
+            (directory / "molecule.yaml").write_text("scenario:\n  name: second\n")
+        (directory / "inventory.yml").write_text(
+            "all:\n  hosts:\n    instance:\n      ansible_connection: local\n",
+        )
+        (directory / "converge.yaml").write_text(
+            "- name: Converge\n"
+            "  hosts: all\n"
+            "  gather_facts: false\n"
+            "  tasks:\n"
+            "    - name: Record environment file value\n"
+            "      ansible.builtin.copy:\n"
+            "        content: \"{{ lookup('env', 'YAML_MESSAGE') }}\"\n"
+            '        dest: "{{ playbook_dir }}/executed.txt"\n'
+            "        mode: '0600'\n",
+        )
+    env = {**os.environ, **test_ephemeral_dir_env}
+    for variable in ("MOLECULE_GLOB", "MOLECULE_PROJECT_DIRECTORY", "YAML_MESSAGE"):
+        env.pop(variable, None)
+    result = run(["molecule", "test", *selection], env=env)
+    if layout in ("duplicates", "duplicate_files"):
+        assert result.returncode != 0, result
+        if layout == "duplicates":
+            conflicting_names = names if selection == ("--all",) else ("default",)
+            assert any(
+                f"Duplicate scenario name '{name}' found.  Exiting." in result.stderr
+                for name in conflicting_names
+            )
+        else:
+            assert (
+                "Multiple Molecule configuration files found in scenario directory" in result.stderr
+            )
+            assert str(tmp_path / "molecule/default") in result.stderr
+        assert not list(tmp_path.glob("molecule/*/executed.txt"))
+        return
+    assert result.returncode == 0, result
+    executed_names = names if selection == ("--all",) else ("default",)
+    for name in executed_names:
+        marker = tmp_path / "molecule" / name / "executed.txt"
+        assert marker.read_text() == "YAML_DISCOVERY_EXECUTED"
+
+
+@pytest.mark.parametrize(
+    "case",
+    (
+        ("converge.yml", "converge.yaml", False),
+        ("converge.yaml", "converge.yml", False),
+        ("converge.yaml", "converge.yaml", True),
+    ),
+)
+def test_explicit_yaml_playbook_execution(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    test_ephemeral_dir_env: dict[str, str],
+    case: tuple[str, str, bool],
+) -> None:
+    """Execute exact configured paths without substituting YAML siblings.
+
+    Args:
+        tmp_path: Isolated project directory.
+        monkeypatch: Working directory patcher.
+        test_ephemeral_dir_env: Isolated ephemeral directory environment.
+        case: Configured filename, available filename, and expected execution result.
+    """
+    monkeypatch.chdir(tmp_path)
+    configured, available, succeeds = case
+    directory = tmp_path / "molecule/default"
+    directory.mkdir(parents=True)
+    (directory / "molecule.yml").write_text(
+        "prerun: false\n"
+        "ansible:\n"
+        "  playbooks:\n"
+        f"    converge: {configured}\n"
+        "  executor:\n"
+        "    args:\n"
+        "      ansible_playbook:\n"
+        "        - --inventory=${MOLECULE_SCENARIO_DIRECTORY}/inventory.yml\n"
+        "scenario:\n"
+        "  test_sequence: [converge]\n",
+    )
+    (directory / "inventory.yml").write_text(
+        "all:\n  hosts:\n    instance:\n      ansible_connection: local\n",
+    )
+    (directory / available).write_text(
+        "- name: Converge\n"
+        "  hosts: all\n"
+        "  gather_facts: false\n"
+        "  tasks:\n"
+        "    - name: Record execution\n"
+        "      ansible.builtin.copy:\n"
+        "        content: executed\n"
+        '        dest: "{{ playbook_dir }}/executed.txt"\n'
+        "        mode: '0600'\n",
+    )
+    env = {**os.environ, **test_ephemeral_dir_env}
+    for variable in ("MOLECULE_GLOB", "MOLECULE_PROJECT_DIRECTORY"):
+        env.pop(variable, None)
+    result = run(["molecule", "--base-config", str(tmp_path / "absent.yml"), "test"], env=env)
+    assert (result.returncode == 0) == succeeds, result
+    marker = directory / "executed.txt"
+    assert marker.exists() == succeeds
+    if succeeds:
+        assert marker.read_text() == "executed"
+
+
 def test_sample_collection(
     monkeypatch: pytest.MonkeyPatch,
     resources_folder_path: Path,
