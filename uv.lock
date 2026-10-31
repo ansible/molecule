@@ -157,7 +157,7 @@ dependencies = [
     { name = "cryptography" },
     { name = "distro" },
     { name = "filelock", version = "4.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "filelock", version = "4.2.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "filelock", version = "4.2.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "jsonschema" },
     { name = "packaging" },
     { name = "pathspec" },
@@ -1303,7 +1303,7 @@ wheels = [
 
 [[package]]
 name = "filelock"
-version = "4.2.4"
+version = "4.2.5"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15'",
@@ -1312,9 +1312,9 @@ resolution-markers = [
     "python_full_version >= '3.11.5' and python_full_version < '3.12'",
     "python_full_version >= '3.11' and python_full_version < '3.11.5'",
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/d8/28/3893324bcadf8f89b1616637468d766af3f625008c0735bf704fdfa86617/filelock-4.2.4.tar.gz", hash = "sha256:c6d8663535e1650ee430507b4ffbac7b464dd64b7647ea0112a9f406499d163d", size = 652444, upload-time = "2026-10-19T01:57:51.001Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/aa/4b/2320d9fa03b65b4beb43b521fe1b12b7f87ab91ee42de3a286075016d205/filelock-4.2.5.tar.gz", hash = "sha256:37d8fa4f8b5e9233612e68ab23bf64cae41771322c8797361088ae2895b12894", size = 659943, upload-time = "2026-10-30T19:27:22.237Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e0/1b/5e74289a1878e666bb4b65fe5805a04cafcac2aa5f519ef1ead67ef91c56/filelock-4.2.4-py3-none-any.whl", hash = "sha256:301241438c57936ef93f4243a94f2559022268bfcf9b375a9a72eb0f8db8358e", size = 162475, upload-time = "2026-10-19T01:57:49.419Z" },
+    { url = "https://files.pythonhosted.org/packages/14/2d/2cf36eca330b7a97c0e9076e8fc4272127c29398fa2bb7b24d4321b8b476/filelock-4.2.5-py3-none-any.whl", hash = "sha256:46ce42d27e5cdde09ee7197349663e97cb106679bd9e75db3a09679fbc7aa1a8", size = 163877, upload-time = "2026-10-30T19:27:20.409Z" },
 ]
 
 [[package]]
@@ -2435,7 +2435,7 @@ dev = [
     { name = "coverage", version = "7.17.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "docker" },
     { name = "filelock", version = "4.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "filelock", version = "4.2.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "filelock", version = "4.2.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pexpect" },
     { name = "pytest" },
     { name = "pytest-instafail" },
@@ -2994,7 +2994,7 @@ resolution-markers = [
 dependencies = [
     { name = "argcomplete" },
     { name = "colorama", marker = "sys_platform == 'win32'" },
-    { name = "filelock", version = "4.2.4", source = { registry = "https://pypi.org/simple" } },
+    { name = "filelock", version = "4.2.5", source = { registry = "https://pypi.org/simple" } },
     { name = "packaging" },
     { name = "platformdirs", version = "4.13.7", source = { registry = "https://pypi.org/simple" } },
     { name = "userpath" },
@@ -3339,7 +3339,7 @@ version = "1.6.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "filelock", version = "4.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "filelock", version = "4.2.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "filelock", version = "4.2.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a3/0b/908da9ef8a14b600fc188eee8d63ede071996114613721153f6fc9ea3cd5/python_discovery-1.6.7.tar.gz", hash = "sha256:7f7c28568c8ec3d988d8bddbdbec8e65f08e8767e52f734e18b8b498549b9b70", size = 117807, upload-time = "2026-10-28T06:24:21.878Z" }
 wheels = [
@@ -4185,7 +4185,7 @@ resolution-markers = [
 dependencies = [
     { name = "cachetools" },
     { name = "colorama" },
-    { name = "filelock", version = "4.2.4", source = { registry = "https://pypi.org/simple" } },
+    { name = "filelock", version = "4.2.5", source = { registry = "https://pypi.org/simple" } },
     { name = "packaging" },
     { name = "platformdirs", version = "4.13.7", source = { registry = "https://pypi.org/simple" } },
     { name = "pluggy" },
@@ -4429,7 +4429,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "distlib" },
     { name = "filelock", version = "4.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "filelock", version = "4.2.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "filelock", version = "4.2.5", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "packaging" },
     { name = "platformdirs", version = "4.12.4", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "platformdirs", version = "4.13.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
