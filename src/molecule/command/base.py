@@ -203,6 +203,7 @@ def execute_cmdline_scenarios(
         excludes: Name of scenarios to not run.
 
     Raises:
+        AmbiguousScenarioError: If the default scenario is present but contains ambiguous config.
         ConfigLoadError: If the default scenario is present but cannot be parsed.
     """
     if excludes is None:
@@ -549,6 +550,7 @@ def _verify_configs(configs: list[config.Config], glob_str: str | None = None) -
                  If None, uses util.get_effective_molecule_glob().
 
     Raises:
+        AmbiguousScenarioError: If the scenario contains ambiguous config.
         ScenarioFailureError: When scenario configs cannot be verified.
     """
     if glob_str is None:
