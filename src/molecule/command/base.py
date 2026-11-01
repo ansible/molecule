@@ -40,7 +40,12 @@ from wcmatch import glob
 
 from molecule import config, logger, text, util
 from molecule.constants import MOLECULE_COLLECTION_ROOT, MOLECULE_DEFAULT_SCENARIO_NAME
-from molecule.exceptions import ConfigLoadError, MoleculeError, ScenarioFailureError
+from molecule.exceptions import (
+    AmbiguousScenarioError,
+    ConfigLoadError,
+    MoleculeError,
+    ScenarioFailureError,
+)
 from molecule.reporting.definitions import ScenarioResults
 from molecule.reporting.rendering import report
 from molecule.scenarios import Scenarios
@@ -233,6 +238,11 @@ def execute_cmdline_scenarios(
         default_config = get_configs(args, command_args, ansible_args, default_glob)[0]
     except ConfigLoadError:
         # A default that is present but fails to parse is a real error, not absent.
+        raise
+    except AmbiguousScenarioError:
+        # An ambiguous default is a configuration error, not an absent default.
+        # A cleaner fix would be probably replacing MoleculeError
+        # e.g. with a narrow new ScenarioNotFound exception
         raise
     except MoleculeError:
         # Use a generic logger for this since it's not tied to a specific scenario
@@ -549,6 +559,13 @@ def _verify_configs(configs: list[config.Config], glob_str: str | None = None) -
         for scenario_name, n in collections.Counter(scenario_names).items():
             if n > 1:
                 msg = f"Duplicate scenario name '{scenario_name}' found.  Exiting."
+                matching_directories = {
+                    Path(c.molecule_file).parent
+                    for c in configs
+                    if c.scenario.name == scenario_name
+                }
+                if len(matching_directories) == 1:
+                    raise AmbiguousScenarioError(message=msg)
                 raise ScenarioFailureError(message=msg)
 
         scenario_directories = [Path(c.molecule_file).parent for c in configs]
@@ -558,7 +575,7 @@ def _verify_configs(configs: list[config.Config], glob_str: str | None = None) -
                     "Multiple Molecule configuration files found in scenario directory "
                     f"'{directory}'.\nExiting."
                 )
-                raise ScenarioFailureError(message=msg)
+                raise AmbiguousScenarioError(message=msg)
 
     else:
         msg = f"'{glob_str}' glob failed.  Exiting."

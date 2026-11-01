@@ -33,7 +33,7 @@ import pytest
 
 from molecule import config, util
 from molecule.command import base
-from molecule.constants import MOLECULE_COLLECTION_GLOB, MOLECULE_GLOB
+from molecule.constants import MOLECULE_COLLECTION_GLOB, MOLECULE_GLOB, YAML_EXTENSIONS
 from molecule.exceptions import (
     ConfigLoadError,
     ImmediateExit,
@@ -587,10 +587,9 @@ def test_yaml_glob_rejects_multiple_configs_with_distinct_names(
 
 
 @pytest.mark.parametrize("root", ("molecule", "extensions/molecule"))
-def test_default_discovery_ignores_unsupported_extensions(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-    root: str,
+@pytest.mark.parametrize("extension", (YAML_EXTENSIONS, "yaml.bak", "txt", "YAML"))
+def test_default_discovery_extensions(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, root: str, extension: str
 ) -> None:
     """Discover only supported scenario extensions through the config loader.
 
@@ -598,18 +597,24 @@ def test_default_discovery_ignores_unsupported_extensions(
         tmp_path: Temporary project directory.
         monkeypatch: Working directory patcher.
         root: Role or collection scenario root.
+        extension: Molecule file extension
     """
     monkeypatch.chdir(tmp_path)
-    for extension in ("yml", "yaml", "yaml.bak", "txt", "YAML"):
-        directory = tmp_path / root / extension
-        directory.mkdir(parents=True)
-        (directory / f"molecule.{extension}").write_text("prerun: false\n")
+    directory = tmp_path / root / "default"
+    directory.mkdir(parents=True)
+    molecule_file = directory / f"molecule.{extension}"
+    molecule_file.write_text("prerun: false\n")
+
     pattern = MOLECULE_GLOB if root == "molecule" else MOLECULE_COLLECTION_GLOB
-    configs = base.get_configs({}, {}, glob_str=pattern)
-    assert sorted(c.scenario.name for c in configs) == ["yaml", "yml"]
+    if extension in YAML_EXTENSIONS:
+        configs = base.get_configs({}, {}, glob_str=pattern)
+        assert [c.scenario.name for c in configs] == ["default"]
+    else:
+        with pytest.raises(ScenarioFailureError):
+            base.get_configs({}, {}, glob_str=pattern)
 
 
-@pytest.mark.parametrize("extension", ("yml", "yaml"))
+@pytest.mark.parametrize("extension", YAML_EXTENSIONS)
 def test_invalid_matched_yaml_config_is_not_ignored(
     config_instance: config.Config,
     extension: str,

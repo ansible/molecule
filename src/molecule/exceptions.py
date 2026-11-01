@@ -66,6 +66,10 @@ class ScenarioFailureError(MoleculeError):
             LOG.warning(warn.message)
 
 
+class AmbiguousScenarioError(ScenarioFailureError):
+    """Multiple configuration files match in one scenario directory."""
+
+
 class ImmediateExit(Exception):  # noqa: N818
     """Exception for immediate program termination.
 

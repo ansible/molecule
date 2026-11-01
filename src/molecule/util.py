@@ -43,7 +43,7 @@ from molecule.constants import (
     MOLECULE_GLOB,
     MOLECULE_HEADER,
     MOLECULE_ROOT,
-    YAML_EXTENSIONS,
+    YAML_SUFFIXES,
 )
 from molecule.exceptions import ConfigLoadError, MoleculeError
 
@@ -609,10 +609,10 @@ def resolve_yaml_path(path: Path) -> Path:
 
     # A non yaml file could be otherwise erroneously
     # resolved to an existing yaml file
-    if path.suffix not in YAML_EXTENSIONS:
+    if path.suffix not in YAML_SUFFIXES:
         return path
 
-    for suffix in YAML_EXTENSIONS:
+    for suffix in YAML_SUFFIXES:
         if suffix == path.suffix:
             continue
         candidate = path.with_suffix(suffix)

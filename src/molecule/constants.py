@@ -22,10 +22,9 @@ RC_UNKNOWN_ERROR = 5  # Unexpected errors for which we do not have more specific
 # File and directory patterns
 MOLECULE_HEADER = "# Molecule managed"
 MOLECULE_ROOT = "molecule"
-YAML_EXTENSIONS = (".yml", ".yaml")
-YAML_EXTENSION_PATTERN = (
-    "{" + ",".join(suffix.removeprefix(".") for suffix in YAML_EXTENSIONS) + "}"
-)
+YAML_EXTENSIONS = ("yml", "yaml")
+YAML_SUFFIXES = tuple(f".{extension}" for extension in YAML_EXTENSIONS)
+YAML_EXTENSION_PATTERN = "{" + ",".join(YAML_EXTENSIONS) + "}"
 MOLECULE_FILE_PATTERN = f"molecule.{YAML_EXTENSION_PATTERN}"
 MOLECULE_GLOB = f"{MOLECULE_ROOT}/*/{MOLECULE_FILE_PATTERN}"
 MOLECULE_COLLECTION_ROOT = "extensions/molecule"
