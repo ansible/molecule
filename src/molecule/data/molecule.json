@@ -161,7 +161,7 @@
             }
           ],
           "messages": {
-            "anyOf": "is not one of ['azure', 'ec2', 'delegated', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd', 'lima', 'molecule-*', 'molecule_*', 'custom-*', 'custom_*']"
+            "anyOf": "is not one of ['azure', 'ec2', 'delegated', 'default', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd', 'kubevirt', 'lima', 'molecule-*', 'molecule_*', 'custom-*', 'custom_*']"
           },
           "title": "Name",
           "type": "string"
