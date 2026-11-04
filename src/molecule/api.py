@@ -90,7 +90,7 @@ def verifiers(config: Config | None = None) -> dict[str, Verifier]:
             if issubclass(plugin_class, Verifier):
                 plugin = plugin_class(config)
                 plugins[plugin.name] = plugin
-        except Exception:  # noqa: PERF203
+        except Exception:
             LOG.exception("Failed to load %s verifier", plugin_class.__name__)
     return plugins
 

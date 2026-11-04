@@ -2,7 +2,7 @@
 name = "molecule"
 description = "Molecule aids in the development and testing of Ansible roles"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = "MIT"
 authors = [{ "name" = "Ansible by Red Hat", "email" = "info@ansible.com" }]
 maintainers = [{ "name" = "Ansible by Red Hat", "email" = "info@ansible.com" }]
@@ -17,7 +17,6 @@ classifiers = [
   "Operating System :: POSIX",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -64,7 +63,7 @@ dev = [
   "ansible-navigator>=25.8.0",
   "coverage[toml]>=7.10.6",
   "docker>=7.1.0",
-  "filelock>=3.9.0",
+  "filelock>=4.2.1",
   "pexpect>=4.9.0,<5",
   "pytest>=9",
   "pytest-instafail>=0.5.0",
@@ -78,7 +77,7 @@ dev = [
   "types-pyyaml>=6.0.12.20250822",
 ]
 collection = ["pip>=2.20.3", "pytest-ansible>=26.2.0", "tox>=4.46.0", "tox-ansible>=26.2.1", "tox-extra>=2.2.0", "tox-uv>=1.32.1"]
-docs = ["linkchecker>=10.4.0", "mkdocs-ansible>=24.3.0"]
+docs = ["linkchecker>=10.4.0", "mkdocs-ansible>=26.4.0"]
 lint = [
   "ansible-lint>=6.12.1",
   "codespell>=2.4.1",
@@ -127,7 +126,7 @@ cache_dir = "./.cache/.mypy"
 # To ensure that calling `mypy .` produces desired results (vscode)
 exclude = ["build"]
 files = ["src", "tests"]
-python_version = "3.10"
+python_version = "3.11"
 strict = true
 
 [[tool.mypy.overrides]]
@@ -408,7 +407,7 @@ cache-dir = "./.cache/.ruff"
 fix = true
 line-length = 100
 required-version = ">=0.7.1"
-target-version = "py310"
+target-version = "py311"
 
 [tool.ruff.lint]
 external = [
@@ -549,7 +548,7 @@ description = "Run all linters"
 skip_install = true
 
 [tool.tox.env.lower]
-base_python = ["python3.10"]
+base_python = ["python3.11"]
 dependency_groups = ["dev"]
 description = "Install using lowest constraints possible."
 runner = "uv-venv-runner"
@@ -665,6 +664,9 @@ TERM = "xterm-256color"
 constraint-dependencies = [
   "ansible-core>=2.20.0.dev0; python_version >= '3.14'",
   "cairosvg>=2.9.0",
+  "dnspython>=2.9.0",
+  "filelock>=4.2.1",
+  "pillow>=13.0.0",
 ]
 default-groups = ["dev", "docs", "lint", "pkg"]
 package = true
