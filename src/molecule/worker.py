@@ -10,7 +10,6 @@ from __future__ import annotations
 import copy
 import logging
 import os
-import shutil
 
 from concurrent.futures import Future, ProcessPoolExecutor, as_completed
 from pathlib import Path
@@ -19,6 +18,7 @@ from typing import TYPE_CHECKING
 from molecule import config as config_module
 from molecule import logger, util
 from molecule.command.base import (
+    _remove_scenario_ephemeral_directory,
     execute_scenario,
     execute_subcommand_default,
 )
@@ -147,14 +147,9 @@ def _handle_reset(scenarios: Scenarios) -> None:
     Args:
         scenarios: The Scenarios object holding all scenario objects.
     """
+    removed_ephemeral_directories: set[str] = set()
     for scenario in scenarios.all:
-        reset_log = logger.get_scenario_logger(
-            __name__,
-            scenario.config.scenario.name,
-            "reset",
-        )
-        reset_log.info(f"Removing {scenario.ephemeral_directory}")
-        shutil.rmtree(scenario.ephemeral_directory)
+        _remove_scenario_ephemeral_directory(scenario, removed_ephemeral_directories)
 
 
 def run_scenarios_parallel(
