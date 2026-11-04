@@ -1,5 +1,35 @@
 # Configuration
 
+## YAML filenames
+
+Molecule discovers the following files with `.yml` and `.yaml` extension:
+
+- Scenario configuration: `molecule.yml` or `molecule.yaml`.
+- Default action playbooks: `create`, `destroy`, `converge`, `prepare`, `cleanup`,
+  `side_effect`, and `verify`, with either extension.
+- Scenario dependency files: `requirements.yml` or `requirements.yaml` for roles,
+  and `collections.yml` or `collections.yaml` for collections.
+- Default base configuration: `.config/molecule/config.{yml,yaml}` at the VCS
+  root, then `extensions/molecule/config.{yml,yaml}` in a collection, then
+  `.config/molecule/config.{yml,yaml}` in the user's home directory.
+- Environment variables: `.env.yml` or `.env.yaml` in the invocation directory.
+
+For implicit files other than scenario configurations, `.yml` takes precedence
+when both extensions exist in the same lookup location.
+
+Extension discovery applies only to implicit/default paths. Playbook, dependency,
+base-config, scenario configuration `MOLECULE_GLOB` patterns and env-file paths explicitly supplied through CLI options or
+configuration are used without extension substitution, even when they match a
+default filename. This includes paths inherited from base configuration or
+interpolated from environment variables. A configured `converge.yml` never resolves
+to `converge.yaml`, or vice versa. When a scenario glob matches both
+`molecule.yml` and `molecule.yaml` in one directory, both are loaded and validation
+fails, even if they explicitly configure different scenario names.
+
+!!! note
+
+    Molecule supports the collection metadata file `galaxy.yml` only with the `.yml` extension.
+
 ## Prerun
 
 To help Ansible find used modules and roles, molecule will
@@ -441,17 +471,26 @@ export MOLECULE_GLOB="extensions/molecule/**/molecule.yml"
 ```
 
 This finds `molecule.yml` files at any depth under `extensions/molecule/`.
+For a project using `.yaml`, use `molecule.yaml` in the pattern instead.
+Prefer one filename convention consistently throughout a project.
+
+If you need to discover both extensions, for example during a migration, use:
+
+```bash
+export MOLECULE_GLOB="extensions/molecule/**/molecule.{yml,yaml}"
+```
 
 #### Scenario naming
 
 In collection mode, Molecule derives the scenario name from the relative path
-between `extensions/molecule/` and the directory containing `molecule.yml`:
+between `extensions/molecule/` and the directory containing `molecule.yml` or
+`molecule.yaml`:
 
-| Directory                                          | Scenario name             |
-|----------------------------------------------------|---------------------------|
-| `extensions/molecule/default/`                     | `default`                 |
-| `extensions/molecule/appliance_vlans/merged/`      | `appliance_vlans/merged`  |
-| `extensions/molecule/appliance_vlans/replaced/`    | `appliance_vlans/replaced`|
+| Directory                                       | Scenario name              |
+| ----------------------------------------------- | -------------------------- |
+| `extensions/molecule/default/`                  | `default`                  |
+| `extensions/molecule/appliance_vlans/merged/`   | `appliance_vlans/merged`   |
+| `extensions/molecule/appliance_vlans/replaced/` | `appliance_vlans/replaced` |
 
 The name shown by `molecule list` is exactly what you pass to `-s`, giving
 round-trip consistency. Role-mode scenarios (under `molecule/`) are unaffected

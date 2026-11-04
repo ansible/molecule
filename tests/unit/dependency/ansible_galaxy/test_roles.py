@@ -21,6 +21,8 @@ from __future__ import annotations
 
 import os
 
+from pathlib import Path
+
 import pytest
 
 from molecule import config
@@ -235,3 +237,54 @@ def test_role_file(role_file, _instance):  # type: ignore[no-untyped-def]  # noq
 
 def test_roles_has_requirements_file(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
     assert not _instance._has_requirements_file()
+
+
+def test_empty_role_file_option_is_preserved(config_instance: config.Config) -> None:
+    """Do not turn an empty requirement filename into the current directory.
+
+    Args:
+        config_instance: An isolated scenario configuration.
+    """
+    config_instance.config_data["dependency"]["options"]["role-file"] = ""
+    assert roles.Roles(config_instance).requirements_file == ""
+
+
+@pytest.mark.parametrize(
+    ("extensions", "explicit", "expected_filename"),
+    (
+        pytest.param(("yaml",), None, "requirements.yaml", id="implicit-yaml"),
+        pytest.param(("yaml", "yml"), None, "requirements.yml", id="prefer-yml"),
+        pytest.param((), None, "requirements.yml", id="missing"),
+        pytest.param(("yaml",), "requirements.yml", "requirements.yml", id="explicit-yml"),
+        pytest.param(("yml",), "requirements.yaml", "requirements.yaml", id="explicit-yaml"),
+        pytest.param(("yaml", "yml"), "custom.yaml", "custom.yaml", id="exact-custom"),
+    ),
+)
+def test_role_requirements_yaml_discovery(
+    config_instance: config.Config,
+    extensions: tuple[str, ...],
+    explicit: str | None,
+    expected_filename: str,
+) -> None:
+    """Resolve requirements paths before passing the selected filename to Galaxy.
+
+    Args:
+        config_instance: An isolated scenario configuration.
+        extensions: Requirements files to create.
+        explicit: Optional explicit path, which may not exist.
+        expected_filename: Exact filename passed to Galaxy.
+    """
+    directory = Path(config_instance.scenario.directory)
+    stem = Path(explicit).stem if explicit else "requirements"
+    for extension in extensions:
+        (directory / f"{stem}.{extension}").touch()
+    if explicit is not None:
+        config_instance.config_data["dependency"]["options"]["role-file"] = str(
+            directory / explicit
+        )
+    dependency = roles.Roles(config_instance)
+    expected = str(directory / expected_filename)
+    assert dependency.requirements_file == expected
+    dependency.bake()
+    index = dependency._sh_command.index("--role-file")
+    assert dependency._sh_command[index + 1] == expected

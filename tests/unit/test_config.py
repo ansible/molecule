@@ -39,7 +39,164 @@ if TYPE_CHECKING:
 
     from pytest_mock import MockerFixture
 
-    from molecule.types import DependencyData, DriverData
+    from molecule.types import DependencyData, DriverData, MoleculeArgs
+
+
+@pytest.mark.parametrize("extension", ("yml", "yaml"))
+@pytest.mark.parametrize("available", ((), ("yml",), ("yaml",), ("yaml", "yml")))
+def test_base_config_yaml_path_resolution(
+    config_instance: config.Config,
+    extension: str,
+    available: tuple[str, ...],
+) -> None:
+    """Base configs use only the supplied path, never its YAML sibling.
+
+    Args:
+        config_instance: An isolated scenario config.
+        extension: Supplied filename extension.
+        available: Existing base config extensions.
+    """
+    source = Path(config_instance.molecule_file).with_suffix(".yaml")
+    source.write_text("prerun: false\n")
+    target = source.parent / f"base.{extension}"
+    for suffix in available:
+        target.with_suffix(f".{suffix}").write_text(
+            f"ansible:\n  env:\n    BASE_MARKER: {suffix}\n",
+        )
+    loaded = config.Config(str(source), args={"base_config": [str(target)]})
+    expected = extension if extension in available else None
+    assert loaded.config_data["ansible"]["env"].get("BASE_MARKER") == expected
+
+
+def test_yaml_input_writes_generated_yml_config(config_instance: config.Config) -> None:
+    """Keep generated configuration naming and serialization unchanged.
+
+    Args:
+        config_instance: An isolated scenario configuration.
+    """
+    source = Path(config_instance.molecule_file).with_suffix(".yaml")
+    source.write_text("prerun: false\nansible:\n  playbooks:\n    converge: custom.yaml\n")
+    loaded = config.Config(str(source))
+    loaded.write()
+    assert Path(loaded.config_file).name == "molecule.yml"
+    assert util.safe_load_file(loaded.config_file) == loaded.config_data
+
+
+def test_empty_base_config_path_is_ignored(config_instance: config.Config) -> None:
+    """Do not turn an empty filename into the current directory while resolving paths.
+
+    Args:
+        config_instance: An isolated scenario config.
+    """
+    loaded = config.Config(config_instance.molecule_file, args={"base_config": [""]})
+    assert loaded.config_data == config_instance.config_data
+
+
+@pytest.mark.parametrize("extension", ("yml", "yaml"))
+def test_env_file_exports_supplied_yaml_path(
+    config_instance: config.Config,
+    extension: str,
+) -> None:
+    """Export the supplied environment filename without sibling discovery.
+
+    Args:
+        config_instance: An isolated scenario config.
+        extension: Supplied filename extension.
+    """
+    requested = Path(config_instance.scenario.directory) / f"environment.{extension}"
+    alternative = requested.with_suffix(".yaml" if extension == "yml" else ".yml")
+    alternative.write_text("MARKER: alternative\n")
+    config_instance.args["env_file"] = str(requested)
+    assert config_instance.env_file == str(requested)
+    assert config_instance.env["MOLECULE_ENV_FILE"] == str(requested)
+    requested.write_text("MARKER: requested\n")
+    assert config_instance.env_file == str(requested)
+    assert config_instance.env["MOLECULE_ENV_FILE"] == str(requested)
+
+
+@pytest.mark.parametrize("value", (None, [], 1, "converge.yaml"))
+@pytest.mark.parametrize("section", ("ansible", "playbooks"))
+def test_invalid_ansible_mapping_uses_schema_validation(
+    config_instance: config.Config,
+    value: object,
+    section: str,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Invalid Ansible mappings must still reach schema validation.
+
+    Args:
+        config_instance: An isolated scenario configuration.
+        value: An invalid mapping.
+        section: The parent Ansible section or its playbooks mapping.
+        caplog: Fixture for capturing the validation error.
+    """
+    source = Path(config_instance.molecule_file)
+    data = {"ansible": value} if section == "ansible" else {"ansible": {"playbooks": value}}
+    source.write_text(util.safe_dump(data))
+    with pytest.raises(SystemExit) as exc:
+        config.Config(str(source))
+    assert exc.value.code == 1
+    assert "Failed to validate" in caplog.text
+
+
+@pytest.mark.parametrize("section", ("ansible", "provisioner"))
+@pytest.mark.parametrize("location", ("scenario", "base"))
+@pytest.mark.parametrize("filename", ("converge.yml", "${CONFIGURED_PLAYBOOK}", None))
+def test_explicit_playbook_keys(
+    config_instance: config.Config,
+    monkeypatch: pytest.MonkeyPatch,
+    section: str,
+    location: str,
+    filename: str | None,
+) -> None:
+    """Track user keys after interpolation and migration, before merging defaults.
+
+    Args:
+        config_instance: An isolated configuration.
+        monkeypatch: Environment patcher.
+        section: Modern or legacy section.
+        location: User configuration source.
+        filename: Explicit value, including null and the default filename.
+    """
+    monkeypatch.setenv("CONFIGURED_PLAYBOOK", "custom.yaml")
+    source = Path(config_instance.molecule_file)
+    data = {section: {"playbooks": {"converge": filename}}}
+    args: MoleculeArgs = {}
+    if location == "base":
+        base = source.parent / "base.yml"
+        base.write_text(util.safe_dump(data))
+        args["base_config"] = [str(base)]
+    else:
+        source.write_text(util.safe_dump(data))
+    loaded = config.Config(str(source), args=args)
+    assert loaded.is_playbook_explicit("converge")
+    assert not loaded.is_playbook_explicit("prepare")
+    expected = "custom.yaml" if filename == "${CONFIGURED_PLAYBOOK}" else filename
+    assert loaded.config_data["ansible"]["playbooks"]["converge"] == expected
+
+
+def test_playbook_keys_follow_ordered_user_merge(config_instance: config.Config) -> None:
+    """Rebuild provenance on each pass without losing inherited action keys.
+
+    Args:
+        config_instance: An isolated configuration.
+    """
+    source = Path(config_instance.molecule_file)
+    first = source.parent / "first.yml"
+    second = source.parent / "second.yml"
+    first.write_text("ansible:\n  playbooks:\n    converge: first.yml\n    prepare: prepare.yml\n")
+    second.write_text("ansible:\n  playbooks:\n    converge: second.yaml\n")
+    source.write_text("ansible:\n  playbooks:\n    converge: scenario.yaml\n")
+    loaded = config.Config(str(source), args={"base_config": [str(first), str(second)]})
+    assert loaded.config_data["ansible"]["playbooks"]["converge"] == "scenario.yaml"
+    assert loaded.is_playbook_explicit("converge")
+    assert loaded.is_playbook_explicit("prepare")
+    assert not loaded.is_playbook_explicit("verify")
+    source.write_text("---\n")
+    loaded.args = {}
+    loaded.config_data = loaded._reget_config()
+    assert not loaded.is_playbook_explicit("converge")
+    assert not loaded.is_playbook_explicit("prepare")
 
 
 def test_args_member(config_instance: config.Config) -> None:  # noqa: D103

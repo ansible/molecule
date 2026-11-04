@@ -21,6 +21,8 @@ from __future__ import annotations
 
 import os
 
+from pathlib import Path
+
 import pytest
 
 from molecule import config
@@ -239,3 +241,44 @@ def test_collections_role_file(role_file, _instance):  # type: ignore[no-untyped
 
 def test_collections_has_requirements_file(_instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
     assert not _instance._has_requirements_file()
+
+
+@pytest.mark.parametrize(
+    ("extensions", "explicit", "expected_filename"),
+    (
+        pytest.param(("yaml",), None, "collections.yaml", id="implicit-yaml"),
+        pytest.param(("yaml", "yml"), None, "collections.yml", id="prefer-yml"),
+        pytest.param((), None, "collections.yml", id="missing"),
+        pytest.param(("yaml",), "collections.yml", "collections.yml", id="explicit-yml"),
+        pytest.param(("yml",), "collections.yaml", "collections.yaml", id="explicit-yaml"),
+        pytest.param(("yaml", "yml"), "custom.yaml", "custom.yaml", id="exact-custom"),
+    ),
+)
+def test_collection_requirements_yaml_discovery(
+    config_instance: config.Config,
+    extensions: tuple[str, ...],
+    explicit: str | None,
+    expected_filename: str,
+) -> None:
+    """Resolve requirements paths before passing the selected filename to Galaxy.
+
+    Args:
+        config_instance: An isolated scenario configuration.
+        extensions: Requirements files to create.
+        explicit: Optional explicit path, which may not exist.
+        expected_filename: Exact filename passed to Galaxy.
+    """
+    directory = Path(config_instance.scenario.directory)
+    stem = Path(explicit).stem if explicit else "collections"
+    for extension in extensions:
+        (directory / f"{stem}.{extension}").touch()
+    if explicit is not None:
+        config_instance.config_data["dependency"]["options"]["requirements-file"] = str(
+            directory / explicit
+        )
+    dependency = collections.Collections(config_instance)
+    expected = str(directory / expected_filename)
+    assert dependency.requirements_file == expected
+    dependency.bake()
+    index = dependency._sh_command.index("--requirements-file")
+    assert dependency._sh_command[index + 1] == expected
