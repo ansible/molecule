@@ -41,32 +41,61 @@ By default, Molecule runs each scenario independently with its own isolated stat
 
 This is particularly useful for multi-scenario testing where one scenario manages testing resource lifecycle while other scenarios perform testing against those resources.
 
-To enable shared state, add `shared_state: true` to your configuration file:
-
-```yaml
----
-shared_state: true
-# ... rest of configuration
-```
-
 **Effects of enabling shared state:**
 
-- All scenarios share the same ephemeral state directory
+- All scenarios share one state directory (`state.yml` and `instance_config.yml`), and each scenario keeps its own inventory and configuration files
 - The default scenario handles create/destroy actions for all scenarios
 - Component scenarios can access resources created by the default scenario
 - Scenarios skip their own create/destroy actions when shared resources are managed elsewhere
 - Faster execution with single infrastructure lifecycle instead of per-scenario setup/teardown
 
-**Configuration locations:**
+### Where to set `shared_state` when you run several scenarios
 
-You can add this setting to:
+`molecule test --all` configures each scenario on its own, so `shared_state` must be true for every scenario in the run, not only the default one. There are two ways to do that.
 
-- `.config/molecule/config.yml` file in your `$HOME` directory (global default)
-- Base `config.yml` file at the project root (project default)
-- Collection molecule directory `extensions/molecule/config.yml`
-- Individual scenario `molecule.yml` files (scenario-specific override)
+Set it once in a base `config.yml` that every scenario inherits. Molecule looks for a base config in these places:
 
-**Alternative:** The `--shared-state` command-line flag can also enable this behavior temporarily, but configuration file approach is recommended for consistent usage.
+- `.config/molecule/config.yml` in your `$HOME` directory (global default)
+- `config.yml` at the root of your project (project default)
+- `extensions/molecule/config.yml` in a collection
+
+```yaml
+# config.yml, inherited by every scenario
+shared_state: true
+```
+
+If you do not keep a base `config.yml`, put the same line in each scenario's own `molecule.yml`:
+
+```yaml
+# molecule/default/molecule.yml, and the same line in every other scenario's molecule.yml
+shared_state: true
+```
+
+To turn the behavior on for a single run without editing any file, pass the flag. It applies only to that one invocation.
+
+```bash
+molecule test --all --shared-state
+```
+
+### Where the files live
+
+With `shared_state` enabled, one shared directory holds the state the scenarios have in common, and each scenario keeps its own directory for the files it must not share with its siblings.
+
+```text
+<shared ephemeral directory>/      # MOLECULE_SHARED_EPHEMERAL_DIRECTORY
+├── state.yml                      # shared, what has been created so far
+├── instance_config.yml            # shared, the instances every scenario connects to
+├── default/                       # this scenario's MOLECULE_EPHEMERAL_DIRECTORY
+│   ├── molecule.yml
+│   ├── ansible.cfg
+│   └── inventory/
+└── role1/                         # another scenario's MOLECULE_EPHEMERAL_DIRECTORY
+    ├── molecule.yml
+    ├── ansible.cfg
+    └── inventory/
+```
+
+These are generated paths, so read them at run time rather than hard-coding them. Run a command with `--debug` to print the resolved directories, or read them inside a playbook from the `MOLECULE_SHARED_EPHEMERAL_DIRECTORY` and `MOLECULE_EPHEMERAL_DIRECTORY` variables described below.
 
 ## Variable Substitution
 
@@ -108,14 +137,26 @@ will read variables when rendering `molecule.yml`. See command usage.
 
 Following are the environment variables available in `molecule.yml`:
 
+!!! note
+
+    The ephemeral paths below are generated for each run. Molecule creates them
+    under its cache directory, by default `~/.ansible/tmp/`, or `$ANSIBLE_HOME/tmp/`
+    when `ANSIBLE_HOME` is set, with a
+    generated name of the form `molecule.<hash>.<scenario-name>`, and
+    `molecule.<hash>` for the shared directory. Treat the
+    examples as the shape of the value, not a literal you can hard-code, and run
+    a command with `--debug` to print the resolved paths. Inside a playbook the
+    same directories are available as the lowercase variables
+    `molecule_ephemeral_directory` and `molecule_shared_ephemeral_directory`.
+
 MOLECULE_DEBUG
 
 : If debug is turned on or off
 
 MOLECULE_FILE
 
-: Path to molecule config file, usually
-`~/.cache/molecule/<role-name>/<scenario-name>/molecule.yml`
+: Path to the generated molecule config file, `molecule.yml` inside the
+scenario's ephemeral directory
 
 MOLECULE_ENV_FILE
 
@@ -123,19 +164,26 @@ MOLECULE_ENV_FILE
 
 MOLECULE_STATE_FILE
 
-: The path to molecule state file contains the state of the instances
-(created, converged, etc.). Usually
-`~/.cache/molecule/<role-name>/<scenario-name>/state.yml`
+: The molecule state file, which holds the state of the instances (created,
+converged, etc.). It is `state.yml` inside the scenario's ephemeral directory,
+or inside the shared ephemeral directory when `shared_state` is enabled
 
 MOLECULE_INVENTORY_FILE
 
-: Path to generated inventory file, usually
-`~/.cache/molecule/<role-name>/<scenario-name>/inventory/ansible_inventory.yml`
+: Path to the generated inventory file,
+`inventory/ansible_inventory.yml` inside the scenario's ephemeral directory
 
 MOLECULE_EPHEMERAL_DIRECTORY
 
-: Path to generated directory, usually
-`~/.cache/molecule/<role-name>/<scenario-name>`
+: The scenario's generated working directory. See the note above for its
+location
+
+MOLECULE_SHARED_EPHEMERAL_DIRECTORY
+
+: Path to the directory all scenarios share when `shared_state` is enabled,
+where `state.yml` and `instance_config.yml` live. Each scenario's own
+`MOLECULE_EPHEMERAL_DIRECTORY` is created beneath it. Without `shared_state`,
+the same value as `MOLECULE_EPHEMERAL_DIRECTORY`.
 
 MOLECULE_SCENARIO_DIRECTORY
 
@@ -148,9 +196,10 @@ MOLECULE_PROJECT_DIRECTORY
 
 MOLECULE_INSTANCE_CONFIG
 
-: Path to the instance config file, contains instance name,
-connection, user, port, etc. (populated from driver). Usually
-`~/.cache/molecule/<role-name>/<scenario-name>/instance_config.yml`
+: Path to the instance config file, which holds instance name, connection,
+user, port, etc. (populated from the driver). It is `instance_config.yml`
+inside the scenario's ephemeral directory, or inside the shared ephemeral
+directory when `shared_state` is enabled
 
 MOLECULE_ANSIBLE_ARGS_STRICT_MODE
 

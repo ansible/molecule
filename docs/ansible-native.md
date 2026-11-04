@@ -279,31 +279,36 @@ Shared state enables scenarios to share ephemeral state and testing resources.
 
 ### Configuration
 
+Enable shared state in a base `config.yml` that every scenario inherits, or in each scenario's own `molecule.yml`. Every scenario in the run must have it set. The [configuration reference](configuration.md#shared-state) lists the exact file locations and shows where the shared and per-scenario files are created on disk.
+
 ```yaml
+# config.yml, or each scenario's molecule.yml
 shared_state: true
 ```
 
 When enabled:
 
-- All scenarios share the same ephemeral state directory
+- All scenarios share one state directory (`state.yml` and `instance_config.yml`), and each scenario keeps its own inventory and configuration files
 - Default scenario manages testing resource lifecycle
 - Component scenarios access shared resources
 - State persists between scenario executions
 
 ### Resource Lifecycle Management
 
-**Default scenario** (testing resource management):
+**Default scenario** (testing resource management), in `molecule/default/molecule.yml`:
 
 ```yaml
+# molecule/default/molecule.yml
 scenario:
   test_sequence:
     - create
     - destroy
 ```
 
-**Component scenarios** (testing only):
+**Component scenarios** (testing only), one `molecule.yml` per scenario:
 
 ```yaml
+# molecule/<scenario-name>/molecule.yml
 scenario:
   test_sequence:
     - prepare

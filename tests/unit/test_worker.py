@@ -167,7 +167,10 @@ def test_run_one_returns_results_on_success(
         command_args={**command_args, "force": True},
         ansible_args=(),
     )
-    mock_execute.assert_called_once()
+    mock_execute.assert_called_once_with(
+        mock_config_cls.return_value.scenario,
+        shared_state=True,
+    )
     assert result.name == "test_scenario"
     assert error is None
     assert ansible_output == ""

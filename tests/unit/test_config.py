@@ -25,6 +25,7 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal
 
+import click
 import pytest
 
 from molecule import config, platforms, scenario, state, util
@@ -214,10 +215,20 @@ def test_dependency_property_is_shell(config_instance: config.Config) -> None:  
 
 @pytest.fixture
 def _config_driver_delegated_section_data() -> dict[Literal["driver"], DriverData]:
+    """Driver section data for an unmanaged default driver.
+
+    Returns:
+        A config fragment with the driver section.
+    """
     return {"driver": {"name": "default", "options": {"managed": False}}}
 
 
-def test_env(config_instance: config.Config) -> None:  # noqa: D103
+def test_env(config_instance: config.Config) -> None:
+    """Export the full set of MOLECULE_* environment variables.
+
+    Args:
+        config_instance: Instance of Config.
+    """
     config_instance.args = {"env_file": ".env"}
     env_file = config_instance.args.get("env_file")
     assert isinstance(env_file, str)
@@ -227,6 +238,8 @@ def test_env(config_instance: config.Config) -> None:  # noqa: D103
         "MOLECULE_ENV_FILE": util.abs_path(env_file),
         "MOLECULE_INVENTORY_FILE": config_instance.provisioner.inventory_file,  # type: ignore[union-attr]
         "MOLECULE_EPHEMERAL_DIRECTORY": config_instance.scenario.ephemeral_directory,
+        # Without shared_state the shared directory is the scenario's own.
+        "MOLECULE_SHARED_EPHEMERAL_DIRECTORY": config_instance.scenario.ephemeral_directory,
         "MOLECULE_SCENARIO_DIRECTORY": config_instance.scenario.directory,
         "MOLECULE_PROJECT_DIRECTORY": config_instance.project_directory,
         "MOLECULE_INSTANCE_CONFIG": config_instance.driver.instance_config,
@@ -491,21 +504,122 @@ def test_set_env_from_file(config_instance: config.Config) -> None:  # noqa: D10
     assert contents == env
 
 
-def test_set_env_from_file_returns_original_env_when_env_file_not_found(  # noqa: D103
+def test_set_env_from_file_returns_original_env_when_env_file_not_found(
     config_instance: config.Config,
 ) -> None:
+    """set_env_from_file returns the given env unchanged when the file is missing.
+
+    Args:
+        config_instance: Instance of Config.
+    """
     env = config.set_env_from_file({}, "file-not-found")
 
     assert env == {}
 
 
-def test_write_config(config_instance: config.Config) -> None:  # noqa: D103
+def test_write_config(config_instance: config.Config) -> None:
+    """write() creates the molecule.yml at config_file.
+
+    Args:
+        config_instance: Instance of Config.
+    """
     config_instance.write()
 
     assert os.path.isfile(config_instance.config_file)  # noqa: PTH113
 
 
 # Test ansible section functionality
+
+
+def test_shared_state_molecule_yml_survives_sibling_write(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """A sibling scenario's write() must not overwrite our molecule.yml (#4666).
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        tmp_path: Pytest tmp_path fixture.
+    """
+    # Redirect the ansible-compat runtime cache under tmp_path so the
+    # filesystem writes stay hermetic, out of the repo's .ansible.
+    monkeypatch.setenv("ANSIBLE_HOME", str(tmp_path / ".ansible"))
+    monkeypatch.chdir(tmp_path)
+    alpha = config.Config("")
+    alpha.config_data["shared_state"] = True
+    alpha.config_data["scenario"]["name"] = "alpha"
+    beta = config.Config("")
+    beta.config_data["shared_state"] = True
+    beta.config_data["scenario"]["name"] = "beta"
+    # Config caches its scenario at init with the defaults; rebuild it so the
+    # shared_state and name set above drive the ephemeral directory.
+    del alpha.scenario
+    del beta.scenario
+
+    alpha.write()
+    beta.write()
+
+    assert alpha.config_file != beta.config_file
+    assert str(tmp_path) in alpha.config_file
+    assert util.safe_load_file(alpha.config_file)["scenario"]["name"] == "alpha"
+
+
+def test_shared_state_cli_flag_applies_before_paths_are_cached(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """--shared-state given only on the CLI drives every cached path at init.
+
+    Config.__init__ evaluates env (and so caches the scenario's ephemeral
+    directory and the state file path) before the final CLI override; the CLI
+    flag must already be in config_data by then so state.yml,
+    instance_config.yml (a live driver property) and the scenario directory
+    agree on the shared layout.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        tmp_path: Pytest tmp_path fixture.
+    """
+    monkeypatch.delenv("MOLECULE_EPHEMERAL_DIRECTORY", raising=False)
+    monkeypatch.setenv("ANSIBLE_HOME", str(tmp_path / ".ansible"))
+    monkeypatch.chdir(tmp_path)
+
+    with click.Context(click.Command("test")) as ctx:
+        ctx.set_parameter_source("shared_state", click.core.ParameterSource.COMMANDLINE)
+        cfg = config.Config("", command_args={"shared_state": True})
+
+    shared_root = Path(cfg.scenario.shared_ephemeral_directory)
+
+    assert cfg.shared_state is True
+    assert Path(cfg.scenario.ephemeral_directory).parent == shared_root
+    assert cfg.state.state_file == str(shared_root / "state.yml")
+    assert Path(cfg.driver.instance_config).parent == shared_root
+    assert Path(cfg.driver.instance_config).parent.is_dir()
+
+
+def test_env_shared_directory_under_shared_state(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """Under shared_state the exported shared directory is the shared root.
+
+    Args:
+        monkeypatch: Pytest monkeypatch fixture.
+        tmp_path: Pytest tmp_path fixture.
+    """
+    monkeypatch.delenv("MOLECULE_EPHEMERAL_DIRECTORY", raising=False)
+    monkeypatch.setenv("ANSIBLE_HOME", str(tmp_path / ".ansible"))
+    monkeypatch.chdir(tmp_path)
+    cfg = config.Config("")
+    cfg.config_data["shared_state"] = True
+    # Config caches its scenario at init with the defaults; rebuild it so
+    # shared_state drives the ephemeral directory.
+    del cfg.scenario
+
+    env = cfg.env
+
+    assert env["MOLECULE_SHARED_EPHEMERAL_DIRECTORY"] == cfg.scenario.shared_ephemeral_directory
+    assert env["MOLECULE_SHARED_EPHEMERAL_DIRECTORY"] != env["MOLECULE_EPHEMERAL_DIRECTORY"]
 
 
 def test_ansible_section_defaults() -> None:
