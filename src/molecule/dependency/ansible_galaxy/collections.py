@@ -21,8 +21,8 @@ class Collections(AnsibleGalaxyBase):
         COMMANDS: Arguments to send to ansible-galaxy to install the appropriate type of content.
     """
 
-    FILTER_OPTS = ("role-file",)
-    COMMANDS = ("collection", "install")
+    FILTER_OPTS = ("role-file", "roles-path",)
+    COMMANDS = ("collection", "install",)
 
     @property
     def default_options(self) -> MutableMapping[str, str | bool]:
