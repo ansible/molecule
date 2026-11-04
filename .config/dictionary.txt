@@ -3,6 +3,7 @@ CLICOLOR
 CMDB
 CPUS
 Cfmpr
+DIND
 Dequènes
 ENVNAME
 Kubevirt
@@ -10,6 +11,7 @@ Lifecycle
 Multibranch
 NOPASSWD
 Nocows
+PIND
 Prerun
 Rolebinding
 Sbarnea
