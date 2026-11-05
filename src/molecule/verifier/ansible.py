@@ -96,7 +96,7 @@ class Ansible(Verifier):
 
         if self._config.provisioner:
             # Check if verify playbook exists before calling provisioner
-            if not self._config.provisioner.playbooks.verify:
+            if not action_args and not self._config.provisioner.playbooks.verify:
                 note = f"Remove from {self._config.subcommand}_sequence to suppress"
                 message = "Missing playbook"
                 self._config.scenario.results.add_completion(
