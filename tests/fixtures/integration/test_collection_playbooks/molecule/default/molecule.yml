@@ -1,0 +1,37 @@
+---
+prerun: false
+dependency:
+  enabled: false
+driver:
+  name: default
+platforms:
+  - name: instance
+ansible:
+  env:
+    ANSIBLE_COLLECTIONS_PATH: __COLLECTIONS_PATH__
+  cfg:
+    defaults:
+      interpreter_python: auto_silent
+  playbooks:
+    cleanup: example.infra.cleanup
+    create: example.infra.create
+    converge: example.infra.converge.yml
+    destroy: example.infra.destroy
+    prepare: example.infra.lifecycle.create
+    side_effect: example.infra.side_effect.yml
+    verify: example.infra.verify
+provisioner:
+  name: ansible
+scenario:
+  test_sequence:
+    - syntax
+    - destroy
+    - create
+    - prepare
+    - converge
+    - check
+    - idempotence
+    - side_effect
+    - verify
+    - cleanup
+    - destroy

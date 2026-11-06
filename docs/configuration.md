@@ -1,5 +1,8 @@
 # Configuration
 
+For ansible-native configuration, including collection playbook references under
+`ansible.playbooks`, see [Ansible-Native Configuration](ansible-native.md).
+
 ## Prerun
 
 To help Ansible find used modules and roles, molecule will
