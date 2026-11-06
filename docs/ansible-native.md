@@ -114,6 +114,11 @@ playbooks; for example, `check`, `syntax`, and `idempotence` use the configured
 commands are separate command arguments and are not resolved as values from
 `ansible.playbooks`.
 
+The legacy `provisioner.playbooks` configuration accepts the same paths and
+collection references because Molecule migrates it internally to
+`ansible.playbooks`. Prefer `ansible.playbooks` for new configuration, and do not
+define both forms in the same configuration.
+
 Collection references use the form `namespace.collection.playbook`, with optional
 directories below the collection's `playbooks/` directory and an optional `.yml`
 or `.yaml` suffix. Each dot-separated identifier starts with a lowercase ASCII

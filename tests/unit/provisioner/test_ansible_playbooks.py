@@ -42,6 +42,16 @@ def _provisioner_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
 
 
 @pytest.fixture
+def _legacy_collection_playbook_data() -> dict[str, object]:
+    return {
+        "provisioner": {
+            "name": "ansible",
+            "playbooks": {"converge": "example.infra.converge"},
+        },
+    }
+
+
+@pytest.fixture
 def _instance(_provisioner_section_data, config_instance: config.Config):  # type: ignore[no-untyped-def]  # noqa: ANN202
     return ansible_playbooks.AnsiblePlaybooks(config_instance)
 
@@ -146,6 +156,21 @@ def test_get_playbook_returns_collection_reference_unchanged(  # noqa: D103
     )
 
     assert _instance._get_playbook(section) == reference
+
+
+@pytest.mark.parametrize(
+    "config_instance",
+    ["_legacy_collection_playbook_data"],  # noqa: PT007
+    indirect=True,
+)
+def test_legacy_provisioner_playbook_collection_reference_is_migrated(  # noqa: D103
+    _instance: ansible_playbooks.AnsiblePlaybooks,  # noqa: PT019
+) -> None:
+    reference = "example.infra.converge"
+
+    assert "playbooks" not in _instance._config.config_data["provisioner"]
+    assert _instance._config.config_data["ansible"]["playbooks"]["converge"] == reference
+    assert _instance.converge == reference
 
 
 def test_get_playbook_existing_dotted_local_file_precedes_reference(  # noqa: D103
