@@ -31,6 +31,8 @@ from tests.unit.conftest import os_split  # pylint:disable=C0411
 
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from molecule import config
 
 
@@ -93,6 +95,111 @@ def test_get_playbook(tmpdir, _instance):  # type: ignore[no-untyped-def]  # noq
     util.write_file(x, "")
 
     assert x == _instance._get_playbook("create")
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    (
+        ("example.infra.create", True),
+        ("example.infra.create.yml", True),
+        ("example.infra.lifecycle.create", True),
+        ("example.infra.create.yaml", True),
+        ("create.yml", False),
+        ("foo.bar.yml", False),
+        ("./example.infra.create", False),
+        ("/var/example.infra.create", False),
+        ("Example.infra.create", False),
+        ("example.infra.bad-name", False),
+    ),
+)
+def test_is_collection_playbook_reference(  # noqa: D103
+    value: str,
+    expected: bool,  # noqa: FBT001
+) -> None:
+    assert ansible_playbooks.is_collection_playbook_reference(value) is expected
+
+
+@pytest.mark.parametrize(
+    ("section", "reference"),
+    (
+        ("cleanup", "example.infra.cleanup"),
+        ("create", "example.infra.create.yml"),
+        ("converge", "example.infra.converge"),
+        ("destroy", "example.infra.destroy.yml"),
+        ("prepare", "example.infra.lifecycle.prepare"),
+        ("side_effect", "example.infra.side_effect"),
+        ("verify", "example.infra.verify.yml"),
+    ),
+)
+def test_get_playbook_returns_collection_reference_unchanged(  # noqa: D103
+    _instance: ansible_playbooks.AnsiblePlaybooks,  # noqa: PT019
+    monkeypatch: pytest.MonkeyPatch,
+    section: ansible_playbooks.Section,
+    reference: str,
+) -> None:
+    assert _instance._config.provisioner
+    _instance._config.config_data["ansible"]["playbooks"][section] = reference
+    monkeypatch.setattr(
+        _instance,
+        "_get_bundled_driver_playbook",
+        lambda _: pytest.fail("collection reference should bypass driver fallback"),
+    )
+
+    assert _instance._get_playbook(section) == reference
+
+
+def test_get_playbook_existing_dotted_local_file_precedes_reference(  # noqa: D103
+    _instance: ansible_playbooks.AnsiblePlaybooks,  # noqa: PT019
+) -> None:
+    assert _instance._config.provisioner
+    reference = "example.infra.create"
+    _instance._config.config_data["ansible"]["playbooks"]["create"] = reference
+    local_path = _instance._config.provisioner.abs_path(reference)
+    util.write_file(local_path, "")
+
+    assert _instance._get_playbook("create") == local_path
+
+
+def test_get_playbook_explicit_dotted_path_uses_local_behavior(  # noqa: D103
+    _instance: ansible_playbooks.AnsiblePlaybooks,  # noqa: PT019
+) -> None:
+    assert _instance._config.provisioner
+    configured = "./example.infra.create"
+    _instance._config.config_data["ansible"]["playbooks"]["create"] = configured
+    local_path = _instance._config.provisioner.abs_path(configured)
+    util.write_file(local_path, "")
+
+    assert _instance._get_playbook("create") == local_path
+
+
+def test_get_playbook_missing_local_path_keeps_existing_required_behavior(  # noqa: D103
+    _instance: ansible_playbooks.AnsiblePlaybooks,  # noqa: PT019
+) -> None:
+    assert _instance._config.provisioner
+    configured = "missing-converge.yml"
+    _instance._config.config_data["ansible"]["playbooks"]["converge"] = configured
+
+    assert _instance._get_playbook("converge") == _instance._config.provisioner.abs_path(
+        configured,
+    )
+
+
+def test_get_playbook_missing_local_path_uses_driver_fallback(  # noqa: D103
+    _instance: ansible_playbooks.AnsiblePlaybooks,  # noqa: PT019
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    assert _instance._config.provisioner
+    _instance._config.config_data["ansible"]["playbooks"]["create"] = "missing-create.yml"
+    bundled_playbook = tmp_path / "create.yml"
+    bundled_playbook.write_text("---\n", encoding="utf-8")
+    monkeypatch.setattr(
+        _instance,
+        "_get_bundled_driver_playbook",
+        lambda _: str(bundled_playbook),
+    )
+
+    assert _instance._get_playbook("create") == str(bundled_playbook)
 
 
 @pytest.mark.skip(reason="create not running for delegated")

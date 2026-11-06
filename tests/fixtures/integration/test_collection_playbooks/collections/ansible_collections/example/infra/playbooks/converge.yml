@@ -1,0 +1,11 @@
+---
+- name: Converge collection fixture
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Write stable converge receipt
+      ansible.builtin.copy:
+        content: "converge\n"
+        dest: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/receipts/converge.txt"
+        mode: "0644"
+      delegate_to: localhost

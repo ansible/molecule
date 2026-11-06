@@ -22,6 +22,7 @@
 from __future__ import annotations
 
 import os
+import re
 
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -43,6 +44,26 @@ if TYPE_CHECKING:
         "side_effect",
         "verify",
     ]
+
+
+_COLLECTION_PLAYBOOK_REFERENCE = re.compile(
+    r"[a-z][a-z0-9_]*(?:\.[a-z][a-z0-9_]*){2,}",
+)
+
+
+def is_collection_playbook_reference(value: str) -> bool:
+    """Return whether value uses Molecule's supported collection playbook syntax.
+
+    Args:
+        value: Candidate playbook path or reference.
+
+    Returns:
+        Whether the value is a supported collection playbook reference.
+    """
+    reference = value
+    if reference.endswith((".yml", ".yaml")):
+        reference = reference.rsplit(".", maxsplit=1)[0]
+    return _COLLECTION_PLAYBOOK_REFERENCE.fullmatch(reference) is not None
 
 
 class AnsiblePlaybooks:
@@ -69,64 +90,64 @@ class AnsiblePlaybooks:
 
     @property
     def cleanup(self) -> str | None:
-        """Get the cleanup playbook path.
+        """Get the cleanup playbook path or collection playbook reference.
 
         Returns:
-            Path to cleanup.yml.
+            Path or collection playbook reference for cleanup.
         """
         return self._get_playbook("cleanup")
 
     @property
     def create(self) -> str | None:
-        """Get the create playbook path.
+        """Get the create playbook path or collection playbook reference.
 
         Returns:
-            Path to create.yml.
+            Path or collection playbook reference for create.
         """
         return self._get_playbook("create")
 
     @property
     def converge(self) -> str | None:
-        """Get the converge playbook path.
+        """Get the converge playbook path or collection playbook reference.
 
         Returns:
-            Path to converge.yml.
+            Path or collection playbook reference for converge.
         """
         return self._get_playbook("converge")
 
     @property
     def destroy(self) -> str | None:
-        """Get the destroy playbook path.
+        """Get the destroy playbook path or collection playbook reference.
 
         Returns:
-            Path to destroy.yml.
+            Path or collection playbook reference for destroy.
         """
         return self._get_playbook("destroy")
 
     @property
     def prepare(self) -> str | None:
-        """Get the prepare playbook path.
+        """Get the prepare playbook path or collection playbook reference.
 
         Returns:
-            Path to prepare.yml.
+            Path or collection playbook reference for prepare.
         """
         return self._get_playbook("prepare")
 
     @property
     def side_effect(self) -> str | None:
-        """Get the side_effect playbook path.
+        """Get the side_effect playbook path or collection playbook reference.
 
         Returns:
-            Path to side_effect.yml.
+            Path or collection playbook reference for side_effect.
         """
         return self._get_playbook("side_effect")
 
     @property
     def verify(self) -> str | None:
-        """Get the verify playbook path.
+        """Get the verify playbook path or collection playbook reference.
 
         Returns:
-            Path to verify.yml.
+            Path or collection playbook reference for verify.
         """
         return self._get_playbook("verify")
 
@@ -138,7 +159,7 @@ class AnsiblePlaybooks:
         return Path()
 
     def _get_playbook(self, section: Section) -> str | None:
-        """Return path to playbook or None if playbook is not needed.
+        """Return a playbook path or collection playbook reference, or None if not needed.
 
         Return None when there is no playbook configured and when action is
         considered skippable.
@@ -147,22 +168,27 @@ class AnsiblePlaybooks:
             section: Named section to retrieve playbook for.
 
         Returns:
-            The playbook path, or none if one is not needed.
+            The playbook path or collection playbook reference, or none if one is not needed.
         """
         c = self._config.config_data
 
         playbook: str | None = c["ansible"]["playbooks"][section]
 
         if self._config.provisioner and playbook is not None:
-            playbook = self._config.provisioner.abs_path(playbook)
-            if playbook:
-                playbook = self._normalize_playbook(playbook)
+            configured_playbook = playbook
+            local_playbook = self._normalize_playbook(
+                self._config.provisioner.abs_path(configured_playbook),
+            )
 
-                if os.path.exists(playbook):  # noqa: PTH110
-                    return playbook
+            if os.path.exists(local_playbook):  # noqa: PTH110
+                return local_playbook
 
-            if os.path.exists(self._get_bundled_driver_playbook(section)):  # noqa: PTH110
-                return self._get_bundled_driver_playbook(section)
+            if is_collection_playbook_reference(configured_playbook):
+                return configured_playbook
+
+            bundled_playbook = self._get_bundled_driver_playbook(section)
+            if os.path.exists(bundled_playbook):  # noqa: PTH110
+                return bundled_playbook
             if section not in [
                 # these playbooks can be considered optional
                 "prepare",
@@ -172,7 +198,7 @@ class AnsiblePlaybooks:
                 "side_effect",
                 "verify",
             ]:
-                return playbook
+                return local_playbook
         return None
 
     def _get_bundled_driver_playbook(self, section: Section) -> str:

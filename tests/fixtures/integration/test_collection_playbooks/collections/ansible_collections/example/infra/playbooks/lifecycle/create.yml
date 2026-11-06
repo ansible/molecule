@@ -1,0 +1,11 @@
+---
+- name: Record nested prepare execution
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Write prepare receipt
+      ansible.builtin.copy:
+        content: "prepare\n"
+        dest: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/receipts/prepare.txt"
+        mode: "0644"
+      delegate_to: localhost

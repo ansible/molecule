@@ -522,6 +522,65 @@ def test_verify(  # noqa: D103
         _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
+@pytest.mark.parametrize(
+    ("action", "section", "kwargs"),
+    (
+        ("cleanup", "cleanup", {"verify": False}),
+        ("create", "create", {"verify": False}),
+        ("converge", "converge", {"verify": False}),
+        ("destroy", "destroy", {"verify": False}),
+        ("prepare", "prepare", {"verify": False}),
+        ("side_effect", "side_effect", {"verify": False}),
+        ("verify", "verify", {"verify": True}),
+    ),
+)
+def test_configured_actions_use_collection_reference(  # noqa: D103
+    instance: ansible.Ansible,
+    _patched_ansible_playbook: Mock,  # noqa: PT019
+    action: str,
+    section: str,
+    kwargs: dict[str, bool],
+) -> None:
+    assert instance._config.provisioner
+    reference = f"example.infra.{section}"
+    instance._config.config_data["ansible"]["playbooks"][section] = reference  # type: ignore[literal-required]
+
+    getattr(instance, action)()
+
+    _patched_ansible_playbook.assert_called_once_with(
+        reference,
+        instance._config,
+        **kwargs,
+    )
+
+
+@pytest.mark.parametrize(
+    ("action", "flag"),
+    (("check", "check"), ("syntax", "syntax-check")),
+)
+def test_converge_reference_is_used_for_check_and_syntax(  # noqa: D103
+    instance: ansible.Ansible,
+    _patched_ansible_playbook: Mock,  # noqa: PT019
+    action: str,
+    flag: str,
+) -> None:
+    assert instance._config.provisioner
+    reference = "example.infra.converge"
+    instance._config.config_data["ansible"]["playbooks"]["converge"] = reference
+
+    getattr(instance, action)()
+
+    _patched_ansible_playbook.assert_called_once_with(
+        reference,
+        instance._config,
+        verify=False,
+    )
+    _patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
+        flag,
+        value=True,
+    )
+
+
 def test_ansible_write_config(instance):  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     instance.write_config()
 

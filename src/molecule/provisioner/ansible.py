@@ -357,7 +357,7 @@ class Ansible(base.Base):
         """Execute ``ansible-playbook`` against the converge playbook. unless specified otherwise.
 
         Args:
-            playbook: An optional string containing an absolute path to a playbook.
+            playbook: An optional path or collection playbook reference.
             **kwargs: An optional keyword arguments.
 
         Returns:
@@ -536,7 +536,7 @@ class Ansible(base.Base):
         """Get an instance of AnsiblePlaybook and returns it.
 
         Args:
-            playbook: A string containing an absolute path to a provisioner's playbook.
+            playbook: A path or collection playbook reference for a provisioner's playbook.
             verify: An optional bool to toggle the Playbook mode between provision and verify.
                 False: provision; True: verify. Default is False.
             **kwargs: An optional keyword arguments.
