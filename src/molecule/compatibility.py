@@ -1,4 +1,4 @@
-# ruff: noqa: ANN001, ANN204, ANN205, ARG004, D102, D105
+# ruff: noqa: ANN001, ANN204, ANN205, ARG004, D102, D105, UP042
 # pylint: disable=missing-return-doc,missing-param-doc,useless-suppression
 # mypy: ignore-errors
 """Compatibility module for Python 3.10+."""

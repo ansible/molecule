@@ -34,9 +34,7 @@ from molecule.util import boolean
 
 
 if TYPE_CHECKING:
-    from typing import TextIO
-
-    from typing_extensions import Self
+    from typing import Self, TextIO
 
     from molecule.reporting.definitions import ScenarioResults, ScenariosResults
 
