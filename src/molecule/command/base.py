@@ -550,38 +550,59 @@ def _verify_configs(configs: list[config.Config], glob_str: str | None = None) -
                  If None, uses util.get_effective_molecule_glob().
 
     Raises:
-        AmbiguousScenarioError: If the scenario contains ambiguous config.
-        ScenarioFailureError: When scenario configs cannot be verified.
+        ScenarioFailureError: When scenario configs cannot be verified, including
+            AmbiguousScenarioError from the uniqueness checks.
     """
-    if glob_str is None:
-        glob_str = util.get_effective_molecule_glob()
+    if not configs:
+        if glob_str is None:
+            glob_str = util.get_effective_molecule_glob()
 
-    if configs:
-        scenario_names = [c.scenario.name for c in configs]
-        for scenario_name, n in collections.Counter(scenario_names).items():
-            if n > 1:
-                msg = f"Duplicate scenario name '{scenario_name}' found.  Exiting."
-                matching_directories = {
-                    Path(c.molecule_file).parent
-                    for c in configs
-                    if c.scenario.name == scenario_name
-                }
-                if len(matching_directories) == 1:
-                    raise AmbiguousScenarioError(message=msg)
-                raise ScenarioFailureError(message=msg)
-
-        scenario_directories = [Path(c.molecule_file).parent for c in configs]
-        for directory, n in collections.Counter(scenario_directories).items():
-            if n > 1:
-                msg = (
-                    "Multiple Molecule configuration files found in scenario directory "
-                    f"'{directory}'.\nExiting."
-                )
-                raise AmbiguousScenarioError(message=msg)
-
-    else:
         msg = f"'{glob_str}' glob failed.  Exiting."
         raise ScenarioFailureError(message=msg)
+
+    _verify_unique_scenario_names(configs)
+    _verify_unique_scenario_directories(configs)
+
+
+def _verify_unique_scenario_names(configs: list[config.Config]) -> None:
+    """Verify each scenario name identifies a single configuration.
+
+    Args:
+        configs: The discovered scenario configurations.
+
+    Raises:
+        AmbiguousScenarioError: If a name is duplicated within one directory.
+        ScenarioFailureError: If a name is duplicated across directories.
+    """
+    scenario_names = [c.scenario.name for c in configs]
+    for scenario_name, n in collections.Counter(scenario_names).items():
+        if n > 1:
+            msg = f"Duplicate scenario name '{scenario_name}' found.  Exiting."
+            matching_directories = {
+                Path(c.molecule_file).parent for c in configs if c.scenario.name == scenario_name
+            }
+            if len(matching_directories) == 1:
+                raise AmbiguousScenarioError(message=msg)
+            raise ScenarioFailureError(message=msg)
+
+
+def _verify_unique_scenario_directories(configs: list[config.Config]) -> None:
+    """Verify each scenario directory contains a single configuration.
+
+    Args:
+        configs: The discovered scenario configurations.
+
+    Raises:
+        AmbiguousScenarioError: If multiple configurations share a directory.
+    """
+    scenario_directories = [Path(c.molecule_file).parent for c in configs]
+    for directory, n in collections.Counter(scenario_directories).items():
+        if n > 1:
+            msg = (
+                "Multiple Molecule configuration files found in scenario directory "
+                f"'{directory}'.\nExiting."
+            )
+            raise AmbiguousScenarioError(message=msg)
 
 
 def _get_subcommand(string: str) -> str:

@@ -35,6 +35,7 @@ from molecule import config, util
 from molecule.command import base
 from molecule.constants import MOLECULE_COLLECTION_GLOB, MOLECULE_GLOB, YAML_EXTENSIONS
 from molecule.exceptions import (
+    AmbiguousScenarioError,
     ConfigLoadError,
     ImmediateExit,
     MoleculeError,
@@ -681,20 +682,31 @@ def test_verify_configs(config_instance: config.Config) -> None:
     base._verify_configs(configs)
 
 
+@pytest.mark.parametrize("glob_str", (None, "custom/*/molecule.yaml"))
 def test_verify_configs_raises_with_no_configs(
     caplog: pytest.LogCaptureFixture,
+    mocker: MockerFixture,
+    glob_str: str | None,
 ) -> None:
     """Ensure verify_configs raises when no configs are provided.
 
     Args:
         caplog: pytest caplog fixture.
+        mocker: Fixture for selecting the effective discovery glob.
+        glob_str: Optional explicit discovery glob.
     """
+    mocker.patch(
+        "molecule.util.get_effective_molecule_glob", return_value="effective/*/molecule.yaml"
+    )
     with pytest.raises(ScenarioFailureError) as e:
-        base._verify_configs([])
+        base._verify_configs([], glob_str)
 
+    assert e.type is ScenarioFailureError
     assert e.value.code == 1
 
-    msg = f"'{MOLECULE_GLOB}' glob failed.  Exiting."
+    expected_glob = glob_str if glob_str is not None else "effective/*/molecule.yaml"
+    msg = f"'{expected_glob}' glob failed.  Exiting."
+    assert e.value.message == msg
     assert msg in caplog.text
 
 
@@ -717,6 +729,53 @@ def test_verify_configs_raises_with_duplicate_configs(
 
     msg = "Duplicate scenario name 'default' found.  Exiting."
     assert msg in caplog.text
+
+
+@pytest.mark.parametrize(
+    ("scenarios", "error_type"),
+    (
+        pytest.param(
+            (("default", "one/molecule.yml"), ("default", "one/molecule.yaml")),
+            AmbiguousScenarioError,
+            id="duplicate-name-in-one-directory",
+        ),
+        pytest.param(
+            (("default", "one/molecule.yml"), ("default", "two/molecule.yml")),
+            ScenarioFailureError,
+            id="duplicate-name-across-directories",
+        ),
+        pytest.param(
+            (("first", "one/molecule.yml"), ("second", "one/molecule.yaml")),
+            AmbiguousScenarioError,
+            id="distinct-names-in-one-directory",
+        ),
+    ),
+)
+def test_verify_configs_validation_errors(
+    mocker: MockerFixture,
+    scenarios: tuple[tuple[str, str], ...],
+    error_type: type[ScenarioFailureError],
+) -> None:
+    """Preserve validation error types, messages, and precedence.
+
+    Args:
+        mocker: Fixture for creating isolated configurations.
+        scenarios: Scenario names and configuration file paths.
+        error_type: Exact expected exception class.
+    """
+    configs = []
+    for name, molecule_file in scenarios:
+        scenario_config = mocker.Mock(spec=config.Config)
+        scenario_config.scenario.name = name
+        scenario_config.molecule_file = molecule_file
+        configs.append(scenario_config)
+
+    with pytest.raises(error_type) as e:
+        base._verify_configs(configs)
+
+    # ScenarioFailureError is the base of AmbiguousScenarioError
+    assert e.type is error_type
+    assert e.value.code == 1
 
 
 def test_get_subcommand() -> None:

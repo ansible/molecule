@@ -503,35 +503,35 @@ def test_interpolate(config_instance: config.Config) -> None:  # noqa: D103
     string = "foo: $HOME"
     x = f"foo: {os.environ['HOME']}"
 
-    assert x == config_instance._interpolate(string, os.environ, "")
+    assert config_instance._interpolate(string, os.environ, "") == x
 
 
 def test_interpolate_curly(config_instance: config.Config) -> None:  # noqa: D103
     string = "foo: ${HOME}"
     x = f"foo: {os.environ['HOME']}"
 
-    assert x == config_instance._interpolate(string, os.environ, "")
+    assert config_instance._interpolate(string, os.environ, "") == x
 
 
 def test_interpolate_default(config_instance: config.Config) -> None:  # noqa: D103
     string = "foo: ${NONE-default}"
     x = "foo: default"
 
-    assert x == config_instance._interpolate(string, os.environ, "")
+    assert config_instance._interpolate(string, os.environ, "") == x
 
 
 def test_interpolate_default_colon(config_instance: config.Config) -> None:  # noqa: D103
     string = "foo: ${NONE:-default}"
     x = "foo: default"
 
-    assert x == config_instance._interpolate(string, os.environ, "")
+    assert config_instance._interpolate(string, os.environ, "") == x
 
 
 def test_interpolate_default_variable(config_instance: config.Config) -> None:  # noqa: D103
     string = "foo: ${NONE:-$HOME}"
     x = f"foo: {os.environ['HOME']}"
 
-    assert x == config_instance._interpolate(string, os.environ, "")
+    assert config_instance._interpolate(string, os.environ, "") == x
 
 
 def test_interpolate_curly_default_variable(  # noqa: D103
@@ -540,7 +540,7 @@ def test_interpolate_curly_default_variable(  # noqa: D103
     string = "foo: ${NONE-$HOME}"
     x = f"foo: {os.environ['HOME']}"
 
-    assert x == config_instance._interpolate(string, os.environ, "")
+    assert config_instance._interpolate(string, os.environ, "") == x
 
 
 def test_interpolate_raises_on_failed_interpolation(  # noqa: D103
