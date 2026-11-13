@@ -42,7 +42,12 @@ def _dependency_section_data():  # type: ignore[no-untyped-def]  # noqa: ANN202
     return {
         "dependency": {
             "name": "galaxy",
-            "options": {"foo": "bar", "v": True, "requirements-file": "foo.yml"},
+            "options": {
+                "foo": "bar",
+                "v": True,
+                "requirements-file": "foo.yml",
+                "roles-path": "/usr/share/ansible/roles",
+            },
             "env": {"FOO": "bar"},
         },
     }
@@ -103,6 +108,7 @@ def test_roles_options_property(_instance, role_file):  # type: ignore[no-untype
         "force": False,
         "role-file": role_file,
         "foo": "bar",
+        "roles-path": "/usr/share/ansible/roles",
         "v": True,
     }
 
@@ -120,6 +126,7 @@ def test_roles_options_property_handles_cli_args(role_file, _instance):  # type:
         "force": False,
         "role-file": role_file,
         "foo": "bar",
+        "roles-path": "/usr/share/ansible/roles",
         "vvv": True,
     }
 
@@ -140,15 +147,18 @@ def test_roles_env_property(_instance):  # type: ignore[no-untyped-def]  # noqa:
     ["_dependency_section_data"],  # noqa: PT007
     indirect=True,
 )
-def test_galaxy_bake(_instance, role_file):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
+def test_roles_bake(_instance, role_file):  # type: ignore[no-untyped-def]  # noqa: ANN201, PT019, D103
     _instance.bake()
     args = [
         "ansible-galaxy",
+        "role",
         "install",
         "--foo",
         "bar",
         "--role-file",
         role_file,
+        "--roles-path",
+        "/usr/share/ansible/roles",
         "-v",
     ]
     assert _instance._sh_command == args
