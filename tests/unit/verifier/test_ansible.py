@@ -110,6 +110,38 @@ def test_ansible_execute(caplog, _patched_ansible_verify, _instance, monkeypatch
     _patched_ansible_verify.assert_called_once_with(None)
 
 
+def test_ansible_execute_with_custom_playbook(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    _patched_ansible_verify,  # noqa: PT019
+    _instance,  # noqa: PT019
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr(
+        "molecule.provisioner.ansible_playbooks.AnsiblePlaybooks.verify",
+        None,
+    )
+
+    _instance.execute(["verify_absent.yml"])
+
+    _patched_ansible_verify.assert_called_once_with(["verify_absent.yml"])
+
+
+def test_ansible_execute_reports_missing_playbook(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
+    _patched_ansible_verify,  # noqa: PT019
+    _instance,  # noqa: PT019
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr(
+        "molecule.provisioner.ansible_playbooks.AnsiblePlaybooks.verify",
+        None,
+    )
+
+    _instance.execute()
+
+    assert not _patched_ansible_verify.called
+    states = _instance._config.scenario.results.actions[-1].states
+    assert [state.message for state in states] == ["Executed: Missing playbook"]
+
+
 def test_execute_does_not_execute(  # type: ignore[no-untyped-def]  # noqa: ANN201, D103
     patched_ansible_converge,
     caplog: pytest.LogCaptureFixture,
