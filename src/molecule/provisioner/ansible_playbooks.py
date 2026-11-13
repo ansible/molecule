@@ -156,7 +156,10 @@ class AnsiblePlaybooks:
         if self._config.provisioner and playbook is not None:
             playbook = self._config.provisioner.abs_path(playbook)
             if playbook:
-                playbook = self._normalize_playbook(playbook)
+                playbook = self._normalize_playbook(
+                    playbook,
+                    discover=not self._config.is_playbook_explicit(section),
+                )
 
                 if os.path.exists(playbook):  # noqa: PTH110
                     return playbook
@@ -185,6 +188,8 @@ class AnsiblePlaybooks:
             self._config.driver.name,
             self._config.config_data["ansible"]["playbooks"][section],
         )
+        if not self._config.is_playbook_explicit(section):
+            path = util.resolve_yaml_path(path)
         if path.exists():
             return str(path)
         path = Path(
@@ -192,24 +197,31 @@ class AnsiblePlaybooks:
             "playbooks",
             self._config.config_data["ansible"]["playbooks"][section],
         )
+        if not self._config.is_playbook_explicit(section):
+            path = util.resolve_yaml_path(path)
         return str(path)
 
-    def _normalize_playbook(self, playbook: str) -> str:
+    def _normalize_playbook(self, playbook: str, *, discover: bool = False) -> str:
         """Return current filename to use for a playbook by allowing fallbacks.
 
         Currently used to deprecate use of playbook.yml in favour of converge.yml
 
         Args:
             playbook: Playbook path to alter.
+            discover: Whether to discover an alternative YAML extension.
 
         Returns:
             Normalized playbook path.
         """
-        play_path = Path(playbook)
-        if not playbook or play_path.is_file():
+        if not playbook:
             return playbook
+        play_path = Path(playbook)
+        if discover:
+            play_path = util.resolve_yaml_path(play_path)
+        if play_path.is_file():
+            return str(play_path)
 
-        pb_rename_map = {"converge.yml": "playbook.yml"}
+        pb_rename_map = {"converge.yml": "playbook.yml", "converge.yaml": "playbook.yml"}
         basename = play_path.name
         if basename in pb_rename_map:
             fb_playbook = play_path.parent / pb_rename_map[basename]

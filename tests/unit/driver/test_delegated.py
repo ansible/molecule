@@ -33,7 +33,36 @@ from tests.conftest import is_subset  # pylint:disable=C0411
 
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from pytest_mock import MockerFixture
+
+
+@pytest.mark.parametrize("extensions", ((), ("yml",), ("yaml",), ("yaml", "yml")))
+def test_bundled_yaml_playbook_discovery(
+    config_instance: config.Config,
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    extensions: tuple[str, ...],
+) -> None:
+    """The inherited driver lookup supports either bundled playbook extension.
+
+    Args:
+        config_instance: An isolated scenario config.
+        tmp_path: Temporary driver root.
+        monkeypatch: Fixture for replacing the driver's package directory.
+        extensions: Bundled playbook files to create.
+    """
+    directory = tmp_path / "playbooks"
+    directory.mkdir()
+    for extension in extensions:
+        (directory / f"create.{extension}").touch()
+    driver = delegated.Delegated(config_instance)
+    monkeypatch.setattr(driver, "_path", str(tmp_path))
+    preferred = "yml" if "yml" in extensions else "yaml"
+    assert driver.get_playbook("create") == (
+        str(directory / f"create.{preferred}") if extensions else None
+    )
 
 
 @pytest.fixture

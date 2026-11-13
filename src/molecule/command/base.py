@@ -40,7 +40,12 @@ from wcmatch import glob
 
 from molecule import config, logger, text, util
 from molecule.constants import MOLECULE_COLLECTION_ROOT, MOLECULE_DEFAULT_SCENARIO_NAME
-from molecule.exceptions import ConfigLoadError, MoleculeError, ScenarioFailureError
+from molecule.exceptions import (
+    AmbiguousScenarioError,
+    ConfigLoadError,
+    MoleculeError,
+    ScenarioFailureError,
+)
 from molecule.reporting.definitions import ScenarioResults
 from molecule.reporting.rendering import report
 from molecule.scenarios import Scenarios
@@ -137,7 +142,7 @@ def _is_excluded(name: str, excludes: list[str]) -> bool:
 
 
 def _resolve_scenario_glob(effective_base_glob: str, scenario_name: str) -> str:
-    """Resolve a scenario name to a glob pattern for molecule.yml discovery.
+    """Resolve a scenario name to a glob pattern for scenario configuration discovery.
 
     In collection mode (glob contains MOLECULE_COLLECTION_ROOT), uses path-based
     resolution to correctly handle both nested names ('appliance_vlans/merged')
@@ -149,7 +154,7 @@ def _resolve_scenario_glob(effective_base_glob: str, scenario_name: str) -> str:
         scenario_name: The scenario name from -s (e.g., 'default' or 'appliance_vlans/merged').
 
     Returns:
-        A glob string targeting the specific scenario's molecule.yml.
+        A glob string targeting the specific scenario's configuration.
 
     Raises:
         ScenarioFailureError: If the scenario name contains path traversal sequences.
@@ -166,11 +171,12 @@ def _resolve_scenario_glob(effective_base_glob: str, scenario_name: str) -> str:
         base_dir = effective_base_glob.split("*", maxsplit=1)[0]
         has_wildcard = glob.is_magic(scenario_name, flags=glob.BRACE)
         is_recursive = "**" in effective_base_glob
+        filename = Path(effective_base_glob).name
         if has_wildcard and is_recursive:
             # Preserve recursive matching so -s "camera_*" or -s "{camera,router}_*"
             # finds scenarios at any depth under matching directories.
-            return str(Path(base_dir) / scenario_name / "**" / "molecule.yml")
-        return str(Path(base_dir) / scenario_name / "molecule.yml")
+            return str(Path(base_dir) / scenario_name / "**" / filename)
+        return str(Path(base_dir) / scenario_name / filename)
     return effective_base_glob.replace("*", scenario_name)
 
 
@@ -197,6 +203,7 @@ def execute_cmdline_scenarios(
         excludes: Name of scenarios to not run.
 
     Raises:
+        AmbiguousScenarioError: If the default scenario is present but contains ambiguous config.
         ConfigLoadError: If the default scenario is present but cannot be parsed.
     """
     if excludes is None:
@@ -232,6 +239,11 @@ def execute_cmdline_scenarios(
         default_config = get_configs(args, command_args, ansible_args, default_glob)[0]
     except ConfigLoadError:
         # A default that is present but fails to parse is a real error, not absent.
+        raise
+    except AmbiguousScenarioError:
+        # An ambiguous default is a configuration error, not an absent default.
+        # A cleaner fix would be probably replacing MoleculeError
+        # e.g. with a narrow new ScenarioNotFound exception
         raise
     except MoleculeError:
         # Use a generic logger for this since it's not tied to a specific scenario
@@ -530,7 +542,7 @@ def get_configs(
 
 
 def _verify_configs(configs: list[config.Config], glob_str: str | None = None) -> None:
-    """Verify a Molecule config was found and returns None.
+    """Verify configurations were found, with unique names and directories.
 
     Args:
         configs: A list containing absolute paths to Molecule config files.
@@ -538,21 +550,59 @@ def _verify_configs(configs: list[config.Config], glob_str: str | None = None) -
                  If None, uses util.get_effective_molecule_glob().
 
     Raises:
-        ScenarioFailureError: When scenario configs cannot be verified.
+        ScenarioFailureError: When scenario configs cannot be verified, including
+            AmbiguousScenarioError from the uniqueness checks.
     """
-    if glob_str is None:
-        glob_str = util.get_effective_molecule_glob()
+    if not configs:
+        if glob_str is None:
+            glob_str = util.get_effective_molecule_glob()
 
-    if configs:
-        scenario_names = [c.scenario.name for c in configs]
-        for scenario_name, n in collections.Counter(scenario_names).items():
-            if n > 1:
-                msg = f"Duplicate scenario name '{scenario_name}' found.  Exiting."
-                raise ScenarioFailureError(message=msg)
-
-    else:
         msg = f"'{glob_str}' glob failed.  Exiting."
         raise ScenarioFailureError(message=msg)
+
+    _verify_unique_scenario_names(configs)
+    _verify_unique_scenario_directories(configs)
+
+
+def _verify_unique_scenario_names(configs: list[config.Config]) -> None:
+    """Verify each scenario name identifies a single configuration.
+
+    Args:
+        configs: The discovered scenario configurations.
+
+    Raises:
+        AmbiguousScenarioError: If a name is duplicated within one directory.
+        ScenarioFailureError: If a name is duplicated across directories.
+    """
+    scenario_names = [c.scenario.name for c in configs]
+    for scenario_name, n in collections.Counter(scenario_names).items():
+        if n > 1:
+            msg = f"Duplicate scenario name '{scenario_name}' found.  Exiting."
+            matching_directories = {
+                Path(c.molecule_file).parent for c in configs if c.scenario.name == scenario_name
+            }
+            if len(matching_directories) == 1:
+                raise AmbiguousScenarioError(message=msg)
+            raise ScenarioFailureError(message=msg)
+
+
+def _verify_unique_scenario_directories(configs: list[config.Config]) -> None:
+    """Verify each scenario directory contains a single configuration.
+
+    Args:
+        configs: The discovered scenario configurations.
+
+    Raises:
+        AmbiguousScenarioError: If multiple configurations share a directory.
+    """
+    scenario_directories = [Path(c.molecule_file).parent for c in configs]
+    for directory, n in collections.Counter(scenario_directories).items():
+        if n > 1:
+            msg = (
+                "Multiple Molecule configuration files found in scenario directory "
+                f"'{directory}'.\nExiting."
+            )
+            raise AmbiguousScenarioError(message=msg)
 
 
 def _get_subcommand(string: str) -> str:

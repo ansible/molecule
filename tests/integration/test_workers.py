@@ -69,6 +69,10 @@ def test_workers_parallel_success(collection_dir: Path) -> None:
     Args:
         collection_dir: Path to the temporary collection fixture.
     """
+    scenario = collection_dir / "extensions/molecule/scenario_0"
+    for filename in ("molecule", "converge", "prepare", "verify"):
+        path = scenario / f"{filename}.yml"
+        path.rename(path.with_suffix(".yaml"))
     result = _run_molecule(
         collection_dir,
         ["test", "--all", "--workers", "2", "--report"],

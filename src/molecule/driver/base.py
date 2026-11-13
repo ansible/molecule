@@ -30,6 +30,7 @@ from importlib.metadata import version
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from molecule import util
 from molecule.status import Status
 
 
@@ -368,6 +369,7 @@ class Driver(ABC):
             "playbooks",
             step + ".yml",
         )
+        p = util.resolve_yaml_path(p)
         if p.is_file():
             return str(p)
         return None

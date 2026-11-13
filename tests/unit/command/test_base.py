@@ -33,7 +33,9 @@ import pytest
 
 from molecule import config, util
 from molecule.command import base
+from molecule.constants import MOLECULE_COLLECTION_GLOB, MOLECULE_GLOB, YAML_EXTENSIONS
 from molecule.exceptions import (
+    AmbiguousScenarioError,
     ConfigLoadError,
     ImmediateExit,
     MoleculeError,
@@ -298,7 +300,7 @@ def test_execute_cmdline_scenarios_missing(
     with pytest.raises(SystemExit):
         base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
-    error_msg = "'molecule/nonexistent/molecule.yml' glob failed.  Exiting."
+    error_msg = "'molecule/nonexistent/molecule.{yml,yaml}' glob failed.  Exiting."
     assert error_msg in caplog.text
 
 
@@ -484,6 +486,176 @@ def test_execute_scenario_shared_destroy(
     assert not scenario.prune.called
 
 
+@pytest.mark.parametrize("extension", ("yml", "yaml"))
+@pytest.mark.parametrize("selection", (None, "default", "other", "*"))
+def test_get_yaml_configs(
+    config_instance: config.Config,
+    extension: str,
+    selection: str | None,
+) -> None:
+    """Discover default and named scenarios with either extension.
+
+    Args:
+        config_instance: An isolated scenario configuration.
+        extension: Scenario config extension.
+        selection: Optional scenario selector.
+    """
+    source = Path(config_instance.molecule_file)
+    source.rename(source.with_suffix(f".{extension}"))
+    other = source.parent.parent / "other"
+    other.mkdir()
+    (other / "molecule.yaml").write_text("prerun: false\n")
+    pattern = MOLECULE_GLOB
+    if selection is not None:
+        pattern = base._resolve_scenario_glob(pattern, selection)
+    configs = base.get_configs({}, {}, glob_str=pattern)
+    expected = [selection] if selection not in (None, "*") else ["default", "other"]
+    assert sorted(c.scenario.name for c in configs) == expected
+
+
+@pytest.mark.parametrize("extension", ("yml", "yaml"))
+def test_yaml_custom_glob_is_exact(config_instance: config.Config, extension: str) -> None:
+    """Load exactly the suffix selected by a custom glob when both siblings exist.
+
+    Args:
+        config_instance: An isolated scenario configuration.
+        extension: The extension selected by the discovery pattern.
+    """
+    source = Path(config_instance.molecule_file)
+    source.with_suffix(".yaml").write_text("prerun: false\n")
+    configs = base.get_configs({}, {}, glob_str=f"molecule/*/molecule.{extension}")
+    assert len(configs) == 1
+    expected = source.with_suffix(f".{extension}")
+    assert configs[0].molecule_file == str(expected)
+
+
+@pytest.mark.parametrize("discovery", ("default", "explicit", "environment", "wildcard"))
+def test_yaml_glob_reports_duplicate_scenario_names(
+    config_instance: config.Config,
+    monkeypatch: pytest.MonkeyPatch,
+    discovery: str,
+) -> None:
+    """Preserve duplicate-name validation for default and explicit glob discovery.
+
+    Args:
+        config_instance: An isolated scenario configuration.
+        monkeypatch: Environment patcher.
+        discovery: Default, explicit, environment, or wildcard glob selection.
+    """
+    monkeypatch.delenv("MOLECULE_GLOB", raising=False)
+    pattern = None
+    if discovery == "explicit":
+        pattern = MOLECULE_GLOB
+    elif discovery == "environment":
+        monkeypatch.setenv("MOLECULE_GLOB", MOLECULE_GLOB)
+    elif discovery == "wildcard":
+        pattern = "molecule/*/molecule.*"
+    source = Path(config_instance.molecule_file)
+    for name in ("default", "other"):
+        directory = source.parent.parent / name
+        directory.mkdir(exist_ok=True)
+        for extension in ("yaml", "yml"):
+            path = directory / f"molecule.{extension}"
+            path.write_text("prerun: false\n")
+    with pytest.raises(ScenarioFailureError) as exc:
+        base.get_configs({}, {}, glob_str=pattern)
+    assert exc.value.code == 1
+    assert exc.value.message in {
+        f"Duplicate scenario name '{name}' found.  Exiting." for name in ("default", "other")
+    }
+
+
+@pytest.mark.parametrize("pattern", (MOLECULE_GLOB, "molecule/*/molecule.*"))
+def test_yaml_glob_rejects_multiple_configs_with_distinct_names(
+    config_instance: config.Config,
+    pattern: str,
+) -> None:
+    """Reject two matched configuration files even when their names are unique.
+
+    Args:
+        config_instance: An isolated scenario configuration.
+        pattern: Discovery glob matching both configuration files.
+    """
+    source = Path(config_instance.molecule_file)
+    source.write_text("prerun: false\nscenario:\n  name: first\n")
+    sibling = source.with_suffix(".yaml")
+    sibling.write_text("prerun: false\nscenario:\n  name: second\n")
+    with pytest.raises(ScenarioFailureError) as exc:
+        base.get_configs({}, {}, glob_str=pattern)
+    assert exc.value.code == 1
+    assert "Multiple Molecule configuration files found in scenario directory" in exc.value.message
+    assert str(source.parent) in exc.value.message
+
+
+@pytest.mark.parametrize("root", ("molecule", "extensions/molecule"))
+@pytest.mark.parametrize("extension", (YAML_EXTENSIONS, "yaml.bak", "txt", "YAML"))
+def test_default_discovery_extensions(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, root: str, extension: str
+) -> None:
+    """Discover only supported scenario extensions through the config loader.
+
+    Args:
+        tmp_path: Temporary project directory.
+        monkeypatch: Working directory patcher.
+        root: Role or collection scenario root.
+        extension: Molecule file extension
+    """
+    monkeypatch.chdir(tmp_path)
+    directory = tmp_path / root / "default"
+    directory.mkdir(parents=True)
+    molecule_file = directory / f"molecule.{extension}"
+    molecule_file.write_text("prerun: false\n")
+
+    pattern = MOLECULE_GLOB if root == "molecule" else MOLECULE_COLLECTION_GLOB
+    if extension in YAML_EXTENSIONS:
+        configs = base.get_configs({}, {}, glob_str=pattern)
+        assert [c.scenario.name for c in configs] == ["default"]
+    else:
+        with pytest.raises(ScenarioFailureError):
+            base.get_configs({}, {}, glob_str=pattern)
+
+
+@pytest.mark.parametrize("extension", YAML_EXTENSIONS)
+def test_invalid_matched_yaml_config_is_not_ignored(
+    config_instance: config.Config,
+    extension: str,
+) -> None:
+    """A valid sibling must not hide an invalid configuration matched by the glob.
+
+    Args:
+        config_instance: An isolated scenario configuration.
+        extension: The invalid configuration's suffix.
+    """
+    source = Path(config_instance.molecule_file)
+    source.write_text("prerun: false\n")
+    source.with_suffix(".yaml").write_text("prerun: false\n")
+    source.with_suffix(f".{extension}").write_text("ansible: [\n")
+    with pytest.raises(ConfigLoadError):
+        base.get_configs({}, {}, glob_str=MOLECULE_GLOB)
+
+
+def test_yaml_default_config_passed_to_shared_state(
+    config_instance: config.Config,
+    mocker: MockerFixture,
+) -> None:
+    """Named execution still finds a YAML default for shared-state orchestration.
+
+    Args:
+        config_instance: The isolated default scenario.
+        mocker: Fixture for observing orchestration without running Ansible.
+    """
+    source = Path(config_instance.molecule_file)
+    default = source.with_suffix(".yaml")
+    source.rename(default)
+    other = source.parent.parent / "other"
+    other.mkdir()
+    (other / "molecule.yaml").write_text("---\n")
+    mocker.patch("molecule.util.get_effective_molecule_glob", return_value=MOLECULE_GLOB)
+    run_scenarios = mocker.patch("molecule.command.base._run_scenarios")
+    base.execute_cmdline_scenarios(["other"], {}, {"subcommand": "test"})
+    assert run_scenarios.call_args.args[2].molecule_file == str(default)
+
+
 def test_get_configs(config_instance: config.Config) -> None:
     """Ensure get_configs returns a list of config.Config instances.
 
@@ -510,20 +682,31 @@ def test_verify_configs(config_instance: config.Config) -> None:
     base._verify_configs(configs)
 
 
+@pytest.mark.parametrize("glob_str", (None, "custom/*/molecule.yaml"))
 def test_verify_configs_raises_with_no_configs(
     caplog: pytest.LogCaptureFixture,
+    mocker: MockerFixture,
+    glob_str: str | None,
 ) -> None:
     """Ensure verify_configs raises when no configs are provided.
 
     Args:
         caplog: pytest caplog fixture.
+        mocker: Fixture for selecting the effective discovery glob.
+        glob_str: Optional explicit discovery glob.
     """
+    mocker.patch(
+        "molecule.util.get_effective_molecule_glob", return_value="effective/*/molecule.yaml"
+    )
     with pytest.raises(ScenarioFailureError) as e:
-        base._verify_configs([])
+        base._verify_configs([], glob_str)
 
+    assert e.type is ScenarioFailureError
     assert e.value.code == 1
 
-    msg = "'molecule/*/molecule.yml' glob failed.  Exiting."
+    expected_glob = glob_str if glob_str is not None else "effective/*/molecule.yaml"
+    msg = f"'{expected_glob}' glob failed.  Exiting."
+    assert e.value.message == msg
     assert msg in caplog.text
 
 
@@ -546,6 +729,53 @@ def test_verify_configs_raises_with_duplicate_configs(
 
     msg = "Duplicate scenario name 'default' found.  Exiting."
     assert msg in caplog.text
+
+
+@pytest.mark.parametrize(
+    ("scenarios", "error_type"),
+    (
+        pytest.param(
+            (("default", "one/molecule.yml"), ("default", "one/molecule.yaml")),
+            AmbiguousScenarioError,
+            id="duplicate-name-in-one-directory",
+        ),
+        pytest.param(
+            (("default", "one/molecule.yml"), ("default", "two/molecule.yml")),
+            ScenarioFailureError,
+            id="duplicate-name-across-directories",
+        ),
+        pytest.param(
+            (("first", "one/molecule.yml"), ("second", "one/molecule.yaml")),
+            AmbiguousScenarioError,
+            id="distinct-names-in-one-directory",
+        ),
+    ),
+)
+def test_verify_configs_validation_errors(
+    mocker: MockerFixture,
+    scenarios: tuple[tuple[str, str], ...],
+    error_type: type[ScenarioFailureError],
+) -> None:
+    """Preserve validation error types, messages, and precedence.
+
+    Args:
+        mocker: Fixture for creating isolated configurations.
+        scenarios: Scenario names and configuration file paths.
+        error_type: Exact expected exception class.
+    """
+    configs = []
+    for name, molecule_file in scenarios:
+        scenario_config = mocker.Mock(spec=config.Config)
+        scenario_config.scenario.name = name
+        scenario_config.molecule_file = molecule_file
+        configs.append(scenario_config)
+
+    with pytest.raises(error_type) as e:
+        base._verify_configs(configs)
+
+    # ScenarioFailureError is the base of AmbiguousScenarioError
+    assert e.type is error_type
+    assert e.value.code == 1
 
 
 def test_get_subcommand() -> None:

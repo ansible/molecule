@@ -42,7 +42,7 @@ def test_molecule_constants() -> None:
     assert MOLECULE_HEADER == "# Molecule managed"
     assert MOLECULE_DEFAULT_SCENARIO_NAME == "default"
     assert isinstance(MOLECULE_GLOB, str)
-    assert "molecule.yml" in MOLECULE_GLOB
+    assert "molecule.{yml,yaml}" in MOLECULE_GLOB
 
 
 def test_molecule_platform_name() -> None:
