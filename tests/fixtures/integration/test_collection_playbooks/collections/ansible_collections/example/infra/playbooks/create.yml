@@ -1,0 +1,17 @@
+---
+- name: Create fixture resource
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Write create receipt
+      ansible.builtin.copy:
+        content: "create\n"
+        dest: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/receipts/create.txt"
+        mode: "0644"
+      delegate_to: localhost
+    - name: Create resource
+      ansible.builtin.copy:
+        content: "created\n"
+        dest: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/receipts/resource.txt"
+        mode: "0644"
+      delegate_to: localhost

@@ -34,6 +34,7 @@ from rich.markup import escape
 from molecule import logger, util
 from molecule.api import MoleculeRuntimeWarning
 from molecule.exceptions import ScenarioFailureError
+from molecule.provisioner.ansible_playbooks import is_collection_playbook_reference
 from molecule.reporting.definitions import CompletionState
 
 
@@ -55,7 +56,7 @@ class AnsiblePlaybook:
         """Set up the requirements to execute ``ansible-playbook``.
 
         Args:
-            playbook: A string containing the path to the playbook.
+            playbook: A path or collection playbook reference.
             config: An instance of a Molecule config.
             verify: An optional bool to toggle the Playbook mode between provision and verify.
                 False provision; True: verify. Default is False.
@@ -144,7 +145,7 @@ class AnsiblePlaybook:
 
         Args:
             backend: The executor backend name.
-            playbook: Path to the playbook file.
+            playbook: Path or collection playbook reference.
             options: Merged provisioner options.
             verbose_flag: Verbose flag options.
             ansible_args: Additional ansible arguments.
@@ -267,7 +268,9 @@ class AnsiblePlaybook:
         # Smart mode: exclude create/destroy only for bundled playbooks
         if action in ["create", "destroy"]:
             playbook = getattr(self._config.provisioner.playbooks, action, None)
-            return bool(playbook and Path(playbook).exists())
+            return bool(
+                playbook and (is_collection_playbook_reference(playbook) or Path(playbook).exists())
+            )
 
         # Default: provide args (None actions, non-create/destroy actions)
         return True

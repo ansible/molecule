@@ -1,0 +1,11 @@
+---
+- name: Record side effect execution
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Write side effect receipt
+      ansible.builtin.copy:
+        content: "side_effect\n"
+        dest: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/receipts/side_effect.txt"
+        mode: "0644"
+      delegate_to: localhost

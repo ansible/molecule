@@ -389,6 +389,74 @@ def test_bake_create_destroy_smart_mode_user_provided(
     assert _instance._ansible_command == args
 
 
+@pytest.mark.parametrize("action", ("create", "destroy"))
+def test_bake_create_destroy_collection_reference_provides_args(  # noqa: D103
+    action: str,
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+) -> None:
+    assert _instance._config.provisioner
+    reference = f"example.infra.{action}"
+    _instance._config.config_data["ansible"]["playbooks"][action] = reference  # type: ignore[literal-required]
+    _instance._playbook = reference
+    _instance._config.action = action
+    _instance._config.ansible_args = ("--extra-vars", "foo=bar")
+    _instance._config.config_data["ansible"]["executor"]["args"]["ansible_playbook"] = [
+        "--forks=2",
+    ]
+
+    _instance.bake()
+
+    assert "--forks=2" in _instance._ansible_command
+    assert "--extra-vars" in _instance._ansible_command
+    assert "foo=bar" in _instance._ansible_command
+
+
+@pytest.mark.parametrize("action", ("create", "destroy"))
+def test_should_provide_args_strict_mode_suppresses_collection_reference(  # noqa: D103
+    action: str,
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    assert _instance._config.provisioner
+    _instance._config.config_data["ansible"]["playbooks"][action] = (  # type: ignore[literal-required]
+        f"example.infra.{action}"
+    )
+    monkeypatch.setenv("MOLECULE_ANSIBLE_ARGS_STRICT_MODE", "true")
+
+    assert not _instance._should_provide_args(action)
+
+
+def test_should_not_provide_args_for_missing_non_reference_path(  # noqa: D103
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+) -> None:
+    assert _instance._config.provisioner
+    _instance._config.config_data["ansible"]["playbooks"]["create"] = "missing-create.yml"
+
+    assert not _instance._should_provide_args("create")
+
+
+@pytest.mark.parametrize(
+    ("backend", "prefix"),
+    (
+        ("ansible-playbook", ["ansible-playbook"]),
+        ("ansible-navigator", ["ansible-navigator", "run"]),
+    ),
+)
+def test_bake_passes_collection_reference_unchanged_once(  # noqa: D103
+    backend: str,
+    prefix: list[str],
+    _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019
+) -> None:
+    reference = "example.infra.lifecycle.create.yml"
+    _instance._playbook = reference
+    _instance._config.config_data["ansible"]["executor"]["backend"] = backend
+
+    _instance.bake()
+
+    assert _instance._ansible_command[: len(prefix)] == prefix
+    assert _instance._ansible_command.count(reference) == 1
+
+
 def test_bake_strict_mode_none_action(
     _inventory_directory: str,  # noqa: PT019
     _instance: ansible_playbook.AnsiblePlaybook,  # noqa: PT019

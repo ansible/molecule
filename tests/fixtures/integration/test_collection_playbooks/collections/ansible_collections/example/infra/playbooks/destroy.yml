@@ -1,0 +1,16 @@
+---
+- name: Destroy fixture resource
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Remove resource
+      ansible.builtin.file:
+        path: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/receipts/resource.txt"
+        state: absent
+      delegate_to: localhost
+    - name: Write destroy receipt
+      ansible.builtin.copy:
+        content: "destroy\n"
+        dest: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/receipts/destroy.txt"
+        mode: "0644"
+      delegate_to: localhost

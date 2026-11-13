@@ -1,0 +1,11 @@
+---
+- name: Record verify execution
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Write verify receipt
+      ansible.builtin.copy:
+        content: "verify\n"
+        dest: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/receipts/verify.txt"
+        mode: "0644"
+      delegate_to: localhost

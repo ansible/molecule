@@ -92,7 +92,7 @@ ansible:
 
 Configuration options merged into ansible.cfg for the scenario. The `inventory` setting under defaults specifies the inventory source.
 
-### Playbook Paths
+### Playbook Paths and Collection References
 
 ```yaml
 ansible:
@@ -106,7 +106,72 @@ ansible:
     side_effect: side_effect.yml
 ```
 
-Playbook paths are relative to the scenario directory.
+Each of the seven configured playbooks can be a local path or an Ansible collection
+playbook reference: `cleanup`, `create`, `converge`, `destroy`, `prepare`,
+`side_effect`, and `verify`. These settings apply to actions that use the configured
+playbooks; for example, `check`, `syntax`, and `idempotence` use the configured
+`converge` playbook. Positional playbooks supplied to `side_effect` or `verify`
+commands are separate command arguments and are not resolved as values from
+`ansible.playbooks`.
+
+The legacy `provisioner.playbooks` configuration accepts the same paths and
+collection references because Molecule migrates it internally to
+`ansible.playbooks`. Prefer `ansible.playbooks` for new configuration, and do not
+define both forms in the same configuration.
+
+Collection references use the form `namespace.collection.playbook`, with optional
+directories below the collection's `playbooks/` directory and an optional `.yml`
+or `.yaml` suffix. Each dot-separated identifier starts with a lowercase ASCII
+letter and otherwise contains lowercase letters, numbers, or underscores:
+
+```yaml
+ansible:
+  playbooks:
+    cleanup: example.infra.cleanup
+    create: example.infra.create.yml
+    converge: example.infra.lifecycle.converge.yaml
+    destroy: example.infra.destroy
+    prepare: example.infra.prepare
+    side_effect: example.infra.side_effect
+    verify: example.infra.verify
+```
+
+For example, `example.infra.create` refers to
+`example/infra/playbooks/create.yml`; `example.infra.lifecycle.create` refers to
+`example/infra/playbooks/lifecycle/create.yml`. Molecule passes a recognized
+reference unchanged to the selected executor. The collection must be available in
+that executor's Ansible environment, including inside the execution environment
+when using `ansible-navigator`.
+
+Local playbook paths remain relative to the scenario directory. Molecule checks
+that local path first, so an existing local file takes precedence even if its name
+looks like a collection reference. If a dotted local filename is ambiguous, prefix
+it with `./` to force local-path handling (for example, `./example.infra.create`).
+Without an existing local file or the `./` prefix, a value matching the collection
+reference syntax is treated as a reference. A missing collection or playbook then
+fails through Ansible; Molecule does not fall back to a bundled playbook.
+
+Collection references can replace scenario-local wrapper playbooks that only
+import a collection playbook. For example, replace this configuration and wrapper:
+
+```yaml
+ansible:
+  playbooks:
+    converge: converge.yml
+```
+
+```yaml
+# converge.yml
+- ansible.builtin.import_playbook: example.infra.converge
+```
+
+with a direct reference:
+
+```yaml
+ansible:
+  playbooks:
+    converge: example.infra.converge
+```
 
 ## Native Inventory Usage
 

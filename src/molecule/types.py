@@ -122,13 +122,13 @@ class PlaybookData(TypedDict, total=False):
     """Playbooks for a scenario.
 
     Attributes:
-        cleanup: The cleanup playbook.
-        create: The create playbook.
-        converge: The converge playbook.
-        destroy: The destroy playbook.
-        prepare: The prepare playbook.
-        side_effect: The side_effect playbook.
-        verify: The verify playbook.
+        cleanup: The cleanup playbook path or collection playbook reference.
+        create: The create playbook path or collection playbook reference.
+        converge: The converge playbook path or collection playbook reference.
+        destroy: The destroy playbook path or collection playbook reference.
+        prepare: The prepare playbook path or collection playbook reference.
+        side_effect: The side_effect playbook path or collection playbook reference.
+        verify: The verify playbook path or collection playbook reference.
     """
 
     cleanup: str
@@ -221,7 +221,7 @@ class AnsibleData(TypedDict, total=False):
         cfg: Ansible configuration options (maps to ansible.cfg).
         executor: Executor configuration including backend and arguments.
         env: Environment variables for ansible execution.
-        playbooks: Playbook paths for different scenarios.
+        playbooks: Playbook paths or collection playbook references for different scenarios.
     """
 
     cfg: dict[str, Any]

@@ -1,0 +1,13 @@
+namespace: example
+name: infra
+version: 1.0.0
+readme: README.md
+authors:
+  - Molecule integration test
+description: Collection fixture for Molecule playbook reference coverage.
+license:
+  - MIT
+tags: []
+dependencies: {}
+repository: https://example.invalid/example/infra
+build_ignore: []
