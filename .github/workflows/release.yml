@@ -18,7 +18,7 @@ jobs:
   release:
     if: "${{ github.event_name == 'release' || inputs.pypi_publish }}"
     environment: release
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       id-token: write
 
@@ -30,7 +30,7 @@ jobs:
       - name: Switch to using latest Python by default
         uses: actions/setup-python@v7
         with:
-          python-version: "3.14"
+          python-version: "3.15"
 
       - name: Install tox
         run: python3 -m pip install --user "tox>=4.46.0"
@@ -68,7 +68,7 @@ jobs:
   forum_post:
     if: "${{ github.event_name == 'release' }}"
     needs: release
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions: {}
 
     steps:
