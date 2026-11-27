@@ -27,7 +27,6 @@ antsibull
 anyconfig
 argnames
 argvalues
-autouse
 autovivification
 booleaness
 cacheprovider
@@ -47,7 +46,6 @@ cpus
 credssp
 dbadmin
 decentral
-delenv
 dependee
 devfile
 dind
@@ -126,7 +124,6 @@ skipsdist
 sles
 ssbarnea
 stestr
-stopall
 stty
 superitem
 sysexit
@@ -142,12 +139,10 @@ tryfirst
 tsoh
 ulimits
 urandom
-usefixtures
 vfoo
 virtenv
 virtualmachines
 webservers
-worktrees
 yourcollection
 yournamespace
 yourrole
